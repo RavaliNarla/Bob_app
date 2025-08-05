@@ -1,0 +1,153 @@
+/* Completely remove the dropdown toggle arrow */
+.dropdown-toggle::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Reset button styles */
+.dropdown-toggle {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  line-height: 1;
+}
+
+/* Remove focus styles */
+.dropdown-toggle:focus {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Style the SVG icon */
+.dropdown-toggle svg {
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+}
+
+/* Make job row content more compact */
+.job-row {
+  font-size: 0.8rem; /* Reduced from default */
+  line-height: 1.2;
+}
+
+.job-title {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.job-detail {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Specific style for location to ensure it stays on one line */
+.location-cell {
+  min-width: 120px; /* Adjust based on your needs */
+  max-width: 200px; /* Adjust based on your needs */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+/* Make bullet points smaller */
+.job-bullet {
+  width: 4px !important;
+  height: 4px !important;
+  margin: 1px 0;
+}
+
+/* Adjust bullet columns */
+.bullet-columns {
+  padding: 4px 6px !important;
+  width: 24px !important;
+  min-width: 24px !important;
+}
+
+/* Make checkbox smaller */
+.form-check-input {
+  width: 0.9em !important;
+  height: 0.9em !important;
+  margin-top: 0.2em;
+}
+
+/* Search bar styles */
+.search-container {
+  position: relative;
+  margin: 0 auto 1.5rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.search-input {
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  font-size: 0.9rem;
+  width: 100%;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.search-input:focus {
+  border-color: #FF7043;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 112, 67, 0.25);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6c757d;
+  pointer-events: none;
+}
+/* Reduce font size for job title and other text */
+.job-title-text {
+    font-size: 0.9rem;  /* smaller font size */
+    white-space: nowrap; /* prevent wrapping */
+    overflow: hidden;
+    text-overflow: ellipsis; /* show ... if still too long */
+  }
+  
+  .job-detail-text {
+    font-size: 0.85rem; /* slightly smaller for code, exp, positions */
+  }
+  .job-postings-wrapper {
+    gap: 1rem; /* optional: space between checkboxes */
+  }
+  
+  .job-posting-checkbox {
+    flex: 0 0 auto;
+  }
+  
+  /* Force first 5 to stay in one row */
+  .job-posting-checkbox.no-wrap {
+    white-space: nowrap;
+  }
+  
+  /* Optional: Adjust spacing so wrapping looks nice */
+  .job-postings-wrapper .job-posting-checkbox:nth-child(n+6) {
+    margin-top: 0.5rem; /* small spacing on wrap */
+  }
+  .checklinks {
+    margin-top: 10px;
+    width: 100%;
+  }
+  .checklinks .form-check-input {
+    margin-top: 5px;
+  }
+  .checklinks > div:nth-child(n+6) {
+    margin-top: 8px;
+  }
+  .checklinks > div {
+    margin-right: 1.5rem;
+  }
