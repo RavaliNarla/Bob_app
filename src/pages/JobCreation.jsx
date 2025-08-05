@@ -1,13 +1,16 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { JobCreationApiService } from '../services/JobCreationApiService';
 import { useLanguage } from '../context/LanguageContext';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faFileAlt, faCircle, faCheckCircle, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { apiService } from '../services/apiService';
-
+import * as XLSX from 'xlsx';
+import { jobSchema } from './../components/validationSchema'; 
 
 const JobCreation = () => {
+  // Ref for file input
+  const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('upload');
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
@@ -43,6 +46,7 @@ const JobCreation = () => {
   const [noOfPositionsOptions, setNoOfPositionsOptions] = useState([]);
   const [noOfPositionsLoading, setNoOfPositionsLoading] = useState(false);
   const [noOfPositionsError, setNoOfPositionsError] = useState(null);
+  const [jsonData, setJsonData] = useState([]);
 
   useEffect(() => {
     // Fetch work experience options
@@ -220,24 +224,26 @@ const JobCreation = () => {
   const handleFileChange = (e) => {
     const newErrors = {};
     const selectedFiles = Array.from(e.target.files);
- const validExtensions = ['.xls', '.xlsx'];
+    const validExtensions = ['.xls', '.xlsx'];
 
- const validFiles = selectedFiles.filter(file => {
-   const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-   return validExtensions.includes(ext);
- });
+    const validFiles = selectedFiles.filter(file => {
+      const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+      return validExtensions.includes(ext);
+    });
 
- if (validFiles.length !== selectedFiles.length) {
-   //alert("Only Excel files (.xls, .xlsx) are allowed.");
-   newErrors.file = "Only Excel files (.xls, .xlsx) are allowed.";
-
- }
- else {
-   delete newErrors.file;
- }
-setErrors(newErrors);
- setFiles([...files, ...validFiles]);
- };
+    if (validFiles.length !== selectedFiles.length) {
+      newErrors.file = "Only Excel files (.xls, .xlsx) are allowed.";
+    } else {
+      delete newErrors.file;
+    }
+    setErrors(newErrors);
+    setFiles([...files, ...validFiles]);
+    // Call readExcel for each valid file
+    validFiles.forEach(file => {
+      console.log('Calling readExcel for uploaded file:', file.name);
+      readExcel(file);
+    });
+  };
   const [formData, setFormData] = useState({
     bussiness_unit: '',
     grade: '',
@@ -265,9 +271,47 @@ setErrors(newErrors);
   };
   const handleDrop = (e) => {
     e.preventDefault();
-    if (e.dataTransfer.files) {
-      setFiles([...e.dataTransfer.files]);
+    console.log('handleDrop called');
+    const droppedFiles = Array.from(e.dataTransfer.files);
+    if (droppedFiles.length > 0) {
+      setFiles(prevFiles => [...prevFiles, ...droppedFiles]);
+      // Optionally, call readExcel for each file (if you want to validate immediately)
+      droppedFiles.forEach(file => {
+        console.log('Calling readExcel for dropped file:', file.name);
+        readExcel(file);
+      });
     }
+  };
+
+  const readExcel = async (file) => {
+    console.log('readExcel called for:', file.name);
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      const arrayBuffer = event.target.result;
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+      const validRows = [];
+      const errorList = [];
+
+      for (let i = 0; i < rows.length; i++) {
+        try {
+          const validated = await jobSchema.validate(rows[i], { abortEarly: false });
+          validRows.push(validated);
+        } catch (err) {
+          errorList.push({
+            row: i + 2, // Excel row (account for header)
+            messages: err.errors,
+          });
+        }
+      }
+      setErrors(errorList);
+      setJsonData(validRows); // Store valid rows for later submit
+    };
+
+    reader.readAsArrayBuffer(file); // ✅ Modern replacement
   };
 
   const handleDragOver = (e) => {
@@ -369,23 +413,28 @@ setErrors(newErrors);
     return newErrors;
   };
   const handleUploadSubmit = async () => {
-    console.log("files:", files);
     if (files.length === 0) {
-       setErrors(prev => ({ ...prev, file: "Please upload at least one Excel file." }));
+      setErrors(prev => ({ ...prev, file: "Please upload at least one Excel file." }));
       return;
     }
-  
+    if (errors && Array.isArray(errors) && errors.length > 0) {
+      alert("Please fix validation errors before submitting.");
+      return;
+    }
+    if (!jsonData || jsonData.length === 0) {
+      alert("No valid data to submit.");
+      return;
+    }
     try {
-      for (let file of files) {
-        const res = await apiService.uploadJobExcel(file);
-        console.log("Upload response:", res);
-      }
-      alert("Files uploaded successfully!");
-      setFiles([]); // Clear the upload list
+      // Replace with your actual API endpoint if different
+      console.log('Posting JSON data:', jsonData);
+      const response = await apiService.createJobPost(jsonData);
+      alert("Excel data posted successfully!");
+      setFiles([]);
+      setJsonData([]);
     } catch (error) {
-      console.error("Error uploading Excel:", error);
-      //alert("Failed to upload file.");
-      setErrors(prev => ({ ...prev, file: "Failed to upload file." }));
+      alert("Failed to post Excel data.");
+      console.error("Error posting Excel data:", error);
     }
   };
   return (
@@ -470,14 +519,14 @@ setErrors(newErrors);
           {/* Upload Section */}
           {selectedOption === 'upload' && (
             <div className="upload-section">
-              <a href="/Job_Template.xlsx" download className="btn btn-outline-primary mb-3">
+              <a href="/JobRequisitionTemplate.xlsx" download className="btn btn-outline-primary mb-3">
                 Export Excel Format
               </a>
               <div
                 className="border rounded p-5 text-center mb-3"
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                onClick={() => document.getElementById('file-upload').click()}
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
                 style={{
                   borderStyle: 'dashed',
                   backgroundColor: 'rgb(255, 231, 222)',
@@ -492,14 +541,15 @@ setErrors(newErrors);
                 <FontAwesomeIcon icon={faUpload} size="3x" className="mb-3 text-muted" />
                 <h5>Drag and drop your files here</h5>
                 <p className="text-muted">or click to browse files</p>
-                <Form.Control
-                  type="file"
-                  id="file-upload"
-                  className="d-none"
-                  onChange={handleFileChange}
-                  multiple
-                />
               </div>
+              {/* Hidden file input outside drop area */}
+              <Form.Control
+                type="file"
+                id="file-upload"
+                className="d-none"
+                onChange={handleFileChange}
+                ref={fileInputRef}
+              />
 
               {errors.file && <small className="error d-block mb-2">{errors.file}</small>}
 
@@ -524,7 +574,38 @@ setErrors(newErrors);
               >
                 Submit
               </Button>
+                    {/* <hr /> */}
+
+      {/* <h4>Validation Errors</h4> */}
+      {errors.length > 0 ? (
+        <ul style={{ color: 'red' }}>
+          {errors.map((err, i) => (
+            <li key={i}>
+              Row {err.row}
+              <ul>
+                {err.messages.map((msg, j) => (
+                  <li key={j}>{msg}</li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      ) : (
+         <p></p>
+      )}
+
+      {/*
+      <h4 className="mt-4">Valid JSON Output</h4>
+      {jsonData.length > 0 ? (
+        <pre>{JSON.stringify(jsonData, null, 2)}</pre>
+      ) : (
+        <p>No valid data yet</p>
+      )}
+      */}
             </div>
+
+
+
           )}
 
           {/* Form Section */}

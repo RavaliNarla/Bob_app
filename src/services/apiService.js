@@ -63,14 +63,15 @@ export const apiService = {
 
 
   createJobPost: (data) => api.post('/jobpost', data), // Dummy POST endpoint
-  uploadJobExcel: (file) => {
-    const formData = new FormData();
-    formData.append('file', file); // backend expects 'file' key
-    console.log(formData)
-    return api.post('/jobposts/upload-excel', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
-  },
+  // uploadJobExcel: (file) => {
+  //   const formData = new FormData();
+  //   formData.append('file', file); // backend expects 'file' key
+  //   console.log(formData)
+  //   return api.post('/jobposts/upload-excel', formData, {
+  //     headers: { 'Content-Type': 'multipart/form-data' }
+  //   });
+  // },
+  uploadJobExcel: (data) => api.post('/uploadexcel', data), // Dummy POST endpoint
    postJobRequisitions :(payload) => api.post("/requisitionpost", payload)
 
 

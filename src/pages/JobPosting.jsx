@@ -166,13 +166,18 @@ const JobPosting = () => {
 
       {/* Job Posting Channels */}
       <div className="mt-5 mb-4">
-        <Row className="align-items-center">
-          <Col xs={12} sm="auto" className="mb-2 mb-sm-0">
-            <h6 className="fw-bold mb-0">Job Postings</h6>
-          </Col>
-          <Col>
-            <div className="d-flex flex-wrap align-items-center checklinks">
-              {Object.entries(jobBoards).map(([key, value], idx) => (
+  <Row className="align-items-start">
+    <Col xs={12} sm="auto" className="d-flex align-items-center">
+      <Form.Label className="fw-bold mb-0 postclass" style={{ whiteSpace: 'nowrap' }}>
+        Job Postings
+      </Form.Label>
+    </Col>
+    <Col>
+      <div className="d-flex flex-column">
+        <div className="d-flex flex-wrap align-items-center checklinks">
+          {Object.entries(jobBoards).map(([key, value], idx) => {
+            if (['linkedin', 'careerPage', 'naukri', 'glassDoor', 'indeed'].includes(key)) {
+              return (
                 <div key={idx} className="me-4 mb-1">
                   <Form.Check
                     type="checkbox"
@@ -185,11 +190,37 @@ const JobPosting = () => {
                     className="d-inline-block"
                   />
                 </div>
-              ))}
-            </div>
-          </Col>
-        </Row>
+              );
+            }
+            return null;
+          })}
+        </div>
+        <div className="d-flex flex-wrap align-items-center checklinks mt-2">
+          {Object.entries(jobBoards).map(([key, value], idx) => {
+            if (['foundit', 'freshersWorld'].includes(key)) {
+              return (
+                <div key={idx} className="me-4 mb-1">
+                  <Form.Check
+                    type="checkbox"
+                    label={key
+                      .replace(/([A-Z])/g, ' $1')
+                      .replace(/^./, (str) => str.toUpperCase())}
+                    name={key}
+                    checked={value}
+                    onChange={handleCheckboxChange}
+                    className="d-inline-block"
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
       </div>
+    </Col>
+  </Row>
+</div>
+
 
 
       {/* Approval Status */}
