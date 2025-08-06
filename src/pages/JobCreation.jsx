@@ -7,8 +7,11 @@ import { faUpload, faFileAlt, faCircle, faCheckCircle, faCheck } from '@fortawes
 import { apiService } from '../services/apiService';
 import * as XLSX from 'xlsx';
 import { jobSchema } from './../components/validationSchema'; 
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useNavigate } from 'react-router-dom';
 const JobCreation = () => {
+  const navigate = useNavigate();
   // Ref for file input
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('upload');
@@ -46,6 +49,10 @@ const JobCreation = () => {
   const [noOfPositionsOptions, setNoOfPositionsOptions] = useState([]);
   const [noOfPositionsLoading, setNoOfPositionsLoading] = useState(false);
   const [noOfPositionsError, setNoOfPositionsError] = useState(null);
+
+  const [businessUnitOptions, setbusinessUnitOptions] = useState([]);
+  const [businessUnitLoading, setbusinessUnitLoading] = useState(false);
+  const [businessUnitError, setbusinessUnitError] = useState(null);
   const [jsonData, setJsonData] = useState([]);
 
   useEffect(() => {
@@ -175,49 +182,63 @@ const JobCreation = () => {
         setCasteError('Failed to load castes');
         setCasteLoading(false);
       });
+// Fetch business options
+
+ 
+    setbusinessUnitLoading(true);
+    setbusinessUnitError(null);
+    JobCreationApiService.getBusinessunitData()
+      .then((data) => {
+        setbusinessUnitOptions(Array.isArray(data) ? data : []);
+        setbusinessUnitLoading(false);
+      })
+      .catch((err) => {
+        setbusinessUnitError('Failed to load castes');
+        setbusinessUnitLoading(false);
+      });
   }, []);
   const fieldLabels = {
     en: {
-      bussiness_unit: 'Business Unit *',
-      grade: 'Grade *',
-      job_title: 'Job Title *',
-      budget: 'Budget *',
-      job_start_date: 'Job Start Date *',
-      job_end_date: 'Job End Date *',
-      required_hours: 'Required Hours *',
-      interview_mode: 'Interview Mode *',
-      domain: 'Domain *',
-      client: 'Client *',
-      priority: 'Priority *',
-      location: 'Location *',
-      job_type: 'Job Type *',
-      age: 'Age * (5 Yrs age relaxation for SC, ST & BC)',
-      caste: 'Caste *',
-      work_experience: 'Experience *',
-      no_of_positions: 'No of Positions *',
-      education_qualification: 'Educational Qualification *',
-      relaxation_policy: 'Relaxation Policy *',
+      bussiness_unit: 'Business Unit',
+      grade: 'Grade',
+      job_title: 'Job Title',
+      budget: 'Budget',
+      job_start_date: 'Job Start Date',
+      job_end_date: 'Job End Date',
+      required_hours: 'Required Hours',
+      interview_mode: 'Interview Mode',
+      domain: 'Domain',
+      client: 'Client',
+      priority: 'Priority',
+      location: 'Location',
+      job_type: 'Job Type',
+      age: 'Age (5 Yrs age relaxation)',
+      caste: 'Caste',
+      work_experience: 'Experience',
+      no_of_positions: 'No of Positions',
+      education_qualification: 'Educational Qualification',
+      relaxation_policy: 'Relaxation Policy',
     },
     hi: {
-      bussiness_unit: 'व्यावसायिक इकाई *',
-      grade: 'ग्रेड *',
-      job_title: 'नौकरी का शीर्षक *',
-      budget: 'बजट *',
-      job_start_date: 'नौकरी प्रारंभ तिथि *',
-      job_end_date: 'नौकरी समाप्ति तिथि *',
-      required_hours: 'आवश्यक घंटे *',
-      interview_mode: 'साक्षात्कार मोड *',
-      domain: 'डोमेन *',
-      client: 'क्लाइंट *',
-      priority: 'प्राथमिकता *',
-      location: 'स्थान *',
-      job_type: 'नौकरी का प्रकार *',
-      age: 'आयु * (SC, ST & BC के लिए 5 वर्ष की छूट)',
-      caste: 'जाति *',
-      work_experience: 'अनुभव *',
-      no_of_positions: 'पदों की संख्या *',
-      education_qualification: 'शैक्षिक योग्यता *',
-      relaxation_policy: 'छूट नीति *',
+      bussiness_unit: 'व्यावसायिक इकाई',
+      grade: 'ग्रेड',
+      job_title: 'नौकरी का शीर्षक',
+      budget: 'बजट',
+      job_start_date: 'नौकरी प्रारंभ तिथि',
+      job_end_date: 'नौकरी समाप्ति तिथि',
+      required_hours: 'आवश्यक घंटे',
+      interview_mode: 'साक्षात्कार मोड',
+      domain: 'डोमेन',
+      client: 'क्लाइंट',
+      priority: 'प्राथमिकता',
+      location: 'स्थान',
+      job_type: 'नौकरी का प्रकार',
+      age: 'आयु (SC, ST & BC के लिए 5 वर्ष की छूट)',
+      caste: 'जाति',
+      work_experience: 'अनुभव',
+      no_of_positions: 'पदों की संख्या',
+      education_qualification: 'शैक्षिक योग्यता',
+      relaxation_policy: 'छूट नीति',
     }
   };
   const [lang, setLang] = useState('en');
@@ -282,7 +303,28 @@ const JobCreation = () => {
       });
     }
   };
-
+const convertKeysToSnakeCase = (dataArray) => {
+  return dataArray.map((item) => ({
+    bussiness_unit: item["Business Unit"],
+    grade: item["Grade"],
+    job_title: item["Job Title"],
+    budget: item["Budget"],
+    job_start_date: item["Job Start Date"],
+    job_end_date: item["Job End Date"],
+    required_hours: item["Required Hours"],
+    interview_mode: item["Interview Mode"],
+    domain: item["Domain"],
+    client: item["Client"],
+    priority: item["Priority"],
+    location: item["Location"],
+    job_type: item["Job Type"],
+    caste: item["Caste"],
+    work_experience: item["Experience"],
+    no_of_positions: item["No. of Positions"],
+    education_qualification: item["Education Qualification"],
+    relaxation_policy: item["Relaxation Policy"],
+  }));
+};
   const readExcel = async (file) => {
     console.log('readExcel called for:', file.name);
     const reader = new FileReader();
@@ -308,7 +350,9 @@ const JobCreation = () => {
         }
       }
       setErrors(errorList);
-      setJsonData(validRows); // Store valid rows for later submit
+      console.log("validate error",validRows);
+      const formattedData = convertKeysToSnakeCase(validRows);
+      setJsonData(formattedData); // Store valid rows for later submit
     };
 
     reader.readAsArrayBuffer(file); // ✅ Modern replacement
@@ -326,27 +370,32 @@ const JobCreation = () => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
-      console.log('Valid form:', JSON.stringify(formData));
-      // Call your backend API here
-      apiService.createJobPost(formData)
+      console.log('✅ Valid form data:', formData);
+      // Send JSON to backend
+      apiService.createJobPost({ ...formData })
         .then((res) => {
-          alert("Job post submitted successfully!");
+          console.log("✅ Job post submitted successfully:", res);
+          toast.success("Job post submitted successfully!!");
+          navigate('/job-postings');
         })
         .catch((err) => {
-          console.error("Error submitting job post", err);
+          console.error("❌ Error submitting job post:", err.response?.data || err.message);
+          toast.error("Submission failed");
         });
     } else {
-      // Always log validation errors immediately
-      console.log('Validation errors:', validationErrors);
+      console.warn('⚠️ Validation errors:', validationErrors);
       setErrors(validationErrors);
-      // Optionally scroll to first error
+      // Scroll to the first error field
       const firstErrorField = Object.keys(validationErrors)[0];
       if (firstErrorField) {
         const el = document.getElementsByName(firstErrorField)[0];
-        if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (el && el.scrollIntoView) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
     }
   };
+
   const handleCancel = () => {
     // Reset form and errors
     setFormData({
@@ -427,13 +476,14 @@ const JobCreation = () => {
     }
     try {
       // Replace with your actual API endpoint if different
-      console.log('Posting JSON data:', jsonData);
-      const response = await apiService.createJobPost(jsonData);
-      alert("Excel data posted successfully!");
+      console.log('Posting JSON data11:', jsonData);
+      const response = await apiService.uploadJobExcel(jsonData);
+      toast.success("Excel data posted successfully!");
       setFiles([]);
       setJsonData([]);
+      navigate('/job-postings');
     } catch (error) {
-      alert("Failed to post Excel data.");
+      toast.error("Failed to post Excel data.");
       console.error("Error posting Excel data:", error);
     }
   };
@@ -610,133 +660,62 @@ const JobCreation = () => {
 
           {/* Form Section */}
           {selectedOption === 'direct' && (
-            <div className="form-section mt-4">
-            <h4 className="mb-4">Job Requisition Form</h4>
-            <form className="job-form" onSubmit={handleSubmit}>
-              <div className="row g-3">
+            <div className="form-section p-3 rounded-3" style={{ 
+              backgroundColor: '#fff', 
+              maxWidth: '1400px', 
+              margin: '0 auto',
+              boxShadow: '0 0 15px rgba(0,0,0,0.1)',
+              fontSize: '0.9rem'
+            }}>
+            <h4 className="text-center mb-3" style={{ fontSize: '1.25rem', color: '#FF7043' }}>Job Requisition Form</h4>
+            <form className="job-form row gx-3" onSubmit={handleSubmit} style={{ fontSize: '0.9rem' }}>
+              <div className="col-md-3">
                 {/* Business Unit */}
-                <div className="col-md-6">
-                  <label htmlFor="bussiness_unit" className="form-label">{fieldLabels[lang].bussiness_unit}</label>
-                  <input type="text" className="form-control" id="bussiness_unit" name="bussiness_unit" value={formData.bussiness_unit} onChange={handleInputChange} placeholder="Bank of Telangana" />
+                <div className="col-md-10 mb-2 ">
+                  <label htmlFor="bussiness_unit" className="form-label ">{fieldLabels[lang].bussiness_unit} <span className="required-asterisk">*</span></label>
+                  <select
+                    id="bussiness_unit"
+                    name="bussiness_unit"
+                    className="form-select"
+                    value={formData.bussiness_unit}
+                    onChange={handleInputChange}
+                    disabled={businessUnitLoading}
+                  >
+                    <option value="">{businessUnitLoading ? 'Loading business units...' : 'Select Business Unit'}</option>
+                    {businessUnitOptions.map((option, idx) => (
+                      <option key={option.BusinessUnitID || idx} value={option.BusinessUnitName}>
+                        {option.BusinessUnitName}
+                      </option>
+                    ))}
+                  </select>
+                  {businessUnitError && <small className="error">{businessUnitError}</small>}
                   {errors.bussiness_unit && <small className="error">{errors.bussiness_unit}</small>}
                 </div>
           
-                {/* Grade */}
-                <div className="col-md-6">
-                  <label htmlFor="grade" className="form-label">{fieldLabels[lang].grade}</label>
-                  <select id="grade" name="grade" className="form-select" value={formData.grade} onChange={handleInputChange} disabled={gradeLoading}>
-                    <option value="">{gradeLoading ? 'Loading grades...' : 'Select Grade'}</option>
-                    {gradeOptions.map((option, idx) => (
-                      <option key={option.JobGradeID || idx} value={option.JobGradeID}>{option.GradeName}</option>
-                    ))}
-                  </select>
-                  {gradeError && <small className="error">{gradeError}</small>}
-                  {errors.grade && <small className="error">{errors.grade}</small>}
-                </div>
-          
-                {/* Job Title */}
-                <div className="col-md-6">
-                  <label htmlFor="job_title" className="form-label">{fieldLabels[lang].job_title}</label>
-                  <select id="job_title" name="job_title" className="form-select" value={formData.job_title} onChange={handleInputChange} disabled={jobTitleLoading}>
-                    <option value="">{jobTitleLoading ? 'Loading job titles...' : 'Select Job Title'}</option>
-                    {jobTitleOptions.map((option, idx) => (
-                      <option key={option.JobTitleID || idx} value={option.JobTitleName}>{option.JobTitleName}</option>
-                    ))}
-                  </select>
-                  {jobTitleError && <small className="error">{jobTitleError}</small>}
-                  {errors.job_title && <small className="error">{errors.job_title}</small>}
-                </div>
-          
-                {/* Budget */}
-                <div className="col-md-6">
-                  <label htmlFor="budget" className="form-label">{fieldLabels[lang].budget}</label>
-                  <input type="text" className="form-control" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} />
-                  {errors.budget && <small className="error">{errors.budget}</small>}
-                </div>
-          
-                {/* Job Start Date */}
-                <div className="col-md-6">
-                  <label htmlFor="job_start_date" className="form-label">{fieldLabels[lang].job_start_date}</label>
+               
+              {/* Job Start Date */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="job_start_date" className="form-label">{fieldLabels[lang].job_start_date} <span className="required-asterisk">*</span></label>
                   <input type="date" className="form-control" id="job_start_date" name="job_start_date" value={formData.job_start_date} onChange={handleInputChange} />
                   {errors.job_start_date && <small className="error">{errors.job_start_date}</small>}
                 </div>
           
-                {/* Job End Date */}
-                <div className="col-md-6">
-                  <label htmlFor="job_end_date" className="form-label">{fieldLabels[lang].job_end_date}</label>
-                  <input type="date" className="form-control" id="job_end_date" name="job_end_date" value={formData.job_end_date} onChange={handleInputChange} />
-                  {errors.job_end_date && <small className="error">{errors.job_end_date}</small>}
-                </div>
+               
           
-                {/* Required Hours */}
-                <div className="col-md-6">
-                  <label htmlFor="required_hours" className="form-label">{fieldLabels[lang].required_hours}</label>
-                  <input type="text" className="form-control" id="required_hours" name="required_hours" value={formData.required_hours} onChange={handleInputChange} />
-                  {errors.required_hours && <small className="error">{errors.required_hours}</small>}
-                </div>
-          
-                {/* Interview Mode */}
-                <div className="col-md-6">
-                  <label htmlFor="interview_mode" className="form-label">{fieldLabels[lang].interview_mode}</label>
-                  <select id="interview_mode" name="interview_mode" className="form-select" value={formData.interview_mode} onChange={handleInputChange}>
-                    <option value="">Select Interview Mode</option>
-                    <option value="Online">Online</option>
-                    <option value="Offline">Offline</option>
-                  </select>
-                  {errors.interview_mode && <small className="error">{errors.interview_mode}</small>}
-                </div>
+               
           
                 {/* Domain */}
-                <div className="col-md-6">
-                  <label htmlFor="domain" className="form-label">{fieldLabels[lang].domain}</label>
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="domain" className="form-label">{fieldLabels[lang].domain} <span className="required-asterisk">*</span></label>
                   <input type="text" className="form-control" id="domain" name="domain" value={formData.domain} onChange={handleInputChange} />
                   {errors.domain && <small className="error">{errors.domain}</small>}
                 </div>
           
-                {/* Client */}
-                <div className="col-md-6">
-                  <label htmlFor="client" className="form-label">{fieldLabels[lang].client}</label>
-                  <input type="text" className="form-control" id="client" name="client" value={formData.client} onChange={handleInputChange} />
-                  {errors.client && <small className="error">{errors.client}</small>}
-                </div>
-          
-                {/* Priority */}
-                <div className="col-md-6">
-                  <label htmlFor="priority" className="form-label">{fieldLabels[lang].priority}</label>
-                  <select id="priority" name="priority" className="form-select" value={formData.priority} onChange={handleInputChange}>
-                    <option value="">Select Priority</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </select>
-                  {errors.priority && <small className="error">{errors.priority}</small>}
-                </div>
-          
-                {/* Location */}
-                <div className="col-md-6">
-                  <label htmlFor="location" className="form-label">{fieldLabels[lang].location}</label>
-                  <select 
-                    id="location" 
-                    name="location" 
-                    className="form-select" 
-                    value={formData.location} 
-                    onChange={handleInputChange}
-                    disabled={locationLoading}
-                  >
-                    <option value="">{locationLoading ? 'Loading locations...' : 'Select Location'}</option>
-                    {locationOptions.map((option, idx) => (
-                      <option key={option.LocationID || idx} value={option.LocationName}>
-                        {option.LocationName}
-                      </option>
-                    ))}
-                  </select>
-                  {locationError && <small className="error">{locationError}</small>}
-                  {errors.location && <small className="error">{errors.location}</small>}
-                </div>
+               
           
                 {/* Job Type */}
-                <div className="col-md-6">
-                  <label htmlFor="job_type" className="form-label">{fieldLabels[lang].job_type}</label>
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="job_type" className="form-label">{fieldLabels[lang].job_type} <span className="required-asterisk">*</span></label>
                   <select 
                     id="job_type" 
                     name="job_type" 
@@ -756,105 +735,11 @@ const JobCreation = () => {
                   {errors.job_type && <small className="error">{errors.job_type}</small>}
                 </div>
           
-                {/* Age */}
-                <div className="col-md-6">
-                  <label htmlFor="age" className="form-label">{fieldLabels[lang].age}</label>
-                  <input type="text" className="form-control" id="age" name="age" value={formData.age} onChange={handleInputChange} />
-                  {errors.age && <small className="error">{errors.age}</small>}
-                </div>
-          
-                {/* Caste */}
-                {/* Caste */}
-                <div className="col-md-6">
-                  <label htmlFor="caste" className="form-label">{fieldLabels[lang].caste}</label>
-                  <select
-                    id="caste"
-                    name="caste"
-                    className="form-select"
-                    value={formData.caste}
-                    onChange={handleInputChange}
-                    disabled={casteLoading}
-                  >
-                    <option value="">{casteLoading ? 'Loading castes...' : 'Select Caste'}</option>
-                    {casteOptions.map((option, idx) => (
-                      <option key={option.CasteID || idx} value={option.CasteName}>
-                        {option.CasteName}
-                      </option>
-                    ))}
-                  </select>
-                  {casteError && <small className="error">{casteError}</small>}
-                  {errors.caste && <small className="error">{errors.caste}</small>}
-                </div>
-          
-                {/* Work Experience */}
-                <div className="col-md-6">
-                  <label htmlFor="work_experience" className="form-label">{fieldLabels[lang].work_experience}</label>
-                  <select
-                    id="work_experience"
-                    name="work_experience"
-                    className="form-select"
-                    value={formData.work_experience}
-                    onChange={handleInputChange}
-                    disabled={workExperienceLoading}
-                  >
-                    <option value="">{workExperienceLoading ? 'Loading experience...' : 'Select Years of Exp'}</option>
-                    {workExperienceOptions.map((option, idx) => (
-                      <option key={option.WorkExperienceID || idx} value={option.WorkExperienceName}>
-                        {option.WorkExperienceName}
-                      </option>
-                    ))}
-                  </select>
-                  {workExperienceError && <small className="error">{workExperienceError}</small>}
-                  {errors.work_experience && <small className="error">{errors.work_experience}</small>}
-                </div>
                 
-                {/* Education Qualification */}
-                <div className="col-md-6">
-                  <label htmlFor="education_qualification" className="form-label">{fieldLabels[lang].education_qualification}</label>
-                  <select
-                    id="education_qualification"
-                    name="education_qualification"
-                    className="form-select"
-                    value={formData.education_qualification}
-                    onChange={handleInputChange}
-                    disabled={educationQualificationLoading}
-                  >
-                    <option value="">{educationQualificationLoading ? 'Loading qualifications...' : 'Select Qualification'}</option>
-                    {educationQualificationOptions.map((option, idx) => (
-                      <option key={option.QualificationID || idx} value={option.QualificationName}>
-                        {option.QualificationName}
-                      </option>
-                    ))}
-                  </select>
-                  {educationQualificationError && <small className="error">{educationQualificationError}</small>}
-                  {errors.education_qualification && <small className="error">{errors.education_qualification}</small>}
-                </div>
-
-                {/* Priority */}
-                <div className="col-md-6">
-                  <label htmlFor="priority" className="form-label">{fieldLabels[lang].priority}</label>
-                  <select
-                    id="priority"
-                    name="priority"
-                    className="form-select"
-                    value={formData.priority}
-                    onChange={handleInputChange}
-                    disabled={priorityLoading}
-                  >
-                    <option value="">{priorityLoading ? 'Loading priorities...' : 'Select Priority'}</option>
-                    {priorityOptions.map((option, idx) => (
-                      <option key={option.PriorityID || idx} value={option.PriorityName}>
-                        {option.PriorityName}
-                      </option>
-                    ))}
-                  </select>
-                  {priorityError && <small className="error">{priorityError}</small>}
-                  {errors.priority && <small className="error">{errors.priority}</small>}
-                </div>
 
                 {/* Number of Positions */}
-                <div className="col-md-6">
-                  <label htmlFor="no_of_positions" className="form-label">{fieldLabels[lang].no_of_positions}</label>
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="no_of_positions" className="form-label">{fieldLabels[lang].no_of_positions} <span className="required-asterisk">*</span></label>
                   <select
                     id="no_of_positions"
                     name="no_of_positions"
@@ -874,9 +759,67 @@ const JobCreation = () => {
                   {errors.no_of_positions && <small className="error">{errors.no_of_positions}</small>}
                 </div>
 
-                {/* Relaxation Policy */}
-                <div className="col-md-6">
-                  <label htmlFor="relaxation_policy" className="form-label">{fieldLabels[lang].relaxation_policy}</label>
+               
+              </div>
+              <div className="col-md-3" >
+               
+          
+                {/* Grade */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="grade" className="form-label">{fieldLabels[lang].grade} <span className="required-asterisk">*</span></label>
+                  <select id="grade" name="grade" className="form-select" value={formData.grade} onChange={handleInputChange} disabled={gradeLoading}>
+                    <option value="">{gradeLoading ? 'Loading grades...' : 'Select Grade'}</option>
+                    {gradeOptions.map((option, idx) => (
+                      <option key={option.JobGradeID || idx} value={option.JobGradeID}>{option.GradeName}</option>
+                    ))}
+                  </select>
+                  {gradeError && <small className="error">{gradeError}</small>}
+                  {errors.grade && <small className="error">{errors.grade}</small>}
+                </div>
+          
+              
+          
+                {/* Job End Date */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="job_end_date" className="form-label">{fieldLabels[lang].job_end_date} <span className="required-asterisk">*</span></label>
+                  <input type="date" className="form-control" id="job_end_date" name="job_end_date" value={formData.job_end_date} onChange={handleInputChange} />
+                  {errors.job_end_date && <small className="error">{errors.job_end_date}</small>}
+                </div>
+          
+               
+          
+                {/* Client */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="client" className="form-label">{fieldLabels[lang].client} <span className="required-asterisk">*</span></label>
+                  <input type="text" className="form-control" id="client" name="client" value={formData.client} onChange={handleInputChange} />
+                  {errors.client && <small className="error">{errors.client}</small>}
+                </div>
+          
+                
+                {/* Education Qualification */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="education_qualification" className="form-label">{fieldLabels[lang].education_qualification} <span className="required-asterisk">*</span></label>
+                  <select
+                    id="education_qualification"
+                    name="education_qualification"
+                    className="form-select"
+                    value={formData.education_qualification}
+                    onChange={handleInputChange}
+                    disabled={educationQualificationLoading}
+                  >
+                    <option value="">{educationQualificationLoading ? 'Loading qualifications...' : 'Select Qualification'}</option>
+                    {educationQualificationOptions.map((option, idx) => (
+                      <option key={option.QualificationID || idx} value={option.QualificationName}>
+                        {option.QualificationName}
+                      </option>
+                    ))}
+                  </select>
+                  {educationQualificationError && <small className="error">{educationQualificationError}</small>}
+                  {errors.education_qualification && <small className="error">{errors.education_qualification}</small>}
+                </div>
+                 {/* Relaxation Policy */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="relaxation_policy" className="form-label">{fieldLabels[lang].relaxation_policy} <span className="required-asterisk">*</span></label>
                   <select
                     id="relaxation_policy"
                     name="relaxation_policy"
@@ -895,9 +838,157 @@ const JobCreation = () => {
                   {relaxationPolicyError && <small className="error">{relaxationPolicyError}</small>}
                   {errors.relaxation_policy && <small className="error">{errors.relaxation_policy}</small>}
                 </div>
+
+               
               </div>
+              <div className="col-md-3">
+               
           
-              <div className="d-flex justify-content-end mt-4 gap-3">
+                {/* Job Title */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="job_title" className="form-label">{fieldLabels[lang].job_title} <span className="required-asterisk">*</span></label>
+                  <select id="job_title" name="job_title" className="form-select" value={formData.job_title} onChange={handleInputChange} disabled={jobTitleLoading}>
+                    <option value="">{jobTitleLoading ? 'Loading job titles...' : 'Select Job Title'}</option>
+                    {jobTitleOptions.map((option, idx) => (
+                      <option key={option.JobTitleID || idx} value={option.JobTitleName}>{option.JobTitleName}</option>
+                    ))}
+                  </select>
+                  {jobTitleError && <small className="error">{jobTitleError}</small>}
+                  {errors.job_title && <small className="error">{errors.job_title}</small>}
+                </div>
+          
+               
+          
+                {/* Required Hours */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="required_hours" className="form-label">{fieldLabels[lang].required_hours} <span className="required-asterisk">*</span></label>
+                  <input type="text" className="form-control" id="required_hours" name="required_hours" value={formData.required_hours} onChange={handleInputChange} />
+                  {errors.required_hours && <small className="error">{errors.required_hours}</small>}
+                </div>
+          
+              
+          
+                {/* Priority */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="priority" className="form-label">{fieldLabels[lang].priority} <span className="required-asterisk">*</span></label>
+                  <select id="priority" name="priority" className="form-select" value={formData.priority} onChange={handleInputChange}>
+                    <option value="">Select Priority</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                  {errors.priority && <small className="error">{errors.priority}</small>}
+                </div>
+          
+                {/* Caste */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="caste" className="form-label">{fieldLabels[lang].caste} <span className="required-asterisk">*</span></label>
+                  <select
+                    id="caste"
+                    name="caste"
+                    className="form-select"
+                    value={formData.caste}
+                    onChange={handleInputChange}
+                    disabled={casteLoading}
+                  >
+                    <option value="">{casteLoading ? 'Loading castes...' : 'Select Caste'}</option>
+                    {casteOptions.map((option, idx) => (
+                      <option key={option.CasteID || idx} value={option.CasteName}>
+                        {option.CasteName}
+                      </option>
+                    ))}
+                  </select>
+                  {casteError && <small className="error">{casteError}</small>}
+                  {errors.caste && <small className="error">{errors.caste}</small>}
+                </div>
+          
+              
+               
+                
+              
+          
+                {/* Age */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="age" className="form-label">{fieldLabels[lang].age} <span className="required-asterisk">*</span></label>
+                  <input type="text" className="form-control" id="age" name="age" value={formData.age} onChange={handleInputChange} />
+                  {errors.age && <small className="error">{errors.age}</small>}
+                </div>
+          
+              </div>
+              <div className="col-md-3">
+               
+                {/* Budget */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="budget" className="form-label">{fieldLabels[lang].budget} <span className="required-asterisk">*</span></label>
+                  <input type="text" className="form-control" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} />
+                  {errors.budget && <small className="error">{errors.budget}</small>}
+                </div>
+          
+               
+          
+                {/* Interview Mode */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="interview_mode" className="form-label">{fieldLabels[lang].interview_mode} <span className="required-asterisk">*</span></label>
+                  <select id="interview_mode" name="interview_mode" className="form-select" value={formData.interview_mode} onChange={handleInputChange}>
+                    <option value="">Select Interview Mode</option>
+                    <option value="Online">Online</option>
+                    <option value="Offline">Offline</option>
+                  </select>
+                  {errors.interview_mode && <small className="error">{errors.interview_mode}</small>}
+                </div>
+          
+             
+          
+                {/* Location */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="location" className="form-label">{fieldLabels[lang].location} <span className="required-asterisk">*</span></label>
+                  <select 
+                    id="location" 
+                    name="location" 
+                    className="form-select" 
+                    value={formData.location} 
+                    onChange={handleInputChange}
+                    disabled={locationLoading}
+                  >
+                    <option value="">{locationLoading ? 'Loading locations...' : 'Select Location'}</option>
+                    {locationOptions.map((option, idx) => (
+                      <option key={option.LocationID || idx} value={option.LocationName}>
+                        {option.LocationName}
+                      </option>
+                    ))}
+                  </select>
+                  {locationError && <small className="error">{locationError}</small>}
+                  {errors.location && <small className="error">{errors.location}</small>}
+                </div>
+          
+               
+          
+                {/* Work Experience */}
+                <div className="col-md-10 mb-2">
+                  <label htmlFor="work_experience" className="form-label">{fieldLabels[lang].work_experience} <span className="required-asterisk">*</span></label>
+                  <select
+                    id="work_experience"
+                    name="work_experience"
+                    className="form-select"
+                    value={formData.work_experience}
+                    onChange={handleInputChange}
+                    disabled={workExperienceLoading}
+                  >
+                    <option value="">{workExperienceLoading ? 'Loading experience...' : 'Select Years of Exp'}</option>
+                    {workExperienceOptions.map((option, idx) => (
+                      <option key={option.WorkExperienceID || idx} value={option.WorkExperienceName}>
+                        {option.WorkExperienceName}
+                      </option>
+                    ))}
+                  </select>
+                  {workExperienceError && <small className="error">{workExperienceError}</small>}
+                  {errors.work_experience && <small className="error">{errors.work_experience}</small>}
+                </div>
+                
+              
+              </div>
+
+              <div className="d-flex justify-content-end mt-4 gap-3" style={{ fontSize: '0.9rem' }}>
                 <Button variant="outline-secondary" onClick={handleCancel}>Cancel</Button>
                 <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
                   Save

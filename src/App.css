@@ -1,11 +1,13 @@
 /* Custom styles */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
   background-color: #f8f9fa;
   margin: 0;
   padding: 0;
 }
-
+body {
+  font-family: 'Poppins', sans-serif;
+}
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -29,9 +31,9 @@ body {
 /* Sidebar styles */
 .sidebar {
   height: calc(100vh - 56px);
-  overflow-y: auto;
+  /* overflow-y: auto; */
   position: sticky;
-  top: 56px;
+  /* top: 56px; */
 }
 
 .sidebar .nav-link {
@@ -54,9 +56,16 @@ body {
 
 /* Card styles */
 .card {
-  border: none;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+	border: none;
+	border-radius: 0.5rem;
+	/* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); */
+	background: none !important;
+  max-height: 445px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+.reqfon{
+  font-size: 13px;
 }
 
 /* Form controls */
@@ -176,3 +185,13 @@ body {
    margin-top: 4px;
    display: block;
  }
+ .job-form .form-label,
+.job-form .form-control,
+.job-form .form-select,
+.job-form input,
+.job-form select,
+.job-form textarea {
+  font-family: 'Poppins', Arial, sans-serif !important;;
+  font-size: 13px !important;
+  font-weight: 400 !important;;
+}

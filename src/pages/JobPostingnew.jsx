@@ -101,7 +101,7 @@ const JobPosting = () => {
     <Container fluid className="p-4">
       {/* Title and Search Bar Row */}
       <div className="d-flex align-items-center justify-content-center mb-3">
-        <h5 className="fonall me-3" style={{ marginBottom: '0.25rem' }}>All Requisites</h5>
+        <h5 className="fw-bold me-3" style={{ marginBottom: '0.25rem' }}>All Requisites</h5>
         <div className="search-container" style={{ width: '100%', maxWidth: '400px' }}>
           <i className="fas fa-search search-icon"></i>
           <input
@@ -185,7 +185,7 @@ const JobPosting = () => {
         <Row className="align-items-start">
           <Col xs={12} sm={12} md={8}>
             <div className="d-flex flex-wrap align-items-center">
-              <Form.Label className="postingfont me-3 mb-0" style={{ minWidth: '100px', alignSelf: 'flex-start', paddingTop: '4px' }}>
+              <Form.Label className="fw-bold me-3 mb-0" style={{ minWidth: '100px', alignSelf: 'flex-start', paddingTop: '4px' }}>
                 Job Postings:
               </Form.Label>
               <div className="d-flex flex-wrap checkbtnspost" style={{ flex: 1 }}>
@@ -213,7 +213,7 @@ const JobPosting = () => {
 
       {/* Approval Status */}
       <div className="d-flex align-items-center mb-4">
-        <span className="postingfont me-3">Approved Status</span>
+        <span className="fw-bold me-3">Approved Status</span>
         <Form.Select
           value={approvalStatus}
           onChange={(e) => setApprovalStatus(e.target.value)}

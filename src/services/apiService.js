@@ -8,6 +8,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  
 });
 
 // Request interceptor to add auth token
@@ -15,7 +16,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -45,12 +46,14 @@ export const apiService = {
   logout: () => api.post('/auth/logout'),
 
   // User endpoints
-  getUsers: () => api.get('/users'),
+ getUsers: () => api.get('/users'),
   getUser: (id) => api.get(`/users/${id}`),
   updateUser: (id, data) => api.put(`/users/${id}`, data),
   deleteUser: (id) => api.delete(`/users/${id}`),
 
   // Data endpoints
+  
+
   getData: (params = {}) => api.get('/data', { params }),
   getDataItem: (id) => api.get(`/data/${id}`),
   createData: (data) => api.post('/data', data),
@@ -62,7 +65,9 @@ export const apiService = {
 
 
 
-  createJobPost: (data) => api.post('/jobpost', data), // Dummy POST endpoint
+  createJobPost: (data) => api.post('/jobcreation', data), // Dummy POST endpoint
+  getJobPost: () => api.get('/activejobs'), // Dummy GET endpoint
+  
   // uploadJobExcel: (file) => {
   //   const formData = new FormData();
   //   formData.append('file', file); // backend expects 'file' key
@@ -71,9 +76,8 @@ export const apiService = {
   //     headers: { 'Content-Type': 'multipart/form-data' }
   //   });
   // },
-  uploadJobExcel: (data) => api.post('/uploadexcel', data), // Dummy POST endpoint
-   postJobRequisitions :(payload) => api.post("/requisitionpost", payload)
-
+  uploadJobExcel: (data) => api.post('/jobcreationbulk', data), // Dummy POST endpoint
+  postJobRequisitions :(payload) => api.post("/requisitionpost", payload)
 
 };
 

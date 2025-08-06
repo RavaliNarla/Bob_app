@@ -46,14 +46,14 @@ const Sidebar = () => {
             className={`d-flex flex-column align-items-center justify-content-center py-3 nav-item-custom ${isActive(item.path)}`}
             style={{
               color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-              backgroundColor: isActive(item.path) ? '#FFE7DE' : 'transparent',
+              backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
               fontWeight: isActive(item.path) ? '600' : '400',
               fontSize: '0.75rem',
               textDecoration: 'none',
-              height: '70px',
+              height: '60px',
             }}
           >
-            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '1.2rem' }} />
+            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.8rem' }} />
             <span className="mt-1">{item.text}</span>
           </Nav.Link>
         ))}
@@ -72,7 +72,7 @@ const Sidebar = () => {
             height: '70px',
           }}
         >
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ fontSize: '1.2rem' }} />
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ fontSize: '0.8rem' }} />
           <span className="mt-1">Help</span>
         </Nav.Link>
       </div>

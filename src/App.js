@@ -3,7 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import { Container, Row, Col, Spinner } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 // Lazy load components
 const Header = React.lazy(() => import('./components/Header'));
 const Sidebar = React.lazy(() => import('./components/Sidebar'));
@@ -56,7 +57,7 @@ function App() {
           <Header />
           <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden' }}>
             <Sidebar />
-            <main className="flex-grow-1" style={{ overflowY: 'auto' }}>
+            <main className="flex-grow-1" style={{ overflowY: 'auto', background: '#eee' }}>
               <Container fluid className="h-100">
                 <Row className="h-100">
                   <Col className="p-0" style={{ borderRight: '1px solid #dee2e6' }}>
@@ -64,14 +65,13 @@ function App() {
                       <Route path="/" element={<JobCreation />} />
                       <Route path="/job-creation" element={<JobCreation />} />
                       <Route path="/job-postings" element={<JobPosting />} />
-                      
                     </Routes>
                   </Col>
-
                 </Row>
               </Container>
             </main>
           </div>
+          <ToastContainer position="top-right" autoClose={5000} />
         </div>
       </Suspense>
     </ErrorBoundary>

@@ -1,3 +1,19 @@
+.job-form .form-label,
+.job-form .form-control,
+.job-form .form-select,
+.job-form input,
+.job-form select,
+.job-form textarea {
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+  font-weight: bold;
+}
 /* Completely remove the dropdown toggle arrow */
 .dropdown-toggle::after {
   display: none !important;
@@ -25,6 +41,22 @@
   width: 14px;
   height: 14px;
   vertical-align: middle;
+}
+
+/* Remove top and bottom padding from job posting rows */
+.job-row.py-2 {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background: #fff;
+  margin-bottom: 10px;
+  border-radius: 10px;
+}
+/* Remove left and right margins from all rows */
+.row {
+  --bs-gutter-x: 0;
+  --bs-gutter-y: 0;
+  margin-right: 0;
+  margin-left: 0;
 }
 
 /* Make job row content more compact */
@@ -66,9 +98,10 @@
 
 /* Adjust bullet columns */
 .bullet-columns {
-  padding: 4px 6px !important;
+  padding: 10px 6px !important;
   width: 24px !important;
   min-width: 24px !important;
+  border-radius:10px 0 0 10px !important
 }
 
 /* Make checkbox smaller */
@@ -182,4 +215,49 @@
   outline: none !important;
 }
 
+/* Select status dropdown
+.form-select {
+  border: 1px solid #FF7043 !important;
+} */
+
+.form-select:focus {
+  border-color: #FF7043 !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 112, 67, 0.25) !important;
+}
+
+/* Cancel button */
+.btn-outline-secondary {
+  color: #FF7043 !important;
+  border-color: #FF7043 !important;
+}
+
+.btn-outline-secondary:hover {
+  color: #fff !important;
+  background-color: #FF7043 !important;
+  border-color: #FF7043 !important;
+}
+.checkbtnspost {
+  margin-left: 35px;
+  margin-top: 9px;
+}
+.job-form .form-label,
+.job-form .form-control,
+.job-form .form-select,
+.job-form input,
+.job-form select,
+.job-form textarea {
+  font-family: 'Poppins', Arial, sans-serif !important;;
+  font-size: 13px !important;
+  font-weight: 400 !important;;
+}
+.fonall{
+font-family: 'Poppins', sans-serif !important;
+  font-weight: 600 !important;  /* 600 = semibold */
+  font-size: 16px !important;
+}
+.postingfont{
+  font-family: 'Poppins', sans-serif !important;
+ 
+  font-size: 14px !important;
+}
 /* ...existing code... */

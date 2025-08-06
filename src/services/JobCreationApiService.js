@@ -18,6 +18,20 @@ export const JobCreationApiService = {
       throw error;
     }
   },
+   async getBusinessunitData() {
+    try {
+      //const response = await axios.get(`${API_BASE_URL}/grades`);
+      //return response.data;
+      return [
+        { BusinessUnitID: 'G1', BusinessUnitName: 'Business 5' },
+        { BusinessUnitID: 'G2', BusinessUnitName: 'Business 2' },
+        { BusinessUnitID: 'G3', BusinessUnitName: 'Business 3' }
+        ];
+    } catch (error) {
+      console.error('Error fetching grade data:', error);
+      throw error;
+    }
+  },
   // You can add more job creation related API methods here
   async getJobTitleData() {
     // Return static JSON for testing
