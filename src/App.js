@@ -10,7 +10,7 @@ const Header = React.lazy(() => import('./components/Header'));
 const Sidebar = React.lazy(() => import('./components/Sidebar'));
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
-
+const JobRequisition = React.lazy(() => import('./pages/JobRequisition'));
 // Loading component
 const Loading = () => (
   <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
@@ -65,6 +65,7 @@ function App() {
                       <Route path="/" element={<JobCreation />} />
                       <Route path="/job-creation" element={<JobCreation />} />
                       <Route path="/job-postings" element={<JobPosting />} />
+                      <Route path="/job-requisition" element={<JobRequisition />} />
                     </Routes>
                   </Col>
                 </Row>

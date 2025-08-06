@@ -66,8 +66,9 @@ export const apiService = {
 
 
   createJobPost: (data) => api.post('/jobcreation', data), // Dummy POST endpoint
+  getReqData: () => api.get('/getreq'),
   getJobPost: () => api.get('/activejobs'), // Dummy GET endpoint
-  
+
   // uploadJobExcel: (file) => {
   //   const formData = new FormData();
   //   formData.append('file', file); // backend expects 'file' key

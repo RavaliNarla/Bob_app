@@ -18,7 +18,7 @@ const EllipsisIcon = () => (
 );
 
 const JobPosting = () => {
-  const [approvalStatus, setApprovalStatus] = useState('');
+   
   const [jobBoards, setJobBoards] = useState({
     linkedin: false,
     careerPage: false,
@@ -30,18 +30,97 @@ const JobPosting = () => {
   });
 
   const [jobPostings, setJobPostings] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  //const [selectedFilterStatus, setSelectedFilterStatus] = useState('');
+  const [selectedApproval, setSelectedApproval] = useState('');
+  const [approvalStatus, setApprovalStatus] = useState('');
+ 
   useEffect(() => {
       const fetchJobPostings = async () => {
         setLoading(true);
         setError(null);
         try {
           console.log('Attempting to fetch job postings...');
-          const responseData = await apiService.getJobPost(); 
+          const responseData = await apiService.getReqData(); 
+//          const responseData = {
+//   data: [
+//     {
+//       requisition_id: 1,
+//       requisition_code: "REQ-2025-001",
+//       requisition_title: "Senior Software Engineer",
+//       requisition_description: "Looking for a senior software engineer with 5+ years experience in full-stack development.",
+//       registration_start_date: "2025-08-01",
+//       registration_end_date: "2025-08-15",
+//       requisition_status: "Open",
+//       requisition_comments: "Urgent requirement",
+//       requisition_approval: "Approved",
+//       created_by: "hr_manager",
+//       created_date: "2025-07-30",
+//       updated_by: "hr_admin",
+//       updated_date: "2025-08-05",
+//       others: "Remote work allowed",
+//       no_of_positions: 3,
+//       job_postings: "LinkedIn, Indeed"
+//     },
+//     {
+//       requisition_id: 1,
+//       requisition_code: "REQ-2025-005",
+//       requisition_title: "Senior Software Engineer",
+//       requisition_description: "Looking for a senior software engineer with 5+ years experience in full-stack development.",
+//       registration_start_date: "2025-08-01",
+//       registration_end_date: "2025-08-15",
+//       requisition_status: "Open",
+//       requisition_comments: "Urgent requirement",
+//       requisition_approval: "Submitted",
+//       created_by: "hr_manager",
+//       created_date: "2025-07-30",
+//       updated_by: "hr_admin",
+//       updated_date: "2025-08-05",
+//       others: "Remote work allowed",
+//       no_of_positions: 3,
+//       job_postings: "LinkedIn, Indeed"
+//     },
+//     {
+//       requisition_id: 1,
+//       requisition_code: "REQ-2025-006",
+//       requisition_title: "Senior Software Engineer",
+//       requisition_description: "Looking for a senior software engineer with 5+ years experience in full-stack development.",
+//       registration_start_date: "2025-08-01",
+//       registration_end_date: "2025-08-15",
+//       requisition_status: "Open",
+//       requisition_comments: "Urgent requirement",
+//       requisition_approval: "Submitted",
+//       created_by: "hr_manager",
+//       created_date: "2025-07-30",
+//       updated_by: "hr_admin",
+//       updated_date: "2025-08-05",
+//       others: "Remote work allowed",
+//       no_of_positions: 3,
+//       job_postings: "LinkedIn, Indeed"
+//     },
+//     {
+//       requisition_id: 2,
+//       requisition_code: "REQ-2025-002",
+//       requisition_title: "UI/UX Designer",
+//       requisition_description: "Creative designer needed for mobile and web apps.",
+//       registration_start_date: "2025-08-02",
+//       registration_end_date: "2025-08-20",
+//       requisition_status: "Open",
+//       requisition_comments: "Portfolio must be attached",
+//       requisition_approval: "Pending",
+//       created_by: "design_lead",
+//       created_date: "2025-08-01",
+//       updated_by: "design_lead",
+//       updated_date: "2025-08-03",
+//       others: "Hybrid work",
+//       no_of_positions: 2,
+//       job_postings: "Behance, LinkedIn"
+//     }
+//   ]
+// };
           
-          console.log('API Response Data:', responseData);
+          console.log('API Response Data:', responseData.data);
           
           // Ensure the response has a `data` property that is an array
           if (responseData && Array.isArray(responseData.data)) {
@@ -92,27 +171,60 @@ const JobPosting = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Filter job postings based on search term
- const filteredJobPostings = jobPostings.filter(job => 
-    (job.job_title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (job.job_code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (job.location || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+const filteredJobPostings = jobPostings.filter(job => {
+  const search = searchTerm.toLowerCase();
+  const matchesSearch =
+    job.requisition_title.toLowerCase().includes(search) ||
+    job.requisition_code.toLowerCase().includes(search);
+
+  const matchesApproval = selectedApproval === '' || job.requisition_status === selectedApproval;
+
+  return matchesSearch && matchesApproval;
+});
+
   return (
     <Container fluid className="p-4">
       {/* Title and Search Bar Row */}
-      <div className="d-flex align-items-center justify-content-center mb-3">
-        <h5 className="fonall me-3" style={{ marginBottom: '0.25rem' }}>All Requisites</h5>
-        <div className="search-container" style={{ width: '100%', maxWidth: '400px' }}>
+      <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+  {/* Title and Dropdown */}
+      <div className="d-flex align-items-center mb-2 mb-md-0">
+        <h5 className="fonall me-3" style={{ marginBottom: '0.25rem' }}>All Requisitions</h5>
+        <Form.Select
+          value={selectedApproval}
+          onChange={(e) => setSelectedApproval(e.target.value)}
+          style={{ width: '200px' }}
+        >
+         <option value="">All Requisitions</option>
+          <option value="Submitted">Submitted</option>
+          <option value="Pending">Pending for Approval</option>
+          <option value="Approved">Approved</option>
+          <option value="Published">Published</option>
+          <option value="Rejected">Rejected</option>
+        </Form.Select>
+      </div>
+
+      {/* Search Box */}
+      <div className="search-container" style={{ width: '100%', maxWidth: '400px' }}>
+        <i className="fas fa-search search-icon"></i>
+        <input
+          type="text"
+          className="search-input"
+          placeholder="Search requisitions"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+    </div>
+       {/* <div className="search-container" style={{ width: '100%', maxWidth: '400px' }}>
           <i className="fas fa-search search-icon"></i>
           <input
             type="text"
             className="search-input"
-            placeholder="Search requisitions..."
+            placeholder="Search requisitions"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
-      </div>
+        </div> */}
       {loading ? (
               <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '200px' }}>
                 <Spinner animation="border" variant="primary" />
@@ -140,27 +252,31 @@ const JobPosting = () => {
        </div>
      </div>
      <Form.Check type="checkbox" className="form-check-orange me-2" />
-     <span className="job-title fw-semibold text-dark">{job.job_title}</span>
+     <span className="job-title fw-semibold text-dark">{job.requisition_code}</span>
    </Col>
  
    {/* Job Code */}
    <Col xs={6} md={2} className="job-detail">
-     Job Code: {job.job_code}
+      Tile: {job.requisition_title}
    </Col>
  
    {/* Experience */}
-   <Col xs={6} md={1} className="job-detail">
+   {/* <Col xs={6} md={1} className="job-detail">
      Exp: {job.work_experience}
-   </Col>
- 
+   </Col> */}
+  {/* <Col xs={6} md={1} className="job-detail">
+     {job.requisition_approval}
+   </Col>  */}
    {/* Positions */}
    <Col xs={6} md={1} className="job-detail">
      Positions: {job.no_of_positions}
    </Col>
- 
+  <Col xs={6} md={1} className="job-detail">
+     Strat Date: {job.requisition_status}
+   </Col> 
+   
    {/* Location + Actions */}
    <Col xs={6} md={2} className="d-flex justify-content-end align-items-center">
-     <div className="location-cell me-3" title={`Location: ${job.location}`}>Location: {job.location}</div>
      <Dropdown align="end">
        <Dropdown.Toggle variant="light" size="sm" className="border-0 bg-transparent p-0 custom-dropdown">
          <EllipsisIcon />
@@ -180,63 +296,68 @@ const JobPosting = () => {
 </Card>
 
   )}
-      {/* Job Posting Channels - Left Aligned */}
-      <div className="mt-5 mb-4">
-        <Row className="align-items-start">
-          <Col xs={12} sm={12} md={8}>
-            <div className="d-flex flex-wrap align-items-center">
-              <Form.Label className="postingfont me-3 mb-0" style={{ minWidth: '100px', alignSelf: 'flex-start', paddingTop: '4px' }}>
-                Job Postings:
-              </Form.Label>
-              <div className="d-flex flex-wrap checkbtnspost" style={{ flex: 1 }}>
-                {Object.entries(jobBoards).map(([key, value], idx) => (
-                  <div key={idx} className="me-4 mb-2">
-                    <Form.Check
-                      type="checkbox"
-                      label={key
-                        .replace(/([A-Z])/g, ' $1')
-                        .replace(/^./, (str) => str.toUpperCase())}
-                      name={key}
-                      checked={value}
-                      onChange={handleCheckboxChange}
-                      className="d-inline-block"
-                    />
+
+      {/* Job Posting Channels and Approval Status: Show only if selectedApproval is 'Submitted' */}
+      {selectedApproval === 'Submitted' && (
+        <>
+          {/* Job Posting Channels - Left Aligned */}
+          <div className="mt-5 mb-4">
+            <Row className="align-items-start">
+              <Col xs={12} sm={12} md={8}>
+                <div className="d-flex flex-wrap align-items-center">
+                  <Form.Label className="postingfont me-3 mb-0" style={{ minWidth: '100px', alignSelf: 'flex-start', paddingTop: '4px' }}>
+                    Job Postings:
+                  </Form.Label>
+                  <div className="d-flex flex-wrap checkbtnspost" style={{ flex: 1 }}>
+                    {Object.entries(jobBoards).map(([key, value], idx) => (
+                      <div key={idx} className="me-4 mb-2">
+                        <Form.Check
+                          type="checkbox"
+                          label={key
+                            .replace(/([A-Z])/g, ' $1')
+                            .replace(/^./, (str) => str.toUpperCase())}
+                          name={key}
+                          checked={value}
+                          onChange={handleCheckboxChange}
+                          className="d-inline-block"
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
-          </Col>
-        </Row>
-      </div>
+                </div>
+              </Col>
+            </Row>
+          </div>
 
+          {/* Approval Status */}
+          <div className="d-flex align-items-center mb-4">
+            <span className="postingfont me-3">Approved Status</span>
+            <Form.Select
+              value={selectedApproval}
+              onChange={(e) => setApprovalStatus(e.target.value)}
+              style={{ width: 'auto', minWidth: '200px' }}
+              className="ms-2"
+            >
+              <option value="">Select Status</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+            </Form.Select>
+          </div>
+        </>
+      )}
 
-
-      {/* Approval Status */}
-      <div className="d-flex align-items-center mb-4">
-        <span className="postingfont me-3">Approved Status</span>
-        <Form.Select
-          value={approvalStatus}
-          onChange={(e) => setApprovalStatus(e.target.value)}
-          style={{ width: 'auto', minWidth: '200px' }}
-          className="ms-2"
-        >
-          <option value="">Select Status</option>
-          <option value="approved">Approved</option>
-          <option value="pending">Pending</option>
-          <option value="rejected">Rejected</option>
-        </Form.Select>
-      </div>
-
-      {/* Action Buttons */}
-      <div className="d-flex justify-content-end gap-3">
-        <Button variant="outline-secondary">Cancel</Button>
-        <Button
-          style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}
-          className="text-white"
-        >
-          Save
-        </Button>
-      </div>
+      {/* Action Buttons: Show only if selectedApproval is 'Submitted' */}
+      {selectedApproval === 'Submitted' && (
+        <div className="d-flex justify-content-end gap-3">
+          <Button variant="outline-secondary">Cancel</Button>
+          <Button
+            style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}
+            className="text-white"
+          >
+            Save
+          </Button>
+        </div>
+      )}
     </Container>
   );
 };

@@ -18,6 +18,8 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: faHome, text: 'Overview', path: '/overview' },
+    { icon: faFileAlt, text: 'Job Requisiton', path: '/job-requisition' },
+
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidates' },
