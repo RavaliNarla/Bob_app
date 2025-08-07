@@ -195,3 +195,9 @@ body {
   font-size: 13px !important;
   font-weight: 400 !important;;
 }
+
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+  font-weight: bold;
+}

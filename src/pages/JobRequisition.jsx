@@ -58,16 +58,14 @@ const JobRequisition = () => {
       setLoading(false);
     }
   };
-
   const openModal = (req = currentReq, index = null) => {
     setCurrentReq(req);
     setEditIndex(index);
     setShowModal(true);
   };
-
+ 
   const handleSave = () => {
     const newErrors = {};
-
     if (!currentReq.requisition_title?.trim()) {
       newErrors.requisition_title = "Title is required";
     }
@@ -95,7 +93,6 @@ const JobRequisition = () => {
       handleSaveCallback();
     }
   };
-
   const handleSaveCallback = async () => {
     try {
       if (editIndex !== null) {
@@ -118,11 +115,11 @@ const JobRequisition = () => {
       toast.error("Save failed");
     }
   };
-
+ 
   const handleDelete = async (index) => {
     try {
       const id = reqs[index]?.requisition_id;
-      await axios.delete(`${API_BASE}/delete_requisition/${id}`);
+      await axios.delete(`${API_BASE}/delete_requisitions/${id}`);
       toast.error("Requisition deleted");
       fetchRequisitions();
     } catch (err) {
@@ -130,7 +127,7 @@ const JobRequisition = () => {
       toast.error("Delete failed");
     }
   };
-
+ 
   const resetForm = () => {
     setShowModal(false);
     setCurrentReq({
@@ -144,7 +141,6 @@ const JobRequisition = () => {
     setEditIndex(null);
     setErrr({});
   };
-
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -152,12 +148,11 @@ const JobRequisition = () => {
     }
     setSortConfig({ key, direction });
   };
-
   const getSortIndicator = (key) => {
     if (sortConfig.key !== key) return null;
     return sortConfig.direction === "asc" ? " ▲" : " ▼";
   };
-
+ 
   const filteredAndSortedJobs = () => {
     let sortableItems = [...reqs];
     if (searchTerm) {
@@ -185,19 +180,16 @@ const JobRequisition = () => {
     }
     return sortableItems;
   };
-
   const jobsToDisplay = filteredAndSortedJobs();
-
+ 
   if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
-
    return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Requisitions</h2>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-
       <InputGroup className="mb-3 w-50">
         <InputGroup.Text>
           <FontAwesomeIcon icon={faSearch} />
@@ -209,9 +201,8 @@ const JobRequisition = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
-
       <hr />
-
+ 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No requisitions match your criteria.</p>
       ) : (
@@ -254,7 +245,6 @@ const JobRequisition = () => {
           </tbody>
         </Table>
       )}
-
 <Modal
   show={showModal}
   onHide={resetForm}
@@ -266,7 +256,6 @@ const JobRequisition = () => {
       {editIndex !== null ? "Edit Requisition" : "Add Requisition"}
     </Modal.Title>
   </Modal.Header>
-
   <Modal.Body>
     <Form className="requisition-form">
       <Row className="g-4">
@@ -289,7 +278,6 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
         <Col md={12}>
           <Form.Group>
             <Form.Label className="form-label">
@@ -310,7 +298,6 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
         <Col md={6}>
           <Form.Group>
             <Form.Label className="form-label">
@@ -329,7 +316,6 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
         <Col md={6}>
           <Form.Group>
             <Form.Label className="form-label">
@@ -348,7 +334,6 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
         <Col md={6}>
           <Form.Group>
             <Form.Label className="form-label">
@@ -369,7 +354,6 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-
         <Col md={6}>
           <Form.Group>
             <Form.Label className="form-label">

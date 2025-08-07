@@ -6,28 +6,28 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
+ 
 .btn-orange {
   background-color: #ff6b00;
   color: white;
   border: none;
 }
-
+ 
 .btn-orange:hover {
   background-color: #e65c00;
 }
-
+ 
 .btn-outline-orange {
   color: #ff6b00;
   border: 1px solid #ff6b00;
   background-color: transparent;
 }
-
+ 
 .btn-outline-orange:hover {
   background-color: #ff6b00;
   color: white;
 }
-
+ 
 .requisition-item {
   border: 1px solid #eee;
   border-radius: 8px;
@@ -35,18 +35,18 @@
   transition: box-shadow 0.2s ease-in-out;
   background-color: #fff;
 }
-
+ 
 .requisition-item:hover {
   box-shadow: 0 4px 12px rgba(0,0,0,0.07);
 }
-
+ 
 .job-bullet {
   width: 4px;
   height: 4px;
   background-color: orange;
   border-radius: 50%;
 }
-
+ 
 .custom-dropdown .dropdown-toggle::after {
   display: none;
 }
@@ -56,7 +56,6 @@
 }.text-orange {
   color: #FF7043;
 }
-
 .requisition-form .form-label {
   font-weight: 500;
 }
@@ -64,12 +63,10 @@
 .wide-modal {
   max-width: 900px;
 }
-
 /* Orange header text */
 .text-orange {
   color: #FF7043;
 }
-
 /* Label styling */
 .requisition-form .form-label {
   font-weight: 600;
