@@ -9,11 +9,7 @@
   font-weight: 400;
 }
 
-.required-asterisk {
-  color: red;
-  margin-left: 2px;
-  font-weight: bold;
-}
+
 /* Completely remove the dropdown toggle arrow */
 .dropdown-toggle::after {
   display: none !important;

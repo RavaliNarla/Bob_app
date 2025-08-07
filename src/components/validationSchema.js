@@ -1,35 +1,24 @@
 import * as Yup from 'yup';
  
 export const jobSchema = Yup.object().shape({
-  'Business Unit': Yup.string().required('Business Unit is required'),
-  'Grade': Yup.string().required('Grade is required'),
-  'Job Title': Yup.string().required('Job Title is required'),
-  'Budget': Yup.number().required('Budget is required'),
-  'Job Start Date': Yup.date()
-    .required('Job Start Date is required'),
-  'Job End Date': Yup.date()
-    .required('Job End Date is required'),
-    // .nullable()
-    // .min(Yup.ref('Job Start Date'), 'Job End Date must be after Job Start Date'),
-  'Required Hours': Yup.number()
-    .required('Required Hours is required'),
-  'Interview Mode': Yup.string()
-    .required('Interview Mode is required'),
-  'Domain': Yup.string().required('Domain is required'),
-  'Client': Yup.string().required('Client is required'),
-  'Priority': Yup.string()
-    .required('Priority is required'),
+'Requisition ID': Yup.string().required('Requisition ID is required'),
+  'Position Title': Yup.string().required('Position Title is required'),
+  'Department': Yup.string().required('Department is required'),
+  'Country': Yup.string().required('Country is required'),
+  'State': Yup.string().required('State is required'),
+  'City': Yup.string().required('City is required'),
   'Location': Yup.string().required('Location is required'),
-  'Job Type': Yup.string().oneOf(['Full-time', 'Part-time', 'Contract'], 'Invalid Job Type')
-    .required('Job Type is required'),
-  'Age': Yup.number()
-    .required('Age is required'),
-  'Caste': Yup.string().required('Caste is required'),
-  'Experience': Yup.string()
-    .required('Experience is required'),
-  'No. of Positions': Yup.number()
-    .required('Number of Positions is required'),
-  'Education Qualification': Yup.string().required('Education Qualification is required'),
-  'Relaxation Policy': Yup.string().required('Relaxation Policy is required'),
- 
+  'Description': Yup.string().required('Description is required'),
+  'Roles & Responsibilities': Yup.string().required('Roles Responsibilities is required'),
+  'Grade ID': Yup.string().required('Grade ID is required'),
+  'Employment Type': Yup.string().required('Employment Type is required'),
+  'Eligibility Age Min': Yup.number().required('Eligibility Age Min is required'),
+  'Eligibility Age Max': Yup.number().required('Eligibility Age Max is required'),
+  'Mandatory Qualification': Yup.string().required('Mandatory Qualification is required'),
+  'Preferred Qualification': Yup.string().required('Preffered Qualification is required'),
+  'Mandatory Experience': Yup.string().required('Mandatory Experience is required'),
+  'Preferred Experience': Yup.string().required('Preffered Experience is required'),
+  'Probation Period': Yup.string().required('Probation Period is required'),
+  'Documents Required': Yup.string().required('Documants Required is required'),
+  'Min Credit Score': Yup.number().required('Min Creadit Score is required'),
 });

@@ -9,6 +9,7 @@ const JobRequisitionForm = ({
   handleCancel,
   // Dropdown options passed as props
   requisitionIdOptions = [],
+  positionTitleOptions = [],
   departmentOptions = [],
   countryOptions = [],
   stateOptions = [],
@@ -16,9 +17,10 @@ const JobRequisitionForm = ({
   locationOptions = [],
   gradeIdOptions = [],
   employmentTypeOptions = [],
-  mandatoryQualificationOptions = [],
-  preferredQualificationOptions = [],
+//   mandatoryQualificationOptions = [],
+//   preferredQualificationOptions = [],
 }) => {
+    console.log(positionTitleOptions)
   return (
     <div className="form-section p-3 rounded-3" style={{
       backgroundColor: '#fff',
@@ -28,7 +30,7 @@ const JobRequisitionForm = ({
       fontSize: '0.9rem'
     }}>
       <h4 className="text-center mb-3" style={{ fontSize: '1.25rem', color: '#FF7043' }}>
-        Job Requisition Form
+        Job Posting
       </h4>
       <form className="job-form row gx-3" onSubmit={handleSubmit} style={{ fontSize: '0.9rem' }}>
         <div className="col-md-3">
@@ -44,15 +46,27 @@ const JobRequisitionForm = ({
             >
               <option value="">Select Requisition ID</option>
               {requisitionIdOptions.map(option => (
-                <option key={option.id} value={option.name}>{option.name}</option>
+                <option key={option.name} value={option.id}>{option.name}</option>
               ))}
             </select>
             {errors.requisition_id && <small className="error">{errors.requisition_id}</small>}
           </div>
           {/* Position Title */}
+          
           <div className="col-md-10 mb-2">
             <label htmlFor="position_title" className="form-label">Position Title <span className="required-asterisk">*</span></label>
-            <input type="text" className="form-control" id="position_title" name="position_title" value={formData.position_title} onChange={handleInputChange} />
+            <select
+              id="position_title"
+              name="position_title"
+              className="form-select"
+              value={formData.position_title}
+              onChange={handleInputChange}
+            >
+              <option value="">Select Position Title</option>
+              {positionTitleOptions.map((option, idx) => (
+                <option key={option.name || idx} value={option.name || option}>{option.name || option}</option>
+              ))}
+            </select>
             {errors.position_title && <small className="error">{errors.position_title}</small>}
           </div>
           {/* Department */}
@@ -84,7 +98,7 @@ const JobRequisitionForm = ({
             >
               <option value="">Select Country</option>
               {countryOptions.map(option => (
-                <option key={option.country_id} value={option.country_name}>{option.country_name}</option>
+                <option key={option.country_id} value={option.country_id}>{option.country_name}</option>
               ))}
             </select>
             {errors.country && <small className="error">{errors.country}</small>}
@@ -101,7 +115,7 @@ const JobRequisitionForm = ({
             >
               <option value="">Select State</option>
               {stateOptions.map(option => (
-                <option key={option.state_id} value={option.state_name}>{option.state_name}</option>
+                <option key={option.state_id} value={option.state_id}>{option.state_name}</option>
               ))}
             </select>
             {errors.state && <small className="error">{errors.state}</small>}
@@ -114,7 +128,7 @@ const JobRequisitionForm = ({
             <select id="city" name="city" className="form-select" value={formData.city} onChange={handleInputChange}>
               <option value="">Select City</option>
               {cityOptions.map(option => (
-                <option key={option.city_id} value={option.city_name}>{option.city_name}</option>
+                <option key={option.city_id} value={option.city_id}>{option.city_name}</option>
               ))}
             </select>
             {errors.city && <small className="error">{errors.city}</small>}
@@ -131,7 +145,7 @@ const JobRequisitionForm = ({
             >
               <option value="">Select Location</option>
               {locationOptions.map(option => (
-                <option key={option.location_id} value={option.location_name}>{option.location_name}</option>
+                <option key={option.location_id} value={option.location_id}>{option.location_name}</option>
               ))}
             </select>
             {errors.location && <small className="error">{errors.location}</small>}
@@ -166,7 +180,7 @@ const JobRequisitionForm = ({
             >
               <option value="">Select Grade ID</option>
               {gradeIdOptions.map(option => (
-                <option key={option.id} value={option.name}>{option.name}</option>
+                <option key={option.id} value={option.id}>{option.name}</option>
               ))}
             </select>
             {errors.grade_id && <small className="error">{errors.grade_id}</small>}
@@ -193,47 +207,37 @@ const JobRequisitionForm = ({
           {/* Eligibility Age Min */}
           <div className="col-md-10 mb-2">
             <label htmlFor="eligibility_age_min" className="form-label">Eligibility Age Min <span className="required-asterisk">*</span></label>
-            <input type="number" className="form-control" id="eligibility_age_min" name="eligibility_age_min" value={formData.eligibility_age_min} onChange={handleInputChange} />
+            <input type="number" className="form-control" id="eligibility_age_min" name="eligibility_age_min" value={formData.eligibility_age_min} onChange={handleInputChange} min="1" />
             {errors.eligibility_age_min && <small className="error">{errors.eligibility_age_min}</small>}
           </div>
           {/* Eligibility Age Max */}
           <div className="col-md-10 mb-2">
             <label htmlFor="eligibility_age_max" className="form-label">Eligibility Age Max <span className="required-asterisk">*</span></label>
-            <input type="number" className="form-control" id="eligibility_age_max" name="eligibility_age_max" value={formData.eligibility_age_max} onChange={handleInputChange} />
+            <input type="number" className="form-control" id="eligibility_age_max" name="eligibility_age_max" value={formData.eligibility_age_max} onChange={handleInputChange} min="1" />
             {errors.eligibility_age_max && <small className="error">{errors.eligibility_age_max}</small>}
           </div>
           {/* Mandatory Qualification */}
           <div className="col-md-10 mb-2">
             <label htmlFor="mandatory_qualification" className="form-label">Mandatory Qualification <span className="required-asterisk">*</span></label>
-            <select
+            <textarea
               id="mandatory_qualification"
               name="mandatory_qualification"
-              className="form-select"
+              className="form-control"
               value={formData.mandatory_qualification}
               onChange={handleInputChange}
-            >
-              <option value="">Select Qualification</option>
-              {mandatoryQualificationOptions.map(option => (
-                <option key={option.id} value={option.name}>{option.name}</option>
-              ))}
-            </select>
+            />
             {errors.mandatory_qualification && <small className="error">{errors.mandatory_qualification}</small>}
           </div>
           {/* Preferred Qualification */}
           <div className="col-md-10 mb-2">
             <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk">*</span></label>
-            <select
+            <textarea
               id="preferred_qualification"
               name="preferred_qualification"
-              className="form-select"
+              className="form-control"
               value={formData.preferred_qualification}
               onChange={handleInputChange}
-            >
-              <option value="">Select Qualification</option>
-              {preferredQualificationOptions.map(option => (
-                <option key={option.id} value={option.name}>{option.name}</option>
-              ))}
-            </select>
+            />
             {errors.preferred_qualification && <small className="error">{errors.preferred_qualification}</small>}
           </div>
         </div>
@@ -241,13 +245,13 @@ const JobRequisitionForm = ({
           {/* Mandatory Experience */}
           <div className="col-md-10 mb-2">
             <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience <span className="required-asterisk">*</span></label>
-            <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} />
+            <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" />
             {errors.mandatory_experience && <small className="error">{errors.mandatory_experience}</small>}
           </div>
           {/* Preferred Experience */}
           <div className="col-md-10 mb-2">
             <label htmlFor="preferred_experience" className="form-label">Preferred Experience <span className="required-asterisk">*</span></label>
-            <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} />
+            <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" />
             {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
           </div>
           {/* Probation Period */}

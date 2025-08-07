@@ -18,8 +18,8 @@ const JobCreation = () => {
   const [errors, setErrors] = useState({});
   const [jsonData, setJsonData] = useState([]);
 
-  // State for form data
-  const [formData, setFormData] = useState({
+  // Define an initial state object for form fields to make resetting easier
+  const initialState = {
     requisition_id: '',
     position_title: '',
     department: '',
@@ -40,7 +40,10 @@ const JobCreation = () => {
     probation_period: '',
     documents_required: '',
     min_credit_score: '',
-  });
+  };
+
+  // State for form data, initialized with the initialState object
+  const [formData, setFormData] = useState(initialState);
 
   // State for dropdown master data
   const [masterData, setMasterData] = useState({
@@ -52,61 +55,37 @@ const JobCreation = () => {
     cityOptions: [],
     locationOptions: [],
     gradeIdOptions: [],
-    employmentTypeOptions: [],
-    mandatoryQualificationOptions: [],
-    preferredQualificationOptions: [],
+    employmentTypeOptions: ["Full-Time", "Part-Time", "Contract"], //static
   });
   
   const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState(null);
 
-  // Fetch all dropdown master data on mount
   useEffect(() => {
     const fetchAllMasterData = async () => {
       setLoading(true);
       setDataError(null);
       try {
-        // Simulating the API calls
-        const masterDataRes = {
-          position_title: ["Digital Banking", "Information Security", "Security", "Information Technology"],
-          departments: [
-            { "department_id": 1, "department_name": "Digital Banking" },
-            { "department_id": 2, "department_name": "Information Security" },
-            { "department_id": 3, "department_name": "Security" },
-            { "department_id": 4, "department_name": "Information Technology" }
-          ],
-          countries: [
-            { "country_name": "India", "country_id": 1 },
-            { "country_name": "USA", "country_id": 2 }
-          ],
-          states: [
-            { "state_name": "Telangana", "state_id": 1 },
-            { "state_id": 2, "state_name": "California" }
-          ],
-          cities: [
-            { "city_name": "Hyderabad", "city_id": 1 },
-            { "city_name": "Los Angeles", "city_id": 2 }
-          ],
-          locations: [
-            { "location_name": "HiTech City", "location_id": 1 },
-            { "location_name": "Downtown LA", "location_id": 2 }
-          ],
-          job_grade_ids: [1, 2, 3],
-          employment_type: ["Full-Time", "Part-Time", "Contract"],
-          mandatory_qualification: ["Bachelor's Degree", "Master's Degree"],
-          preferred_qualification: ["PhD", "Certifications"]
-        };
+        // Fetch all master data and requisition data concurrently
+        const [masterDataRes, requisitionDataRes] = await Promise.all([
+          apiService.getMasterData(),
+          apiService.getReqData()
+        ]);
 
-        const requisitionDataRes = {
-          data: [
-            { requisition_id: 1, requisition_code: "REQ-2025-001", requisition_title: "Senior Software Engineer" },
-            { requisition_id: 2, requisition_code: "REQ-2025-002", requisition_title: "UI/UX Designer" },
-            { requisition_id: 3, requisition_code: "REQ-2025-005", requisition_title: "Senior Software Engineer" },
-            { requisition_id: 4, requisition_code: "REQ-2025-006", requisition_title: "Senior Software Engineer" }
-          ]
-        };
+        console.log('Master Data Response:', masterDataRes);
+        console.log('Requisition Data Response:', requisitionDataRes);
+
+        // Fallback static job_grade_ids if not present in API response
+        const staticJobGrades = [
+          { job_grade_id: 1, job_scale: "S1" },
+          { job_grade_id: 2, job_scale: "S2" }
+        ];
+        const jobGrades = (masterDataRes.job_grade_ids && masterDataRes.job_grade_ids.length > 0)
+          ? masterDataRes.job_grade_ids
+          : staticJobGrades;
 
         setMasterData({
+          // Use the actual API response from getReqData() to create requisition options
           requisitionIdOptions: (requisitionDataRes.data || []).map(req => ({
             id: req.requisition_id,
             name: req.requisition_code
@@ -117,8 +96,14 @@ const JobCreation = () => {
           stateOptions: masterDataRes.states,
           cityOptions: masterDataRes.cities,
           locationOptions: masterDataRes.locations,
-          gradeIdOptions: (masterDataRes.job_grade_ids || []).map(id => ({ id, name: id })),
-          employmentTypeOptions: (masterDataRes.employment_type || []).map(type => ({ id: type, name: type })),
+          gradeIdOptions: jobGrades.map(grade => ({
+            id: grade.job_grade_id,
+            name: grade.job_scale
+          })),
+          employmentTypeOptions: ((masterDataRes.employment_type && masterDataRes.employment_type.length > 0)
+            ? masterDataRes.employment_type
+            : ["Full-Time", "Part-Time", "Contract"]
+          ).map(type => ({ id: type, name: type })),
           mandatoryQualificationOptions: (masterDataRes.mandatory_qualification || []).map(q => ({ id: q, name: q })),
           preferredQualificationOptions: (masterDataRes.preferred_qualification || []).map(q => ({ id: q, name: q })),
         });
@@ -137,21 +122,34 @@ const JobCreation = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
-      console.log('✅ Valid form data:', formData);
-      // Your API submission logic here
+      try {
+        const response = await apiService.jobCreation(formData);
+        console.log('✅ Valid form data:', formData);
+        console.log('✅ API response:', response);
+        
+        // Show success toast message
+        toast.success('Job created successfully!');
+        
+        // Reset form fields to their initial state after a successful submission
+        setFormData(initialState);
+        
+      } catch (error) {
+        console.error('❌ API error:', error);
+        toast.error('Failed to create job.');
+        // Handle API errors
+      }
     } else {
       setErrors(validationErrors);
     }
   };
 
+  // The handleCancel function now also uses the initialState object to reset the form
   const handleCancel = () => {
-    setFormData({
-      requisition_id: '', position_title: '', department: '', country: '', state: '', city: '', location: '', description: '', roles_responsibilities: '', grade_id: '', employment_type: '', eligibility_age_min: '', eligibility_age_max: '', mandatory_qualification: '', preferred_qualification: '', mandatory_experience: '', preferred_experience: '', probation_period: '', documents_required: '', min_credit_score: '',
-    });
+    setFormData(initialState);
     setErrors({});
   };
   
@@ -196,6 +194,7 @@ const JobCreation = () => {
     setFiles([...files, ...validFiles]);
     validFiles.forEach(file => readExcel(file));
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFiles = Array.from(e.dataTransfer.files);
@@ -204,12 +203,14 @@ const JobCreation = () => {
       droppedFiles.forEach(file => readExcel(file));
     }
   };
+
   const handleDragOver = (e) => e.preventDefault();
   const removeFile = (index) => {
     const newFiles = [...files];
     newFiles.splice(index, 1);
     setFiles(newFiles);
   };
+
   const convertKeysToSnakeCase = (dataArray) => {
     return dataArray.map((item) => ({
       requisition_id: item["Requisition ID"],
@@ -234,6 +235,7 @@ const JobCreation = () => {
       min_credit_score: item["Min Credit Score"],
     }));
   };
+
   const readExcel = async (file) => {
     const reader = new FileReader();
     reader.onload = async (event) => {
@@ -257,6 +259,7 @@ const JobCreation = () => {
     };
     reader.readAsArrayBuffer(file);
   };
+  
   const handleUploadSubmit = async () => {
     if (files.length === 0) {
       setErrors(prev => ({ ...prev, file: "Please upload at least one Excel file." }));
@@ -318,7 +321,7 @@ const JobCreation = () => {
                   fontWeight: selectedOption === 'upload' ? '600' : '400',
                   fontSize: '14px'
                 }}>
-                  Upload Recruitment Request Document(s)
+                  Bulk Upload
                 </span>
               </div>
               <div
@@ -350,7 +353,7 @@ const JobCreation = () => {
                   fontWeight: selectedOption === 'direct' ? '600' : '400',
                   fontSize: '14px'
                 }}>
-                  Go to Job Requisition Form
+                  Job Posting Form
                 </span>
               </div>
             </div>
@@ -433,6 +436,7 @@ const JobCreation = () => {
                 cityOptions={masterData.cityOptions}
                 locationOptions={masterData.locationOptions}
                 gradeIdOptions={masterData.gradeIdOptions}
+                positionTitleOptions={masterData.positionTitleOptions}
                 employmentTypeOptions={masterData.employmentTypeOptions}
                 mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
                 preferredQualificationOptions={masterData.preferredQualificationOptions}
