@@ -1,257 +1,192 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { JobCreationApiService } from '../services/JobCreationApiService';
-import { useLanguage } from '../context/LanguageContext';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload, faFileAlt, faCircle, faCheckCircle, faCheck } from '@fortawesome/free-solid-svg-icons';
-import { apiService } from '../services/apiService';
+import { faUpload, faFileAlt, faCheck } from '@fortawesome/free-solid-svg-icons';
+import JobRequisitionForm from './../components/JobCreationForm';
 import * as XLSX from 'xlsx';
-import { jobSchema } from './../components/validationSchema'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
+import { apiService } from '../services/apiService';
+import { jobSchema } from './../components/validationSchema';
+
 const JobCreation = () => {
   const navigate = useNavigate();
-  // Ref for file input
   const fileInputRef = useRef(null);
-  const [selectedOption, setSelectedOption] = useState('upload');
+  const [selectedOption, setSelectedOption] = useState('direct');
   const [files, setFiles] = useState([]);
   const [errors, setErrors] = useState({});
-  const [gradeOptions, setGradeOptions] = useState([]);
-  const [gradeLoading, setGradeLoading] = useState(false);
-  const [gradeError, setGradeError] = useState(null);
-  const [jobTitleOptions, setJobTitleOptions] = useState([]);
-  const [jobTitleLoading, setJobTitleLoading] = useState(false);
-  const [jobTitleError, setJobTitleError] = useState(null);
-  // New state for location, job type, caste
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [locationLoading, setLocationLoading] = useState(false);
-  const [locationError, setLocationError] = useState(null);
-  const [jobTypeOptions, setJobTypeOptions] = useState([]);
-  const [jobTypeLoading, setJobTypeLoading] = useState(false);
-  const [jobTypeError, setJobTypeError] = useState(null);
-  const [casteOptions, setCasteOptions] = useState([]);
-  const [casteLoading, setCasteLoading] = useState(false);
-  const [casteError, setCasteError] = useState(null);
-  // New state for work experience, education qualification, relaxation policy, priority, no of positions
-  const [workExperienceOptions, setWorkExperienceOptions] = useState([]);
-  const [workExperienceLoading, setWorkExperienceLoading] = useState(false);
-  const [workExperienceError, setWorkExperienceError] = useState(null);
-  const [educationQualificationOptions, setEducationQualificationOptions] = useState([]);
-  const [educationQualificationLoading, setEducationQualificationLoading] = useState(false);
-  const [educationQualificationError, setEducationQualificationError] = useState(null);
-  const [relaxationPolicyOptions, setRelaxationPolicyOptions] = useState([]);
-  const [relaxationPolicyLoading, setRelaxationPolicyLoading] = useState(false);
-  const [relaxationPolicyError, setRelaxationPolicyError] = useState(null);
-  const [priorityOptions, setPriorityOptions] = useState([]);
-  const [priorityLoading, setPriorityLoading] = useState(false);
-  const [priorityError, setPriorityError] = useState(null);
-  const [noOfPositionsOptions, setNoOfPositionsOptions] = useState([]);
-  const [noOfPositionsLoading, setNoOfPositionsLoading] = useState(false);
-  const [noOfPositionsError, setNoOfPositionsError] = useState(null);
-
-  const [businessUnitOptions, setbusinessUnitOptions] = useState([]);
-  const [businessUnitLoading, setbusinessUnitLoading] = useState(false);
-  const [businessUnitError, setbusinessUnitError] = useState(null);
   const [jsonData, setJsonData] = useState([]);
 
-  useEffect(() => {
-    // Fetch work experience options
-    setWorkExperienceLoading(true);
-    setWorkExperienceError(null);
-    JobCreationApiService.getWorkExperienceData && JobCreationApiService.getWorkExperienceData()
-      .then((data) => {
-        setWorkExperienceOptions(Array.isArray(data) ? data : []);
-        setWorkExperienceLoading(false);
-      })
-      .catch((err) => {
-        setWorkExperienceError('Failed to load work experience');
-        setWorkExperienceLoading(false);
-      });
-  
-    // Fetch education qualification options
-    setEducationQualificationLoading(true);
-    setEducationQualificationError(null);
-    JobCreationApiService.getEducationalQualificationData && JobCreationApiService.getEducationalQualificationData()
-      .then((data) => {
-        setEducationQualificationOptions(Array.isArray(data) ? data : []);
-        setEducationQualificationLoading(false);
-      })
-      .catch((err) => {
-        setEducationQualificationError('Failed to load education qualifications');
-        setEducationQualificationLoading(false);
-      });
-  
-    // Fetch relaxation policy options
-    setRelaxationPolicyLoading(true);
-    setRelaxationPolicyError(null);
-    JobCreationApiService.getRelaxationPolicyData && JobCreationApiService.getRelaxationPolicyData()
-      .then((data) => {
-        setRelaxationPolicyOptions(Array.isArray(data) ? data : []);
-        setRelaxationPolicyLoading(false);
-      })
-      .catch((err) => {
-        setRelaxationPolicyError('Failed to load relaxation policies');
-        setRelaxationPolicyLoading(false);
-      });
-  
-    // Fetch priority options
-    setPriorityLoading(true);
-    setPriorityError(null);
-    JobCreationApiService.getPriorityData && JobCreationApiService.getPriorityData()
-      .then((data) => {
-        setPriorityOptions(Array.isArray(data) ? data : []);
-        setPriorityLoading(false);
-      })
-      .catch((err) => {
-        setPriorityError('Failed to load priorities');
-        setPriorityLoading(false);
-      });
-  
-    // Fetch no of positions options
-    setNoOfPositionsLoading(true);
-    setNoOfPositionsError(null);
-    JobCreationApiService.getNoOfPositionsData && JobCreationApiService.getNoOfPositionsData()
-      .then((data) => {
-        setNoOfPositionsOptions(Array.isArray(data) ? data : []);
-        setNoOfPositionsLoading(false);
-      })
-      .catch((err) => {
-        setNoOfPositionsError('Failed to load no of positions');
-        setNoOfPositionsLoading(false);
-      });
-    setGradeLoading(true);
-    setGradeError(null);
-    JobCreationApiService.getGradeData()
-      .then((data) => {
-        setGradeOptions(Array.isArray(data) ? data : []);
-        setGradeLoading(false);
-      })
-      .catch((err) => {
-        setGradeError('Failed to load grades');
-        setGradeLoading(false);
-      });
-  
-    setJobTitleLoading(true);
-    setJobTitleError(null);
-    JobCreationApiService.getJobTitleData()
-      .then((data) => {
-        setJobTitleOptions(Array.isArray(data) ? data : []);
-        setJobTitleLoading(false);
-      })
-      .catch((err) => {
-        setJobTitleError('Failed to load job titles');
-        setJobTitleLoading(false);
-      });
-  
-    // Fetch location options
-    setLocationLoading(true);
-    setLocationError(null);
-    JobCreationApiService.getLocationData()
-      .then((data) => {
-        setLocationOptions(Array.isArray(data) ? data : []);
-        setLocationLoading(false);
-      })
-      .catch((err) => {
-        setLocationError('Failed to load locations');
-        setLocationLoading(false);
-      });
-  
-    // Fetch job type options
-    setJobTypeLoading(true);
-    setJobTypeError(null);
-    JobCreationApiService.getJobTypeData()
-      .then((data) => {
-        setJobTypeOptions(Array.isArray(data) ? data : []);
-        setJobTypeLoading(false);
-      })
-      .catch((err) => {
-        setJobTypeError('Failed to load job types');
-        setJobTypeLoading(false);
-      });
-  
-    // Fetch caste options
-    setCasteLoading(true);
-    setCasteError(null);
-    JobCreationApiService.getCasteData()
-      .then((data) => {
-        setCasteOptions(Array.isArray(data) ? data : []);
-        setCasteLoading(false);
-      })
-      .catch((err) => {
-        setCasteError('Failed to load castes');
-        setCasteLoading(false);
-      });
-// Fetch business options
+  // State for form data
+  const [formData, setFormData] = useState({
+    requisition_id: '',
+    position_title: '',
+    department: '',
+    country: '',
+    state: '',
+    city: '',
+    location: '',
+    description: '',
+    roles_responsibilities: '',
+    grade_id: '',
+    employment_type: '',
+    eligibility_age_min: '',
+    eligibility_age_max: '',
+    mandatory_qualification: '',
+    preferred_qualification: '',
+    mandatory_experience: '',
+    preferred_experience: '',
+    probation_period: '',
+    documents_required: '',
+    min_credit_score: '',
+  });
 
- 
-    setbusinessUnitLoading(true);
-    setbusinessUnitError(null);
-    JobCreationApiService.getBusinessunitData()
-      .then((data) => {
-        setbusinessUnitOptions(Array.isArray(data) ? data : []);
-        setbusinessUnitLoading(false);
-      })
-      .catch((err) => {
-        setbusinessUnitError('Failed to load castes');
-        setbusinessUnitLoading(false);
-      });
+  // State for dropdown master data
+  const [masterData, setMasterData] = useState({
+    requisitionIdOptions: [],
+    positionTitleOptions: [],
+    departmentOptions: [],
+    countryOptions: [],
+    stateOptions: [],
+    cityOptions: [],
+    locationOptions: [],
+    gradeIdOptions: [],
+    employmentTypeOptions: [],
+    mandatoryQualificationOptions: [],
+    preferredQualificationOptions: [],
+  });
+  
+  const [loading, setLoading] = useState(false);
+  const [dataError, setDataError] = useState(null);
+
+  // Fetch all dropdown master data on mount
+  useEffect(() => {
+    const fetchAllMasterData = async () => {
+      setLoading(true);
+      setDataError(null);
+      try {
+        // Simulating the API calls
+        const masterDataRes = {
+          position_title: ["Digital Banking", "Information Security", "Security", "Information Technology"],
+          departments: [
+            { "department_id": 1, "department_name": "Digital Banking" },
+            { "department_id": 2, "department_name": "Information Security" },
+            { "department_id": 3, "department_name": "Security" },
+            { "department_id": 4, "department_name": "Information Technology" }
+          ],
+          countries: [
+            { "country_name": "India", "country_id": 1 },
+            { "country_name": "USA", "country_id": 2 }
+          ],
+          states: [
+            { "state_name": "Telangana", "state_id": 1 },
+            { "state_id": 2, "state_name": "California" }
+          ],
+          cities: [
+            { "city_name": "Hyderabad", "city_id": 1 },
+            { "city_name": "Los Angeles", "city_id": 2 }
+          ],
+          locations: [
+            { "location_name": "HiTech City", "location_id": 1 },
+            { "location_name": "Downtown LA", "location_id": 2 }
+          ],
+          job_grade_ids: [1, 2, 3],
+          employment_type: ["Full-Time", "Part-Time", "Contract"],
+          mandatory_qualification: ["Bachelor's Degree", "Master's Degree"],
+          preferred_qualification: ["PhD", "Certifications"]
+        };
+
+        const requisitionDataRes = {
+          data: [
+            { requisition_id: 1, requisition_code: "REQ-2025-001", requisition_title: "Senior Software Engineer" },
+            { requisition_id: 2, requisition_code: "REQ-2025-002", requisition_title: "UI/UX Designer" },
+            { requisition_id: 3, requisition_code: "REQ-2025-005", requisition_title: "Senior Software Engineer" },
+            { requisition_id: 4, requisition_code: "REQ-2025-006", requisition_title: "Senior Software Engineer" }
+          ]
+        };
+
+        setMasterData({
+          requisitionIdOptions: (requisitionDataRes.data || []).map(req => ({
+            id: req.requisition_id,
+            name: req.requisition_code
+          })),
+          positionTitleOptions: (masterDataRes.position_title || []).map(name => ({ id: name, name })),
+          departmentOptions: masterDataRes.departments,
+          countryOptions: masterDataRes.countries,
+          stateOptions: masterDataRes.states,
+          cityOptions: masterDataRes.cities,
+          locationOptions: masterDataRes.locations,
+          gradeIdOptions: (masterDataRes.job_grade_ids || []).map(id => ({ id, name: id })),
+          employmentTypeOptions: (masterDataRes.employment_type || []).map(type => ({ id: type, name: type })),
+          mandatoryQualificationOptions: (masterDataRes.mandatory_qualification || []).map(q => ({ id: q, name: q })),
+          preferredQualificationOptions: (masterDataRes.preferred_qualification || []).map(q => ({ id: q, name: q })),
+        });
+      } catch (err) {
+        console.error('Failed to fetch master data:', err);
+        setDataError('Failed to fetch master data.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAllMasterData();
   }, []);
-  const fieldLabels = {
-    en: {
-      bussiness_unit: 'Business Unit',
-      grade: 'Grade',
-      job_title: 'Job Title',
-      budget: 'Budget',
-      job_start_date: 'Job Start Date',
-      job_end_date: 'Job End Date',
-      required_hours: 'Required Hours',
-      interview_mode: 'Interview Mode',
-      domain: 'Domain',
-      client: 'Client',
-      priority: 'Priority',
-      location: 'Location',
-      job_type: 'Job Type',
-      age: 'Age (5 Yrs age relaxation)',
-      caste: 'Caste',
-      work_experience: 'Experience',
-      no_of_positions: 'No of Positions',
-      education_qualification: 'Educational Qualification',
-      relaxation_policy: 'Relaxation Policy',
-    },
-    hi: {
-      bussiness_unit: 'व्यावसायिक इकाई',
-      grade: 'ग्रेड',
-      job_title: 'नौकरी का शीर्षक',
-      budget: 'बजट',
-      job_start_date: 'नौकरी प्रारंभ तिथि',
-      job_end_date: 'नौकरी समाप्ति तिथि',
-      required_hours: 'आवश्यक घंटे',
-      interview_mode: 'साक्षात्कार मोड',
-      domain: 'डोमेन',
-      client: 'क्लाइंट',
-      priority: 'प्राथमिकता',
-      location: 'स्थान',
-      job_type: 'नौकरी का प्रकार',
-      age: 'आयु (SC, ST & BC के लिए 5 वर्ष की छूट)',
-      caste: 'जाति',
-      work_experience: 'अनुभव',
-      no_of_positions: 'पदों की संख्या',
-      education_qualification: 'शैक्षिक योग्यता',
-      relaxation_policy: 'छूट नीति',
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      console.log('✅ Valid form data:', formData);
+      // Your API submission logic here
+    } else {
+      setErrors(validationErrors);
     }
   };
-  const [lang, setLang] = useState('en');
+
+  const handleCancel = () => {
+    setFormData({
+      requisition_id: '', position_title: '', department: '', country: '', state: '', city: '', location: '', description: '', roles_responsibilities: '', grade_id: '', employment_type: '', eligibility_age_min: '', eligibility_age_max: '', mandatory_qualification: '', preferred_qualification: '', mandatory_experience: '', preferred_experience: '', probation_period: '', documents_required: '', min_credit_score: '',
+    });
+    setErrors({});
+  };
+  
+  // Basic client-side validation
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
+    if (!formData.position_title.trim()) newErrors.position_title = 'Position Title is required';
+    if (!formData.department) newErrors.department = 'Department is required';
+    if (!formData.country) newErrors.country = 'Country is required';
+    if (!formData.state) newErrors.state = 'State is required';
+    if (!formData.city) newErrors.city = 'City is required';
+    if (!formData.location) newErrors.location = 'Location is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.roles_responsibilities.trim()) newErrors.roles_responsibilities = 'Roles & Responsibilities are required';
+    if (!formData.grade_id) newErrors.grade_id = 'Grade ID is required';
+    if (!formData.employment_type) newErrors.employment_type = 'Employment Type is required';
+    if (!formData.eligibility_age_min || isNaN(formData.eligibility_age_min)) newErrors.eligibility_age_min = 'Min Age is required and must be a number';
+    if (!formData.eligibility_age_max || isNaN(formData.eligibility_age_max)) newErrors.eligibility_age_max = 'Max Age is required and must be a number';
+    if (!formData.mandatory_qualification) newErrors.mandatory_qualification = 'Mandatory Qualification is required';
+    if (!formData.preferred_qualification) newErrors.preferred_qualification = 'Preferred Qualification is required';
+    if (!formData.mandatory_experience || isNaN(formData.mandatory_experience)) newErrors.mandatory_experience = 'Mandatory Experience is required and must be a number';
+    if (!formData.preferred_experience || isNaN(formData.preferred_experience)) newErrors.preferred_experience = 'Preferred Experience is required and must be a number';
+    if (!formData.probation_period.trim()) newErrors.probation_period = 'Probation Period is required';
+    if (!formData.documents_required.trim()) newErrors.documents_required = 'Documents Required is required';
+    if (!formData.min_credit_score.trim()) newErrors.min_credit_score = 'Min Credit Score is required';
+    return newErrors;
+  };
+
+  // File upload and Excel handling logic (kept for completeness)
   const handleFileChange = (e) => {
     const newErrors = {};
     const selectedFiles = Array.from(e.target.files);
     const validExtensions = ['.xls', '.xlsx'];
-
-    const validFiles = selectedFiles.filter(file => {
-      const ext = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
-      return validExtensions.includes(ext);
-    });
-
+    const validFiles = selectedFiles.filter(file => validExtensions.includes(file.name.slice(file.name.lastIndexOf('.')).toLowerCase()));
     if (validFiles.length !== selectedFiles.length) {
       newErrors.file = "Only Excel files (.xls, .xlsx) are allowed.";
     } else {
@@ -259,207 +194,68 @@ const JobCreation = () => {
     }
     setErrors(newErrors);
     setFiles([...files, ...validFiles]);
-    // Call readExcel for each valid file
-    validFiles.forEach(file => {
-      console.log('Calling readExcel for uploaded file:', file.name);
-      readExcel(file);
-    });
-  };
-  const [formData, setFormData] = useState({
-    bussiness_unit: '',
-    grade: '',
-    job_title: '',
-    budget: '',
-    job_start_date: '',
-    job_end_date: '',
-    required_hours: '',
-    interview_mode: '',
-    domain: '',
-    client: '',
-    priority: '',
-    location: '',
-    job_type: '',
-    age: '',
-    caste: '',
-    work_experience: '',
-    no_of_positions: '',
-    education_qualification: '',
-    relaxation_policy: ''
-  });
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    validFiles.forEach(file => readExcel(file));
   };
   const handleDrop = (e) => {
     e.preventDefault();
-    console.log('handleDrop called');
     const droppedFiles = Array.from(e.dataTransfer.files);
     if (droppedFiles.length > 0) {
       setFiles(prevFiles => [...prevFiles, ...droppedFiles]);
-      // Optionally, call readExcel for each file (if you want to validate immediately)
-      droppedFiles.forEach(file => {
-        console.log('Calling readExcel for dropped file:', file.name);
-        readExcel(file);
-      });
+      droppedFiles.forEach(file => readExcel(file));
     }
   };
-const convertKeysToSnakeCase = (dataArray) => {
-  return dataArray.map((item) => ({
-    bussiness_unit: item["Business Unit"],
-    grade: item["Grade"],
-    job_title: item["Job Title"],
-    budget: item["Budget"],
-    job_start_date: item["Job Start Date"],
-    job_end_date: item["Job End Date"],
-    required_hours: item["Required Hours"],
-    interview_mode: item["Interview Mode"],
-    domain: item["Domain"],
-    client: item["Client"],
-    priority: item["Priority"],
-    location: item["Location"],
-    job_type: item["Job Type"],
-    caste: item["Caste"],
-    work_experience: item["Experience"],
-    no_of_positions: item["No. of Positions"],
-    education_qualification: item["Education Qualification"],
-    relaxation_policy: item["Relaxation Policy"],
-  }));
-};
-  const readExcel = async (file) => {
-    console.log('readExcel called for:', file.name);
-    const reader = new FileReader();
-
-    reader.onload = async (event) => {
-      const arrayBuffer = event.target.result;
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-
-      const validRows = [];
-      const errorList = [];
-
-      for (let i = 0; i < rows.length; i++) {
-        try {
-          const validated = await jobSchema.validate(rows[i], { abortEarly: false });
-          validRows.push(validated);
-        } catch (err) {
-          errorList.push({
-            row: i + 2, // Excel row (account for header)
-            messages: err.errors,
-          });
-        }
-      }
-      setErrors(errorList);
-      console.log("validate error",validRows);
-      const formattedData = convertKeysToSnakeCase(validRows);
-      setJsonData(formattedData); // Store valid rows for later submit
-    };
-
-    reader.readAsArrayBuffer(file); // ✅ Modern replacement
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e) => e.preventDefault();
   const removeFile = (index) => {
     const newFiles = [...files];
     newFiles.splice(index, 1);
     setFiles(newFiles);
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length === 0) {
-      console.log('✅ Valid form data:', formData);
-      // Send JSON to backend
-      apiService.createJobPost({ ...formData })
-        .then((res) => {
-          console.log("✅ Job post submitted successfully:", res);
-          toast.success("Job post submitted successfully!!");
-          navigate('/job-postings');
-        })
-        .catch((err) => {
-          console.error("❌ Error submitting job post:", err.response?.data || err.message);
-          toast.error("Submission failed");
-        });
-    } else {
-      console.warn('⚠️ Validation errors:', validationErrors);
-      setErrors(validationErrors);
-      // Scroll to the first error field
-      const firstErrorField = Object.keys(validationErrors)[0];
-      if (firstErrorField) {
-        const el = document.getElementsByName(firstErrorField)[0];
-        if (el && el.scrollIntoView) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const convertKeysToSnakeCase = (dataArray) => {
+    return dataArray.map((item) => ({
+      requisition_id: item["Requisition ID"],
+      position_title: item["Position Title"],
+      department: item["Department"],
+      country: item["Country"],
+      state: item["State"],
+      city: item["City"],
+      location: item["Location"],
+      description: item["Description"],
+      roles_responsibilities: item["Roles & Responsibilities"],
+      grade_id: item["Grade ID"],
+      employment_type: item["Employment Type"],
+      eligibility_age_min: item["Eligibility Age Min"],
+      eligibility_age_max: item["Eligibility Age Max"],
+      mandatory_qualification: item["Mandatory Qualification"],
+      preferred_qualification: item["Preferred Qualification"],
+      mandatory_experience: item["Mandatory Experience"],
+      preferred_experience: item["Preferred Experience"],
+      probation_period: item["Probation Period"],
+      documents_required: item["Documents Required"],
+      min_credit_score: item["Min Credit Score"],
+    }));
+  };
+  const readExcel = async (file) => {
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const arrayBuffer = event.target.result;
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+      const validRows = [];
+      const errorList = [];
+      for (let i = 0; i < rows.length; i++) {
+        try {
+          const validated = await jobSchema.validate(rows[i], { abortEarly: false });
+          validRows.push(validated);
+        } catch (err) {
+          errorList.push({ row: i + 2, messages: err.errors });
         }
       }
-    }
-  };
-
-  const handleCancel = () => {
-    // Reset form and errors
-    setFormData({
-      bussiness_unit: '',
-      grade: '',
-      job_title: '',
-      budget: '',
-      job_start_date: '',
-      job_end_date: '',
-      required_hours: '',
-      interview_mode: '',
-      domain: '',
-      client: '',
-      priority: '',
-      location: '',
-      job_type: '',
-      age: '',
-      caste: '',
-      work_experience: '',
-      no_of_positions: '',
-      education_qualification: '',
-      relaxation_policy: ''
-    });
-    setErrors({});
-  };
-  const validateForm = () => {
-    const newErrors = {};
-  
-    if (!formData.bussiness_unit.trim()) newErrors.bussiness_unit = 'Business Unit is required';
-    if (!formData.grade.trim()) newErrors.grade = 'Please select a grade from the list';
-    if (!formData.job_title.trim()) newErrors.job_title = 'Please select a job title from the list';
-  
-    if (!formData.budget.trim()) newErrors.budget = 'Budget is required';
-    else if (!/^\d+(,\d+)?/.test(formData.budget)) newErrors.budget = 'Invalid budget format';
-  
-    if (!formData.job_start_date) newErrors.job_start_date = 'Start date is required';
-    if (!formData.job_end_date) {
-      newErrors.job_end_date = 'Job end date is required';
-    } else if (formData.job_start_date && formData.job_end_date < formData.job_start_date) {
-      newErrors.job_end_date = 'End date cannot be before start date';
-    }
-  
-    if (!formData.required_hours) newErrors.required_hours = 'Required hours is required';
-    else if (isNaN(formData.required_hours)) newErrors.required_hours = 'Must be a number';
-  
-    if (!formData.age.trim()) newErrors.age = 'Age is required';
-    else if (!/^\d{1,2}/.test(formData.age)) newErrors.age = 'Invalid age';
-  
-    // For dropdowns, show a user-friendly message if not selected
-    if (!formData.no_of_positions) newErrors.no_of_positions = 'Please select the number of positions from the list';
-    if (!formData.priority) newErrors.priority = 'Please select a priority from the list';
-    if (!formData.location) newErrors.location = 'Please select a location from the list';
-    if (!formData.job_type) newErrors.job_type = 'Please select a job type from the list';
-    if (!formData.caste) newErrors.caste = 'Please select a caste from the list';
-    if (!formData.work_experience) newErrors.work_experience = 'Please select work experience from the list';
-    if (!formData.education_qualification) newErrors.education_qualification = 'Please select an education qualification from the list';
-    if (!formData.relaxation_policy) newErrors.relaxation_policy = 'Please select a relaxation policy from the list';
-  
-    // For text fields
-    if (!formData.interview_mode) newErrors.interview_mode = 'Interview mode is required';
-    if (!formData.domain) newErrors.domain = 'Domain is required';
-    if (!formData.client) newErrors.client = 'Client is required';
-  
-    return newErrors;
+      setErrors(errorList);
+      const formattedData = convertKeysToSnakeCase(validRows);
+      setJsonData(formattedData);
+    };
+    reader.readAsArrayBuffer(file);
   };
   const handleUploadSubmit = async () => {
     if (files.length === 0) {
@@ -475,9 +271,7 @@ const convertKeysToSnakeCase = (dataArray) => {
       return;
     }
     try {
-      // Replace with your actual API endpoint if different
-      console.log('Posting JSON data11:', jsonData);
-      const response = await apiService.uploadJobExcel(jsonData);
+      // await apiService.uploadJobExcel(jsonData);
       toast.success("Excel data posted successfully!");
       setFiles([]);
       setJsonData([]);
@@ -487,522 +281,167 @@ const convertKeysToSnakeCase = (dataArray) => {
       console.error("Error posting Excel data:", error);
     }
   };
+
   return (
     <Container fluid className="py-5">
-    <Row className="justify-content-center">
-      <Col xs={12} md={10} lg={8}>
-        <div className="p-4">
-
-          {/* Toggle Buttons */}
-          <div className="mb-4 d-flex gap-3 align-items-center justify-content-center flex-wrap">
-            <div
-              onClick={() => setSelectedOption('upload')}
-              className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'upload' ? 'border border-2' : ''}`}
-              style={{
-                minWidth: '280px',
-                backgroundColor: '#FFFFFF',
-                border: '2px solid #FF7043',
-                cursor: 'pointer'
-              }}
-            >
-              <div className="position-relative me-3">
-                <div style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  backgroundColor: selectedOption === 'upload' ? '#FF7043' : '#FFFFFF',
-                  border: '2px solid #FF7043',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {selectedOption === 'upload' && (
-                    <FontAwesomeIcon icon={faCheck} style={{ fontSize: '12px', color: '#FFF' }} />
-                  )}
-                </div>
-              </div>
-              <span style={{
-                color: selectedOption === 'upload' ? '#212121' : '#757575',
-                fontWeight: selectedOption === 'upload' ? '600' : '400',
-                fontSize: '14px'
-              }}>
-                Upload Recruitment Request Document(s)
-              </span>
-            </div>
-
-            <div
-              onClick={() => setSelectedOption('direct')}
-              className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'direct' ? 'border border-2' : ''}`}
-              style={{
-                minWidth: '280px',
-                backgroundColor: '#FFFFFF',
-                border: '2px solid #FF7043',
-                cursor: 'pointer'
-              }}
-            >
-              <div className="position-relative me-3">
-                <div style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
-                  backgroundColor: selectedOption === 'direct' ? '#FF7043' : '#FFFFFF',
-                  border: '2px solid #FF7043',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {selectedOption === 'direct' && (
-                    <FontAwesomeIcon icon={faCheck} style={{ fontSize: '12px', color: '#FFF' }} />
-                  )}
-                </div>
-              </div>
-              <span style={{
-                color: selectedOption === 'direct' ? '#212121' : '#757575',
-                fontWeight: selectedOption === 'direct' ? '600' : '400',
-                fontSize: '14px'
-              }}>
-                Go to Job Requisition Form
-              </span>
-            </div>
-          </div>
-
-          {/* Upload Section */}
-          {selectedOption === 'upload' && (
-            <div className="upload-section">
-              <a href="/JobRequisitionTemplate.xlsx" download className="btn btn-outline-primary mb-3">
-                Export Excel Format
-              </a>
+      <Row className="justify-content-center">
+        <Col xs={12} md={10} lg={8}>
+          <div className="p-4">
+            {/* Toggle Buttons */}
+            <div className="mb-4 d-flex gap-3 align-items-center justify-content-center flex-wrap">
               <div
-                className="border rounded p-5 text-center mb-3"
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                onClick={() => setSelectedOption('upload')}
+                className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'upload' ? 'border border-2' : ''}`}
                 style={{
-                  borderStyle: 'dashed',
-                  backgroundColor: 'rgb(255, 231, 222)',
-                  cursor: 'pointer',
-                  minHeight: '200px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center'
+                  minWidth: '280px',
+                  backgroundColor: '#FFFFFF',
+                  border: '2px solid #FF7043',
+                  cursor: 'pointer'
                 }}
               >
-                <FontAwesomeIcon icon={faUpload} size="3x" className="mb-3 text-muted" />
-                <h5>Drag and drop your files here</h5>
-                <p className="text-muted">or click to browse files</p>
+                <div className="position-relative me-3">
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: selectedOption === 'upload' ? '#FF7043' : '#FFFFFF',
+                    border: '2px solid #FF7043',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {selectedOption === 'upload' && (<FontAwesomeIcon icon={faCheck} style={{ fontSize: '12px', color: '#FFF' }} />)}
+                  </div>
+                </div>
+                <span style={{
+                  color: selectedOption === 'upload' ? '#212121' : '#757575',
+                  fontWeight: selectedOption === 'upload' ? '600' : '400',
+                  fontSize: '14px'
+                }}>
+                  Upload Recruitment Request Document(s)
+                </span>
               </div>
-              {/* Hidden file input outside drop area */}
-              <Form.Control
-                type="file"
-                id="file-upload"
-                className="d-none"
-                onChange={handleFileChange}
-                ref={fileInputRef}
-              />
+              <div
+                onClick={() => setSelectedOption('direct')}
+                className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'direct' ? 'border border-2' : ''}`}
+                style={{
+                  minWidth: '280px',
+                  backgroundColor: '#FFFFFF',
+                  border: '2px solid #FF7043',
+                  cursor: 'pointer'
+                }}
+              >
+                <div className="position-relative me-3">
+                  <div style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    backgroundColor: selectedOption === 'direct' ? '#FF7043' : '#FFFFFF',
+                    border: '2px solid #FF7043',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {selectedOption === 'direct' && (<FontAwesomeIcon icon={faCheck} style={{ fontSize: '12px', color: '#FFF' }} />)}
+                  </div>
+                </div>
+                <span style={{
+                  color: selectedOption === 'direct' ? '#212121' : '#757575',
+                  fontWeight: selectedOption === 'direct' ? '600' : '400',
+                  fontSize: '14px'
+                }}>
+                  Go to Job Requisition Form
+                </span>
+              </div>
+            </div>
 
-              {errors.file && <small className="error d-block mb-2">{errors.file}</small>}
-
-              {files.length > 0 && (
-                <div className="mb-3">
-                  <h6>Selected Files:</h6>
-                  <ul className="list-unstyled">
-                    {files.map((file, index) => (
-                      <li key={index} className="d-flex align-items-center justify-content-between">
-                        <span><FontAwesomeIcon icon={faFileAlt} className="me-2 text-muted" /> {file.name}</span>
-                        <button className="btn btn-sm btn-danger ms-2" onClick={() => removeFile(index)}>✕</button>
+            {/* Upload Section */}
+            {selectedOption === 'upload' && (
+              <div className="upload-section">
+                <a href="/JobRequisitionTemplate.xlsx" download className="btn btn-outline-primary mb-3">
+                  Export Excel Format
+                </a>
+                <div
+                  className="border rounded p-5 text-center mb-3"
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                  style={{
+                    borderStyle: 'dashed',
+                    backgroundColor: 'rgb(255, 231, 222)',
+                    cursor: 'pointer',
+                    minHeight: '200px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <FontAwesomeIcon icon={faUpload} size="3x" className="mb-3 text-muted" />
+                  <h5>Drag and drop your files here</h5>
+                  <p className="text-muted">or click to browse files</p>
+                </div>
+                <Form.Control type="file" id="file-upload" className="d-none" onChange={handleFileChange} ref={fileInputRef} multiple />
+                {errors.file && <small className="error d-block mb-2">{errors.file}</small>}
+                {files.length > 0 && (
+                  <div className="mb-3">
+                    <h6>Selected Files:</h6>
+                    <ul className="list-unstyled">
+                      {files.map((file, index) => (
+                        <li key={index} className="d-flex align-items-center justify-content-between">
+                          <span><FontAwesomeIcon icon={faFileAlt} className="me-2 text-muted" /> {file.name}</span>
+                          <button className="btn btn-sm btn-danger ms-2" onClick={() => removeFile(index)}>✕</button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <Button 
+                  onClick={handleUploadSubmit}
+                  className="text-white fw-semibold"
+                  style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', minWidth: '250px' }}
+                >
+                  Submit
+                </Button>
+                {Array.isArray(errors) && errors.length > 0 && (
+                  <ul style={{ color: 'red', marginTop: '20px' }}>
+                    {errors.map((err, i) => (
+                      <li key={i}>
+                        Row {err.row}
+                        <ul>
+                          {err.messages.map((msg, j) => (<li key={j}>{msg}</li>))}
+                        </ul>
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
-
-              <Button 
-                onClick={handleUploadSubmit}
-                className="text-white fw-semibold"
-                style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', minWidth: '250px' }}
-              >
-                Submit
-              </Button>
-                    {/* <hr /> */}
-
-      {/* <h4>Validation Errors</h4> */}
-      {errors.length > 0 ? (
-        <ul style={{ color: 'red' }}>
-          {errors.map((err, i) => (
-            <li key={i}>
-              Row {err.row}
-              <ul>
-                {err.messages.map((msg, j) => (
-                  <li key={j}>{msg}</li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      ) : (
-         <p></p>
-      )}
-
-      {/*
-      <h4 className="mt-4">Valid JSON Output</h4>
-      {jsonData.length > 0 ? (
-        <pre>{JSON.stringify(jsonData, null, 2)}</pre>
-      ) : (
-        <p>No valid data yet</p>
-      )}
-      */}
-            </div>
-
-
-
-          )}
-
-          {/* Form Section */}
-          {selectedOption === 'direct' && (
-            <div className="form-section p-3 rounded-3" style={{ 
-              backgroundColor: '#fff', 
-              maxWidth: '1400px', 
-              margin: '0 auto',
-              boxShadow: '0 0 15px rgba(0,0,0,0.1)',
-              fontSize: '0.9rem'
-            }}>
-            <h4 className="text-center mb-3" style={{ fontSize: '1.25rem', color: '#FF7043' }}>Job Requisition Form</h4>
-            <form className="job-form row gx-3" onSubmit={handleSubmit} style={{ fontSize: '0.9rem' }}>
-              <div className="col-md-3">
-                {/* Business Unit */}
-                <div className="col-md-10 mb-2 ">
-                  <label htmlFor="bussiness_unit" className="form-label ">{fieldLabels[lang].bussiness_unit} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="bussiness_unit"
-                    name="bussiness_unit"
-                    className="form-select"
-                    value={formData.bussiness_unit}
-                    onChange={handleInputChange}
-                    disabled={businessUnitLoading}
-                  >
-                    <option value="">{businessUnitLoading ? 'Loading business units...' : 'Select Business Unit'}</option>
-                    {businessUnitOptions.map((option, idx) => (
-                      <option key={option.BusinessUnitID || idx} value={option.BusinessUnitName}>
-                        {option.BusinessUnitName}
-                      </option>
-                    ))}
-                  </select>
-                  {businessUnitError && <small className="error">{businessUnitError}</small>}
-                  {errors.bussiness_unit && <small className="error">{errors.bussiness_unit}</small>}
-                </div>
-          
-               
-              {/* Job Start Date */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="job_start_date" className="form-label">{fieldLabels[lang].job_start_date} <span className="required-asterisk">*</span></label>
-                  <input type="date" className="form-control" id="job_start_date" name="job_start_date" value={formData.job_start_date} onChange={handleInputChange} />
-                  {errors.job_start_date && <small className="error">{errors.job_start_date}</small>}
-                </div>
-          
-               
-          
-               
-          
-                {/* Domain */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="domain" className="form-label">{fieldLabels[lang].domain} <span className="required-asterisk">*</span></label>
-                  <input type="text" className="form-control" id="domain" name="domain" value={formData.domain} onChange={handleInputChange} />
-                  {errors.domain && <small className="error">{errors.domain}</small>}
-                </div>
-          
-               
-          
-                {/* Job Type */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="job_type" className="form-label">{fieldLabels[lang].job_type} <span className="required-asterisk">*</span></label>
-                  <select 
-                    id="job_type" 
-                    name="job_type" 
-                    className="form-select" 
-                    value={formData.job_type} 
-                    onChange={handleInputChange}
-                    disabled={jobTypeLoading}
-                  >
-                    <option value="">{jobTypeLoading ? 'Loading job types...' : 'Select Job Type'}</option>
-                    {jobTypeOptions.map((option, idx) => (
-                      <option key={option.JobTypeID || idx} value={option.JobTypeName}>
-                        {option.JobTypeName}
-                      </option>
-                    ))}
-                  </select>
-                  {jobTypeError && <small className="error">{jobTypeError}</small>}
-                  {errors.job_type && <small className="error">{errors.job_type}</small>}
-                </div>
-          
-                
-
-                {/* Number of Positions */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="no_of_positions" className="form-label">{fieldLabels[lang].no_of_positions} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="no_of_positions"
-                    name="no_of_positions"
-                    className="form-select"
-                    value={formData.no_of_positions}
-                    onChange={handleInputChange}
-                    disabled={noOfPositionsLoading}
-                  >
-                    <option value="">{noOfPositionsLoading ? 'Loading positions...' : 'Select No of Positions'}</option>
-                    {noOfPositionsOptions.map((option, idx) => (
-                      <option key={option.NoOfPositionsID || idx} value={option.NoOfPositionsValue}>
-                        {option.NoOfPositionsValue}
-                      </option>
-                    ))}
-                  </select>
-                  {noOfPositionsError && <small className="error">{noOfPositionsError}</small>}
-                  {errors.no_of_positions && <small className="error">{errors.no_of_positions}</small>}
-                </div>
-
-               
+                )}
               </div>
-              <div className="col-md-3" >
-               
-          
-                {/* Grade */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="grade" className="form-label">{fieldLabels[lang].grade} <span className="required-asterisk">*</span></label>
-                  <select id="grade" name="grade" className="form-select" value={formData.grade} onChange={handleInputChange} disabled={gradeLoading}>
-                    <option value="">{gradeLoading ? 'Loading grades...' : 'Select Grade'}</option>
-                    {gradeOptions.map((option, idx) => (
-                      <option key={option.JobGradeID || idx} value={option.JobGradeID}>{option.GradeName}</option>
-                    ))}
-                  </select>
-                  {gradeError && <small className="error">{gradeError}</small>}
-                  {errors.grade && <small className="error">{errors.grade}</small>}
-                </div>
-          
-              
-          
-                {/* Job End Date */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="job_end_date" className="form-label">{fieldLabels[lang].job_end_date} <span className="required-asterisk">*</span></label>
-                  <input type="date" className="form-control" id="job_end_date" name="job_end_date" value={formData.job_end_date} onChange={handleInputChange} />
-                  {errors.job_end_date && <small className="error">{errors.job_end_date}</small>}
-                </div>
-          
-               
-          
-                {/* Client */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="client" className="form-label">{fieldLabels[lang].client} <span className="required-asterisk">*</span></label>
-                  <input type="text" className="form-control" id="client" name="client" value={formData.client} onChange={handleInputChange} />
-                  {errors.client && <small className="error">{errors.client}</small>}
-                </div>
-          
-                
-                {/* Education Qualification */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="education_qualification" className="form-label">{fieldLabels[lang].education_qualification} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="education_qualification"
-                    name="education_qualification"
-                    className="form-select"
-                    value={formData.education_qualification}
-                    onChange={handleInputChange}
-                    disabled={educationQualificationLoading}
-                  >
-                    <option value="">{educationQualificationLoading ? 'Loading qualifications...' : 'Select Qualification'}</option>
-                    {educationQualificationOptions.map((option, idx) => (
-                      <option key={option.QualificationID || idx} value={option.QualificationName}>
-                        {option.QualificationName}
-                      </option>
-                    ))}
-                  </select>
-                  {educationQualificationError && <small className="error">{educationQualificationError}</small>}
-                  {errors.education_qualification && <small className="error">{errors.education_qualification}</small>}
-                </div>
-                 {/* Relaxation Policy */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="relaxation_policy" className="form-label">{fieldLabels[lang].relaxation_policy} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="relaxation_policy"
-                    name="relaxation_policy"
-                    className="form-select"
-                    value={formData.relaxation_policy}
-                    onChange={handleInputChange}
-                    disabled={relaxationPolicyLoading}
-                  >
-                    <option value="">{relaxationPolicyLoading ? 'Loading policies...' : 'Select Policy'}</option>
-                    {relaxationPolicyOptions.map((option, idx) => (
-                      <option key={option.policy_id || idx} value={option.RelaxationPolicyName}>
-                        {option.policy_name}
-                      </option>
-                    ))}
-                  </select>
-                  {relaxationPolicyError && <small className="error">{relaxationPolicyError}</small>}
-                  {errors.relaxation_policy && <small className="error">{errors.relaxation_policy}</small>}
-                </div>
+            )}
 
-               
-              </div>
-              <div className="col-md-3">
-               
-          
-                {/* Job Title */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="job_title" className="form-label">{fieldLabels[lang].job_title} <span className="required-asterisk">*</span></label>
-                  <select id="job_title" name="job_title" className="form-select" value={formData.job_title} onChange={handleInputChange} disabled={jobTitleLoading}>
-                    <option value="">{jobTitleLoading ? 'Loading job titles...' : 'Select Job Title'}</option>
-                    {jobTitleOptions.map((option, idx) => (
-                      <option key={option.JobTitleID || idx} value={option.JobTitleName}>{option.JobTitleName}</option>
-                    ))}
-                  </select>
-                  {jobTitleError && <small className="error">{jobTitleError}</small>}
-                  {errors.job_title && <small className="error">{errors.job_title}</small>}
-                </div>
-          
-               
-          
-                {/* Required Hours */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="required_hours" className="form-label">{fieldLabels[lang].required_hours} <span className="required-asterisk">*</span></label>
-                  <input type="text" className="form-control" id="required_hours" name="required_hours" value={formData.required_hours} onChange={handleInputChange} />
-                  {errors.required_hours && <small className="error">{errors.required_hours}</small>}
-                </div>
-          
-              
-          
-                {/* Priority */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="priority" className="form-label">{fieldLabels[lang].priority} <span className="required-asterisk">*</span></label>
-                  <select id="priority" name="priority" className="form-select" value={formData.priority} onChange={handleInputChange}>
-                    <option value="">Select Priority</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </select>
-                  {errors.priority && <small className="error">{errors.priority}</small>}
-                </div>
-          
-                {/* Caste */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="caste" className="form-label">{fieldLabels[lang].caste} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="caste"
-                    name="caste"
-                    className="form-select"
-                    value={formData.caste}
-                    onChange={handleInputChange}
-                    disabled={casteLoading}
-                  >
-                    <option value="">{casteLoading ? 'Loading castes...' : 'Select Caste'}</option>
-                    {casteOptions.map((option, idx) => (
-                      <option key={option.CasteID || idx} value={option.CasteName}>
-                        {option.CasteName}
-                      </option>
-                    ))}
-                  </select>
-                  {casteError && <small className="error">{casteError}</small>}
-                  {errors.caste && <small className="error">{errors.caste}</small>}
-                </div>
-          
-              
-               
-                
-              
-          
-                {/* Age */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="age" className="form-label">{fieldLabels[lang].age} <span className="required-asterisk">*</span></label>
-                  <input type="text" className="form-control" id="age" name="age" value={formData.age} onChange={handleInputChange} />
-                  {errors.age && <small className="error">{errors.age}</small>}
-                </div>
-          
-              </div>
-              <div className="col-md-3">
-               
-                {/* Budget */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="budget" className="form-label">{fieldLabels[lang].budget} <span className="required-asterisk">*</span></label>
-                  <input type="text" className="form-control" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} />
-                  {errors.budget && <small className="error">{errors.budget}</small>}
-                </div>
-          
-               
-          
-                {/* Interview Mode */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="interview_mode" className="form-label">{fieldLabels[lang].interview_mode} <span className="required-asterisk">*</span></label>
-                  <select id="interview_mode" name="interview_mode" className="form-select" value={formData.interview_mode} onChange={handleInputChange}>
-                    <option value="">Select Interview Mode</option>
-                    <option value="Online">Online</option>
-                    <option value="Offline">Offline</option>
-                  </select>
-                  {errors.interview_mode && <small className="error">{errors.interview_mode}</small>}
-                </div>
-          
-             
-          
-                {/* Location */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="location" className="form-label">{fieldLabels[lang].location} <span className="required-asterisk">*</span></label>
-                  <select 
-                    id="location" 
-                    name="location" 
-                    className="form-select" 
-                    value={formData.location} 
-                    onChange={handleInputChange}
-                    disabled={locationLoading}
-                  >
-                    <option value="">{locationLoading ? 'Loading locations...' : 'Select Location'}</option>
-                    {locationOptions.map((option, idx) => (
-                      <option key={option.LocationID || idx} value={option.LocationName}>
-                        {option.LocationName}
-                      </option>
-                    ))}
-                  </select>
-                  {locationError && <small className="error">{locationError}</small>}
-                  {errors.location && <small className="error">{errors.location}</small>}
-                </div>
-          
-               
-          
-                {/* Work Experience */}
-                <div className="col-md-10 mb-2">
-                  <label htmlFor="work_experience" className="form-label">{fieldLabels[lang].work_experience} <span className="required-asterisk">*</span></label>
-                  <select
-                    id="work_experience"
-                    name="work_experience"
-                    className="form-select"
-                    value={formData.work_experience}
-                    onChange={handleInputChange}
-                    disabled={workExperienceLoading}
-                  >
-                    <option value="">{workExperienceLoading ? 'Loading experience...' : 'Select Years of Exp'}</option>
-                    {workExperienceOptions.map((option, idx) => (
-                      <option key={option.WorkExperienceID || idx} value={option.WorkExperienceName}>
-                        {option.WorkExperienceName}
-                      </option>
-                    ))}
-                  </select>
-                  {workExperienceError && <small className="error">{workExperienceError}</small>}
-                  {errors.work_experience && <small className="error">{errors.work_experience}</small>}
-                </div>
-                
-              
-              </div>
-
-              <div className="d-flex justify-content-end mt-4 gap-3" style={{ fontSize: '0.9rem' }}>
-                <Button variant="outline-secondary" onClick={handleCancel}>Cancel</Button>
-                <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-                  Save
-                </Button>
-              </div>
-            </form>
+            {/* Form Section */}
+            {selectedOption === 'direct' && (
+              <JobRequisitionForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                handleCancel={handleCancel}
+                requisitionIdOptions={masterData.requisitionIdOptions}
+                departmentOptions={masterData.departmentOptions}
+                countryOptions={masterData.countryOptions}
+                stateOptions={masterData.stateOptions}
+                cityOptions={masterData.cityOptions}
+                locationOptions={masterData.locationOptions}
+                gradeIdOptions={masterData.gradeIdOptions}
+                employmentTypeOptions={masterData.employmentTypeOptions}
+                mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
+                preferredQualificationOptions={masterData.preferredQualificationOptions}
+              />
+            )}
           </div>
-          
-          )}
-
-        </div>
-      </Col>
-    </Row>
-  </Container>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
