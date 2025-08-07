@@ -53,5 +53,31 @@
 .editanddelete{
     cursor: pointer;
     color: #e65c00;
+}.text-orange {
+  color: #FF7043;
 }
 
+.requisition-form .form-label {
+  font-weight: 500;
+}
+/* Modal width */
+.wide-modal {
+  max-width: 900px;
+}
+
+/* Orange header text */
+.text-orange {
+  color: #FF7043;
+}
+
+/* Label styling */
+.requisition-form .form-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+.table-header-orange th {
+  color: #FF7043;
+  font-weight: 600;
+}

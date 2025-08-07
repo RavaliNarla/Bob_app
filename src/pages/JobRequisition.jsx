@@ -1,3 +1,4 @@
+// JobRequisition.js
 import React, { useState, useEffect } from "react";
 import {
   Modal,
@@ -6,7 +7,7 @@ import {
   Table,
   InputGroup,
   Row,
-  Col,
+  Col
 } from "react-bootstrap";
 import "../css/JobRequisition.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,264 +16,238 @@ import {
   faTrash,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import { apiService } from "../services/apiService";
+import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+const API_BASE = "http://192.168.20.111:8081/api";
 
 const JobRequisition = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentReq, setCurrentReq] = useState({
-    title: "",
-    description: "",
-    positions: "",
-    startDate: "",
-    endDate: "",
-    comments: "",
+    requisition_title: "",
+    requisition_description: "",
+    no_of_positions: "",
+    registration_start_date: "",
+    registration_end_date: "",
+    requisition_comments: "",
   });
   const [editIndex, setEditIndex] = useState(null);
-  // Toast state removed
   const [reqs, setReqs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errr, setErrr] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
   useEffect(() => {
-    const fetchRequistions = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const responseData = await apiService.getReqData();
-        if (responseData && Array.isArray(responseData.data)) {
-          setReqs(responseData.data);
-        } else {
-          setError("Failed to fetch job postings: Unexpected data format.");
-        }
-      } catch (err) {
-        if (err.response) {
-          setError(`Failed to fetch job postings: Server Error ${err.response.status}`);
-        } else if (err.request) {
-          setError("Failed to fetch job postings: No response from server.");
-        } else {
-          setError(`Failed to fetch job postings: ${err.message}`);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchRequistions();
+    fetchRequisitions();
   }, []);
 
-  const openModal = (
-    req = {
-      title: "",
-      description: "",
-      positions: "",
-      startDate: "",
-      endDate: "",
-      comments: "",
-    },
-    index = null
-  ) => {
-    setCurrentReq({
-      title: req.requisition_title || "",
-      description: req.requisition_description || "",
-      positions: req.no_of_positions || "",
-      startDate: req.requisition_start_date || "",
-      endDate: req.requisition_end_date || "",
-      comments: req.requisition_comments || "",
-    });
+  const fetchRequisitions = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${API_BASE}/getreq`);
+      setReqs(res.data.data);
+    } catch (err) {
+      setError("Failed to fetch requisitions.");
+      console.error("GET Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openModal = (req = currentReq, index = null) => {
+    setCurrentReq(req);
     setEditIndex(index);
     setShowModal(true);
   };
 
   const handleSave = () => {
-    if (
-      !currentReq.title ||
-      !currentReq.description ||
-      !currentReq.positions ||
-      !currentReq.startDate ||
-      !currentReq.endDate
+    const newErrors = {};
+
+    if (!currentReq.requisition_title?.trim()) {
+      newErrors.requisition_title = "Title is required";
+    }
+    if (!currentReq.requisition_description?.trim()) {
+      newErrors.requisition_description = "Description is required";
+    }
+    if (!currentReq.registration_start_date) {
+      newErrors.registration_start_date = "Start date is required";
+    }
+    if (!currentReq.registration_end_date) {
+      newErrors.registration_end_date = "End date is required";
+    } else if (
+      currentReq.registration_start_date &&
+      new Date(currentReq.registration_end_date) <= new Date(currentReq.registration_start_date)
     ) {
-      showToast("Please fill all required fields.", "warning");
-      return;
+      newErrors.registration_end_date = "End date must be after start date";
+    }
+    if (!currentReq.no_of_positions || currentReq.no_of_positions <= 0) {
+      newErrors.no_of_positions = "Enter a valid number";
     }
 
-    let updatedreqs = [...reqs];
-    const newReq = {
-      ...currentReq,
-      requisition_title: currentReq.title,
-      requisition_description: currentReq.description,
-      no_of_positions: currentReq.positions,
-      requisition_start_date: currentReq.startDate,
-      requisition_end_date: currentReq.endDate,
-      requisition_comments: currentReq.comments,
-    };
+    setErrr(newErrors);
 
-    if (editIndex !== null) {
-      updatedreqs[editIndex] = newReq;
-      showToast("Requisition updated successfully", "info");
-    } else {
-      updatedreqs.push({
-        ...newReq,
-        _id: Date.now().toString(),
-      });
-      showToast("Requisition added successfully", "success");
+    if (Object.keys(newErrors).length === 0) {
+      handleSaveCallback();
     }
-
-    setReqs(updatedreqs);
-    resetForm();
   };
 
-  const handleDelete = (index) => {
-    const updatedreqs = reqs.filter((_, i) => i !== index);
-    setReqs(updatedreqs);
-    showToast("Requisition deleted", "danger");
+  const handleSaveCallback = async () => {
+    try {
+      if (editIndex !== null) {
+        const updatedReq = {
+          ...currentReq,
+          requisition_id: reqs[editIndex].requisition_id,
+        };
+        await axios.put(`${API_BASE}/update_requisitions`, updatedReq);
+        toast.info("Requisition updated successfully");
+        const updatedReqs = [...reqs];
+        updatedReqs[editIndex] = updatedReq;
+        setReqs(updatedReqs);
+      } else {
+        await axios.post(`${API_BASE}/create_requisitions`, currentReq);
+        toast.success("Requisition added successfully");
+        fetchRequisitions();
+      }
+      resetForm();
+    } catch (err) {
+      toast.error("Save failed");
+    }
+  };
+
+  const handleDelete = async (index) => {
+    try {
+      const id = reqs[index]?.requisition_id;
+      await axios.delete(`${API_BASE}/delete_requisition/${id}`);
+      toast.error("Requisition deleted");
+      fetchRequisitions();
+    } catch (err) {
+      console.error("Delete Error:", err.response?.data || err.message);
+      toast.error("Delete failed");
+    }
   };
 
   const resetForm = () => {
     setShowModal(false);
     setCurrentReq({
-      title: "",
-      description: "",
-      positions: "",
-      startDate: "",
-      endDate: "",
-      comments: "",
+      requisition_title: "",
+      requisition_description: "",
+      no_of_positions: "",
+      registration_start_date: "",
+      registration_end_date: "",
+      requisition_comments: "",
     });
     setEditIndex(null);
+    setErrr({});
   };
 
-  const showToast = (message, variant) => {
-    alert(message);
-  };
-  
   const handleSort = (key) => {
-    let direction = 'asc';
-    if (sortConfig.key === key && sortConfig.direction === 'asc') {
-      direction = 'desc';
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
     }
     setSortConfig({ key, direction });
   };
-  
+
   const getSortIndicator = (key) => {
-    if (sortConfig.key !== key) {
-      return null;
-    }
-    return sortConfig.direction === 'asc' ? ' ▲' : ' ▼';
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === "asc" ? " ▲" : " ▼";
   };
 
   const filteredAndSortedJobs = () => {
     let sortableItems = [...reqs];
     if (searchTerm) {
       sortableItems = sortableItems.filter((job) =>
-        job.requisition_title.toLowerCase().includes(searchTerm.toLowerCase())
+        job.requisition_title?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
-
-        // Handle nested properties for sorting
-        if (sortConfig.key === 'title') {
-          aValue = a.requisition_title;
-          bValue = b.requisition_title;
-        } else if (sortConfig.key === 'description') {
-          aValue = a.requisition_description;
-          bValue = b.requisition_description;
-        } else if (sortConfig.key === 'positions') {
-          aValue = a.no_of_positions;
-          bValue = b.no_of_positions;
-        } else if (sortConfig.key === 'startDate') {
-          aValue = new Date(a.requisition_start_date);
-          bValue = new Date(b.requisition_start_date);
-        } else if (sortConfig.key === 'endDate') {
-          aValue = new Date(a.requisition_end_date);
-          bValue = new Date(b.requisition_end_date);
+        if (aValue == null || bValue == null) return 0;
+        if (sortConfig.key.includes("date")) {
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
         }
-
-        if (aValue < bValue) {
-          return sortConfig.direction === 'asc' ? -1 : 1;
-        }
-        if (aValue > bValue) {
-          return sortConfig.direction === 'asc' ? 1 : -1;
-        }
-        return 0;
+        return sortConfig.direction === "asc"
+          ? aValue > bValue
+            ? 1
+            : -1
+          : aValue < bValue
+          ? 1
+          : -1;
       });
     }
     return sortableItems;
   };
-  
+
   const jobsToDisplay = filteredAndSortedJobs();
 
   if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
-  return (
+   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Requisitions</h2>
-        <Button variant="orange" onClick={() => openModal()}>
-          + Add
-        </Button>
+        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
 
-      <div className="mb-3">
-        <InputGroup className="w-50">
-          <InputGroup.Text>
-            <FontAwesomeIcon icon={faSearch} />
-          </InputGroup.Text>
-          <Form.Control
-            placeholder="Search by title"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </InputGroup>
-      </div>
+      <InputGroup className="mb-3 w-50">
+        <InputGroup.Text>
+          <FontAwesomeIcon icon={faSearch} />
+        </InputGroup.Text>
+        <Form.Control
+          type="text"
+          placeholder="Search by title"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </InputGroup>
+
       <hr />
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No requisitions match your criteria.</p>
       ) : (
-        <Table responsive hover>
-          <thead>
-            <tr>
-              <th onClick={() => handleSort('title')} style={{cursor: 'pointer'}}>
-                Title{getSortIndicator('title')}
-              </th>
-              <th onClick={() => handleSort('description')} style={{cursor: 'pointer'}}>
-                Description{getSortIndicator('description')}
-              </th>
-              <th onClick={() => handleSort('positions')} style={{cursor: 'pointer'}}>
-                Positions{getSortIndicator('positions')}
-              </th>
-              <th onClick={() => handleSort('startDate')} style={{cursor: 'pointer'}}>
-                Start Date{getSortIndicator('startDate')}
-              </th>
-              <th onClick={() => handleSort('endDate')} style={{cursor: 'pointer'}}>
-                End Date{getSortIndicator('endDate')}
-              </th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+<Table responsive hover>
+  <thead className="table-header-orange">
+    <tr>
+      <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer" }}>
+        Title{getSortIndicator("requisition_title")}
+      </th>
+      <th onClick={() => handleSort("requisition_description")} style={{ cursor: "pointer" }}>
+        Description{getSortIndicator("requisition_description")}
+      </th>
+      <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer" }}>
+        Positions{getSortIndicator("no_of_positions")}
+      </th>
+      <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer" }}>
+        Start Date{getSortIndicator("registration_start_date")}
+      </th>
+      <th onClick={() => handleSort("registration_end_date")} style={{ cursor: "pointer" }}>
+        End Date{getSortIndicator("registration_end_date")}
+      </th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
           <tbody>
             {jobsToDisplay.map((job, index) => (
-              <tr key={job._id}>
+              <tr key={job.requisition_id || index}>
                 <td>{job.requisition_title}</td>
                 <td>{job.requisition_description}</td>
                 <td>{job.no_of_positions}</td>
-                <td>{job.requisition_start_date}</td>
-                <td>{job.requisition_end_date}</td>
+                <td>{job.registration_start_date}</td>
+                <td>{job.registration_end_date}</td>
                 <td>
-                  <FontAwesomeIcon
-                    icon={faPencil}
-                    className="text-info me-3 cursor-pointer"
-                    onClick={() => openModal(job, index)}
-                  />
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="text-danger cursor-pointer"
-                    onClick={() => handleDelete(index)}
-                  />
+                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(job, index)} />
+                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
                 </td>
               </tr>
             ))}
@@ -280,98 +255,157 @@ const JobRequisition = () => {
         </Table>
       )}
 
-      <Modal show={showModal} onHide={resetForm}>
-        <Modal.Header closeButton>
-          <Modal.Title>{editIndex !== null ? "Edit Requisition" : "Add Requisition"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form className="requisition-form">
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type="text"
-                    value={currentReq.title}
-                    onChange={(e) => setCurrentReq({ ...currentReq, title: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                <Form.Label>Description</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={2}
-                  value={currentReq.description}
-                  onChange={(e) => setCurrentReq({ ...currentReq, description: e.target.value })}
-                />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>End Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={currentReq.endDate}
-                    onChange={(e) => setCurrentReq({ ...currentReq, endDate: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Start Date</Form.Label>
-                  <Form.Control
-                    type="date"
-                    value={currentReq.startDate}
-                    onChange={(e) => setCurrentReq({ ...currentReq, startDate: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>No. of Positions</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={currentReq.positions}
-                    onChange={(e) => setCurrentReq({ ...currentReq, positions: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Comments</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={2}
-                    value={currentReq.comments}
-                    onChange={(e) => setCurrentReq({ ...currentReq, comments: e.target.value })}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          {/* <Button variant="secondary" onClick={resetForm}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            {editIndex !== null ? "Update" : "Save"}
-          </Button> */}
+<Modal
+  show={showModal}
+  onHide={resetForm}
+  centered
+  dialogClassName="wide-modal"
+>
+  <Modal.Header closeButton>
+    <Modal.Title className="fw-bold text-orange fs-4">
+      {editIndex !== null ? "Edit Requisition" : "Add Requisition"}
+    </Modal.Title>
+  </Modal.Header>
 
-          <Button variant="outline-secondary" onClick={resetForm}>Cancel</Button>
-                    <Button type="submit" className="text-white" onClick={handleSave} style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-                       {editIndex !== null ? "Update" : "Save"}
-                    </Button>
-        </Modal.Footer>
-      </Modal>
+  <Modal.Body>
+    <Form className="requisition-form">
+      <Row className="g-4">
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              Requisition Title <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter requisition title"
+              value={currentReq.requisition_title}
+              isInvalid={!!errr.requisition_title}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, requisition_title: e.target.value })
+              }
+            />
+            <Form.Control.Feedback type="invalid">
+              {errr.requisition_title}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
 
-      {/* Toast removed, using alert instead */}
+        <Col md={12}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              Description <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Enter description"
+              value={currentReq.requisition_description}
+              isInvalid={!!errr.requisition_description}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, requisition_description: e.target.value })
+              }
+            />
+            <Form.Control.Feedback type="invalid">
+              {errr.requisition_description}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              Start Date <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="date"
+              value={currentReq.registration_start_date}
+              isInvalid={!!errr.registration_start_date}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, registration_start_date: e.target.value })
+              }
+            />
+            <Form.Control.Feedback type="invalid">
+              {errr.registration_start_date}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              End Date <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="date"
+              value={currentReq.registration_end_date}
+              isInvalid={!!errr.registration_end_date}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, registration_end_date: e.target.value })
+              }
+            />
+            <Form.Control.Feedback type="invalid">
+              {errr.registration_end_date}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              Number of Positions <span className="text-danger">*</span>
+            </Form.Label>
+            <Form.Control
+              type="number"
+              min="1"
+              placeholder="e.g. 10"
+              value={currentReq.no_of_positions}
+              isInvalid={!!errr.no_of_positions}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, no_of_positions: e.target.value })
+              }
+            />
+            <Form.Control.Feedback type="invalid">
+              {errr.no_of_positions}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Col>
+
+        <Col md={6}>
+          <Form.Group>
+            <Form.Label className="form-label">
+              Comments <small className="text-muted">(Optional)</small>
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={2}
+              placeholder="Optional comments"
+              value={currentReq.requisition_comments}
+              onChange={(e) =>
+                setCurrentReq({ ...currentReq, requisition_comments: e.target.value })
+              }
+            />
+          </Form.Group>
+        </Col>
+      </Row>
+    </Form>
+  </Modal.Body>
+
+<Modal.Footer className="justify-content-end gap-2">
+    <Button variant="outline-secondary" onClick={resetForm}>
+      Cancel
+    </Button>
+    <Button
+      className="text-white"
+      onClick={handleSave}
+      style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
+    >
+      {editIndex !== null ? "Update Requisition" : "Save"}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+      {/* MODAL */}
+      {/* Keep your modal as already structured with errr validations */}
     </div>
   );
 };
