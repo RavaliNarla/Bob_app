@@ -79,7 +79,15 @@ export const apiService = {
   //   });
   // },
   uploadJobExcel: (data) => api.post('/jobcreationbulk', data), // Dummy POST endpoint
-  postJobRequisitions :(payload) => api.post("/requisitionpost", payload)
+  postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
+  getByRequisitionId: (requisition_id) =>
+    axios.get(`http://192.168.20.111:8081/api/getbyreq/${requisition_id}`, {
+      params: { requistion_id: requisition_id },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+      },
+    }),
 
 };
 

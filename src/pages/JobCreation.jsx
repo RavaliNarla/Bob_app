@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import { jobSchema } from './../components/validationSchema';
 
-const JobCreation = () => {
+const JobCreation = ({ editRequisitionId, isEditMode, onClose, editPositionId }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('direct');
@@ -131,6 +131,45 @@ const JobCreation = () => {
     };
     fetchAllMasterData();
   }, []);
+
+  useEffect(() => {
+    if (editRequisitionId) {
+      apiService.getByRequisitionId(editRequisitionId).then((response) => {
+        const allPositions = response.data || [];
+
+        // ✅ Pick the exact position using position_id
+        const selectedPosition = allPositions.find(
+          (item) => item.position_id === editPositionId
+        );
+
+        if (selectedPosition) {
+          setFormData({
+            requisition_id: selectedPosition.requisition_id || '',
+            position_title: selectedPosition.position_title || '',
+            department: selectedPosition.department || '',
+            country: selectedPosition.country || '',
+            state: selectedPosition.state || '',
+            city: selectedPosition.city || '',
+            location: selectedPosition.location || '',
+            description: selectedPosition.description || '',
+            roles_responsibilities: selectedPosition.roles_responsibilities || '',
+            grade_id: selectedPosition.grade_id || '',
+            employment_type: selectedPosition.employment_type || '',
+            eligibility_age_min: selectedPosition.eligibility_age_min || '',
+            eligibility_age_max: selectedPosition.eligibility_age_max || '',
+            mandatory_qualification: selectedPosition.mandatory_qualification || '',
+            preferred_qualification: selectedPosition.preferred_qualification || '',
+            mandatory_experience: selectedPosition.mandatory_experience || '',
+            preferred_experience: selectedPosition.preferred_experience || '',
+            probation_period: selectedPosition.probation_period || '',
+            documents_required: selectedPosition.document_required || '',
+            min_credit_score: selectedPosition.min_credit_score || ''
+          });
+        }
+      });
+    }
+  }, [editRequisitionId, editPositionId]);
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -283,15 +322,15 @@ const JobCreation = () => {
   };
 
   return (
-    <Container fluid className="py-5">
+    <Container fluid className="py-2">
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
           <div className="p-4">
             {/* Toggle Buttons */}
-            <div className="mb-4 d-flex gap-3 align-items-center justify-content-center flex-wrap">
+            <div className="mb-4 d-flex gap-3 align-items-center justify-content-center flex-wrap buttons_div">
               <div
                 onClick={() => setSelectedOption('upload')}
-                className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'upload' ? 'border border-2' : ''}`}
+                className={`px-3 py-2 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'upload' ? '' : ''}`}
                 style={{
                   minWidth: '280px',
                   backgroundColor: '#FFFFFF',
@@ -323,7 +362,7 @@ const JobCreation = () => {
               </div>
               <div
                 onClick={() => setSelectedOption('direct')}
-                className={`px-4 py-3 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'direct' ? 'border border-2' : ''}`}
+                className={`px-3 py-2 rounded-pill d-flex align-items-center justify-content-center ${selectedOption === 'direct' ? '' : ''}`}
                 style={{
                   minWidth: '280px',
                   backgroundColor: '#FFFFFF',

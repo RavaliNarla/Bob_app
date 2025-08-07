@@ -36,7 +36,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className="sidebar d-flex flex-column align-items-center bg-white pt-3"
+      className="sidebar d-flex flex-column align-items-center bg-white"
       style={{ width: '99px', borderRight: '1px solid #dee2e6', height: '100vh' }}
     >
       <Nav className="flex-column text-center w-100">
