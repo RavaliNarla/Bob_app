@@ -1,7 +1,7 @@
 import * as Yup from 'yup';
  
 export const jobSchema = Yup.object().shape({
-'Requisition ID': Yup.string().required('Requisition ID is required'),
+//'Requisition ID': Yup.string().required('Requisition ID is required'),
   'Position Title': Yup.string().required('Position Title is required'),
   'Department': Yup.string().required('Department is required'),
   'Country': Yup.string().required('Country is required'),

@@ -275,7 +275,7 @@ font-family: 'Poppins', sans-serif !important;
   padding-bottom: 0px !important;
 }
 
-.modal_container .modal-dialog .modal-content .modal-body .container-fluid div div .buttons_div {
+.modal_container .modal-dialog .modal-content .modal-body .container-fluid div div div .buttons_div {
   display: none !important;
 }
 /* ...existing code... */

@@ -103,11 +103,11 @@ export const apiService = {
   getReqData: () => api.get('/getreq'),
   getJobPost: () => api.get('/activejobs'),
   createRequisition: (data) => api.post('/create_requisitions', data),
-  uploadJobExcel: (data) => api.post('/jobcreationbulk', data),
-  postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
+  // uploadJobExcel: (data) => api.post('/jobcreationbulk', data),
+  // postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
      jobCreation: (data) => api.post('/create_positions',data),
   getMasterData: () => apis.get('/all'),
-  getMasterData: () => api.get('/getmasterdata'),
+  //getMasterData: () => api.get('/getmasterdata'),
   getJobPost: () => api.get('/activejobs'), // Dummy GET endpoint
    createRequisition: (data) => api.post('/create_requisitions', data),
   // uploadJobExcel: (file) => {
@@ -118,7 +118,7 @@ export const apiService = {
   //     headers: { 'Content-Type': 'multipart/form-data' }
   //   });
   // },
-  uploadJobExcel: (data) => api.post('/jobcreationbulk', data), // Dummy POST endpoint
+  uploadJobExcel: (data) => api.post('/create_Bulk_positions', data), // Dummy POST endpoint
   postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
   getByRequisitionId: (requisition_id) =>
     axios.get(`http://192.168.20.111:8081/api/getbyreq/${requisition_id}`, {
@@ -128,7 +128,7 @@ export const apiService = {
         Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
       },
     }),
-
+    updateJob: (data) => api.put('/update_positions', data),
 };
 
 export default apiService;

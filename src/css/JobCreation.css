@@ -1,0 +1,14 @@
+.formbackground{
+background:#fff;
+  
+}
+
+
+.uploadfile hover{
+    background:none !important;
+    color: #000 !important;
+}
+.downloadfile hover, .btn-outline-primary hover{
+    background:none !important;
+    color: #000 !important;
+}

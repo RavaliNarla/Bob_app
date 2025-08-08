@@ -22,12 +22,13 @@ const Sidebar = () => {
 
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
-    { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidates' },
-    { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
-    { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
-    { icon: faFileInvoiceDollar, text: 'Roll Offer', path: '/offers' },
-    { icon: faFileInvoiceDollar, text: 'Payments', path: '/payments' },
-    { icon: faCog, text: 'Relaxation Policy', path: '/policy' },
+    { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
+    // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
+    // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
+    // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
+    // { icon: faFileInvoiceDollar, text: 'Roll Offer', path: '/offers' },
+    // { icon: faFileInvoiceDollar, text: 'Payments', path: '/payments' },
+    // { icon: faCog, text: 'Relaxation Policy', path: '/policy' },
   ];
 
   const isActive = (path) => {

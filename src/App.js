@@ -1,22 +1,26 @@
 import React, { Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { Container, Row, Col, Spinner } from 'react-bootstrap';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import CandidateCard from './components/CandidateCard';
+import Tokenexp from './components/Tokenexp';
+import CandidatePortal from './components/CandidatePortal';
 // Lazy load components
-const Header = React.lazy(() => import('./components/Header'));
-const Sidebar = React.lazy(() => import('./components/Sidebar'));
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
 const JobRequisition = React.lazy(() => import('./pages/JobRequisition'));
+const Layout = React.lazy(() => import('./components/Layout'));
 // Loading component
 const Loading = () => (
   <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-    <Spinner animation="border" role="status">
+    <div className="spinner-border" role="status">
       <span className="visually-hidden">Loading...</span>
-    </Spinner>
+    </div>
   </div>
 );
 
@@ -53,27 +57,69 @@ function App() {
   return (
     <ErrorBoundary>
       <Suspense fallback={<Loading />}>
-        <div className="d-flex flex-column vh-100">
-          <Header />
-          <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden' }}>
-            <Sidebar />
-            <main className="flex-grow-1" style={{ overflowY: 'auto', background: '#eee' }}>
-              <Container fluid className="h-100">
-                <Row className="h-100">
-                  <Col className="p-0" style={{ borderRight: '1px solid #dee2e6' }}>
-                    <Routes>
-                      <Route path="/" element={<JobCreation />} />
-                      <Route path="/job-creation" element={<JobCreation />} />
-                      <Route path="/job-postings" element={<JobPosting />} />
-                      <Route path="/job-requisition" element={<JobRequisition />} />
-                    </Routes>
-                  </Col>
-                </Row>
-              </Container>
-            </main>
-          </div>
-          <ToastContainer position="top-right" autoClose={5000} />
-        </div>
+        {/* <Tokenexp> */}
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* Protected routes with layout */}
+            {/* <Route
+              path="/"
+              element={
+                <Layout>
+                  <JobCreation />
+                </Layout>
+              }
+            /> */}
+            <Route
+              path="/job-creation"
+              element={
+                <Layout>
+                  <JobCreation />
+                </Layout>
+              }
+            />
+            <Route
+              path="/job-postings"
+              element={
+                <Layout>
+                  <JobPosting />
+                </Layout>
+              }
+            />
+            <Route
+              path="/job-requisition"
+              element={
+                <Layout>
+                  <JobRequisition />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/candidate-shortlist"
+              element={
+                <Layout>
+                  <CandidateCard />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/candidate-portal"
+              element={
+                <Layout>
+                  <CandidatePortal />
+                </Layout>
+              }
+            />
+            {/* Redirect unknown routes */}
+            {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+          </Routes>
+        {/* </Tokenexp> */}
+        <ToastContainer position="top-right" autoClose={5000} />
       </Suspense>
     </ErrorBoundary>
   );

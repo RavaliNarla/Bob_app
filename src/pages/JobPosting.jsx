@@ -89,6 +89,7 @@ const JobPosting = () => {
   const [approvalStatus, setApprovalStatus] = useState("");
   const [activeKey, setActiveKey] = useState(null);
   const [reqs, setReqs] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const showToast = (message, variant) => {
     alert(message);
@@ -573,8 +574,8 @@ const JobPosting = () => {
               <Accordion.Body>
                 <Row>
                   <Col xs={12} className="text-muted">
-                    <Table responsive hover>
-                      <thead>
+                    <Table className="req_table" responsive hover>
+                      <thead className="table-header-orange">
                         <tr>
                           <th
                             onClick={() => handleSort("title")}
@@ -609,7 +610,7 @@ const JobPosting = () => {
                           <th>Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody className="table-body-orange">
                         {apiData.map((job, index) => (
                           <tr key={job.position_id || index}>
                             <td>{job.position_title}</td>
@@ -695,14 +696,14 @@ const JobPosting = () => {
           <div className="d-flex align-items-center mb-4">
             <span className="postingfont me-3">Approved Status</span>
             <Form.Select
-              value={selectedApproval}
+              value={approvalStatus}
               onChange={(e) => setApprovalStatus(e.target.value)}
               style={{ width: "auto", minWidth: "200px" }}
               className="ms-2"
             >
               <option value="">Select Status</option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
+              <option value="approved">Direct Approval</option>
+              <option value="workflow">Workflow</option>
             </Form.Select>
           </div>
         </>
@@ -726,7 +727,7 @@ const JobPosting = () => {
           <Modal.Title>{editIndex !== null ? "Edit Requisition" : "Add Requisition"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <JobCreation editRequisitionId={editRequisitionId} isEditMode={true} onClose={resetForm} editPositionId={editPositionId} />
+          <JobCreation editRequisitionId={editRequisitionId} showModal={showModal} onClose={() => setShowModal(false)} editPositionId={editPositionId} />
         </Modal.Body>
         {/* <Modal.Footer>
           <Button variant="outline-secondary" onClick={resetForm}>Cancel</Button>

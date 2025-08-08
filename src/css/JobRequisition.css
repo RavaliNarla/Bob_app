@@ -69,12 +69,29 @@
 }
 /* Label styling */
 .requisition-form .form-label {
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 6px;
   color: #333;
-  font-size: 0.95rem;
+  font-size: 14px;
 }
+
+.req_table {
+  margin-bottom: 0px !important;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+}
+
 .table-header-orange th {
   color: #FF7043;
   font-weight: 600;
+  padding: 12px !important;
+}
+
+.table-body-orange td {
+  padding: 12px !important;
+}
+
+.table-responsive {
+  border-radius: 10px !important;
 }

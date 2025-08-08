@@ -1,0 +1,154 @@
+.login-container {
+  display: flex;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Left panel - Orange background */
+.left-panel {
+  flex: 1;
+  background-color: #ff6a00;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  text-align: center;
+}
+
+.left-panel img {
+  width: 70%;
+  max-width: 400px;
+  margin-bottom: 30px;
+}
+
+.left-panel h2 {
+  font-size: 30px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.left-panel h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* Right panel - Form */
+.right-panel {
+  flex: 1;
+  background-color: #fff;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.logo img {
+  width: 60px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.logo h4 {
+  font-size: 18px;
+  color: #333;
+}
+
+/* Form Styling */
+.login_form {
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.login_form label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
+}
+
+.login_form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  outline: none;
+}
+
+.actions {
+  text-align: right;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.forgot-link {
+  font-size: 12px;
+  color: #666;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-button {
+  background-color: #ff6a00;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.divider {
+  text-align: center;
+  color: #999;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.google-button {
+  background-color: white;
+  color: #333;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.google-button img {
+  width: 18px;
+  height: 18px;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #ff6a00;
+  text-decoration: none;
+  font-weight: bold;
+}
+

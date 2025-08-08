@@ -28,14 +28,14 @@ const Header = () => {
         </div>
 
         <div className="d-flex align-items-center">
-          <Button variant="link" className="text-dark me-2">
+          <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faGlobe} size="lg" />
           </Button>
-          <Button variant="link" className="text-dark me-2">
+          <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
           </Button>
           <div className="d-flex align-items-center">
-            <FontAwesomeIcon icon={faUserCircle} className="text-dark" size="2x" />
+            <FontAwesomeIcon icon={faUserCircle} size="2x" style={{ color: '#fff' }} />
           </div>
         </div>
       </div>

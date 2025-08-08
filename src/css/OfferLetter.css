@@ -1,0 +1,112 @@
+/* General body styling inside modal */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for the whole letter component */
+.offer-letter-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow-y: auto;
+  max-height: 80vh;
+  box-sizing: border-box;
+}
+
+/* Input styling */
+.offer-letter-container input {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* Button styling */
+.offer-letter-container button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.offer-letter-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Output preview styling */
+.offer-preview {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.offer-preview p,
+.offer-preview ul,
+.offer-preview table {
+  margin-bottom: 15px;
+}
+
+.offer-preview h4 {
+  margin-top: 25px;
+  color: #333;
+}
+
+/* Table styling */
+.offer-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.offer-preview table th,
+.offer-preview table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: left;
+}
+
+.offer-preview table th {
+  background-color: #f2f2f2;
+}
+
+/* Signature section */
+.signature {
+  margin-top: 50px;
+}
+
+.signature p {
+  margin: 0;
+}
+
+/* Responsive inside modal */
+@media (max-width: 768px) {
+  .offer-letter-container {
+    padding: 15px;
+  }
+
+  .offer-letter-container input {
+    font-size: 14px;
+  }
+
+  .offer-preview table th,
+  .offer-preview table td {
+    padding: 8px;
+  }
+}

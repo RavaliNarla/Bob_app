@@ -183,16 +183,16 @@ const JobRequisition = () => {
   const jobsToDisplay = filteredAndSortedJobs();
  
   if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="alert alert-danger mt-5">{error}</div>;
+  if (error) return <div className="alert alert-danger mt-5 mx-3">{error}</div>;
    return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Requisitions</h2>
+        <h5>Requisitions</h5>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-      <InputGroup className="mb-3 w-50">
-        <InputGroup.Text>
-          <FontAwesomeIcon icon={faSearch} />
+      <InputGroup className="mb-3 w-50" >
+        <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+          <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
         </InputGroup.Text>
         <Form.Control
           type="text"
@@ -201,12 +201,12 @@ const JobRequisition = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
-      <hr />
+      {/* <hr /> */}
  
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No requisitions match your criteria.</p>
       ) : (
-<Table responsive hover>
+<Table className="req_table" responsive hover>
   <thead className="table-header-orange">
     <tr>
       <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer" }}>
@@ -228,7 +228,7 @@ const JobRequisition = () => {
     </tr>
   </thead>
 
-          <tbody>
+          <tbody className="table-body-orange">
             {jobsToDisplay.map((job, index) => (
               <tr key={job.requisition_id || index}>
                 <td>{job.requisition_title}</td>
@@ -237,8 +237,8 @@ const JobRequisition = () => {
                 <td>{job.registration_start_date}</td>
                 <td>{job.registration_end_date}</td>
                 <td>
-                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(job, index)} />
-                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
+                  <FontAwesomeIcon icon={faPencil} className="me-3 cursor-pointer" style={{ color: '#0d6dfdd3', cursor: 'pointer' }} onClick={() => openModal(job, index)} />
+                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" style={{ cursor: 'pointer' }} onClick={() => handleDelete(index)} />
                 </td>
               </tr>
             ))}
@@ -252,7 +252,7 @@ const JobRequisition = () => {
   dialogClassName="wide-modal"
 >
   <Modal.Header closeButton>
-    <Modal.Title className="fw-bold text-orange fs-4">
+    <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
       {editIndex !== null ? "Edit Requisition" : "Add Requisition"}
     </Modal.Title>
   </Modal.Header>
@@ -298,78 +298,82 @@ const JobRequisition = () => {
             </Form.Control.Feedback>
           </Form.Group>
         </Col>
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="form-label">
-              Start Date <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="date"
-              value={currentReq.registration_start_date}
-              isInvalid={!!errr.registration_start_date}
-              onChange={(e) =>
-                setCurrentReq({ ...currentReq, registration_start_date: e.target.value })
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {errr.registration_start_date}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="form-label">
-              End Date <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="date"
-              value={currentReq.registration_end_date}
-              isInvalid={!!errr.registration_end_date}
-              onChange={(e) =>
-                setCurrentReq({ ...currentReq, registration_end_date: e.target.value })
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {errr.registration_end_date}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="form-label">
-              Number of Positions <span className="text-danger">*</span>
-            </Form.Label>
-            <Form.Control
-              type="number"
-              min="1"
-              placeholder="e.g. 10"
-              value={currentReq.no_of_positions}
-              isInvalid={!!errr.no_of_positions}
-              onChange={(e) =>
-                setCurrentReq({ ...currentReq, no_of_positions: e.target.value })
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {errr.no_of_positions}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <Form.Group>
-            <Form.Label className="form-label">
-              Comments <small className="text-muted">(Optional)</small>
-            </Form.Label>
-            <Form.Control
-              as="textarea"
-              rows={2}
-              placeholder="Optional comments"
-              value={currentReq.requisition_comments}
-              onChange={(e) =>
-                setCurrentReq({ ...currentReq, requisition_comments: e.target.value })
-              }
-            />
-          </Form.Group>
-        </Col>
+        <div className="d-flex gap-1">
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="form-label">
+                Start Date <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                type="date"
+                value={currentReq.registration_start_date}
+                isInvalid={!!errr.registration_start_date}
+                onChange={(e) =>
+                  setCurrentReq({ ...currentReq, registration_start_date: e.target.value })
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                {errr.registration_start_date}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="form-label">
+                End Date <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                type="date"
+                value={currentReq.registration_end_date}
+                isInvalid={!!errr.registration_end_date}
+                onChange={(e) =>
+                  setCurrentReq({ ...currentReq, registration_end_date: e.target.value })
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                {errr.registration_end_date}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+        </div>
+        <div className="d-flex gap-1">
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="form-label">
+                Number of Positions <span className="text-danger">*</span>
+              </Form.Label>
+              <Form.Control
+                type="number"
+                min="1"
+                placeholder="e.g. 10"
+                value={currentReq.no_of_positions}
+                isInvalid={!!errr.no_of_positions}
+                onChange={(e) =>
+                  setCurrentReq({ ...currentReq, no_of_positions: e.target.value })
+                }
+              />
+              <Form.Control.Feedback type="invalid">
+                {errr.no_of_positions}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label className="form-label">
+                Comments <small className="text-muted">(Optional)</small>
+              </Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                placeholder="Optional comments"
+                value={currentReq.requisition_comments}
+                onChange={(e) =>
+                  setCurrentReq({ ...currentReq, requisition_comments: e.target.value })
+                }
+              />
+            </Form.Group>
+          </Col>
+        </div>
       </Row>
     </Form>
   </Modal.Body>
