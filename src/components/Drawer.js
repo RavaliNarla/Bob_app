@@ -185,7 +185,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                     className="rect-Profile"
                     style={{ width: "70px", height: "70px" }}
                   /> */}
-                  <img src={candidate.avatar} alt={candidate.firstname} className="candidate_image me-3" />
+                  <img src={candidate.avatar} alt={candidate.full_name} className="candidate_image me-3" />
                 </div>
                 <div>
                   <h5 className="mb-0">
@@ -194,7 +194,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                   <p className="text-muted mb-0 py-1">
                     {candidate?.location}
                   </p>
-                  <p className="text-muted mb-0">{candidate?.mobile_number}</p>
+                  <p className="text-muted mb-0">{candidate?.phone}</p>
                 </div>
                 <div className="px-3">
                   <Badge className="Active_round_pill">Active</Badge>
@@ -327,7 +327,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                               <Col md={6}>
                                 <div className="head-section">NAME</div>
                                 <p className="sum-data">
-                                  {candidate?.firstname}
+                                  {candidate?.full_name}
                                 </p>
                               </Col>
                               <Col md={6}>
@@ -347,7 +347,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                 <div className="head-section">CONTACT INFO</div>
                                 <p className="sum-data">
                                   {" "}
-                                  {candidate?.mobile_number}
+                                  {candidate?.phone}
                                 </p>
                               </Col>
                             </Row>
@@ -476,7 +476,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                     TOTAL EXPERIENCE
                                   </div>
                                   <p className="sum-data">
-                                    {candidate?.totalExperience}{" "}
+                                    {candidate?.total_experience}{" "}
                                   </p>
                                 </Col>
                               </Row>

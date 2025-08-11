@@ -82,19 +82,19 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
         <p style={{ textAlign: 'right' }}>Date: {today}</p>
         <p>
           To,<br />
-          {formData.candidateName}<br />
+          {formData.full_name}<br />
           {formData.address1}<br />
           {formData.address2}
         </p>
 
         <p><strong>Subject: Offer of Employment</strong></p>
-        <p>Dear {formData.candidateName},</p>
+        <p>Dear {formData.full_name},</p>
         <p>
-          We are pleased to offer you the position of {formData.jobTitle} at {formData.companyName}. Your expected date of joining will be {formData.joiningDate}. The terms and conditions of your employment are as follows:
+          We are pleased to offer you the position of {formData.position_title} at {formData.companyName}. Your expected date of joining will be {formData.joiningDate}. The terms and conditions of your employment are as follows:
         </p>
 
         <ul>
-          <li><strong>Job Title:</strong> {formData.jobTitle}</li>
+          <li><strong>Job Title:</strong> {formData.position_title}</li>
           <li><strong>Location:</strong> {formData.location}</li>
           <li><strong>Reporting To:</strong> {formData.reportingManager}</li>
           <li><strong>Gross Salary:</strong> {formData.grossAnnual}</li>
