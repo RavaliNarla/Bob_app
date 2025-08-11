@@ -341,7 +341,7 @@ const JobCreationForm = ({
 
         {/* Probation Period */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="probation_period" className="form-label">Probation Period <span className="required-asterisk">*</span></label>
+          <label htmlFor="probation_period" className="form-label">Probation Period(Months) <span className="required-asterisk">*</span></label>
           <input type="text" className="form-control" id="probation_period" name="probation_period" value={formData.probation_period} onChange={handleInputChange} />
           {errors.probation_period && <small className="error">{errors.probation_period}</small>}
         </div>
