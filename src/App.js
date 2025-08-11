@@ -116,7 +116,7 @@ function App() {
               }
             />
             {/* Redirect unknown routes */}
-            {/* <Route path="*" element={<Navigate to="/login" />} /> */}
+            <Route path="/" element={<Navigate to="/login" />} />
           </Routes>
         {/* </Tokenexp> */}
         <ToastContainer position="top-right" autoClose={5000} />

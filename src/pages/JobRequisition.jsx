@@ -185,7 +185,7 @@ const JobRequisition = () => {
   if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (error) return <div className="alert alert-danger mt-5 mx-3">{error}</div>;
    return (
-    <div className="container mt-5">
+    <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5>Requisitions</h5>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>

@@ -109,16 +109,16 @@
 
 /* Search bar styles */
 .search-container {
-  position: relative;
-  margin: 0 auto 1.5rem;
-  max-width: 500px;
-  width: 100%;
+  /* position: relative; */
+  /* margin: 0 auto 1.5rem; */
+  /* max-width: 500px; */
+  /* width: 100%; */
 }
 
 .search-input {
   border: 1px solid #dee2e6;
-  border-radius: 20px;
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border-radius: 10px;
+  padding: 0.25rem 0.5rem;
   font-size: 0.9rem;
   width: 100%;
   transition: all 0.2s ease;
@@ -277,5 +277,14 @@ font-family: 'Poppins', sans-serif !important;
 
 .modal_container .modal-dialog .modal-content .modal-body .container-fluid div div div .buttons_div {
   display: none !important;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #FF7043 !important;
+  /* color: #fff !important; */
+}
+
+.accordion-button:focus {
+  box-shadow: none !important;
 }
 /* ...existing code... */

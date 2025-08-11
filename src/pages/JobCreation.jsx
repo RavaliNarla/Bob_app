@@ -204,20 +204,44 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const validationErrors = validateForm();
+  //   if (Object.keys(validationErrors).length === 0) {
+  //     try {
+  //       console.log("formadata",formData)
+  //       const response = await apiService.jobCreation(formData);
+  //       console.log('✅ Valid form data:', formData);
+  //       console.log('✅ API response:', response);
+  //       toast.success('Job created successfully!');
+  //       setFormData(initialState);
+  //     } catch (error) {
+  //       console.error('❌ API error:', error);
+  //       toast.error('Failed to create job.');
+  //     }
+  //   } else {
+  //     setErrors(validationErrors);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length === 0) {
       try {
-        console.log("formadata",formData)
-        const response = await apiService.jobCreation(formData);
+        let response;
+        if (!showModal) {
+          response = await apiService.jobCreation(formData);
+        } else {
+          response = await apiService.updateJob(formData);
+        }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);
-        toast.success('Job created successfully!');
+        toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
         setFormData(initialState);
       } catch (error) {
         console.error('❌ API error:', error);
-        toast.error('Failed to create job.');
+        toast.error(showModal ? 'Failed to update job.' : 'Failed to create job.');
       }
     } else {
       setErrors(validationErrors);

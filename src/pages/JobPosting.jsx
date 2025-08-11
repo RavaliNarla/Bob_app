@@ -11,11 +11,12 @@ import {
   Alert,
   Accordion,
   Table,
-  Modal
+  Modal,
+  InputGroup
 } from "react-bootstrap";
 import "../css/JobPosting.css";
 import { apiService } from "../services/apiService";
-import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { useNavigate } from "react-router-dom";
@@ -388,9 +389,9 @@ const JobPosting = () => {
   return (
     <Container fluid className="p-4">
       {/* Title and Search Bar Row */}
-      <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+      <div className="row align-items-center justify-content-between mb-3 flex-wrap">
         {/* Title and Dropdown */}
-        <div className="d-flex align-items-center mb-2 mb-md-0">
+        <div className="col-md-6 d-flex align-items-center mb-2 mb-md-0">
           <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
             All Requisitions
           </h5>
@@ -410,17 +411,27 @@ const JobPosting = () => {
 
         {/* Search Box */}
         <div
-          className="search-container"
-          style={{ width: "100%", maxWidth: "400px" }}
+          className="col-md-6 search-container"
         >
-          <i className="fas fa-search search-icon"></i>
+          {/* <i className="fas fa-search search-icon"></i>
           <input
             type="text"
             className="search-input"
             placeholder="Search requisitions"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          /> */}
+          <InputGroup className="" >
+            <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+              <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+            </InputGroup.Text>
+            <Form.Control
+              type="text"
+              placeholder="Search requisitions"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </InputGroup>
         </div>
       </div>
       {/* <div className="search-container" style={{ width: '100%', maxWidth: '400px' }}>
@@ -536,6 +547,7 @@ const JobPosting = () => {
                     <Form.Check
                       type="checkbox"
                       className="form-check-orange me-2"
+                      onClick={(e) => e.stopPropagation()}
                     />
                     <span className="job-title fw-semibold text-dark">
                       {job.requisition_code}
@@ -551,7 +563,7 @@ const JobPosting = () => {
                   </Col>
 
                   <Col xs={6} md={2} className="job-detail">
-                    Start Date: {job.requisition_status}
+                    Status: {job.requisition_status}
                   </Col>
 
                   {/* <Col xs={6} md={2} className="d-flex justify-content-end align-items-center">
