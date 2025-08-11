@@ -28,11 +28,11 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
   const initialState = {
     requisition_id: '',
     position_title: '',
-    department: '',
-    country: '',
-    state: '',
-    city: '',
-    location: '',
+    dept_id: 1,
+    country_id: '',
+    state_id: '',
+    city_id: '',
+    location_id: '',
     description: '',
     roles_responsibilities: '',
     grade_id: '',
@@ -48,6 +48,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     min_credit_score: '',
     no_of_vacancies: '',
     selection_procedure: '',
+    special_cat_id: '0',
+    reservation_cat_id:'0',
+    position_status:'submitted'
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -218,10 +221,10 @@ const handleInputChange = (e) => {
   const { name, value } = e.target;
   setFormData((prev) => ({ ...prev, [name]: value }));
 
-  if (name === "country") {
+  if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 
-    
+    console.log('Selected country ID:', countryId);
     if (countryId) {
       // Filter states based on the countryId
       const states = masterData.allStates.filter(
@@ -236,14 +239,14 @@ const handleInputChange = (e) => {
     // Reset subsequent form fields and dropdowns
     setFormData((prev) => ({
       ...prev,
-      state: "",
-      city: "",
-      location: "",
+      state_id: "",
+      city_id: "",
+      location_id: "",
     }));
     setFilteredCities([]);
     setFilteredLocations([]);
 
-  } else if (name === "state") {
+  } else if (name === "state_id") {
     // Convert the value to a number since IDs are numbers
     const stateId = Number(value); 
 
@@ -260,12 +263,12 @@ const handleInputChange = (e) => {
     // Reset subsequent form fields and dropdowns
     setFormData((prev) => ({
       ...prev,
-      city: "",
-      location: "",
+      city_id: "",
+      location_id: "",
     }));
     setFilteredLocations([]);
 
-  } else if (name === "city") {
+  } else if (name === "city_id") {
     // Convert the value to a number since IDs are numbers
     const cityId = Number(value);
 
@@ -282,7 +285,7 @@ const handleInputChange = (e) => {
     // Reset the final form field
     setFormData((prev) => ({
       ...prev,
-      location: "",
+      location_id: "",
     }));
   }
 };
@@ -322,11 +325,11 @@ const handleInputChange = (e) => {
     const newErrors = {};
     if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
     if (!formData.position_title.trim()) newErrors.position_title = 'Position Title is required';
-    if (!formData.department) newErrors.department = 'Department is required';
-    if (!formData.country) newErrors.country = 'Country is required';
-    if (!formData.state) newErrors.state = 'State is required';
-    if (!formData.city) newErrors.city = 'City is required';
-    if (!formData.location) newErrors.location = 'Location is required';
+    if (!formData.dept_id) newErrors.dept_id = 'Department is required';
+    if (!formData.country_id) newErrors.country_id = 'Country is required';
+    if (!formData.state_id) newErrors.state_id = 'State is required';
+    if (!formData.city_id) newErrors.city_id = 'City is required';
+    if (!formData.location_id) newErrors.location_id = 'Location is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.roles_responsibilities.trim()) newErrors.roles_responsibilities = 'Roles & Responsibilities are required';
     if (!formData.grade_id) newErrors.grade_id = 'Grade ID is required';

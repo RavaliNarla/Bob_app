@@ -123,14 +123,14 @@ const JobCreationForm = ({
           <label htmlFor="department" className="form-label">Department <span className="required-asterisk">*</span></label>
           <select
             id="department"
-            name="department"
+            name="dept_id"
             className="form-select"
-            value={formData.department}
-            onChange={handleInputChange}
+            value={formData.dept_id}
+            //onChange={handleInputChange}
           >
             <option value="">Select Department</option>
             {departmentOptions.map(option => (
-              <option key={option.department_id || option.department_name} value={option.department_name}>{option.department_name}</option>
+              <option key={option.department_id || option.department_name} value={option.dept_id}>{option.department_name}</option>
             ))}
           </select>
           {errors.department && <small className="error">{errors.department}</small>}
@@ -141,9 +141,9 @@ const JobCreationForm = ({
           <label htmlFor="country" className="form-label">Country <span className="required-asterisk">*</span></label>
           <select
             id="country"
-            name="country"
+            name="country_id"
             className="form-select"
-            value={formData.country}
+            value={formData.country_id}
             onChange={handleInputChange}
           >
             <option value="">Select Country</option>
@@ -159,9 +159,9 @@ const JobCreationForm = ({
           <label htmlFor="state" className="form-label">State <span className="required-asterisk">*</span></label>
           <select
             id="state"
-            name="state"
+            name="state_id"
             className="form-select"
-            value={formData.state}
+            value={formData.state_id}
             onChange={handleInputChange}
           >
             <option value="">Select State</option>
@@ -175,7 +175,7 @@ const JobCreationForm = ({
         {/* City */}
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="city" className="form-label">City <span className="required-asterisk">*</span></label>
-          <select id="city" name="city" className="form-select" value={formData.city} onChange={handleInputChange}>
+          <select id="city" name="city_id" className="form-select" value={formData.city_id} onChange={handleInputChange}>
             <option value="">Select City</option>
             {cityOptions.map(option => (
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
@@ -189,9 +189,9 @@ const JobCreationForm = ({
           <label htmlFor="location" className="form-label">Location <span className="required-asterisk">*</span></label>
           <select
             id="location"
-            name="location"
+            name="location_id"
             className="form-select"
-            value={formData.location}
+            value={formData.location_id}
             onChange={handleInputChange}
           >
             <option value="">Select Location</option>
