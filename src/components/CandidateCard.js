@@ -12,181 +12,29 @@ import {
 import Drawer from "./Drawer";
 import InterviewModal from "./InterviewModal";
 import OfferModal from "./OfferModal";
-import { getJobRequirements } from "../services/getJobRequirements";
-
-const staticCandidates = [
-    {
-        applicant_id: 1,
-        firstname: "Kunal Rampal",
-        location: "Hyderabad, India",
-        mobile_number: "97548 96215",
-        rating: "5.0",
-        avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-        skillsMatched: 10,
-        totalSkills: 13,
-        description: "10 out of 13 skills matched. This profile may be a Best fit.",
-        skills: "AWS, Java, Kafka, Spring Boot, Microservices, Docker, Kubernetes, SQL, REST, Git",
-        jobTitles: "Software Developer Recruitment",
-        email: "kunalrampal@gmail.com",
-        address: "H.No. 38-57/1/J2, Neredmet, Hyderabad, India - 5000 057",
-        currentJobTitle: "Full-Stack Developer",
-        totalExperience: "5.2 Years",
-        currentCTC: "15 Lakh PA",
-        expectedCTC: "20 Lakh PA",
-        currentCompany: "Sagarsift India Ltd",
-        companyLocation: "Hyderabad, India",
-        postGraduation: "MCA",
-        postGraduationUniversity: "Andhra University",
-        postGraduationGrade: "9.0",
-        postGraduationYear: "2024-25",
-        graduation: "B.Sc - Computers",
-        graduationUniversity: "Osmania University",
-        graduationGrade: "7.5",
-        graduationYear: "2017-20",
-        profileStatus: "Shortlisted",
-    },
-    {
-        applicant_id: 2,
-        firstname: "Akhil kumar",
-        location: "Chennai, India",
-        mobile_number: "88978 21546",
-        rating: "5.0",
-        avatar: "https://randomuser.me/api/portraits/men/33.jpg",
-        skillsMatched: 10,
-        totalSkills: 13,
-        description: "10 out of 13 skills matched. This profile may be a Best fit.",
-        skills: "AWS, Java, Kafka, Spring Boot, Microservices, Docker, Kubernetes, SQL, REST, Git",
-        jobTitles: "Software Developer Recruitment",
-        email: "akhilkumar@gmail.com",
-        address: "123, Anna Salai, Chennai, India - 600001",
-        currentJobTitle: "Software Engineer",
-        totalExperience: "3.5 Years",
-        currentCTC: "12 Lakh PA",
-        expectedCTC: "18 Lakh PA",
-        currentCompany: "Tech Solutions Pvt. Ltd.",
-        companyLocation: "Chennai, India",
-        postGraduation: "M.Tech - Computer Science",
-        postGraduationUniversity: "IIT Madras",
-        postGraduationGrade: "8.5",
-        postGraduationYear: "2022-23",
-        graduation: "B.E. - Information Technology",
-        graduationUniversity: "Anna University",
-        graduationGrade: "8.2",
-        graduationYear: "2018-22",
-        profileStatus: "Shortlisted",
-    },
-    {
-        applicant_id: 3,
-        firstname: "Tamil Selvan",
-        location: "Mumbai, India",
-        mobile_number: "99785 12768",
-        rating: "4.9",
-        avatar: "https://randomuser.me/api/portraits/men/34.jpg",
-        skillsMatched: 9,
-        totalSkills: 13,
-        description: "9 out of 13 skills matched. This profile may be a good fit.",
-        skills: "Java, Kafka, Spring Boot, Microservices, Docker, Kubernetes, SQL, REST, Git",
-        jobTitles: "Machine Learning Engineer",
-        email: "tamils@gmail.com",
-        address: "45, Marine Drive, Mumbai, India - 400002",
-        currentJobTitle: "Lead Developer",
-        totalExperience: "8 Years",
-        currentCTC: "20 Lakh PA",
-        expectedCTC: "25 Lakh PA",
-        currentCompany: "Mumbai Enterprises",
-        companyLocation: "Mumbai, India",
-        postGraduation: "M.Sc - Software Engineering",
-        postGraduationUniversity: "University of Mumbai",
-        postGraduationGrade: "9.1",
-        postGraduationYear: "2015-17",
-        graduation: "B.Tech - Computer Engineering",
-        graduationUniversity: "University of Mumbai",
-        graduationGrade: "8.8",
-        graduationYear: "2011-15",
-        profileStatus: "Shortlisted",
-    },
-    {
-        applicant_id: 4,
-        firstname: "Piyush Mishra",
-        location: "Pune, India",
-        mobile_number: "81978 24758",
-        rating: "4.8",
-        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-        skillsMatched: 9,
-        totalSkills: 13,
-        description: "9 out of 13 skills matched. This profile may be a good fit.",
-        skills: "Java, Kafka, Spring Boot, Microservices, Docker, Kubernetes, SQL, REST",
-        jobTitles: "Software Developer Recruitment",
-        email: "piyushm@gmail.com",
-        address: "78, Koregaon Park, Pune, India - 411001",
-        currentJobTitle: "Sr. Software Engineer",
-        totalExperience: "6.5 Years",
-        currentCTC: "18 Lakh PA",
-        expectedCTC: "22 Lakh PA",
-        currentCompany: "Pune Innovations",
-        companyLocation: "Pune, India",
-        postGraduation: "M.E. - Information Technology",
-        postGraduationUniversity: "Pune University",
-        postGraduationGrade: "8.7",
-        postGraduationYear: "2018-20",
-        graduation: "B.E. - Computer Science",
-        graduationUniversity: "Pune University",
-        graduationGrade: "8.5",
-        graduationYear: "2014-18",
-        profileStatus: "Shortlisted",
-    },
-    {
-        applicant_id: 5,
-        firstname: "Nitesh Jha",
-        location: "Bangalore, India",
-        mobile_number: "77319 45578",
-        rating: "4.7",
-        avatar: "https://randomuser.me/api/portraits/men/35.jpg",
-        skillsMatched: 8,
-        totalSkills: 13,
-        description: "8 out of 13 skills matched. This profile may be a good fit.",
-        skills: "Java, Kafka, Spring Boot, Microservices, Docker, Kubernetes, SQL",
-        jobTitles: "UI/UX Designer",
-        email: "niteshjha@gmail.com",
-        address: "10, Koramangala, Bangalore, India - 560034",
-        currentJobTitle: "Software Developer",
-        totalExperience: "4 Years",
-        currentCTC: "14 Lakh PA",
-        expectedCTC: "19 Lakh PA",
-        currentCompany: "Bangalore Tech Hub",
-        companyLocation: "Bangalore, India",
-        postGraduation: "M.Tech - AI & ML",
-        postGraduationUniversity: "Indian Institute of Science",
-        postGraduationGrade: "9.2",
-        postGraduationYear: "2021-22",
-        graduation: "B.Tech - Electronics and Communication",
-        graduationUniversity: "Visvesvaraya Technological University",
-        graduationGrade: "8.9",
-        graduationYear: "2017-21",
-        profileStatus: "Shortlisted",
-    },
-];
+import { getJobRequirements, getJobPositions, getCandidatesByPosition } from "../services/getJobRequirements";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
-    const [resumeEndorsed, setResumeEndorsed] = useState([]);
     const [interviewed, setInterviewed] = useState([]);
     const [offered, setOffered] = useState([]);
     const location = useLocation();
     const responseData = location?.state?.responseData || {};
     const [isDescending, setIsDescending] = useState({
         candidates: true,
-        resumeEndorsed: null,
         interviewed: null,
         offered: null
     });
-    const [search, setSearch] = useState();
+    const [search, setSearch] = useState("");
     const [selectedCandidate, setSelectedCandidate] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
 
     const [jobReqs, setJobReqs] = useState([]);
-    const [selectedRequisitionCode, setSelectedRequisitionCode] = useState("Select All");
-    const [selectedRequisitionTitle, setSelectedRequisitionTitle] = useState(""); // Change to an empty string
+    const [jobPositions, setJobPositions] = useState([]);
+    const [selectedRequisitionCode, setSelectedRequisitionCode] = useState("");
+    const [selectedPositionId, setSelectedPositionId] = useState("");
+    const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
+    const [jobPositionTitle, setJobPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -194,77 +42,95 @@ const CandidateCard = () => {
     const [interviewTime, setInterviewTime] = useState("");
     const [showOfferModal, setShowOfferModal] = useState(false);
     const [offerCandidate, setOfferCandidate] = useState(null);
-    const [jobPosition, setJobPosition] = useState("");
     const [reqId, setReqId] = useState("");
+    const [positionId, setPositionId] = useState("");
     const [salary, setSalary] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const showToast = (message, variant) => {
+        alert(message);
+    };
 
     useEffect(() => {
         const fetchJobData = async () => {
             const response = await getJobRequirements();
             const data = response?.data || [];
-            if (data && data.length > 0) {
-                // Add "Select All" to job requisitions
-                const allJobReqs = [{ requisition_code: "Select All", requisition_title: "Select All" }, ...data];
-                setJobReqs(allJobReqs);
-                setSelectedRequisitionCode(allJobReqs[0].requisition_code);
-                // No need to set the title here, let the user select it
-            }
+            setJobReqs(data);
         };
         fetchJobData();
     }, []);
 
     useEffect(() => {
-        // Only filter candidates if a specific requisition title is selected
-        if (selectedRequisitionTitle && selectedRequisitionTitle !== "Select All") {
-            const filteredCandidates = staticCandidates.filter(candidate => candidate.jobTitles === selectedRequisitionTitle);
-            setCandidates(filteredCandidates);
-        } else {
-            // If "Select All" is selected in either dropdown, show no candidates
-            setCandidates([]);
-        }
-    }, [selectedRequisitionTitle]);
+        const fetchPositions = async () => {
+            if (selectedRequisitionId) {
+                const positions = await getJobPositions(selectedRequisitionId);
+                setJobPositions(positions);
+                setSelectedPositionId("");
+                setCandidates([]);
+            }
+        };
+        fetchPositions();
+    }, [selectedRequisitionId]);
+
+    useEffect(() => {
+        const fetchCandidates = async () => {
+            console.log("Fetching candidates for position ID:", selectedPositionId);
+            if (selectedPositionId) {
+                const fetchedCandidates = await getCandidatesByPosition(selectedPositionId);
+                console.log("Fetched candidates:", fetchedCandidates);
+                if (fetchedCandidates && fetchedCandidates.length > 0) {
+                    setCandidates(fetchedCandidates);
+                } else {
+                    setCandidates([]);
+                }
+            } else {
+                setCandidates([]);
+            }
+        };
+        fetchCandidates();
+    }, [selectedPositionId]);
 
     const calculateRatings = (candidates, skills) => {
-        return (
-            candidates.map(candidate => {
-                const skillsLowerCase = candidate?.skills.split(',').map(item => item.toLowerCase());
-                const matchedSkills = skills.filter(skill => skillsLowerCase.includes(skill));
-                let rating, ratingDescription;
+        return candidates.map(candidate => {
+            if (!candidate || !candidate.skills) {
+                return { ...candidate, rating: '0.0', ratingDescription: 'No skills provided.' };
+            }
+            const skillsLowerCase = candidate.skills.split(',').map(item => item.toLowerCase().trim());
+            const matchedSkills = skills.filter(skill => skillsLowerCase.includes(skill));
+            let rating, ratingDescription;
 
-                switch (true) {
-                    case matchedSkills.length > 5:
-                        rating = '5.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be the best fit.`;
-                        break;
-                    case matchedSkills.length === 4:
-                        rating = '4.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a good fit.`;
-                        break;
-                    case matchedSkills.length === 3:
-                        rating = '3.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be an average fit.`;
-                        break;
-                    case matchedSkills.length === 2:
-                        rating = '2.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a below average fit.`;
-                        break;
-                    case matchedSkills.length === 1:
-                        rating = '1.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a bad fit.`;
-                        break;
-                    default:
-                        rating = '0.0';
-                        ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a very bad fit.`;
-                        break;
-                }
-
-                return { ...candidate, rating, ratingDescription };
-            }));
+            switch (true) {
+                case matchedSkills.length > 5:
+                    rating = '5.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be the best fit.`;
+                    break;
+                case matchedSkills.length === 4:
+                    rating = '4.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a good fit.`;
+                    break;
+                case matchedSkills.length === 3:
+                    rating = '3.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be an average fit.`;
+                    break;
+                case matchedSkills.length === 2:
+                    rating = '2.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a below average fit.`;
+                    break;
+                case matchedSkills.length === 1:
+                    rating = '1.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a bad fit.`;
+                    break;
+                default:
+                    rating = '0.0';
+                    ratingDescription = `${matchedSkills.length} out of ${skillsLowerCase.length} skills matched. This profile may be a very bad fit.`;
+                    break;
+            }
+            return { ...candidate, rating, ratingDescription };
+        });
     };
 
-    const jdSkillsLowerCase = responseData[0]?.Skills.map(item => item.toLowerCase()) || [];
+    const jdSkillsLowerCase = responseData[0]?.Skills?.map(item => item.toLowerCase()) || [];
     const ratedCandidates = calculateRatings(candidates, jdSkillsLowerCase);
-    const ratedResumeEndorsed = calculateRatings(resumeEndorsed, jdSkillsLowerCase);
     const ratedOffered = calculateRatings(offered, jdSkillsLowerCase);
     const ratedInterviewed = calculateRatings(interviewed, jdSkillsLowerCase);
 
@@ -276,28 +142,27 @@ const CandidateCard = () => {
 
     const handleJobReqChange = (event) => {
         const newRequisitionCode = event.target.value;
+        const selectedReq = jobReqs.find(req => req.requisition_code === newRequisitionCode);
         setSelectedRequisitionCode(newRequisitionCode);
-        
-        // Reset the second dropdown's value to "Select All" when the first one changes
-        setSelectedRequisitionTitle("Select All");
+        setSelectedRequisitionId(selectedReq ? selectedReq.requisition_id : "");
+        setSelectedPositionId("");
+        setJobPositionTitle("");
+        setCandidates([]);
+        setInterviewed([]);
+        setOffered([]);
     };
 
     const handleJobPositionChange = (event) => {
-        const newRequisitionTitle = event.target.value;
-        setSelectedRequisitionTitle(newRequisitionTitle);
+        const newPositionId = event.target.value;
+        const selectedPosition = jobPositions.find(pos => pos.position_id === newPositionId);
+        setSelectedPositionId(newPositionId);
+        setJobPositionTitle(selectedPosition.position_title);
     };
 
     const toggleCandidateSortOrder = () => {
         setIsDescending((prevState) => ({
             ...prevState,
             candidates: !prevState.candidates
-        }));
-    };
-
-    const toggleResumeEndorsedSortOrder = () => {
-        setIsDescending((prevState) => ({
-            ...prevState,
-            resumeEndorsed: prevState.resumeEndorsed === null ? true : !prevState.resumeEndorsed,
         }));
     };
 
@@ -317,68 +182,192 @@ const CandidateCard = () => {
 
     const handleOnDragEnd = (result) => {
         const { source, destination } = result;
-        if (!destination) return;
+
+        if (!destination) {
+            return;
+        }
+
+        // This part handles reordering within the same list
+        if (source.droppableId === destination.droppableId) {
+            const listMap = {
+                candidates: [candidates, setCandidates],
+                interviewed: [interviewed, setInterviewed],
+                offered: [offered, setOffered],
+            };
+            const [list, setList] = listMap[source.droppableId];
+            const updatedList = Array.from(list);
+            const [movedItem] = updatedList.splice(source.index, 1);
+            updatedList.splice(destination.index, 0, movedItem);
+            setList(updatedList);
+            return;
+        }
+
+        // Disallowed moves
+        const disallowedMoves = [
+            ['offered', 'interviewed'],
+            ['offered', 'candidates'],
+            ['interviewed', 'candidates'],
+            ['candidates', 'offered'] // Prevent direct drag from candidates to offered
+        ];
+        if (disallowedMoves.some(([src, dest]) => src === source.droppableId && dest === destination.droppableId)) {
+            return;
+        }
 
         const listMap = {
             candidates: [candidates, setCandidates],
-            "resume-endorsed": [resumeEndorsed, setResumeEndorsed],
             interviewed: [interviewed, setInterviewed],
             offered: [offered, setOffered],
         };
 
         const [sourceList, setSourceList] = listMap[source.droppableId];
-        const updatedSource = Array.from(sourceList);
-        const [movedItem] = updatedSource.splice(source.index, 1);
-        setSourceList(updatedSource);
+        const [destList, setDestList] = listMap[destination.droppableId];
+
+        const newSourceList = Array.from(sourceList);
+        const newDestList = Array.from(destList);
+
+        const [movedItem] = newSourceList.splice(source.index, 1);
+        
+        // Only move the item to the destination list if it's not the 'offered' list
+        if (destination.droppableId !== 'offered') {
+            newDestList.splice(destination.index, 0, movedItem);
+        }
+        
+        setSourceList(newSourceList);
+        
+        // We only set the destination list if it's not the 'offered' list.
+        // The 'offered' list state will be set by the handleOffer function.
+        if (destination.droppableId !== 'offered') {
+            setDestList(newDestList);
+        }
 
         if (destination.droppableId === "interviewed") {
             setInterviewCandidate(movedItem);
             setShowInterviewModal(true);
         } else if (destination.droppableId === "offered") {
             setOfferCandidate(movedItem);
-            setJobPosition(movedItem.jobTitles);
+            setJobPositionTitle(movedItem.jobTitles);
             setReqId(selectedRequisitionCode);
+            setPositionId(selectedPositionId);
             setShowOfferModal(true);
-        } else {
-            const [destList, setDestList] = listMap[destination.droppableId];
-            const updatedDest = Array.from(destList);
-            updatedDest.splice(destination.index, 0, movedItem);
-            setDestList(updatedDest);
+        }
+    };
 
-            let newStatus = "";
-            if (destination.droppableId === "resume-endorsed") {
-                newStatus = "Shortlisted";
-            } else if (destination.droppableId === "candidates") {
-                newStatus = "Shortlisted";
+    const handleScheduleInterview = async () => {
+        if (!interviewCandidate || !interviewDate || !interviewTime) {
+            console.error("Missing required interview information.");
+            return;
+        }
+
+        const [hour, minute] = interviewTime.split(":").map(Number);
+
+        const interviewPayload = {
+            candidate_id: interviewCandidate.candidate_id,
+            date: interviewDate,
+            interview_time: interviewTime,
+            userId: 3, // Replace with actual user ID if needed
+            position_id: selectedPositionId
+        };
+
+        try {
+            const response = await fetch("http://192.168.20.115:8081/api/candidates/schedule-interview", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(interviewPayload)
+            });
+
+            const text = await response.text();
+            console.log("Response text:", text);
+
+            if (!response.ok) {
+                throw new Error("Failed to schedule interview");
             }
-            movedItem.profileStatus = newStatus;
-        }
-    };
 
-    const handleScheduleInterview = () => {
-        if (interviewCandidate) {
-            const interviewPayload = {
-                id: interviewCandidate.applicant_id,
-                name: interviewCandidate.firstname,
-                date: interviewDate,
-                time: interviewTime,
-                reqId: selectedRequisitionCode,
-                jobPosition: selectedRequisitionTitle,
-            };
-
-            console.log("Interview Payload:", interviewPayload);
-
-            const updatedInterviewed = [...interviewed, { ...interviewCandidate, profileStatus: "Interview Scheduled" }];
+            // Update status locally
+            const updatedInterviewed = interviewed.map(candidate =>
+                candidate.candidate_id === interviewCandidate.candidate_id
+                    ? { ...candidate, profileStatus: "Interview Scheduled" }
+                    : candidate
+            );
             setInterviewed(updatedInterviewed);
+
+            setShowInterviewModal(false);
+            setInterviewCandidate(null);
+            setInterviewDate("");
+            setInterviewTime("");
+            showToast("Interview scheduled successfully!");
+        } catch (error) {
+            console.error("Error scheduling interview:", error);
         }
-        setShowInterviewModal(false);
-        setInterviewCandidate(null);
-        setInterviewDate("");
-        setInterviewTime("");
     };
+
+
+
+    const handleOffer = async () => {
+        if (!offerCandidate || !salary) {
+            console.error("Missing candidate or salary details.");
+            return;
+        }
+        setLoading(true);
+        setError(null);
+
+        try {
+            const offerLetterPath = "C:\\Users\\sumanth.sangam\\Downloads\\Academic_CV_Template.pdf";
+
+            const response = await fetch('http://192.168.20.115:8081/api/candidates/offer', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    candidate_id: offerCandidate?.candidate_id,
+                    position_id: positionId,
+                    salary: Number(salary),
+                    offer_letter_path: offerLetterPath
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Error: ${response.statusText}`);
+            }
+
+            // If API call is successful, then update local state
+            const updatedInterviewed = interviewed.filter(
+                (c) => c.candidate_id !== offerCandidate.candidate_id
+            );
+            setInterviewed(updatedInterviewed);
+
+            const updatedOffered = [
+                ...offered,
+                { ...offerCandidate, profileStatus: "Selected", rating: offerCandidate.rating || 0 }
+            ];
+            setOffered(updatedOffered);
+
+            // Clean up after successful offer
+            setShowOfferModal(false);
+            setOfferCandidate(null);
+            setSalary('');
+            setReqId('');
+            setPositionId('');
+            setJobPositionTitle('');
+
+            showToast("Offer sent successfully!", "success");
+
+        } catch (err) {
+            console.error("Failed to send offer:", err);
+            setError(err.message || 'Failed to send offer');
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     const handleCancelInterview = () => {
         if (interviewCandidate) {
+            const updatedInterviewed = interviewed.filter(candidate => candidate.candidate_id !== interviewCandidate.candidate_id);
+            setInterviewed(updatedInterviewed);
             const updatedCandidates = [...candidates, interviewCandidate];
             setCandidates(updatedCandidates);
         }
@@ -388,44 +377,27 @@ const CandidateCard = () => {
         setInterviewTime("");
     };
 
-    const handleOffer = () => {
-        if (offerCandidate) {
-            const updatedOffered = [...offered, { ...offerCandidate, profileStatus: "Selected" }];
-            setOffered(updatedOffered);
-        }
-        setShowOfferModal(false);
-        setOfferCandidate(null);
-        setJobPosition("");
-        setReqId("");
-        setSalary("");
-    };
-
     const handleCancelOffer = () => {
         if (offerCandidate) {
+            const updatedOffered = offered.filter(candidate => candidate.candidate_id !== offerCandidate.candidate_id);
+            setOffered(updatedOffered);
             const updatedInterviewed = [...interviewed, offerCandidate];
             setInterviewed(updatedInterviewed);
         }
         setShowOfferModal(false);
         setOfferCandidate(null);
-        setJobPosition("");
+        setJobPositionTitle("");
         setReqId("");
         setSalary("");
     };
 
     const handlePreview = () => {
-        alert(`Offer Preview for ${offerCandidate.firstname}:\nJob Position: ${jobPosition}\nReq ID: ${reqId}\nSalary: ${salary}`);
+        alert(`Offer Preview for ${offerCandidate.full_name}:\nJob Position: ${jobPositionTitle}\nReq ID: ${reqId}\nSalary: ${salary}`);
     };
 
     const toggleDrawer = (candidate = null) => {
         setIsOpen(!isOpen);
         setSelectedCandidate(candidate);
-    };
-
-    const handleShortlist = (obj) => {
-        let updatedCandidates = candidates.filter(candidate => obj.firstname !== candidate.firstname);
-        setCandidates(updatedCandidates);
-        obj.profileStatus = "Shortlisted";
-        setResumeEndorsed([...resumeEndorsed, obj]);
     };
 
     return (
@@ -435,12 +407,13 @@ const CandidateCard = () => {
                     <Breadcrumb>
                         <BreadcrumbItem active>Jobs</BreadcrumbItem>
                         <BreadcrumbItem>
-                            <select
+                            <Form.Select
                                 className="select-drop"
                                 name="jobReqDropdown"
                                 value={selectedRequisitionCode}
                                 onChange={handleJobReqChange}
                             >
+                                <option value="">Select Requisition Code</option>
                                 {jobReqs.length > 0 ? (
                                     jobReqs.map((req, index) => (
                                         <option key={index} value={req.requisition_code}>
@@ -450,27 +423,27 @@ const CandidateCard = () => {
                                 ) : (
                                     <option value="">No job requests available</option>
                                 )}
-                            </select>
+                            </Form.Select>
                         </BreadcrumbItem>
-                        {selectedRequisitionCode !== "Select All" && (
+                        {selectedRequisitionCode && (
                             <BreadcrumbItem>
-                                <select
+                                <Form.Select
                                     className="select-drop"
                                     name="jobPositionsDropdown"
-                                    value={selectedRequisitionTitle}
+                                    value={selectedPositionId}
                                     onChange={handleJobPositionChange}
                                 >
-                                    <option value="Select All">Select All</option>
-                                    {/* The selected option's title is now dynamically added to the list */}
-                                    <option value={selectedRequisitionTitle} disabled hidden>
-                                        {selectedRequisitionTitle}
-                                    </option>
-                                    {jobReqs.filter(req => req.requisition_code === selectedRequisitionCode).map(req => (
-                                        <option key={req.requisition_code} value={req.requisition_title}>
-                                            {req.requisition_title}
-                                        </option>
-                                    ))}
-                                </select>
+                                    <option value="">Select Position Title</option>
+                                    {jobPositions.length > 0 ? (
+                                        jobPositions.map((pos, index) => (
+                                            <option key={index} value={pos.position_id}>
+                                                {pos.position_title}
+                                            </option>
+                                        ))
+                                    ) : (
+                                        <option value="">No positions available</option>
+                                    )}
+                                </Form.Select>
                             </BreadcrumbItem>
                         )}
                     </Breadcrumb>
@@ -521,27 +494,20 @@ const CandidateCard = () => {
                                     <Droppable droppableId="candidates">
                                         {(provided) => (
                                             <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '66vh' }} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {(selectedRequisitionTitle === "" || selectedRequisitionTitle === "Select All") ? (
-                                                    <div className="no-candidates-message text-center mt-5">
-                                                        <p>Please select a Job Position to view candidates.</p>
-                                                    </div>
-                                                ) : candidates.length === 0 ? (
-                                                    <div className="no-candidates-message text-center mt-5">
-                                                        <p>No candidates available for this position.</p>
-                                                    </div>
-                                                ) : (
-                                                    candidates.map((candidate, index) => (
-                                                        <Draggable key={candidate.applicant_id} draggableId={candidate.applicant_id.toString()} index={index}>
+                                                {candidates
+                                                    .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
+                                                    .map((candidate, index) => (
+                                                        <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
                                                                 <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
                                                                     <div className="candidate_card card-body d-flex justify-content-between">
                                                                         <div>
-                                                                            <img className="candidate_image" src={candidate.avatar} alt={candidate.firstname} />
+                                                                            <img className="candidate_image" src={candidate.avatar || profile_prictures[index % profile_prictures.length]} alt={candidate.full_name} />
                                                                         </div>
                                                                         <div className="w-50 px-1">
-                                                                            <h5 className="candidate_text fw-bold">{candidate.firstname}</h5>
-                                                                            <h6 className="candidate_sub_text">{candidate.location}</h6>
-                                                                            <h6 className="candidate_sub_text">{candidate.mobile_number}</h6>
+                                                                            <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
+                                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
                                                                         <div className="card-status-label">{candidate.profileStatus}</div>
                                                                         <div className="rating_container d-flex align-self-end p-1">
@@ -549,15 +515,11 @@ const CandidateCard = () => {
                                                                             <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
                                                                         </div>
                                                                     </div>
-                                                                    {/* <div className="insight_text_container pb-2 d-flex px-1">
-                                                                        <span role="img" aria-label="info" style={{ fontSize: "18px", marginRight: "4px" }}>💡</span>
-                                                                        <p className="insight_text px-1">{candidate.description}</p>
-                                                                    </div> */}
                                                                 </div>
                                                             )}
                                                         </Draggable>
                                                     ))
-                                                )}
+                                                }
                                                 {provided.placeholder}
                                             </div>
                                         )}
@@ -596,35 +558,32 @@ const CandidateCard = () => {
                                     <Droppable droppableId="interviewed">
                                         {(provided) => (
                                             <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '71vh' }} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {interviewed.map((candidate, index) => (
-                                                    <Draggable key={candidate.applicant_id} draggableId={candidate.applicant_id.toString()} index={index}>
-                                                        {(provided) => (
-                                                            <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                                <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
-                                                                    <div>
-                                                                        <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
-                                                                    </div>
-                                                                    <div className="w-50 px-1">
-                                                                        <h5 className="candidate_text fw-bold">{candidate.firstname}</h5>
-                                                                        <h6 className="candidate_sub_text">{candidate.location}{(candidate.city ? candidate.city + ", " : "") + (candidate.country ? candidate.country : "")}</h6>
-                                                                        <h6 className="candidate_sub_text">{candidate.mobile_number}</h6>
-                                                                    </div>
-                                                                    <div className="card-status-label">{candidate.profileStatus}</div>
-                                                                    <div className="rating_container d-flex align-self-end p-1">
-                                                                        <h6 className="rating_text px-1">{ratedInterviewed?.find(c => c?.applicant_id === candidate?.applicant_id)?.rating}</h6>
-                                                                        <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
+                                                {interviewed
+                                                    .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
+                                                    .map((candidate, index) => (
+                                                        <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
+                                                            {(provided) => (
+                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                                    <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
+                                                                        <div>
+                                                                            <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
+                                                                        </div>
+                                                                        <div className="w-50 px-1">
+                                                                            <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
+                                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                                        </div>
+                                                                        <div className="card-status-label">{candidate.profileStatus}</div>
+                                                                        <div className="rating_container d-flex align-self-end p-1">
+                                                                            <h6 className="rating_text px-1">{ratedInterviewed?.find(c => c?.candidate_id === candidate?.candidate_id)?.rating}</h6>
+                                                                            <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                {/* <div className="insight_text_container pb-2 d-flex px-1">
-                                                                    <img style={{ height: "20px" }} />
-                                                                    <p className="insight_text px-1">
-                                                                        {ratedInterviewed?.find(c => c?.applicant_id === candidate?.applicant_id)?.ratingDescription}
-                                                                    </p>
-                                                                </div> */}
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                ))}
+                                                            )}
+                                                        </Draggable>
+                                                    ))
+                                                }
                                                 {provided.placeholder}
                                             </div>
                                         )}
@@ -663,35 +622,32 @@ const CandidateCard = () => {
                                     <Droppable droppableId="offered">
                                         {(provided) => (
                                             <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '71vh' }} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {offered.map((candidate, index) => (
-                                                    <Draggable key={candidate.applicant_id} draggableId={candidate.applicant_id.toString()} index={index}>
-                                                        {(provided) => (
-                                                            <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                                <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
-                                                                    <div>
-                                                                        <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
-                                                                    </div>
-                                                                    <div className="w-50 px-1">
-                                                                        <h5 className="candidate_text fw-bold">{candidate.firstname}</h5>
-                                                                        <h6 className="candidate_sub_text">{candidate.location}{(candidate.city ? candidate.city + ", " : "") + (candidate.country ? candidate.country : "")}</h6>
-                                                                        <h6 className="candidate_sub_text">{candidate.mobile_number}</h6>
-                                                                    </div>
-                                                                    <div className="card-status-label">{candidate.profileStatus}</div>
-                                                                    <div className="rating_container d-flex align-self-end p-1">
-                                                                        <h6 className="rating_text px-1">{ratedOffered?.find(c => c?.applicant_id === candidate?.applicant_id)?.rating}</h6>
-                                                                        <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
+                                                {offered
+                                                    .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
+                                                    .map((candidate, index) => (
+                                                        <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
+                                                            {(provided) => (
+                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                                    <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
+                                                                        <div>
+                                                                            <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
+                                                                        </div>
+                                                                        <div className="w-50 px-1">
+                                                                            <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
+                                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                                        </div>
+                                                                        <div className="card-status-label">{candidate.profileStatus}</div>
+                                                                        <div className="rating_container d-flex align-self-end p-1">
+                                                                            <h6 className="rating_text px-1">{ratedOffered?.find(c => c?.candidate_id === candidate?.candidate_id)?.rating}</h6>
+                                                                            <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                                {/* <div className="insight_text_container pb-2 d-flex px-1">
-                                                                    <img style={{ height: "20px" }} />
-                                                                    <p className="insight_text px-1">
-                                                                        {ratedOffered?.find(c => c?.applicant_id === candidate?.applicant_id)?.ratingDescription}
-                                                                    </p>
-                                                                </div> */}
-                                                            </div>
-                                                        )}
-                                                    </Draggable>
-                                                ))}
+                                                            )}
+                                                        </Draggable>
+                                                    ))
+                                                }
                                                 {provided.placeholder}
                                             </div>
                                         )}
@@ -707,7 +663,6 @@ const CandidateCard = () => {
                     isOpen={isOpen}
                     toggleDrawer={toggleDrawer}
                     candidate={selectedCandidate}
-                    handleShortlist={handleShortlist}
                     ratedCandidates={ratedCandidates}
                 />
             )}
@@ -725,12 +680,14 @@ const CandidateCard = () => {
                 show={showOfferModal}
                 handleClose={handleCancelOffer}
                 candidate={offerCandidate}
-                jobPosition={jobPosition}
+                position_title={jobPositionTitle}
                 reqId={reqId}
+                position_id={positionId}
                 salary={salary}
                 setSalary={setSalary}
-                handlePreview={handlePreview}
                 handleOffer={handleOffer}
+                loading={loading}
+                error={error}
             />
         </Container>
     );

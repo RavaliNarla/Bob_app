@@ -6,11 +6,12 @@ const OfferModal = ({
   show,
   handleClose,
   candidate,
-  jobPosition,
+  position_title,
   reqId,
   salary,
   setSalary,
-  handleOffer
+  position_id,
+  handleOffer // We will now call this function directly from the button
 }) => {
   const [triggerDownload, setTriggerDownload] = useState(false);
 
@@ -32,11 +33,11 @@ const OfferModal = ({
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>Candidate Name</Form.Label>
-              <Form.Control type="text" value={candidate?.firstname} readOnly />
+              <Form.Control type="text" value={candidate?.full_name} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Job Position</Form.Label>
-              <Form.Control type="text" value={jobPosition} readOnly />
+              <Form.Control type="text" value={position_title} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Requisition ID</Form.Label>
@@ -68,7 +69,7 @@ const OfferModal = ({
       {triggerDownload && (
         <OfferLetter
           candidate={candidate}
-          jobPosition={jobPosition}
+          jobPosition={position_title}
           reqId={reqId}
           salary={salary}
           autoDownload={true}
