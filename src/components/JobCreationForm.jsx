@@ -3,7 +3,7 @@ import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
-const JobRequisitionForm = ({
+const JobCreationForm = ({
   formData,
   errors,
   handleInputChange,
@@ -28,7 +28,7 @@ const JobRequisitionForm = ({
     (req) => String(req.requisition_id) === String(formData.requisition_id)
   );
   // Debug: log the selected requisition to help diagnose issues
-   console.log('Selected Requisition:', selectedRequisition);
+  // console.log('Selected Requisition:', selectedRequisition);
 
   return (
     <div className="form-section p-2 rounded-3">
@@ -130,7 +130,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select Department</option>
             {departmentOptions.map(option => (
-              <option key={option.department_id} value={option.department_name}>{option.department_name}</option>
+              <option key={option.department_id || option.department_name} value={option.department_name}>{option.department_name}</option>
             ))}
           </select>
           {errors.department && <small className="error">{errors.department}</small>}
@@ -148,7 +148,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select Country</option>
             {countryOptions.map(option => (
-              <option key={option.country_id} value={option.country_id}>{option.country_name}</option>
+              <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
           {errors.country && <small className="error">{errors.country}</small>}
@@ -166,7 +166,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select State</option>
             {stateOptions.map(option => (
-              <option key={option.state_id} value={option.state_id}>{option.state_name}</option>
+              <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
           {errors.state && <small className="error">{errors.state}</small>}
@@ -178,7 +178,7 @@ const JobRequisitionForm = ({
           <select id="city" name="city" className="form-select" value={formData.city} onChange={handleInputChange}>
             <option value="">Select City</option>
             {cityOptions.map(option => (
-              <option key={option.city_id} value={option.city_id}>{option.city_name}</option>
+              <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
           {errors.city && <small className="error">{errors.city}</small>}
@@ -196,7 +196,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select Location</option>
             {locationOptions.map(option => (
-              <option key={option.location_id} value={option.location_id}>{option.location_name}</option>
+              <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
           {errors.location && <small className="error">{errors.location}</small>}
@@ -261,7 +261,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select Grade ID</option>
             {gradeIdOptions.map(option => (
-              <option key={option.id} value={option.id}>{option.name}</option>
+              <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
           {errors.grade_id && <small className="error">{errors.grade_id}</small>}
@@ -279,7 +279,7 @@ const JobRequisitionForm = ({
           >
             <option value="">Select Employment Type</option>
             {employmentTypeOptions.map(option => (
-              <option key={option.id} value={option.name}>{option.name}</option>
+              <option key={option.id || option.name} value={option.name}>{option.name}</option>
             ))}
           </select>
           {errors.employment_type && <small className="error">{errors.employment_type}</small>}
@@ -371,4 +371,4 @@ const JobRequisitionForm = ({
   );
 };
 
-export default JobRequisitionForm;
+export default JobCreationForm;

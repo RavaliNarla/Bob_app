@@ -3,7 +3,7 @@ import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faFileAlt, faCheck, faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
-import JobRequisitionForm from './../components/JobCreationForm';
+import JobCreationForm from './../components/JobCreationForm';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -22,6 +22,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedReqIndex, setSelectedReqIndex] = useState(null);
   const [reqs, setReqs] = useState([]);
+  const [filteredStates, setFilteredStates] = useState([]);
+  const [filteredCities, setFilteredCities] = useState([]);
+  const [filteredLocations, setFilteredLocations] = useState([]);
   const initialState = {
     requisition_id: '',
     position_title: '',
@@ -60,6 +63,10 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     employmentTypeOptions: ["Full-Time", "Part-Time", "Contract"],
     mandatoryQualificationOptions: [],
     preferredQualificationOptions: [],
+    allCountries: [],
+    allStates: [],
+    allCities: [],
+    allLocations: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -76,11 +83,10 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
         ]);
 
         console.log('Master Data Response:', masterDataRes);
-        console.log('Requisition Data Response:', requisitionDataRes);
-
+       console.log('Requisition Data Response:', requisitionDataRes);
         const staticJobGrades = [
-          { job_grade_id: 1, job_scale: "S1" },
-          { job_grade_id: 2, job_scale: "S2" }
+          { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
+          { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
         ];
         const jobGrades = (masterDataRes.job_grade_ids && masterDataRes.job_grade_ids.length > 0)
           ? masterDataRes.job_grade_ids
@@ -93,13 +99,17 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
           })),
           positionTitleOptions: (masterDataRes.position_title || []).map(name => ({ id: name, name })),
           departmentOptions: masterDataRes.departments,
-          countryOptions: masterDataRes.countries,
-          stateOptions: masterDataRes.states,
-          cityOptions: masterDataRes.cities,
-          locationOptions: masterDataRes.locations,
+          // countryOptions: masterDataRes.countries,
+          // stateOptions: masterDataRes.states,
+          // cityOptions: masterDataRes.cities,
+          // locationOptions: masterDataRes.locations,
+          allCountries: masterDataRes.countries,
+          allStates: masterDataRes.states,
+          allCities: masterDataRes.cities,
+          allLocations: masterDataRes.locations,
           gradeIdOptions: jobGrades.map(grade => ({
             id: grade.job_grade_id,
-            name: grade.job_scale
+            name: `${grade.job_scale} (${grade.min_salary} - ${grade.max_salary})`
           })),
           employmentTypeOptions: ((masterDataRes.employment_type && masterDataRes.employment_type.length > 0)
             ? masterDataRes.employment_type
@@ -198,32 +208,78 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     }
 
   }, [editRequisitionId, editPositionId]);
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({ ...prev, [name]: value }));
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  if (name === "country") {
+    // Convert the value to a number since IDs are numbers
+    const countryId = Number(value); 
+    
+    if (countryId) {
+      // Filter states based on the countryId
+      const states = masterData.allStates.filter(
+        (s) => s.countryId === countryId
+      );
+      setFilteredStates(states);
+    } else {
+      // If no country is selected, clear the dependent dropdowns
+      setFilteredStates([]);
+    }
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const validationErrors = validateForm();
-  //   if (Object.keys(validationErrors).length === 0) {
-  //     try {
-  //       console.log("formadata",formData)
-  //       const response = await apiService.jobCreation(formData);
-  //       console.log('✅ Valid form data:', formData);
-  //       console.log('✅ API response:', response);
-  //       toast.success('Job created successfully!');
-  //       setFormData(initialState);
-  //     } catch (error) {
-  //       console.error('❌ API error:', error);
-  //       toast.error('Failed to create job.');
-  //     }
-  //   } else {
-  //     setErrors(validationErrors);
-  //   }
-  // };
+    // Reset subsequent form fields and dropdowns
+    setFormData((prev) => ({
+      ...prev,
+      state: "",
+      city: "",
+      location: "",
+    }));
+    setFilteredCities([]);
+    setFilteredLocations([]);
 
+  } else if (name === "state") {
+    // Convert the value to a number since IDs are numbers
+    const stateId = Number(value); 
+
+    if (stateId) {
+      // Filter cities where the state_id matches the selected state's ID
+      const cities = masterData.allCities.filter(
+        (c) => c.state_id === stateId
+      );
+      setFilteredCities(cities);
+    } else {
+      setFilteredCities([]);
+    }
+
+    // Reset subsequent form fields and dropdowns
+    setFormData((prev) => ({
+      ...prev,
+      city: "",
+      location: "",
+    }));
+    setFilteredLocations([]);
+
+  } else if (name === "city") {
+    // Convert the value to a number since IDs are numbers
+    const cityId = Number(value);
+
+    if (cityId) {
+      // Filter locations where the city_id matches the selected city's ID
+      const locations = masterData.allLocations.filter(
+        (l) => l.city_id === cityId
+      );
+      setFilteredLocations(locations);
+    } else {
+      setFilteredLocations([]);
+    }
+
+    // Reset the final form field
+    setFormData((prev) => ({
+      ...prev,
+      location: "",
+    }));
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
@@ -440,7 +496,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
               </Button>
             </div>
             {selectedOption === 'direct' && (
-              <JobRequisitionForm
+              <JobCreationForm
                 formData={formData}
                 errors={errors}
                 handleInputChange={handleInputChange}
@@ -448,10 +504,10 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
                 handleCancel={handleCancel}
                 requisitionIdOptions={masterData.requisitionIdOptions}
                 departmentOptions={masterData.departmentOptions}
-                countryOptions={masterData.countryOptions}
-                stateOptions={masterData.stateOptions}
-                cityOptions={masterData.cityOptions}
-                locationOptions={masterData.locationOptions}
+                countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
+                stateOptions={filteredStates.map(s => ({ id: s.stateId, name: s.stateName }))}
+                cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
+                locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
                 gradeIdOptions={masterData.gradeIdOptions}
                 positionTitleOptions={masterData.positionTitleOptions}
                 employmentTypeOptions={masterData.employmentTypeOptions}
