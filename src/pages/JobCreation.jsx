@@ -237,6 +237,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
         }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);
+            setFormData(initialState);
+            setErrors({});
+
         toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
         setFormData(initialState);
       } catch (error) {
@@ -462,13 +465,13 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
       </Row>
       <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title>Job Postings</Modal.Title>
+          <Modal.Title className='fonall'>Job Postings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="upload-section">
+          <div className="upload-section fontss">
             <div>
               <Form.Group className="mb-2">
-                <Form.Label className="fw-semibold small mb-1 d-flex align-items-center" style={{ gap: '0.4em' }}>
+                <Form.Label className="fw-semibold small mb-1 d-flex align-items-center fontss" style={{ gap: '0.4em' }}>
                   Select Requisition
                   {typeof selectedReqIndex === 'number' && reqs[selectedReqIndex] && (
                     <OverlayTrigger
@@ -502,20 +505,22 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
                   )}
                 </Form.Label>
                 <Form.Select
-                  size="sm"
-                  value={selectedReqIndex ?? ""}
-                  onChange={(e) =>
-                    setSelectedReqIndex(Number(e.target.value))
-                  }
-                  style={{ maxWidth: "300px" }}
-                >
-                  <option value="">Select Requisition</option>
-                  {reqs.map((req, index) => (
-                    <option key={index} value={index}>
-                      {req.requisition_code}
-                    </option>
-                  ))}
-                </Form.Select>
+  size="sm"
+  value={selectedReqIndex === null ? "" : selectedReqIndex}
+  onChange={(e) => {
+    const val = e.target.value;
+    setSelectedReqIndex(val === "" ? null : Number(val));
+  }}
+  style={{ maxWidth: "300px" }}
+>
+  <option value="">Select Requisition</option>
+  {reqs.map((req, index) => (
+    <option key={req.requisition_id} value={index}>
+      {req.requisition_code + " - " + req.requisition_title}
+    </option>
+  ))}
+</Form.Select>
+
               </Form.Group>
               {/* {selectedReqIndex !== null && selectedReqIndex !== "" && (
                 <Row
@@ -584,7 +589,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
               )} */}
             </div>
             <div
-              className="border rounded p-3 text-center mb-3"
+              className="border rounded p-3 text-center mb-3 mt-4"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => fileInputRef.current && fileInputRef.current.click()}
@@ -597,7 +602,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                margin: 'auto',
+                width: '350px'
               }}
             >
               <FontAwesomeIcon icon={faUpload} size="2x" className="mb-2 text-muted" />
@@ -629,7 +636,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className='footspace'>
           <Button
             onClick={handleUploadSubmit}
             className="text-white fw-semibold"

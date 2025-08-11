@@ -32,15 +32,15 @@ const JobRequisitionForm = ({
 
   return (
     <div className="form-section p-2 rounded-3">
-      <h4 className="text-center mb-2" style={{ fontSize: '1.15rem', color: '#FF7043' }}>
+      <h4 className="text-center mb-4 fonall">
         Job Posting
       </h4>
       <form className="job-form row gx-2" onSubmit={handleSubmit} style={{ fontSize: '0.9rem' }}>
         {/* Requisition ID */}
         
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4em' }}>
-            <label htmlFor="requisition_id" className="form-label mb-0">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
+          
+            <label htmlFor="requisition_id" className="form-label">
               Requisition ID <span className="required-asterisk">*</span>
             </label>
             {formData.requisition_id && selectedRequisition && (
@@ -77,27 +77,34 @@ const JobRequisitionForm = ({
                 </span>
               </OverlayTrigger>
             )}
-          </div>
+          
           <select
-            id="requisition_id"
-            name="requisition_id"
-            className="form-select"
-            value={formData.requisition_id}
-            onChange={handleInputChange}
-          >
-            <option value="">Select Requisition ID</option>
-            {requisitionIdOptions.map((option) => (
-              <option key={option.name} value={option.id}>
-                {option.name}
-              </option>
-            ))}
+                id="requisition_id"
+                name="requisition_id"
+                className="form-select"
+                value={formData.requisition_id}
+                onChange={handleInputChange}
+              >
+                <option value="">Select Requisition ID</option>
+                {requisitionIdOptions.map((option) => {
+                  // Find matching requisition details for title
+                  const reqDetails = requisitionData.find(
+                    (req) => String(req.requisition_id) === String(option.id)
+                  );
+                  return (
+                    <option key={option.name} value={option.id}>
+                      {option.name} 
+                      {reqDetails?.requisition_title ? ` - ${reqDetails.requisition_title}` : ""}
+                    </option>
+                  );
+                })}
           </select>
-          {errors.requisition_id && <small className="error">{errors.requisition_id}</small>}
+          {errors.requisition_id  && <small className="error">{errors.requisition_id}</small>}
         </div>
         {/* The rest of your form fields go here */}
         
         {/* Position Title */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="position_title" className="form-label">Position Title <span className="required-asterisk">*</span></label>
           <input
             type="text"
@@ -112,7 +119,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Department */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="department" className="form-label">Department <span className="required-asterisk">*</span></label>
           <select
             id="department"
@@ -130,7 +137,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Country */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="country" className="form-label">Country <span className="required-asterisk">*</span></label>
           <select
             id="country"
@@ -148,7 +155,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* State */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="state" className="form-label">State <span className="required-asterisk">*</span></label>
           <select
             id="state"
@@ -166,7 +173,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* City */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="city" className="form-label">City <span className="required-asterisk">*</span></label>
           <select id="city" name="city" className="form-select" value={formData.city} onChange={handleInputChange}>
             <option value="">Select City</option>
@@ -178,7 +185,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Location */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="location" className="form-label">Location <span className="required-asterisk">*</span></label>
           <select
             id="location"
@@ -196,14 +203,14 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Description */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="description" className="form-label">Description <span className="required-asterisk">*</span></label>
           <textarea className="form-control" id="description" name="description" value={formData.description} onChange={handleInputChange} />
           {errors.description && <small className="error">{errors.description}</small>}
         </div>
 
         {/* Roles & Responsibilities */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="roles_responsibilities" className="form-label">Roles & Responsibilities <span className="required-asterisk">*</span></label>
           <textarea
             id="roles_responsibilities"
@@ -215,7 +222,7 @@ const JobRequisitionForm = ({
           {errors.roles_responsibilities && <small className="error">{errors.roles_responsibilities}</small>}
         </div>
 
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="no_of_vacancies" className="form-label">Number of Positions <span className="required-asterisk">*</span></label>
           <input
             type="number"
@@ -230,7 +237,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Selection Process */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="selection_procedure" className="form-label">Selection Process <span className="required-asterisk">*</span></label>
           <textarea
             id="selection_procedure"
@@ -243,7 +250,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Grade ID */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="grade_id" className="form-label">Grade ID <span className="required-asterisk">*</span></label>
           <select
             id="grade_id"
@@ -261,7 +268,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Employment Type */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2">
+        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="employment_type" className="form-label">Employment Type <span className="required-asterisk">*</span></label>
           <select
             id="employment_type"
@@ -279,21 +286,21 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Eligibility Age Min */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="eligibility_age_min" className="form-label">Eligibility Age Min <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="eligibility_age_min" name="eligibility_age_min" value={formData.eligibility_age_min} onChange={handleInputChange} min="1" />
           {errors.eligibility_age_min && <small className="error">{errors.eligibility_age_min}</small>}
         </div>
 
         {/* Eligibility Age Max */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="eligibility_age_max" className="form-label">Eligibility Age Max <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="eligibility_age_max" name="eligibility_age_max" value={formData.eligibility_age_max} onChange={handleInputChange} min="1" />
           {errors.eligibility_age_max && <small className="error">{errors.eligibility_age_max}</small>}
         </div>
 
         {/* Mandatory Qualification */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="mandatory_qualification" className="form-label">Mandatory Qualification <span className="required-asterisk">*</span></label>
           <textarea
             id="mandatory_qualification"
@@ -306,7 +313,7 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Preferred Qualification */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk">*</span></label>
           <textarea
             id="preferred_qualification"
@@ -319,35 +326,35 @@ const JobRequisitionForm = ({
         </div>
 
         {/* Mandatory Experience */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" />
           {errors.mandatory_experience && <small className="error">{errors.mandatory_experience}</small>}
         </div>
 
         {/* Preferred Experience */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="preferred_experience" className="form-label">Preferred Experience <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" />
           {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
         </div>
 
         {/* Probation Period */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="probation_period" className="form-label">Probation Period <span className="required-asterisk">*</span></label>
           <input type="text" className="form-control" id="probation_period" name="probation_period" value={formData.probation_period} onChange={handleInputChange} />
           {errors.probation_period && <small className="error">{errors.probation_period}</small>}
         </div>
 
         {/* Documents Required */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="documents_required" className="form-label">Documents Required <span className="required-asterisk">*</span></label>
           <textarea className="form-control" id="documents_required" name="documents_required" value={formData.documents_required} onChange={handleInputChange} />
           {errors.documents_required && <small className="error">{errors.documents_required}</small>}
         </div>
 
         {/* Min Credit Score */}
-        <div className="col-12 col-md-6 col-lg-3 mb-3">
+        <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
           <label htmlFor="min_credit_score" className="form-label">Min Credit Score <span className="required-asterisk">*</span></label>
           <input type="text" className="form-control" id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}

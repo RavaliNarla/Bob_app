@@ -96,12 +96,20 @@ body {
 
 .table th {
   font-weight: 600;
+  font-family: poppins, sans-serif;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 12px;
   letter-spacing: 0.5px;
-  color: #6c757d;
+  color: #FF7043;
   border-top: none;
   border-bottom: 1px solid #dee2e6;
+}
+.table td {
+  font-family: poppins, sans-serif;
+  font-size: 12px;
+}
+.fonreg{
+  font-family: Poppins, sans-serif;
 }
 
 /* Badge styles */

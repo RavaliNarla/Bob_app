@@ -12,3 +12,21 @@ background:#fff;
     background:none !important;
     color: #000 !important;
 }
+.formSpace{
+    padding-right: 4px;
+    padding-left: 4px;
+}
+.fontss{
+    font-family: Poppins, sans-serif;
+
+}
+.fonall{
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;  /* 600 = semibold */
+    font-size: 18px !important;
+   color: #FF7043;
+}
+.footspace{
+    padding-bottom: 5px;
+    padding-top: 5px;
+}

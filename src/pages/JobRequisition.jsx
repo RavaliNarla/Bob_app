@@ -187,10 +187,10 @@ const JobRequisition = () => {
    return (
     <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5>Requisitions</h5>
+        <h5 className="fonall">Requisitions</h5>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-      <InputGroup className="mb-3 w-50" >
+      <InputGroup className="mb-3 w-50 fonreg" >
         <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
           <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
         </InputGroup.Text>

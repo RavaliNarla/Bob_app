@@ -398,7 +398,7 @@ const JobPosting = () => {
           <Form.Select
             value={selectedApproval}
             onChange={(e) => setSelectedApproval(e.target.value)}
-            style={{ width: "200px" }}
+            style={{ width: "200px" }} className="fonreg"
           >
             <option value="">All Requisitions</option>
             <option value="Submitted">Submitted</option>
@@ -411,7 +411,7 @@ const JobPosting = () => {
 
         {/* Search Box */}
         <div
-          className="col-md-6 search-container"
+          className="col-md-6 search-container fonreg"
         >
           {/* <i className="fas fa-search search-icon"></i>
           <input
@@ -528,7 +528,7 @@ const JobPosting = () => {
                 // onClick={() => toggleAccordion(index.toString())}
                 onClick={() => toggleAccordion(index.toString(), job.requisition_id)}
               >
-                <Row className="w-100 align-items-center">
+                <Row className="w-100 align-items-center fontreg">
                   <Col xs={12} md={4} className="d-flex align-items-center">
                     {/* <div className="bullet-columns d-flex me-2">
                   <div className="d-flex flex-column me-1">
