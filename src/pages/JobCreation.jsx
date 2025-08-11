@@ -154,6 +154,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
           setFormData({
 
             requisition_id: selectedPosition.requisition_id || '',
+            position_id:editPositionId || '',
+
 
             position_title: selectedPosition.position_title || '',
 
@@ -193,14 +195,18 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
             min_credit_score: selectedPosition.min_credit_score || '',
 
-            // no_of_vacancies: selectedPosition.no_of_vacancies || '',
+            no_of_vacancies: selectedPosition.no_of_vacancies || '',
 
-            // selection_procedure: selectedPosition.selection_procedure || '',
+            selection_procedure: selectedPosition.selection_procedure || '',
 
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
 
+          // setFormData((prev) => ({
+          //   ...prev,
+          //   position_id:editPositionId
+          // }));
         }
 
       });
