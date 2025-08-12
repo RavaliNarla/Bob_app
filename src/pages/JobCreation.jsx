@@ -28,7 +28,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
   const initialState = {
     requisition_id: '',
     position_title: '',
-    dept_id: 1,
+    dept_id: '',
     country_id: '',
     state_id: '',
     city_id: '',
@@ -48,9 +48,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     min_credit_score: '',
     no_of_vacancies: '',
     selection_procedure: '',
-    special_cat_id: '0',
-    reservation_cat_id:'0',
-    position_status:'submitted'
+    // special_cat_id: '0',
+    // reservation_cat_id:'0',
+    // position_status:'submitted'
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -134,22 +134,21 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
   useEffect(() => {
 
-    if (editRequisitionId) {
+    if (editPositionId) {
 
-      apiService.getByRequisitionId(editRequisitionId).then((response) => {
+      apiService.getByPositionId(editPositionId).then((response) => {
 
-        const allPositions = response.data || [];
+        const selectedPosition = response.data || [];
+      console.log('Selected Position:', selectedPosition);
 
-
-
+     // console.log('All Positions:', allPositions);
         // ✅ Pick the exact position using position_id
 
-        const selectedPosition = allPositions.find(
+        // const selectedPosition = allPositions.find(
 
-          (item) => item.position_id === editPositionId
+        //   (item) => item.position_id === editPositionId
 
-        );
-
+        // );
 
 
         if (selectedPosition) {
@@ -158,48 +157,26 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
             requisition_id: selectedPosition.requisition_id || '',
             position_id:editPositionId || '',
-
-
             position_title: selectedPosition.position_title || '',
-
-            department: selectedPosition.department || '',
-
-            country: selectedPosition.country || '',
-
-            state: selectedPosition.state || '',
-
-            city: selectedPosition.city || '',
-
-            location: selectedPosition.location || '',
-
+            dept_id: selectedPosition.dept_id || '',
+            country_id: selectedPosition.country || '',
+            state_id: selectedPosition.state || '',
+            city_id: selectedPosition.city || '',
+            location_id: selectedPosition.location || '',
             description: selectedPosition.description || '',
-
             roles_responsibilities: selectedPosition.roles_responsibilities || '',
-
             grade_id: selectedPosition.grade_id || '',
-
             employment_type: selectedPosition.employment_type || '',
-
             eligibility_age_min: selectedPosition.eligibility_age_min || '',
-
             eligibility_age_max: selectedPosition.eligibility_age_max || '',
-
             mandatory_qualification: selectedPosition.mandatory_qualification || '',
-
             preferred_qualification: selectedPosition.preferred_qualification || '',
-
             mandatory_experience: selectedPosition.mandatory_experience || '',
-
             preferred_experience: selectedPosition.preferred_experience || '',
-
             probation_period: selectedPosition.probation_period || '',
-
             documents_required: selectedPosition.document_required || '',
-
             min_credit_score: selectedPosition.min_credit_score || '',
-
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
-
             selection_procedure: selectedPosition.selection_procedure || '',
 
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
@@ -216,11 +193,16 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
     }
 
-  }, [editRequisitionId, editPositionId]);
+  }, [ editPositionId]);
 const handleInputChange = (e) => {
   const { name, value } = e.target;
+ // console.log('Input change:', name, value);
   setFormData((prev) => ({ ...prev, [name]: value }));
-
+ // ✅ Clear error for this field when it's valid
+  setErrors((prev) => ({
+    ...prev,
+    [name]: value ? "" : prev[name]
+  }));
   if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 
@@ -298,7 +280,9 @@ const handleInputChange = (e) => {
         if (!showModal) {
           response = await apiService.jobCreation(formData);
         } else {
+          console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
+          onClose();
         }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);
@@ -384,11 +368,11 @@ const handleInputChange = (e) => {
     return dataArray.map((item) => ({
       requisition_id: item["Requisition ID"],
       position_title: item["Position Title"],
-      department: item["Department"],
-      country: item["Country"],
-      state: item["State"],
-      city: item["City"],
-      location: item["Location"],
+      dept_id: item["Department"],
+      country_id: item["Country"],
+      state_id: item["State"],
+      city_id: item["City"],
+      location_id: item["Location"],
       description: item["Description"],
       roles_responsibilities: item["Roles & Responsibilities"],
       grade_id: item["Grade ID"],
@@ -403,6 +387,7 @@ const handleInputChange = (e) => {
       documents_required: item["Documents Required"],
       no_of_vacancies: item["Number of Vacancies"],
       selection_procedure: item["Selection Procedure"],
+     min_credit_score:item["Min Credit Score"]
     }));
   };
 

@@ -67,6 +67,7 @@ const JobPosting = () => {
     if (newKey !== null && requisition_id) {
       try {
         const data = await apiService.getByRequisitionId(requisition_id);
+        console.log("Requisition Data:", data);
         setApiData(data.data || []);
       } catch (err) {
         console.error("Error fetching requisition details:", err);
@@ -172,7 +173,7 @@ const JobPosting = () => {
       job_postings_areas: selectedJobBoards,
       approval_status: approvalStatus,
     }));
-console.log("API Payload:", payload);
+      console.log("API Payload:", payload);
     try {
       console.log("Saving job postings with payload:", payload);
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -397,7 +398,7 @@ console.log("API Payload:", payload);
 
       <Modal show={showModal} onHide={resetForm} className="modal_container">
         <Modal.Header closeButton>
-          <Modal.Title className="fonall">{editRequisitionId !== null ? "Edit Requisition" : "Add Requisition"}</Modal.Title>
+          <Modal.Title className="fonall">{editRequisitionId !== null ? "Edit Job Posting" : "Add Job Posting"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <JobCreation

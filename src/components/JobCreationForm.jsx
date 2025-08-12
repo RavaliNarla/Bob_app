@@ -126,14 +126,14 @@ const JobCreationForm = ({
             name="dept_id"
             className="form-select"
             value={formData.dept_id}
-            //onChange={handleInputChange}
+            onChange={handleInputChange}
           >
             <option value="">Select Department</option>
             {departmentOptions.map(option => (
-              <option key={option.department_id || option.department_name} value={option.dept_id}>{option.department_name}</option>
+              <option key={option.department_id || option.department_name} value={option.department_id}>{option.department_name}</option>
             ))}
           </select>
-          {errors.department && <small className="error">{errors.department}</small>}
+          {errors.dept_id && <small className="error">{errors.dept_id}</small>}
         </div>
 
         {/* Country */}
@@ -151,7 +151,7 @@ const JobCreationForm = ({
               <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.country && <small className="error">{errors.country}</small>}
+          {errors.country_id && <small className="error">{errors.country_id}</small>}
         </div>
 
         {/* State */}
@@ -169,7 +169,7 @@ const JobCreationForm = ({
               <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.state && <small className="error">{errors.state}</small>}
+          {errors.state_id && <small className="error">{errors.state_id}</small>}
         </div>
 
         {/* City */}
@@ -181,7 +181,7 @@ const JobCreationForm = ({
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.city && <small className="error">{errors.city}</small>}
+          {errors.city_id && <small className="error">{errors.city_id}</small>}
         </div>
 
         {/* Location */}
@@ -199,7 +199,7 @@ const JobCreationForm = ({
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.location && <small className="error">{errors.location}</small>}
+          {errors.location_id && <small className="error">{errors.location_id}</small>}
         </div>
 
         {/* Description */}
@@ -363,7 +363,7 @@ const JobCreationForm = ({
         <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
           <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button>
           <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-            Save
+         { formData.position_id ? 'Update' : 'Save' }
           </Button>
         </div>
       </form>
