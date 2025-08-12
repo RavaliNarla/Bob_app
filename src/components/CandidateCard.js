@@ -12,7 +12,7 @@ import {
 import Drawer from "./Drawer";
 import InterviewModal from "./InterviewModal";
 import OfferModal from "./OfferModal";
-import { getJobRequirements, getJobPositions, getCandidatesByPosition } from "../services/getJobRequirements";
+import { getJobRequirements, getJobPositions, getCandidatesByPosition, fetchCandidatesByStatus } from "../services/getJobRequirements";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
@@ -35,6 +35,7 @@ const CandidateCard = () => {
     const [selectedPositionId, setSelectedPositionId] = useState("");
     const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
     const [jobPositionTitle, setJobPositionTitle] = useState("");
+const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -47,6 +48,7 @@ const CandidateCard = () => {
     const [salary, setSalary] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
     const showToast = (message, variant) => {
         alert(message);
     };
@@ -75,20 +77,36 @@ const CandidateCard = () => {
     useEffect(() => {
         const fetchCandidates = async () => {
             console.log("Fetching candidates for position ID:", selectedPositionId);
-            if (selectedPositionId) {
+
+            if (selectedRequisitionId && selectedPositionId) {
                 const fetchedCandidates = await getCandidatesByPosition(selectedPositionId);
-                console.log("Fetched candidates:", fetchedCandidates);
-                if (fetchedCandidates && fetchedCandidates.length > 0) {
-                    setCandidates(fetchedCandidates);
-                } else {
-                    setCandidates([]);
-                }
+                console.log("Fetched candidates for position:", fetchedCandidates);
+
+                // Filter for each column based on application_status
+                const shortlistedCandidates = fetchedCandidates.filter(
+                    candidate => candidate.application_status === 'Shortlisted'
+                );
+                const interviewedCandidates = fetchedCandidates.filter(
+                    candidate => candidate.application_status === 'Scheduled'
+                );
+                const offeredCandidates = fetchedCandidates.filter(
+                    candidate => candidate.application_status === 'Offered'
+                );
+
+                setCandidates(shortlistedCandidates);
+                setInterviewed(interviewedCandidates);
+                setOffered(offeredCandidates);
             } else {
                 setCandidates([]);
+                setInterviewed([]);
+                setOffered([]);
             }
         };
+
         fetchCandidates();
-    }, [selectedPositionId]);
+    }, [selectedRequisitionId, selectedPositionId]);
+
+
 
     const calculateRatings = (candidates, skills) => {
         return candidates.map(candidate => {
@@ -151,12 +169,21 @@ const CandidateCard = () => {
         setInterviewed([]);
         setOffered([]);
     };
-
     const handleJobPositionChange = (event) => {
-        const newPositionId = event.target.value;
-        const selectedPosition = jobPositions.find(pos => pos.position_id === newPositionId);
-        setSelectedPositionId(newPositionId);
-        setJobPositionTitle(selectedPosition.position_title);
+        // const positionId = event.target.value;
+        // setSelectedPositionId(positionId);
+
+        // const selectedPos = jobPositions.find(pos => pos.position_id === positionId);
+        // if (selectedPos) {
+        //     setJobPositionTitle(selectedPos.position_title);
+        // }
+        const positionId = event.target.value;
+        setSelectedPositionId(positionId);
+
+        const found = jobPositions.find((pos) => pos.position_id === positionId);
+        if (found) {
+            setSelectedPositionTitle(found.position_title);
+        }
     };
 
     const toggleCandidateSortOrder = () => {
@@ -226,14 +253,14 @@ const CandidateCard = () => {
         const newDestList = Array.from(destList);
 
         const [movedItem] = newSourceList.splice(source.index, 1);
-        
+
         // Only move the item to the destination list if it's not the 'offered' list
         if (destination.droppableId !== 'offered') {
             newDestList.splice(destination.index, 0, movedItem);
         }
-        
+
         setSourceList(newSourceList);
-        
+
         // We only set the destination list if it's not the 'offered' list.
         // The 'offered' list state will be set by the handleOffer function.
         if (destination.droppableId !== 'offered') {
@@ -407,7 +434,7 @@ const CandidateCard = () => {
                     <Breadcrumb>
                         <BreadcrumbItem active>Jobs</BreadcrumbItem>
                         <BreadcrumbItem>
-                            <Form.Select
+                            <select
                                 className="select-drop"
                                 name="jobReqDropdown"
                                 value={selectedRequisitionCode}
@@ -423,11 +450,11 @@ const CandidateCard = () => {
                                 ) : (
                                     <option value="">No job requests available</option>
                                 )}
-                            </Form.Select>
+                            </select>
                         </BreadcrumbItem>
                         {selectedRequisitionCode && (
                             <BreadcrumbItem>
-                                <Form.Select
+                                <select
                                     className="select-drop"
                                     name="jobPositionsDropdown"
                                     value={selectedPositionId}
@@ -443,13 +470,13 @@ const CandidateCard = () => {
                                     ) : (
                                         <option value="">No positions available</option>
                                     )}
-                                </Form.Select>
+                                </select>
                             </BreadcrumbItem>
                         )}
                     </Breadcrumb>
                 </div>
                 <div className="d-flex gap-3 w-50 justify-content-end">
-                    <InputGroup className="mb-3 search-b">
+                    <InputGroup className="search-b">
                         <Form.Control
                             placeholder="Search"
                             aria-label="Search"
@@ -467,7 +494,7 @@ const CandidateCard = () => {
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: '82vh', backgroundColor: '#fff', borderRadius: '15px' }}>
+                            <div className="card-body" style={{ maxHeight: '82vh', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Candidates</h5>
@@ -530,7 +557,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px' }}>
+                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Interviewed</h5>
@@ -563,7 +590,7 @@ const CandidateCard = () => {
                                                     .map((candidate, index) => (
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
-                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
                                                                     <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
                                                                         <div>
                                                                             <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
@@ -594,7 +621,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px' }}>
+                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Offered</h5>
@@ -627,7 +654,7 @@ const CandidateCard = () => {
                                                     .map((candidate, index) => (
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
-                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
                                                                     <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
                                                                         <div>
                                                                             <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
@@ -680,7 +707,7 @@ const CandidateCard = () => {
                 show={showOfferModal}
                 handleClose={handleCancelOffer}
                 candidate={offerCandidate}
-                position_title={jobPositionTitle}
+                position_title={selectedPositionTitle}
                 reqId={reqId}
                 position_id={positionId}
                 salary={salary}

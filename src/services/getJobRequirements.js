@@ -41,3 +41,17 @@ export const getCandidatesByPosition = async (position_id) => {
         return [];
     }
 };
+
+export const fetchCandidatesByStatus = async (status) => {
+    try {
+        const response = await fetch(`http://192.168.20.115:8081/api/candidates/get-candidates/${status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data; // Assuming the API returns an array of candidates
+    } catch (error) {
+        console.error(`Failed to fetch candidates with status ${status}:`, error);
+        return [];
+    }
+};

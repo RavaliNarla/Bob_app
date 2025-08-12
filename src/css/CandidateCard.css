@@ -118,6 +118,7 @@
 .search-f {
     border-radius: 15px !important;
     border: none !important;
+    height: 40px;
     /* outline: none; */
 }
 
@@ -149,7 +150,7 @@
     font-size: 17px !important;
     padding: 3px 23px !important;
     width: auto !important;
-    background-color: #ccd2e1  !important;
+    background-color: #fff  !important;
     color: black !important;
     border: none !important;
     border-radius: 5px !important;
@@ -162,17 +163,18 @@
 }
 
 .advanced-fil {
-    padding: 7px 30px;
-    background-color: #162b75 !important;
-    border-color: #34b1f5 !important;
+    padding: 8px;
+    background-color: rgb(255, 77, 0) !important;
+    /* border-color: #34b1f5 !important; */
     border-radius: 5px;
     color: white;
     border: none;
     cursor: pointer;
     font-size: 14px;
-    height: 2%;
+    /* height: 2%; */
     margin-right: 40px;
     margin-bottom: 20px;
+    font-weight: 500;
 }
 
 .advanced-fil i {

@@ -18,7 +18,7 @@ const Layout = ({ children }) => (
       <Header />
       <div className="flex-grow-1 d-flex" style={{ overflow: 'hidden' }}>
         <Sidebar />
-        <main className="flex-grow-1" style={{ overflowY: 'auto', background: '#eee' }}>
+        <main className="flex-grow-1" style={{ overflowY: 'auto', background: '#eee', overflowX: 'hidden' }}>
           <Container fluid className="h-100">
             <Row className="h-100">
               <Col className="p-0" style={{ borderRight: '1px solid #dee2e6' }}>
