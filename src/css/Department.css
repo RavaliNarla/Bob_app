@@ -1,0 +1,80 @@
+.department-form input,
+.department-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+ 
+.btn-orange {
+  background-color: #ff6b00;
+  color: white;
+  border: none;
+}
+ 
+.btn-orange:hover {
+  background-color: #e65c00;
+}
+ 
+.btn-outline-orange {
+  color: #ff6b00;
+  border: 1px solid #ff6b00;
+  background-color: transparent;
+}
+ 
+.btn-outline-orange:hover {
+  background-color: #ff6b00;
+  color: white;
+}
+ 
+.department-item {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  transition: box-shadow 0.2s ease-in-out;
+  background-color: #fff;
+}
+ 
+.department-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+}
+ 
+.job-bullet {
+  width: 4px;
+  height: 4px;
+  background-color: orange;
+  border-radius: 50%;
+}
+ 
+.custom-dropdown .dropdown-toggle::after {
+  display: none;
+}
+.editanddelete{
+    cursor: pointer;
+    color: #e65c00;
+}.text-orange {
+  color: #FF7043;
+}
+.department-form .form-label {
+  font-weight: 500;
+}
+/* Modal width */
+.wide-modal {
+  max-width: 900px;
+}
+/* Orange header text */
+.text-orange {
+  color: #FF7043;
+}
+/* Label styling */
+.department-form .form-label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+  font-size: 0.95rem;
+}
+.table-header-orange th {
+  color: #FF7043;
+  font-weight: 600;
+}

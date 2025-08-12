@@ -10,10 +10,12 @@ import ForgotPassword from './components/ForgotPassword';
 import CandidateCard from './components/CandidateCard';
 import Tokenexp from './components/Tokenexp';
 import CandidatePortal from './components/CandidatePortal';
+import Dashboard from './pages/Dashboard';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
 const JobRequisition = React.lazy(() => import('./pages/JobRequisition'));
+const Department = React.lazy(() => import('./pages/Department'));
 const Layout = React.lazy(() => import('./components/Layout'));
 // Loading component
 const Loading = () => (
@@ -74,6 +76,14 @@ function App() {
               }
             /> */}
             <Route
+  path="/dashboard"
+  element={
+    <Layout>
+      <Dashboard />
+    </Layout>
+  }
+/>
+            <Route
               path="/job-creation"
               element={
                 <Layout>
@@ -94,6 +104,14 @@ function App() {
               element={
                 <Layout>
                   <JobRequisition />
+                </Layout>
+              }
+            />
+            <Route
+              path="/department"
+              element={
+                <Layout>
+                  <Department />
                 </Layout>
               }
             />
