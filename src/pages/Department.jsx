@@ -14,17 +14,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencil,
   faTrash,
-  faSearch,
-  
+  faSearch
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const API_BASE = "http://192.168.20.115:8080/api";
-
-// Change this flag to false when connecting to real backend
-const USE_MOCK_DATA = true;
 
 const Department = () => {
   const [showModal, setShowModal] = useState(false);
@@ -48,41 +44,8 @@ const Department = () => {
     setLoading(true);
     setError(null);
     try {
-      if (USE_MOCK_DATA) {
-        const mockData = {
-          data: [
-            {
-              department_id: 1,
-              department_name: "Human Resources",
-              department_desc: "Handles recruitment, employee relations, and compliance.",
-            },
-            {
-              department_id: 2,
-              department_name: "Engineering",
-              department_desc: "Responsible for product development and infrastructure.",
-            },
-            {
-              department_id: 3,
-              department_name: "Marketing",
-              department_desc: "Focuses on brand promotion and market analysis.",
-            },
-            {
-              department_id: 4,
-              department_name: "Finance",
-              department_desc: "Manages budgeting, accounting, and financial planning.",
-            },
-            {
-              department_id: 5,
-              department_name: "Customer Support",
-              department_desc: "Provides assistance to clients and resolves product issues.",
-            },
-          ],
-        };
-        setDepts(mockData.data);
-      } else {
-        const res = await axios.get(`${API_BASE}/departments/all`);
-        setDepts(res.data.data);
-      }
+      const res = await axios.get(`${API_BASE}/departments/all`);
+      setDepts(res.data.data || res.data); // adjust if API returns differently
     } catch (err) {
       setError("Failed to fetch Department.");
       console.error("GET Error:", err);
@@ -115,15 +78,12 @@ const Department = () => {
   const handleSaveCallback = async () => {
     try {
       if (editIndex !== null) {
-        // Editing existing record
         const updatedDept = {
           ...currentDept,
           department_id: depts[editIndex].department_id,
         };
 
-        if (!USE_MOCK_DATA) {
-          await axios.put(`${API_BASE}/departments/update/${updatedDept.department_id}`, updatedDept);
-        }
+        await axios.put(`${API_BASE}/departments/update/${updatedDept.department_id}`, updatedDept);
 
         toast.info("Department updated successfully");
 
@@ -131,16 +91,9 @@ const Department = () => {
         updatedDepts[editIndex] = updatedDept;
         setDepts(updatedDepts);
       } else {
-        // Adding new record
-        const tempId = depts.length ? Math.max(...depts.map(d => d.department_id || 0)) + 1 : 1;
-
-        let newDept;
-        if (!USE_MOCK_DATA) {
-          const response = await axios.post(`${API_BASE}/departments/add`, currentDept);
-          newDept = response.data?.data || { ...currentDept, department_id: tempId };
-        } else {
-          newDept = { ...currentDept, department_id: tempId };
-        }
+        console.log("Adding new department:", currentDept);
+        const response = await axios.post(`${API_BASE}/departments/add`, currentDept);
+        const newDept = response.data?.data || currentDept;
 
         toast.success("Department added successfully");
         setDepts(prev => [...prev, newDept]);
@@ -152,23 +105,16 @@ const Department = () => {
     }
   };
 
-  const handleDelete = (index) => {
+  const handleDelete = async (index) => {
     const idToDelete = depts[index]?.department_id;
 
-    if (!USE_MOCK_DATA) {
-      axios.delete(`${API_BASE}/departments/delete/${idToDelete}`)
-        .then(() => {
-          setDepts(depts.filter((dept) => dept.department_id !== idToDelete));
-          toast.error("Department deleted");
-        })
-        .catch(err => {
-          console.error("Delete Error:", err);
-          toast.error("Delete failed");
-        });
-    } else {
-      // Local delete for mock mode
+    try {
+      await axios.delete(`${API_BASE}/departments/delete/${idToDelete}`);
       setDepts(depts.filter((dept) => dept.department_id !== idToDelete));
       toast.error("Department deleted");
+    } catch (err) {
+      console.error("Delete Error:", err);
+      toast.error("Delete failed");
     }
   };
 
@@ -228,7 +174,7 @@ const Department = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 deptfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Department</h2>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
@@ -244,18 +190,15 @@ const Department = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-         
       </InputGroup>
       <hr />
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No Department match your criteria.</p>
       ) : (
-        
         <Table responsive hover>
           <thead className="table-header-orange">
             <tr>
-              
               <th onClick={() => handleSort("department_name")} style={{ cursor: "pointer", width: "40%" }}>
                 Name{getSortIndicator("department_name")}
               </th>
