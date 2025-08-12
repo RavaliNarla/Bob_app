@@ -102,8 +102,8 @@
   color: #FF7043;
 }
 .form-control.is-invalid{
-  border-color: red !important;
+  border-color: #ff0000 !important;
 }
 .invalid-feedback{
-  color:red !important;
+  color:#ff0000 !important;
 }

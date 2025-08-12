@@ -55,7 +55,7 @@ const Sidebar = () => {
               fontSize: '0.75rem',
               textDecoration: 'none',
               height: '60px',
-              width: '98px'
+              width: '97px'
             }}
           >
             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.8rem' }} />
