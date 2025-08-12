@@ -308,7 +308,7 @@ const JobPosting = () => {
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
-                        {apiData.map((job, index) => (
+                        {apiData?.map((job, index) => (
                           <tr key={job.position_id || index}>
                             <td>{job.position_title}</td>
                             <td>{job.description}</td>

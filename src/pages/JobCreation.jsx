@@ -172,7 +172,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
             mandatory_experience: selectedPosition.mandatory_experience || '',
             preferred_experience: selectedPosition.preferred_experience || '',
             probation_period: selectedPosition.probation_period || '',
-            documents_required: selectedPosition.document_required || '',
+            documents_required: selectedPosition.documents_required || '',
             min_credit_score: selectedPosition.min_credit_score || '',
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
             selection_procedure: selectedPosition.selection_procedure || '',
@@ -180,6 +180,23 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
+
+          const states = masterData.allStates.filter(
+    (s) => s.countryId === Number(selectedPosition.country_id)
+  );
+  setFilteredStates(states);
+
+  // 2. Filter cities for the selected state
+  const cities = masterData.allCities.filter(
+    (c) => c.state_id === Number(selectedPosition.state_id)
+  );
+  setFilteredCities(cities);
+
+  // 3. Filter locations for the selected city
+  const locations = masterData.allLocations.filter(
+    (l) => l.city_id === Number(selectedPosition.city_id)
+  );
+  setFilteredLocations(locations);
 
           // setFormData((prev) => ({
           //   ...prev,
@@ -191,7 +208,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
     }
 
-  }, [ editPositionId]);
+  }, [ editPositionId, masterData]);
 const handleInputChange = (e) => {
   const { name, value } = e.target;
  // console.log('Input change:', name, value);
@@ -277,7 +294,7 @@ const handleInputChange = (e) => {
         let response;
         if (!showModal) {
           response = await apiService.jobCreation(formData);
-          navigate("/jobposting");
+          navigate("/job-postings");
         } else {
           console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
@@ -448,7 +465,7 @@ const handleInputChange = (e) => {
   };
 
   return (
-    <Container fluid className="py-2 formbackground">
+    <Container fluid className="py-2">
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
           <div className="p-1">
