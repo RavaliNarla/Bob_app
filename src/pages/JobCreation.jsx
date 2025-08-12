@@ -87,13 +87,11 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
         console.log('Master Data Response:', masterDataRes);
        console.log('Requisition Data Response:', requisitionDataRes);
-        const staticJobGrades = [
-          { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
-          { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
-        ];
-        const jobGrades = (masterDataRes.job_grade_ids && masterDataRes.job_grade_ids.length > 0)
-          ? masterDataRes.job_grade_ids
-          : staticJobGrades;
+        // const staticJobGrades = [
+        //   { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
+        //   { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
+        // ];
+        const jobGrades = masterDataRes.job_grade_data;
 
         setMasterData({
           requisitionIdOptions: (requisitionDataRes.data || []).map(req => ({
@@ -279,6 +277,7 @@ const handleInputChange = (e) => {
         let response;
         if (!showModal) {
           response = await apiService.jobCreation(formData);
+          navigate("/jobposting");
         } else {
           console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
@@ -286,11 +285,12 @@ const handleInputChange = (e) => {
         }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);
-            setFormData(initialState);
-            setErrors({});
+        setFormData(initialState);
+        setErrors({});
 
         toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
         setFormData(initialState);
+         
       } catch (error) {
         console.error('❌ API error:', error);
         toast.error(showModal ? 'Failed to update job.' : 'Failed to create job.');

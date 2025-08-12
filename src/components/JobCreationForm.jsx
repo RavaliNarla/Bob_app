@@ -327,14 +327,14 @@ const JobCreationForm = ({
 
         {/* Mandatory Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience <span className="required-asterisk">*</span></label>
+          <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience(Years) <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" />
           {errors.mandatory_experience && <small className="error">{errors.mandatory_experience}</small>}
         </div>
 
         {/* Preferred Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="preferred_experience" className="form-label">Preferred Experience <span className="required-asterisk">*</span></label>
+          <label htmlFor="preferred_experience" className="form-label">Preferred Experience(Years)<span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" />
           {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
         </div>
