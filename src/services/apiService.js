@@ -109,7 +109,7 @@ export const apiService = {
     updateJob: (data) => api.put('/update_positions', data),
     getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
     getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
-    
+    jobpost: (data) => api.post('/job_postings',data),
     //getJobPost: () => api.get('/activejobs'),
     //createJobPost: (data) => api.post('/jobcreation', data),
      // uploadJobExcel: (file) => {
