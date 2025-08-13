@@ -23,7 +23,7 @@ import {
   faMarker,
 } from "@fortawesome/free-solid-svg-icons";
 // import { faHeart as faRegularHeart } from "@fortawesome/free-regular-svg-icons";
-
+import profile from '../assets/profile_icon.png';
 
 function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandidates }) {
   const handleCloseIconClick = () => {
@@ -185,7 +185,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                     className="rect-Profile"
                     style={{ width: "70px", height: "70px" }}
                   /> */}
-                  <img src={candidate.avatar} alt={candidate.full_name} className="candidate_image me-3" />
+                  <img src={profile} alt={candidate.full_name} className="candidate_image me-3" />
                 </div>
                 <div>
                   <h5 className="mb-0">

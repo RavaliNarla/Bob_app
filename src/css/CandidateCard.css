@@ -196,3 +196,12 @@
     /* gap: 60px; */
     width: 134%;    
 }
+
+.reschedule-btn {
+    border-radius: 10px;
+    background-color: rgb(255, 77, 0) !important;
+    color: white;
+    border: none;
+    width: 100px;
+    height: 50px;
+}

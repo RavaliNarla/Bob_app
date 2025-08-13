@@ -1,3 +1,10 @@
+const BASE_URL = "http://docs.sentrifugo.com:8080/candidate";
+
+export const API_ENDPOINTS = {
+  SCHEDULE_INTERVIEW: `${BASE_URL}/api/candidates/schedule-interview`,
+  OFFER: `${BASE_URL}/api/candidates/offer`,
+};
+
 export const getJobRequirements = async () => {
     try {
         const response = await fetch('http://docs.sentrifugo.com:8080/jobcreation/api/getreq');
