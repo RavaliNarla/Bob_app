@@ -52,6 +52,7 @@ const JobPosting = () => {
     const [isEditMode, setIsEditMode] = useState(false);
 
   const [apiData, setApiData] = useState([]);
+  const [tableLoading, setTableLoading] = useState(false);
   const [editRequisitionId, setEditRequisitionId] = useState(null);
   const [editPositionId, setEditPositionId] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -65,13 +66,25 @@ const JobPosting = () => {
     setActiveKey(newKey);
 
     if (newKey !== null && requisition_id) {
+      setApiData([]);
+      setTableLoading(true);
       try {
         const data = await apiService.getByRequisitionId(requisition_id);
-        console.log("Requisition Data:", data);
-        setApiData(data.data || []);
+        setApiData(data?.data || []);
       } catch (err) {
-        console.error("Error fetching requisition details:", err);
+        if (err.response && err.response.status === 404) {
+          setApiData([]);
+        } else {
+          console.error("Error fetching requisition details:", err);
+        }
+      } finally {
+        setTableLoading(false);
       }
+    }
+    // If closing, clear data and loading state
+    if (newKey === null) {
+      setApiData([]);
+      setTableLoading(false);
     }
   };
 
@@ -83,6 +96,7 @@ const JobPosting = () => {
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
+        console.log("No data")
         setError("Failed to fetch job postings: Unexpected data format.");
       }
     } catch (err) {
@@ -308,27 +322,39 @@ const JobPosting = () => {
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
-                        {apiData?.map((job, index) => (
-                          <tr key={job.position_id || index}>
-                            <td>{job.position_title}</td>
-                            <td>{job.description}</td>
-                            <td>{job.position_code}</td>
-                            <td>{job.preferred_experience}</td>
-                            <td>{job.position_status}</td>
-                            <td className="text-center">
-                              <FontAwesomeIcon
-                                icon={faPencil}
-                                className="text-info me-3 cursor-pointer"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => {
-                                  setEditRequisitionId(job.requisition_id);
-                                  setEditPositionId(job.position_id);
-                                  setShowModal(true);
-                                }}
-                              />
+                        {tableLoading ? (
+                          <tr>
+                            <td colSpan="6" className="text-center py-3">
+                              <Spinner animation="border" size="sm" /> Loading positions...
                             </td>
                           </tr>
-                        ))}
+                        ) : (!apiData || apiData.length === 0) ? (
+                          <tr>
+                            <td colSpan="6" className="text-center text-muted py-3">No positions added yet</td>
+                          </tr>
+                        ) : (
+                          apiData.map((job, index) => (
+                            <tr key={job.position_id || index}>
+                              <td>{job.position_title}</td>
+                              <td>{job.description}</td>
+                              <td>{job.position_code}</td>
+                              <td>{job.preferred_experience}</td>
+                              <td>{job.position_status}</td>
+                              <td className="text-center">
+                                <FontAwesomeIcon
+                                  icon={faPencil}
+                                  className="text-info me-3 cursor-pointer"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setEditRequisitionId(job.requisition_id);
+                                    setEditPositionId(job.position_id);
+                                    setShowModal(true);
+                                  }}
+                                />
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </Table>
                   </Col>
@@ -422,6 +448,13 @@ const JobPosting = () => {
             showModal={showModal}
             onClose={() => setShowModal(false)}
             editPositionId={editPositionId}
+            onUpdateSuccess={() => {
+              if (editRequisitionId) {
+                apiService.getByRequisitionId(editRequisitionId).then(res => {
+                  setApiData(res?.data || []);
+                });
+              }
+            }}
           />
         </Modal.Body>
       </Modal>

@@ -11,6 +11,9 @@ import CandidateCard from './components/CandidateCard';
 import Tokenexp from './components/Tokenexp';
 import CandidatePortal from './components/CandidatePortal';
 import Dashboard from './pages/Dashboard';
+import JobGrade from './pages/JobGrade';
+import Skill from './pages/Skill';
+import Location from './pages/Location';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -112,6 +115,30 @@ function App() {
               element={
                 <Layout>
                   <Department />
+                </Layout>
+              }
+            />
+            <Route
+              path="/job-grade"
+              element={
+                <Layout>
+                  <JobGrade />
+                </Layout>
+              }
+            />
+            <Route
+              path="/skill"
+              element={
+                <Layout>
+                  <Skill />
+                </Layout>
+              }
+            />
+            <Route
+              path="/location"
+              element={
+                <Layout>
+                  <Location />
                 </Layout>
               }
             />
