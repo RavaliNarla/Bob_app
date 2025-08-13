@@ -448,6 +448,13 @@ const JobPosting = () => {
             showModal={showModal}
             onClose={() => setShowModal(false)}
             editPositionId={editPositionId}
+            onUpdateSuccess={() => {
+              if (editRequisitionId) {
+                apiService.getByRequisitionId(editRequisitionId).then(res => {
+                  setApiData(res?.data || []);
+                });
+              }
+            }}
           />
         </Modal.Body>
       </Modal>
