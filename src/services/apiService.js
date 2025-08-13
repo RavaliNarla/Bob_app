@@ -105,7 +105,8 @@ export const apiService = {
 
   uploadJobExcel: (data) => api.post('/create_Bulk_positions', data), // Dummy POST endpoint
   postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
-  
+  getallLocations: () => apis.get('/location/all'),
+  getallCities: () => apis.get('/city/all'),
   updateJob: (data) => api.put('/update_positions', data),
   getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
   getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
