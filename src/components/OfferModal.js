@@ -11,12 +11,14 @@ const OfferModal = ({
   salary,
   setSalary,
   position_id,
-  handleOffer // We will now call this function directly from the button
+  handleOffer
 }) => {
+  // console.log("Position Title in Modal:", position_title); 
   const [triggerDownload, setTriggerDownload] = useState(false);
+  const [showPreview, setShowPreview] = useState(false); // State for preview modal
 
   const handlePreviewClick = () => {
-    setTriggerDownload(true);
+    setShowPreview(true); // Show the preview modal
   };
 
   const handleDownloadComplete = () => {
@@ -45,23 +47,22 @@ const OfferModal = ({
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Salary</Form.Label>
-              <Form.Control
-                type="text"
-                value={salary}
-                onChange={(e) => setSalary(e.target.value)}
-              />
+              <Form.Control type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
-            Close
+            Cancel
           </Button>
-          <Button variant="primary" onClick={handlePreviewClick}>
+          <Button variant="info" onClick={handlePreviewClick}>
+            Preview
+          </Button>
+          <Button variant="primary" onClick={() => setTriggerDownload(true)}>
             Download
           </Button>
-          <Button variant="success" onClick={handleOffer}>
-            Offer
+          <Button variant="primary" onClick={handleOffer}>
+            Send Offer
           </Button>
         </Modal.Footer>
       </Modal>
@@ -70,12 +71,40 @@ const OfferModal = ({
         <OfferLetter
           candidate={candidate}
           jobPosition={position_title}
-          reqId={reqId}
           salary={salary}
-          autoDownload={true}
+          reqId={reqId}
+          autoDownload={triggerDownload}
           onDownloadComplete={handleDownloadComplete}
         />
       )}
+
+      {/* Preview Modal */}
+      <Modal show={showPreview} onHide={() => setShowPreview(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Offer Letter Preview</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <OfferLetter
+            candidate={candidate}
+            jobPosition={position_title}
+            salary={salary}
+            reqId={reqId}
+            autoDownload={false} // Do not auto-download in preview
+            onDownloadComplete={handleDownloadComplete}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowPreview(false)}>
+            Cancel
+          </Button>
+          {/* <Button variant="primary" onClick={() => {
+            setTriggerDownload(true);
+            setShowPreview(false); // Close preview and trigger download
+          }}>
+            Download
+          </Button> */}
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
