@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import apiService from "../services/apiService";
 
-const API_BASE = "http://192.168.20.115:8080/api";
+const API_BASE = "http://docs.sentrifugo.com:8080/master/api";
 
 const Location = () => {
   const [showModal, setShowModal] = useState(false);

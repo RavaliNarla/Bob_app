@@ -20,7 +20,7 @@ const InterviewModal = ({ show, handleClose, candidate, date, setDate, time, set
     }, [date, time]);
 
     return (
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} centered size='lg'>
             <Modal.Header closeButton>
                 <Modal.Title>Schedule Interview</Modal.Title>
             </Modal.Header>

@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Use the environment variables with a fallback to the new URLs you provided.
 // This is the correct way to handle different API services.
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://192.168.20.111:8081/api';
-const API_BASE_URLS = process.env.REACT_APP_API_URLS || 'http://192.168.20.115:8080/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://docs.sentrifugo.com:8080/jobcreation/api';
+const API_BASE_URLS = process.env.REACT_APP_API_URLS || 'http://docs.sentrifugo.com:8080/master/api';
 
 // Create a primary axios instance for most API calls
 const api = axios.create({
@@ -110,9 +110,6 @@ export const apiService = {
   getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
   getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
   jobpost: (data) => api.post('/job_postings',data),
-  getallLocations: () => apis.get('/location/all'),
-  getallCities: () => apis.get('/city/all'),
-  getDashboardQueries: () => api.get('/dashboard/queries'),
    
 };
 

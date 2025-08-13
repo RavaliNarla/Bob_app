@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -6,27 +6,24 @@ import {
   faFileAlt,
   faBriefcase,
   faUserFriends,
+  faCalendarAlt,
+  faFileInvoiceDollar,
+  faCog,
   faQuestionCircle,
-  faChevronDown,
-  faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = () => {
   const location = useLocation();
-  const [adminOpen, setAdminOpen] = useState(false);
-
-  const isActive = (path) => {
-    return location.pathname === path ? 'active' : '';
-  };
 
   const menuItems = [
     { icon: faHome, text: 'Overview', path: '/dashboard' },
-    { icon: faFileAlt, text: 'Job Requisition', path: '/job-requisition' },
+    { icon: faFileAlt, text: 'Job Requisiton', path: '/job-requisition' },
+
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
-  // { icon: faUserFriends, text: 'Department', path: '/department' },
+    // { icon: faUserFriends, text: 'Department', path: '/department' },
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
     // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
@@ -35,14 +32,9 @@ const Sidebar = () => {
     // { icon: faCog, text: 'Relaxation Policy', path: '/policy' },
   ];
 
-  const adminItems = [
-    { icon: faBriefcase, text: 'Department', path: '/department' },
-    { icon: faBriefcase, text: 'Skills', path: '/skill' },
-    { icon: faBriefcase, text: 'Location', path: '/location' },
-    { icon: faBriefcase, text: 'Job Grade', path: '/job-grade' },
-       
-
-  ];
+  const isActive = (path) => {
+    return location.pathname === path ? 'active' : '';
+  };
 
   return (
     <div
@@ -50,7 +42,6 @@ const Sidebar = () => {
       style={{ width: '99px', borderRight: '1px solid #dee2e6', height: '100vh' }}
     >
       <Nav className="flex-column text-center w-100">
-        {/* Regular Menu Items */}
         {menuItems.map((item, index) => (
           <Nav.Link
             key={index}
@@ -71,49 +62,6 @@ const Sidebar = () => {
             <span className="mt-1">{item.text}</span>
           </Nav.Link>
         ))}
-
-        {/* Admin Menu */}
-        <div
-          className="d-flex flex-column align-items-center justify-content-center py-3"
-          style={{
-            color: '#6c757d',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            height: '60px',
-            width: '97px',
-          }}
-          onClick={() => setAdminOpen(!adminOpen)}
-        >
-          <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '0.8rem' }} />
-          <span className="mt-1">Admin</span>
-          <FontAwesomeIcon
-            icon={adminOpen ? faChevronUp : faChevronDown}
-            style={{ fontSize: '0.6rem', marginTop: '2px' }}
-          />
-        </div>
-
-        {/* Admin Sub Menu */}
-        {adminOpen &&
-          adminItems.map((item, index) => (
-            <Nav.Link
-              key={`admin-${index}`}
-              as={Link}
-              to={item.path}
-              className={`d-flex flex-column align-items-center justify-content-center py-2 nav-item-custom ${isActive(item.path)}`}
-              style={{
-                color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-                backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
-                fontWeight: isActive(item.path) ? '600' : '400',
-                fontSize: '0.7rem',
-                textDecoration: 'none',
-                height: '50px',
-                width: '97px'
-              }}
-            >
-              <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />
-              <span className="mt-1">{item.text}</span>
-            </Nav.Link>
-          ))}
       </Nav>
 
       {/* Bottom Help section */}
