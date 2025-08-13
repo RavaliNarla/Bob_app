@@ -285,7 +285,7 @@ const CandidateCard = () => {
     };
 
     const handleScheduleInterview = async (interviewData) => {
-        this.setState({ isLoading: true });
+        // this.setState({ isLoading: true });
         console.log("Scheduling interview with data:", interviewData);
         if (!interviewCandidate || !interviewData.interview_date || !interviewData.interview_time) {
             console.error("Missing required interview information.");
