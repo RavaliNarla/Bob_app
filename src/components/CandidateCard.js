@@ -367,6 +367,7 @@ const CandidateCard = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                console.error("Error sending offer:", errorData);
                 throw new Error(errorData.message || `Error: ${response.statusText}`);
             }
 
