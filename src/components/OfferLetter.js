@@ -44,19 +44,18 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
     }
   }, [candidate, jobPosition, salary, reqId]);
 
- useEffect(() => {
-  if (
-    autoDownload &&
-    candidate &&
-    candidate.candidate_id &&
-    formData.full_name &&
-    formData.location &&
-    formData.grossAnnual
-  ) {
-    handleDownload();
-  }
-}, [autoDownload, candidate, formData]);
-
+  useEffect(() => {
+    if (
+      autoDownload &&
+      candidate &&
+      candidate.candidate_id &&
+      formData.full_name &&
+      formData.location &&
+      formData.grossAnnual
+    ) {
+      handleDownload();
+    }
+  }, [autoDownload, candidate, formData]);
 
   const today = new Date().toLocaleDateString('en-GB', {
     day: '2-digit', month: 'long', year: 'numeric'
@@ -71,7 +70,7 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
 
     const candidateId = candidate.candidate_id;
     const filename = `Offer_Letter_${candidateId}_${new Date().toISOString()}.pdf`;
-    
+
     const opt = {
       margin: 0.5,
       filename: filename,
@@ -79,11 +78,11 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
       html2canvas: { scale: 3, useCORS: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
     };
-    
+
     try {
       const pdfBlob = await html2pdf().from(element).set(opt).output('blob');
       const file = new File([pdfBlob], filename, { type: 'application/pdf' });
-      
+
       const fd = new FormData();
       fd.append("pdfFile", file, filename);
       fd.append("candidateId", candidateId);
