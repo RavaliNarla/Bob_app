@@ -12,7 +12,9 @@ import {
 import Drawer from "./Drawer";
 import InterviewModal from "./InterviewModal";
 import OfferModal from "./OfferModal";
-import { getJobRequirements, getJobPositions, getCandidatesByPosition, fetchCandidatesByStatus } from "../services/getJobRequirements";
+import { getJobRequirements, getJobPositions, getCandidatesByPosition, fetchCandidatesByStatus, API_ENDPOINTS } from "../services/getJobRequirements";
+import profile from '../assets/profile_icon.png';
+import axios from "axios";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
@@ -35,7 +37,7 @@ const CandidateCard = () => {
     const [selectedPositionId, setSelectedPositionId] = useState("");
     const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
     const [jobPositionTitle, setJobPositionTitle] = useState("");
-const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
+    const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -48,7 +50,9 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
     const [salary, setSalary] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    const [offerLetterPath, setOfferLetterPath] = useState('');
+    const [showRescheduleModal, setShowRescheduleModal] = useState(false);
+    const [rescheduleCandidate, setRescheduleCandidate] = useState(null);
     const showToast = (message, variant) => {
         alert(message);
     };
@@ -164,7 +168,8 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
         setSelectedRequisitionCode(newRequisitionCode);
         setSelectedRequisitionId(selectedReq ? selectedReq.requisition_id : "");
         setSelectedPositionId("");
-        setJobPositionTitle("");
+        // Set the job position title if a requisition is selected
+        setJobPositionTitle(selectedReq ? selectedReq.requisition_title : "");
         setCandidates([]);
         setInterviewed([]);
         setOffered([]);
@@ -279,8 +284,10 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
         }
     };
 
-    const handleScheduleInterview = async () => {
-        if (!interviewCandidate || !interviewDate || !interviewTime) {
+    const handleScheduleInterview = async (interviewData) => {
+        this.setState({ isLoading: true });
+        console.log("Scheduling interview with data:", interviewData);
+        if (!interviewCandidate || !interviewData.interview_date || !interviewData.interview_time) {
             console.error("Missing required interview information.");
             return;
         }
@@ -288,15 +295,15 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
         const [hour, minute] = interviewTime.split(":").map(Number);
 
         const interviewPayload = {
-            candidate_id: interviewCandidate.candidate_id,
-            date: interviewDate,
-            interview_time: interviewTime,
-            userId: 3, // Replace with actual user ID if needed
+            candidate_id: interviewCandidate?.candidate_id,
+            date: interviewData.interview_date,
+            interview_time: interviewData.interview_time,
+            // userId: 3,
             position_id: selectedPositionId
         };
 
         try {
-            const response = await fetch("http://192.168.20.115:8081/api/candidates/schedule-interview", {
+            const response = await fetch(API_ENDPOINTS.SCHEDULE_INTERVIEW, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -330,19 +337,18 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
     };
 
 
-
-    const handleOffer = async () => {
-        if (!offerCandidate || !salary) {
-            console.error("Missing candidate or salary details.");
+    const handleOffer = async (offerLetterPath) => {
+        if (!offerCandidate || !salary || !offerLetterPath) {
+            console.error("Missing candidate, salary, or offer letter path.");
             return;
         }
+
         setLoading(true);
         setError(null);
 
         try {
-            const offerLetterPath = "C:\\Users\\sumanth.sangam\\Downloads\\Academic_CV_Template.pdf";
-
-            const response = await fetch('http://192.168.20.115:8081/api/candidates/offer', {
+            console.log("Offer Letter Path:", offerLetterPath);
+            const response = await fetch(API_ENDPOINTS.OFFER, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -355,12 +361,15 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                 })
             });
 
+            console.log("Offer Candidate:", offerCandidate);
+            console.log("Salary:", salary);
+            console.log("Offer Letter Path:", offerLetterPath);
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || `Error: ${response.statusText}`);
             }
 
-            // If API call is successful, then update local state
             const updatedInterviewed = interviewed.filter(
                 (c) => c.candidate_id !== offerCandidate.candidate_id
             );
@@ -372,7 +381,6 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
             ];
             setOffered(updatedOffered);
 
-            // Clean up after successful offer
             setShowOfferModal(false);
             setOfferCandidate(null);
             setSalary('');
@@ -389,7 +397,6 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
             setLoading(false);
         }
     };
-
 
     const handleCancelInterview = () => {
         if (interviewCandidate) {
@@ -427,12 +434,87 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
         setSelectedCandidate(candidate);
     };
 
+    const handleReschedule = (candidate) => {
+        setRescheduleCandidate(candidate);
+        setShowRescheduleModal(true);
+    };
+
+    const handleCancelReschedule = () => {
+        setShowRescheduleModal(false);
+        setRescheduleCandidate(null);
+    };
+
+    // Function to handle the actual reschedule interview
+    const handleRescheduleInterview = async (interviewData) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const payload = {
+                candidate_id: interviewCandidate?.candidate_id,
+                date: interviewData.interview_date,
+                interview_time: interviewData.interview_time,
+                // userId: 3,
+                position_id: selectedPositionId
+                // candidate_id: rescheduleCandidate.candidate_id,
+                // ... include other necessary data from interviewData
+            };
+            // API call to reschedule
+            const response = await axios.put(API_ENDPOINTS.SCHEDULE_INTERVIEW, payload);
+            if (response.status === 200) {
+                showToast("Interview rescheduled successfully!", "success");
+                // Update the candidate's data in the state
+                const updatedInterviewed = interviewed.map(c =>
+                    c.candidate_id === rescheduleCandidate.candidate_id ? { ...c, ...interviewData } : c
+                );
+                setInterviewed(updatedInterviewed);
+                handleCancelReschedule();
+            }
+        } catch (err) {
+            console.error("Failed to reschedule interview:", err);
+            setError(err.message || 'Failed to reschedule interview');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Function to handle the cancellation of an interview
+    const handleDeleteInterview = async (interviewData) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const payload = {
+                candidate_id: interviewCandidate?.candidate_id,
+                date: interviewData.interview_date,
+                interview_time: interviewData.interview_time,
+                // userId: 3,
+                position_id: selectedPositionId,
+                // candidate_id: rescheduleCandidate.candidate_id,
+                interview_status: 'Canceled', // Assuming the API accepts a status field
+                // ... other data
+            };
+            const response = await axios.put(API_ENDPOINTS.SCHEDULE_INTERVIEW, payload);
+            if (response.status === 200) {
+                showToast("Interview cancelled successfully!", "success");
+                // Move candidate to a different column or remove from 'Interviewed'
+                const updatedInterviewed = interviewed.filter(c => c.candidate_id !== rescheduleCandidate.candidate_id);
+                setInterviewed(updatedInterviewed);
+                handleCancelReschedule();
+            }
+        } catch (err) {
+            console.error("Failed to cancel interview:", err);
+            setError(err.message || 'Failed to cancel interview');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <Container fluid className="py-5">
             <div className="top-bar">
                 <div>
                     <Breadcrumb>
                         <BreadcrumbItem active>Jobs</BreadcrumbItem>
+                        {/* // CandidateCard.js */}
                         <BreadcrumbItem>
                             <select
                                 className="select-drop"
@@ -444,7 +526,7 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                                 {jobReqs.length > 0 ? (
                                     jobReqs.map((req, index) => (
                                         <option key={index} value={req.requisition_code}>
-                                            {req.requisition_code}
+                                            {req.requisition_code} - {req.requisition_title}
                                         </option>
                                     ))
                                 ) : (
@@ -527,20 +609,22 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
                                                                 <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex justify-content-between">
+                                                                    <div className="candidate_card card-body d-flex gap-3">
                                                                         <div>
-                                                                            <img className="candidate_image" src={candidate.avatar || profile_prictures[index % profile_prictures.length]} alt={candidate.full_name} />
+                                                                            <img className="candidate_image"
+                                                                                src={profile}
+                                                                                alt={candidate.full_name} />
                                                                         </div>
                                                                         <div className="w-50 px-1">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div className="card-status-label">{candidate.profileStatus}</div>
-                                                                        <div className="rating_container d-flex align-self-end p-1">
+                                                                        {/* <div className="card-status-label">{candidate.profileStatus}</div> */}
+                                                                        {/* <div className="rating_container d-flex align-self-end p-1">
                                                                             <h6 className="rating_text px-1">{candidate.rating}</h6>
                                                                             <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
-                                                                        </div>
+                                                                        </div> */}
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -591,20 +675,31 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
                                                                 <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
+                                                                    <div className="candidate_card card-body d-flex gap-3" style={{ cursor: "pointer" }}>
                                                                         <div>
-                                                                            <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
+                                                                            <img className="candidate_image"
+                                                                                src={profile}
+                                                                                alt={candidate.full_name} />
                                                                         </div>
                                                                         <div className="w-50 px-1">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div className="card-status-label">{candidate.profileStatus}</div>
-                                                                        <div className="rating_container d-flex align-self-end p-1">
-                                                                            <h6 className="rating_text px-1">{ratedInterviewed?.find(c => c?.candidate_id === candidate?.candidate_id)?.rating}</h6>
-                                                                            <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
-                                                                        </div>
+                                                                        {/* This is the new "Reschedule" button */}
+                                                                        {candidate.application_status === 'Scheduled' && (
+                                                                            <button
+                                                                                variant="warning"
+                                                                                size="sm"
+                                                                                className="mt-2"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation(); // Prevents the card's onClick from firing
+                                                                                    handleReschedule(candidate);
+                                                                                }}
+                                                                            >
+                                                                                Reschedule
+                                                                            </button>
+                                                                        )}
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -655,20 +750,23 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
                                                                 <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex justify-content-between" style={{ cursor: "pointer" }}>
+                                                                    <div className="candidate_card card-body d-flex gap-3" style={{ cursor: "pointer" }}>
                                                                         <div>
-                                                                            <img className="candidate_image" src={profile_prictures[index % profile_prictures.length]} />
+                                                                            <img className="candidate_image"
+                                                                                // src={profile_prictures[index % profile_prictures.length]}
+                                                                                src={profile}
+                                                                            />
                                                                         </div>
                                                                         <div className="w-50 px-1">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div className="card-status-label">{candidate.profileStatus}</div>
-                                                                        <div className="rating_container d-flex align-self-end p-1">
+                                                                        {/* <div className="card-status-label">{candidate.profileStatus}</div> */}
+                                                                        {/* <div className="rating_container d-flex align-self-end p-1">
                                                                             <h6 className="rating_text px-1">{ratedOffered?.find(c => c?.candidate_id === candidate?.candidate_id)?.rating}</h6>
                                                                             <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
-                                                                        </div>
+                                                                        </div> */}
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -693,7 +791,7 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                     ratedCandidates={ratedCandidates}
                 />
             )}
-            <InterviewModal
+            {/* <InterviewModal
                 show={showInterviewModal}
                 handleClose={handleCancelInterview}
                 candidate={interviewCandidate}
@@ -702,6 +800,22 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                 time={interviewTime}
                 setTime={setInterviewTime}
                 handleSchedule={handleScheduleInterview}
+            /> */}
+            <InterviewModal
+                show={showInterviewModal}
+                handleClose={handleCancelInterview}
+                handleSave={handleScheduleInterview}
+                candidate={interviewCandidate}
+                position_id={positionId}
+                isReschedule={false}
+            />
+            <InterviewModal
+                show={showRescheduleModal}
+                handleClose={handleCancelReschedule}
+                handleSave={handleRescheduleInterview}
+                handleCancelInterview={handleDeleteInterview}
+                candidate={rescheduleCandidate}
+                isReschedule={true}
             />
             <OfferModal
                 show={showOfferModal}
@@ -715,6 +829,8 @@ const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
                 handleOffer={handleOffer}
                 loading={loading}
                 error={error}
+                offerLetterPath={offerLetterPath} // 👈 Pass the state down
+                setOfferLetterPath={setOfferLetterPath}
             />
         </Container>
     );

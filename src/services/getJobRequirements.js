@@ -1,3 +1,10 @@
+const BASE_URL = "http://192.168.20.115:8081";
+
+export const API_ENDPOINTS = {
+  SCHEDULE_INTERVIEW: `${BASE_URL}/api/candidates/schedule-interview`,
+  OFFER: `${BASE_URL}/api/candidates/offer`,
+};
+
 export const getJobRequirements = async () => {
     try {
         const response = await fetch('http://192.168.20.111:8081/api/getreq');

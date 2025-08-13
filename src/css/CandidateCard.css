@@ -135,6 +135,8 @@
 
 .top-bar .breadcrumb {
     margin-bottom: 5%;
+    white-space: nowrap; 
+    overflow-x: auto;
 }
 
 .top-bar .breadcrumb-item {

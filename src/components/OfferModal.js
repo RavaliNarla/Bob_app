@@ -11,18 +11,25 @@ const OfferModal = ({
   salary,
   setSalary,
   position_id,
-  handleOffer
+  handleOffer,
+  offerLetterPath,
+  setOfferLetterPath
 }) => {
-  // console.log("Position Title in Modal:", position_title); 
   const [triggerDownload, setTriggerDownload] = useState(false);
-  const [showPreview, setShowPreview] = useState(false); // State for preview modal
+  const [showPreview, setShowPreview] = useState(false);
 
-  const handlePreviewClick = () => {
-    setShowPreview(true); // Show the preview modal
+  // const handlePreviewClick = () => {
+  //   setShowPreview(true);
+  // };
+
+  const handleDownloadClick = () => {
+    setShowPreview(true);
+    setTriggerDownload(true);
   };
 
-  const handleDownloadComplete = () => {
+  const handleDownloadComplete = (data) => {
     setTriggerDownload(false);
+    setOfferLetterPath(data.public_url); // Store the correct URL in state
   };
 
   return (
@@ -55,13 +62,20 @@ const OfferModal = ({
           <Button variant="secondary" onClick={handleClose}>
             Cancel
           </Button>
-          <Button variant="info" onClick={handlePreviewClick}>
+          {/* <Button variant="info" onClick={handlePreviewClick}>
             Preview
           </Button>
-          <Button variant="primary" onClick={() => setTriggerDownload(true)}>
+          <Button variant="primary" onClick={handleDownloadClick}>
             Download
+          </Button> */}
+          <Button variant="primary" onClick={handleDownloadClick}>
+            Preview & Download
           </Button>
-          <Button variant="primary" onClick={handleOffer}>
+          <Button
+            variant="primary"
+            onClick={() => handleOffer(offerLetterPath)} // Pass the valid state to the handler
+            disabled={!offerLetterPath}
+          >
             Send Offer
           </Button>
         </Modal.Footer>
@@ -73,12 +87,11 @@ const OfferModal = ({
           jobPosition={position_title}
           salary={salary}
           reqId={reqId}
-          autoDownload={triggerDownload}
+          autoDownload={true}
           onDownloadComplete={handleDownloadComplete}
         />
       )}
 
-      {/* Preview Modal */}
       <Modal show={showPreview} onHide={() => setShowPreview(false)} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Offer Letter Preview</Modal.Title>
@@ -89,20 +102,14 @@ const OfferModal = ({
             jobPosition={position_title}
             salary={salary}
             reqId={reqId}
-            autoDownload={false} // Do not auto-download in preview
-            onDownloadComplete={handleDownloadComplete}
+            autoDownload={false}
+            onDownloadComplete={() => { }}
           />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowPreview(false)}>
-            Cancel
+            Close
           </Button>
-          {/* <Button variant="primary" onClick={() => {
-            setTriggerDownload(true);
-            setShowPreview(false); // Close preview and trigger download
-          }}>
-            Download
-          </Button> */}
         </Modal.Footer>
       </Modal>
     </>
