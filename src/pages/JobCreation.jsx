@@ -28,11 +28,11 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
   const initialState = {
     requisition_id: '',
     position_title: '',
-    department: '',
-    country: '',
-    state: '',
-    city: '',
-    location: '',
+    dept_id: '',
+    country_id: '',
+    state_id: '',
+    city_id: '',
+    location_id: '',
     description: '',
     roles_responsibilities: '',
     grade_id: '',
@@ -48,6 +48,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     min_credit_score: '',
     no_of_vacancies: '',
     selection_procedure: '',
+    // special_cat_id: '0',
+    // reservation_cat_id:'0',
+    // position_status:'submitted'
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -84,13 +87,11 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
         console.log('Master Data Response:', masterDataRes);
        console.log('Requisition Data Response:', requisitionDataRes);
-        const staticJobGrades = [
-          { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
-          { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
-        ];
-        const jobGrades = (masterDataRes.job_grade_ids && masterDataRes.job_grade_ids.length > 0)
-          ? masterDataRes.job_grade_ids
-          : staticJobGrades;
+        // const staticJobGrades = [
+        //   { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
+        //   { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
+        // ];
+        const jobGrades = masterDataRes.job_grade_data;
 
         setMasterData({
           requisitionIdOptions: (requisitionDataRes.data || []).map(req => ({
@@ -131,22 +132,21 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
   useEffect(() => {
 
-    if (editRequisitionId) {
+    if (editPositionId) {
 
-      apiService.getByRequisitionId(editRequisitionId).then((response) => {
+      apiService.getByPositionId(editPositionId).then((response) => {
 
-        const allPositions = response.data || [];
+        const selectedPosition = response.data || [];
+      console.log('Selected Position:', selectedPosition);
 
-
-
+     // console.log('All Positions:', allPositions);
         // ✅ Pick the exact position using position_id
 
-        const selectedPosition = allPositions.find(
+        // const selectedPosition = allPositions.find(
 
-          (item) => item.position_id === editPositionId
+        //   (item) => item.position_id === editPositionId
 
-        );
-
+        // );
 
 
         if (selectedPosition) {
@@ -155,53 +155,48 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
             requisition_id: selectedPosition.requisition_id || '',
             position_id:editPositionId || '',
-
-
             position_title: selectedPosition.position_title || '',
-
-            department: selectedPosition.department || '',
-
-            country: selectedPosition.country || '',
-
-            state: selectedPosition.state || '',
-
-            city: selectedPosition.city || '',
-
-            location: selectedPosition.location || '',
-
+            dept_id: selectedPosition.dept_id || '',
+            country_id: selectedPosition.country_id || '',
+            state_id: selectedPosition.state_id || '',
+            city_id: selectedPosition.city_id || '',
+            location_id: selectedPosition.location_id || '',
             description: selectedPosition.description || '',
-
             roles_responsibilities: selectedPosition.roles_responsibilities || '',
-
             grade_id: selectedPosition.grade_id || '',
-
             employment_type: selectedPosition.employment_type || '',
-
             eligibility_age_min: selectedPosition.eligibility_age_min || '',
-
             eligibility_age_max: selectedPosition.eligibility_age_max || '',
-
             mandatory_qualification: selectedPosition.mandatory_qualification || '',
-
             preferred_qualification: selectedPosition.preferred_qualification || '',
-
             mandatory_experience: selectedPosition.mandatory_experience || '',
-
             preferred_experience: selectedPosition.preferred_experience || '',
-
             probation_period: selectedPosition.probation_period || '',
-
-            documents_required: selectedPosition.document_required || '',
-
+            documents_required: selectedPosition.documents_required || '',
             min_credit_score: selectedPosition.min_credit_score || '',
-
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
-
             selection_procedure: selectedPosition.selection_procedure || '',
 
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
+
+          const states = masterData.allStates.filter(
+    (s) => s.countryId === Number(selectedPosition.country_id)
+  );
+  setFilteredStates(states);
+
+  // 2. Filter cities for the selected state
+  const cities = masterData.allCities.filter(
+    (c) => c.state_id === Number(selectedPosition.state_id)
+  );
+  setFilteredCities(cities);
+
+  // 3. Filter locations for the selected city
+  const locations = masterData.allLocations.filter(
+    (l) => l.city_id === Number(selectedPosition.city_id)
+  );
+  setFilteredLocations(locations);
 
           // setFormData((prev) => ({
           //   ...prev,
@@ -213,15 +208,20 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
 
     }
 
-  }, [editRequisitionId, editPositionId]);
+  }, [ editPositionId, masterData]);
 const handleInputChange = (e) => {
   const { name, value } = e.target;
+ // console.log('Input change:', name, value);
   setFormData((prev) => ({ ...prev, [name]: value }));
-
-  if (name === "country") {
+ // ✅ Clear error for this field when it's valid
+  setErrors((prev) => ({
+    ...prev,
+    [name]: value ? "" : prev[name]
+  }));
+  if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 
-    
+    console.log('Selected country ID:', countryId);
     if (countryId) {
       // Filter states based on the countryId
       const states = masterData.allStates.filter(
@@ -236,14 +236,14 @@ const handleInputChange = (e) => {
     // Reset subsequent form fields and dropdowns
     setFormData((prev) => ({
       ...prev,
-      state: "",
-      city: "",
-      location: "",
+      state_id: "",
+      city_id: "",
+      location_id: "",
     }));
     setFilteredCities([]);
     setFilteredLocations([]);
 
-  } else if (name === "state") {
+  } else if (name === "state_id") {
     // Convert the value to a number since IDs are numbers
     const stateId = Number(value); 
 
@@ -260,12 +260,12 @@ const handleInputChange = (e) => {
     // Reset subsequent form fields and dropdowns
     setFormData((prev) => ({
       ...prev,
-      city: "",
-      location: "",
+      city_id: "",
+      location_id: "",
     }));
     setFilteredLocations([]);
 
-  } else if (name === "city") {
+  } else if (name === "city_id") {
     // Convert the value to a number since IDs are numbers
     const cityId = Number(value);
 
@@ -282,7 +282,7 @@ const handleInputChange = (e) => {
     // Reset the final form field
     setFormData((prev) => ({
       ...prev,
-      location: "",
+      location_id: "",
     }));
   }
 };
@@ -294,16 +294,20 @@ const handleInputChange = (e) => {
         let response;
         if (!showModal) {
           response = await apiService.jobCreation(formData);
+          navigate("/job-postings");
         } else {
+          console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
+          onClose();
         }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);
-            setFormData(initialState);
-            setErrors({});
+        setFormData(initialState);
+        setErrors({});
 
         toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
         setFormData(initialState);
+         
       } catch (error) {
         console.error('❌ API error:', error);
         toast.error(showModal ? 'Failed to update job.' : 'Failed to create job.');
@@ -322,11 +326,11 @@ const handleInputChange = (e) => {
     const newErrors = {};
     if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
     if (!formData.position_title.trim()) newErrors.position_title = 'Position Title is required';
-    if (!formData.department) newErrors.department = 'Department is required';
-    if (!formData.country) newErrors.country = 'Country is required';
-    if (!formData.state) newErrors.state = 'State is required';
-    if (!formData.city) newErrors.city = 'City is required';
-    if (!formData.location) newErrors.location = 'Location is required';
+    if (!formData.dept_id) newErrors.dept_id = 'Department is required';
+    if (!formData.country_id) newErrors.country_id = 'Country is required';
+    if (!formData.state_id) newErrors.state_id = 'State is required';
+    if (!formData.city_id) newErrors.city_id = 'City is required';
+    if (!formData.location_id) newErrors.location_id = 'Location is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.roles_responsibilities.trim()) newErrors.roles_responsibilities = 'Roles & Responsibilities are required';
     if (!formData.grade_id) newErrors.grade_id = 'Grade ID is required';
@@ -381,11 +385,11 @@ const handleInputChange = (e) => {
     return dataArray.map((item) => ({
       requisition_id: item["Requisition ID"],
       position_title: item["Position Title"],
-      department: item["Department"],
-      country: item["Country"],
-      state: item["State"],
-      city: item["City"],
-      location: item["Location"],
+      dept_id: item["Department"],
+      country_id: item["Country"],
+      state_id: item["State"],
+      city_id: item["City"],
+      location_id: item["Location"],
       description: item["Description"],
       roles_responsibilities: item["Roles & Responsibilities"],
       grade_id: item["Grade ID"],
@@ -400,6 +404,7 @@ const handleInputChange = (e) => {
       documents_required: item["Documents Required"],
       no_of_vacancies: item["Number of Vacancies"],
       selection_procedure: item["Selection Procedure"],
+     min_credit_score:item["Min Credit Score"]
     }));
   };
 
@@ -460,7 +465,7 @@ const handleInputChange = (e) => {
   };
 
   return (
-    <Container fluid className="py-2 formbackground">
+    <Container fluid className="py-2">
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
           <div className="p-1">

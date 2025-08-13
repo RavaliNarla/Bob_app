@@ -1,0 +1,69 @@
+.dashfont{
+    font-family: poppins, sans-serif !important;
+}
+.shadow-sm{
+    background-color: #fff !important;
+}
+.shadow-sm h6{
+   font-family: poppins, sans-serif !important;
+   font-size: 14px;
+}
+.cardspace{
+    padding-left: 12px;
+    padding-right: 12px;
+}
+.heightcard{
+    max-height: 494px;
+  overflow: hidden;
+}
+.bgcolr{
+    background-color: #E7F8F3 !important;
+}
+.bgcolr2{
+    background-color: #F1F5FF !important;
+}
+.bgcolr3{
+    background-color: #EAF6FF !important;
+}
+.bgcolr4{
+    background-color: #FCEEFF !important;
+}
+.bgcolr5{
+    background-color: #F1F5FF  !important;
+}
+.bgcolr6{
+    background-color: #EAF4FF !important;
+}
+.bgcolr5 .list-group-item{
+    background-color: #F1F5FF  !important;
+}
+.bgcolr6 .list-group-item {
+    background-color: #EAF4FF !important;
+}
+.bgcolr7 {
+  background-color: #F1F5FF  !important; /* Teal */
+ 
+}
+.shortlist{
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+.shortlist h5 {
+	font-family: poppins, sans-serif;
+	font-weight: 600;
+	color: #FF7043;
+	font-size: 16px;
+}
+.heightcard h6{
+    font-family: poppins, sans-serif;
+    font-weight: 600;
+    color: #FF7043;
+    font-size: 16px !important;
+}
+.fonapp h6{
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;  /* 600 = semibold */
+    font-size: 16px;
+    color: #FF7043;
+}

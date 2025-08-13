@@ -17,12 +17,13 @@ const Sidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { icon: faHome, text: 'Overview', path: '/overview' },
+    { icon: faHome, text: 'Overview', path: '/dashboard' },
     { icon: faFileAlt, text: 'Job Requisiton', path: '/job-requisition' },
 
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
+    // { icon: faUserFriends, text: 'Department', path: '/department' },
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
     // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
@@ -54,6 +55,7 @@ const Sidebar = () => {
               fontSize: '0.75rem',
               textDecoration: 'none',
               height: '60px',
+              width: '97px'
             }}
           >
             <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.8rem' }} />

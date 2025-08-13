@@ -238,7 +238,7 @@ const JobRequisition = () => {
                 <td>{job.registration_end_date}</td>
                 <td>
                   <FontAwesomeIcon icon={faPencil} className="me-3 cursor-pointer" style={{ color: '#0d6dfdd3', cursor: 'pointer' }} onClick={() => openModal(job, index)} />
-                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" style={{ cursor: 'pointer' }} onClick={() => handleDelete(index)} />
+                  <FontAwesomeIcon icon={faTrash} className="required-asterisk cursor-pointer" style={{ cursor: 'pointer' }} onClick={() => handleDelete(index)} />
                 </td>
               </tr>
             ))}
@@ -262,11 +262,10 @@ const JobRequisition = () => {
         <Col md={12}>
           <Form.Group>
             <Form.Label className="form-label">
-              Requisition Title <span className="text-danger">*</span>
+              Requisition Title <span className="required-asterisk">*</span>
             </Form.Label>
             <Form.Control
               type="text"
-              placeholder="Enter requisition title"
               value={currentReq.requisition_title}
               isInvalid={!!errr.requisition_title}
               onChange={(e) =>
@@ -281,12 +280,11 @@ const JobRequisition = () => {
         <Col md={12}>
           <Form.Group>
             <Form.Label className="form-label">
-              Description <span className="text-danger">*</span>
+              Description <span className="required-asterisk">*</span>
             </Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="Enter description"
               value={currentReq.requisition_description}
               isInvalid={!!errr.requisition_description}
               onChange={(e) =>
@@ -302,7 +300,7 @@ const JobRequisition = () => {
           <Col md={6}>
             <Form.Group>
               <Form.Label className="form-label">
-                Start Date <span className="text-danger">*</span>
+                Start Date <span className="required-asterisk">*</span>
               </Form.Label>
               <Form.Control
                 type="date"
@@ -320,7 +318,7 @@ const JobRequisition = () => {
           <Col md={6}>
             <Form.Group>
               <Form.Label className="form-label">
-                End Date <span className="text-danger">*</span>
+                End Date <span className="required-asterisk">*</span>
               </Form.Label>
               <Form.Control
                 type="date"
@@ -340,12 +338,11 @@ const JobRequisition = () => {
           <Col md={6}>
             <Form.Group>
               <Form.Label className="form-label">
-                Number of Positions <span className="text-danger">*</span>
+                Number of Positions <span className="required-asterisk">*</span>
               </Form.Label>
               <Form.Control
                 type="number"
                 min="1"
-                placeholder="e.g. 10"
                 value={currentReq.no_of_positions}
                 isInvalid={!!errr.no_of_positions}
                 onChange={(e) =>
@@ -360,12 +357,11 @@ const JobRequisition = () => {
           <Col md={6}>
             <Form.Group>
               <Form.Label className="form-label">
-                Comments <small className="text-muted">(Optional)</small>
+                Comments{/* Comments <small className="text-muted">(Optional)</small> */}
               </Form.Label>
               <Form.Control
                 as="textarea"
                 rows={2}
-                placeholder="Optional comments"
                 value={currentReq.requisition_comments}
                 onChange={(e) =>
                   setCurrentReq({ ...currentReq, requisition_comments: e.target.value })

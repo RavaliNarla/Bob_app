@@ -67,6 +67,7 @@ const JobPosting = () => {
     if (newKey !== null && requisition_id) {
       try {
         const data = await apiService.getByRequisitionId(requisition_id);
+        console.log("Requisition Data:", data);
         setApiData(data.data || []);
       } catch (err) {
         console.error("Error fetching requisition details:", err);
@@ -147,43 +148,59 @@ const JobPosting = () => {
   };
 
   const handleSavePostings = async () => {
-    const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
+  const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
 
-    // ✅ New validation: At least 2 postings
-    if (selectedJobBoards.length < 1) {
-      setJobBoardError("Please select at least 1 posting.");
-      return;
-    } else {
-      setJobBoardError("");
-    }
+  // Validation: At least 1 posting must be selected
+  if (selectedJobBoards.length < 1) {
+    setJobBoardError("Please select at least 1 posting.");
+    return;
+  } else {
+    setJobBoardError("");
+  }
 
-    if (approvalStatus === "") {
-      toast.info("Please select an approval status.");
-      return;
-    }
+  if (approvalStatus === "") {
+    toast.info("Please select an approval status.");
+    return;
+  }
 
-    if (selectedJobIds.length === 0) {
-      toast.info("Please select at least one requisition to save.");
-      return;
-    }
+  if (selectedJobIds.length === 0) {
+    toast.info("Please select at least one requisition to save.");
+    return;
+  }
 
-    const payload = selectedJobIds.map((id) => ({
-      requisition_id: id,
-      job_postings_areas: selectedJobBoards,
-      approval_status: approvalStatus,
-    }));
-console.log("API Payload:", payload);
-    try {
-      console.log("Saving job postings with payload:", payload);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Job postings updated successfully!");
-      setSelectedJobIds([]);
-      fetchJobPostings();
-    } catch (err) {
-            console.error("Error saving job postings:", err);
-      toast.error("Failed to save job postings. Please try again.");
-    }
+  const payload = {
+    requisition_id: selectedJobIds,
+    job_postings: selectedJobBoards,
+    approval_status: approvalStatus,
   };
+
+  try {
+    console.log("Saving job postings with payload:", payload);
+    await apiService.jobpost(payload);
+    toast.success("Job postings updated successfully!");
+
+    // ✅ Reset all filters, selections, and checkboxes
+    setSelectedJobIds([]);
+    setApprovalStatus("");
+    setSelectedApproval("");
+    setJobBoards({
+      linkedin: false,
+      careerPage: false,
+      naukri: false,
+      glassDoor: false,
+      indeed: false,
+      foundit: false,
+      freshersWorld: false,
+    });
+
+    // ✅ Reload all requisitions
+    fetchJobPostings();
+
+  } catch (err) {
+    console.error("Error saving job postings:", err);
+    toast.error("Failed to save job postings. Please try again.");
+  }
+};
 
   const filteredJobPostings = jobPostings.filter((job) => {
     const search = searchTerm.toLowerCase();
@@ -291,7 +308,7 @@ console.log("API Payload:", payload);
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
-                        {apiData.map((job, index) => (
+                        {apiData?.map((job, index) => (
                           <tr key={job.position_id || index}>
                             <td>{job.position_title}</td>
                             <td>{job.description}</td>
@@ -397,7 +414,7 @@ console.log("API Payload:", payload);
 
       <Modal show={showModal} onHide={resetForm} className="modal_container">
         <Modal.Header closeButton>
-          <Modal.Title className="fonall">{editRequisitionId !== null ? "Edit Requisition" : "Add Requisition"}</Modal.Title>
+          <Modal.Title className="fonall">{editRequisitionId !== null ? "Edit Job Posting" : "Add Job Posting"}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <JobCreation

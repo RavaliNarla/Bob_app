@@ -123,17 +123,17 @@ const JobCreationForm = ({
           <label htmlFor="department" className="form-label">Department <span className="required-asterisk">*</span></label>
           <select
             id="department"
-            name="department"
+            name="dept_id"
             className="form-select"
-            value={formData.department}
+            value={formData.dept_id}
             onChange={handleInputChange}
           >
             <option value="">Select Department</option>
             {departmentOptions.map(option => (
-              <option key={option.department_id || option.department_name} value={option.department_name}>{option.department_name}</option>
+              <option key={option.department_id || option.department_name} value={option.department_id}>{option.department_name}</option>
             ))}
           </select>
-          {errors.department && <small className="error">{errors.department}</small>}
+          {errors.dept_id && <small className="error">{errors.dept_id}</small>}
         </div>
 
         {/* Country */}
@@ -141,9 +141,9 @@ const JobCreationForm = ({
           <label htmlFor="country" className="form-label">Country <span className="required-asterisk">*</span></label>
           <select
             id="country"
-            name="country"
+            name="country_id"
             className="form-select"
-            value={formData.country}
+            value={formData.country_id}
             onChange={handleInputChange}
           >
             <option value="">Select Country</option>
@@ -151,7 +151,7 @@ const JobCreationForm = ({
               <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.country && <small className="error">{errors.country}</small>}
+          {errors.country_id && <small className="error">{errors.country_id}</small>}
         </div>
 
         {/* State */}
@@ -159,9 +159,9 @@ const JobCreationForm = ({
           <label htmlFor="state" className="form-label">State <span className="required-asterisk">*</span></label>
           <select
             id="state"
-            name="state"
+            name="state_id"
             className="form-select"
-            value={formData.state}
+            value={formData.state_id}
             onChange={handleInputChange}
           >
             <option value="">Select State</option>
@@ -169,19 +169,19 @@ const JobCreationForm = ({
               <option key={option.id} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.state && <small className="error">{errors.state}</small>}
+          {errors.state_id && <small className="error">{errors.state_id}</small>}
         </div>
 
         {/* City */}
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
           <label htmlFor="city" className="form-label">City <span className="required-asterisk">*</span></label>
-          <select id="city" name="city" className="form-select" value={formData.city} onChange={handleInputChange}>
+          <select id="city" name="city_id" className="form-select" value={formData.city_id} onChange={handleInputChange}>
             <option value="">Select City</option>
             {cityOptions.map(option => (
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.city && <small className="error">{errors.city}</small>}
+          {errors.city_id && <small className="error">{errors.city_id}</small>}
         </div>
 
         {/* Location */}
@@ -189,9 +189,9 @@ const JobCreationForm = ({
           <label htmlFor="location" className="form-label">Location <span className="required-asterisk">*</span></label>
           <select
             id="location"
-            name="location"
+            name="location_id"
             className="form-select"
-            value={formData.location}
+            value={formData.location_id}
             onChange={handleInputChange}
           >
             <option value="">Select Location</option>
@@ -199,7 +199,7 @@ const JobCreationForm = ({
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
             ))}
           </select>
-          {errors.location && <small className="error">{errors.location}</small>}
+          {errors.location_id && <small className="error">{errors.location_id}</small>}
         </div>
 
         {/* Description */}
@@ -327,14 +327,14 @@ const JobCreationForm = ({
 
         {/* Mandatory Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience <span className="required-asterisk">*</span></label>
+          <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience(Years) <span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" />
           {errors.mandatory_experience && <small className="error">{errors.mandatory_experience}</small>}
         </div>
 
         {/* Preferred Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="preferred_experience" className="form-label">Preferred Experience <span className="required-asterisk">*</span></label>
+          <label htmlFor="preferred_experience" className="form-label">Preferred Experience(Years)<span className="required-asterisk">*</span></label>
           <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" />
           {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
         </div>
@@ -363,7 +363,7 @@ const JobCreationForm = ({
         <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
           <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button>
           <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-            Save
+         { formData.position_id ? 'Update' : 'Save' }
           </Button>
         </div>
       </form>

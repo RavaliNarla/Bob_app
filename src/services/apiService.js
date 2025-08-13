@@ -96,39 +96,21 @@ export const apiService = {
   updateData: (id, data) => api.put(`/data/${id}`, data),
   deleteData: (id) => api.delete(`/data/${id}`),
 
-  // Health check
-  healthCheck: () => api.get('/health'),
-
-  createJobPost: (data) => api.post('/jobcreation', data),
+    
   getReqData: () => api.get('/getreq'),
-  getJobPost: () => api.get('/activejobs'),
   createRequisition: (data) => api.post('/create_requisitions', data),
-  // uploadJobExcel: (data) => api.post('/jobcreationbulk', data),
-  // postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
-     jobCreation: (data) => api.post('/create_positions',data),
+
+  jobCreation: (data) => api.post('/create_positions',data),
   getMasterData: () => apis.get('/all'),
-  //getMasterData: () => api.get('/getmasterdata'),
-  getJobPost: () => api.get('/activejobs'), // Dummy GET endpoint
-   createRequisition: (data) => api.post('/create_requisitions', data),
-  // uploadJobExcel: (file) => {
-  //   const formData = new FormData();
-  //   formData.append('file', file); // backend expects 'file' key
-  //   console.log(formData)
-  //   return api.post('/jobposts/upload-excel', formData, {
-  //     headers: { 'Content-Type': 'multipart/form-data' }
-  //   });
-  // },
+
   uploadJobExcel: (data) => api.post('/create_Bulk_positions', data), // Dummy POST endpoint
   postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
-  getByRequisitionId: (requisition_id) =>
-    axios.get(`http://192.168.20.111:8081/api/getbyreq/${requisition_id}`, {
-      params: { requistion_id: requisition_id },
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
-      },
-    }),
-    updateJob: (data) => api.put('/update_positions', data),
+  
+  updateJob: (data) => api.put('/update_positions', data),
+  getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
+  getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
+  jobpost: (data) => api.post('/job_postings',data),
+   
 };
 
 export default apiService;
