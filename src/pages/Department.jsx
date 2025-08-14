@@ -209,7 +209,7 @@ const Department = () => {
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="table-body-orange">
             {jobsToDisplay.map((job, index) => (
               <tr key={job.department_id || index}>
                 <td>{job.department_name}</td>

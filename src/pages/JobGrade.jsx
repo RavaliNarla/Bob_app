@@ -237,7 +237,7 @@ const JobGrade = () => {
             </tr>
           </thead>
 
-          <tbody>
+          <tbody className="table-body-orange">
             {jobsToDisplay.map((job, index) => (
               <tr key={job.job_grade_id || index}>
                 <td>{job.job_grade_code}</td>
