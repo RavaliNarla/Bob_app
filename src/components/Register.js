@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import panaImage from "../assets/pana.png";
-import logoImage from "../assets/bob-logo.png";
+// import panaImage from "../assets/pana.png";
+// import logoImage from "../assets/bob-logo.png";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "",
   });
 //   const [otp, setOtp] = useState("");
 // const [mfaToken, setMfaToken] = useState("");
@@ -24,9 +25,9 @@ const Register = () => {
 
  const handleRegister = async (e) => {
   e.preventDefault();
-  const { name, email, phone, password, confirmPassword } = form;
+  const { name, email, phone, password, confirmPassword, role } = form;
 
-  if (!name || !email || !phone || !password || !confirmPassword) {
+  if (!name || !email || !phone || !password || !confirmPassword || !role) {
     return alert("All fields are required");
   }
   if (password !== confirmPassword) {
@@ -35,11 +36,12 @@ const Register = () => {
 
   try {
     // 1. Register user via your backend
-    await axios.post("http://bobbe.sentrifugo.com/api/auth/register", {
+    await axios.post("http://localhost:5000/api/auth/recruiter-register", {
       name,
       email,
       phone,
       password,
+      role
     });
 
     // 2. Immediately try to log in (to trigger MFA)
@@ -58,7 +60,8 @@ const Register = () => {
     //   navigate("/dashboard");
     // }
     // localStorage.setItem("access_token",loginRes.data.access_token);
-    navigate("/login");
+    // navigate("/login");
+    alert("Registration successful!");
   } catch (err) {
     console.error(err);
     alert("Registration/Login failed");
@@ -84,20 +87,34 @@ const Register = () => {
 
 
   return (
-    <div className="login-container">
-      <div className="left-panel">
+    <div className="login-container d-flex flex-column align-items-center p-3 py-4">
+      {/* <div className="left-panel">
         <img src={panaImage} alt="Illustration" />
         <h2>बैंक ऑफ़ बड़ौदा</h2>
         <h3>Bank of Baroda</h3>
-      </div>
+      </div> */}
 
-      <div className="right-panel">
-        <div className="logo">
+      {/* <div className="right-panel"> */}
+        {/* <div className="logo">
           <img src={logoImage} alt="Logo" />
           <h4>Recruitment</h4>
-        </div>
+        </div> */}
 
-        <form onSubmit={handleRegister} className="d-flex flex-column">
+
+        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043' }}>User Registration</h5>
+        <form onSubmit={handleRegister} className="d-flex flex-column my-3" style={{ width: '30vw' }}>
+          <label>Role</label>
+          <select
+            name="role"
+            onChange={handleChange}
+            required
+            style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}
+            value={form.role}
+          >
+            <option value="">Select Role</option>
+            <option value="Admin">Admin</option>
+            <option value="Recruiter">Recruiter</option>
+          </select>
           <label>Full Name</label>
           <input name="name" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
 
@@ -126,12 +143,12 @@ const Register = () => {
 )} */}
 
 
-          <p className="register-link">
+          {/* <p className="register-link">
             Already a user? <Link to="/login">Login here</Link>
-          </p>
+          </p> */}
         </form>
       </div>
-    </div>
+    // </div>
   );
 };
 

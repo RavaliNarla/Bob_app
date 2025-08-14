@@ -4,6 +4,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { Provider } from 'react-redux';
+import { store, persistor } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+
 import Login from './components/Login';
 import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
@@ -14,6 +18,7 @@ import Dashboard from './pages/Dashboard';
 import Skill from './pages/Skill';
 import JobGrade from './pages/JobGrade';
 import Location from './pages/Location';
+
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -60,113 +65,126 @@ class ErrorBoundary extends React.Component {
 
 function App() {
   return (
-    <ErrorBoundary>
-      <Suspense fallback={<Loading />}>
-        {/* <Tokenexp> */}
-          <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <ErrorBoundary>
+          <Suspense fallback={<Loading />}>
+            {/* <Tokenexp> */}
+              <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
-            {/* Protected routes with layout */}
-            {/* <Route
-              path="/"
-              element={
-                <Layout>
-                  <JobCreation />
-                </Layout>
-              }
-            /> */}
-            <Route
-  path="/dashboard"
-  element={
-    <Layout>
-      <Dashboard />
-    </Layout>
-  }
-/>
-            <Route
-              path="/job-creation"
-              element={
-                <Layout>
-                  <JobCreation />
-                </Layout>
-              }
-            />
-            <Route
-              path="/job-postings"
-              element={
-                <Layout>
-                  <JobPosting />
-                </Layout>
-              }
-            />
-            <Route
-              path="/job-requisition"
-              element={
-                <Layout>
-                  <JobRequisition />
-                </Layout>
-              }
-            />
-            <Route
-              path="/department"
-              element={
-                <Layout>
-                  <Department />
-                </Layout>
-              }
-            />
-            <Route
-              path="/skill"
-              element={
-                <Layout>
-                  <Skill />
-                </Layout>
-              }
-            />
-            <Route
-              path="/location"
-              element={
-                <Layout>
-                  <Location />
-                </Layout>
-              }
-            />
-            <Route
-              path="/job-grade"
-              element={
-                <Layout>
-                  <JobGrade />
-                </Layout>
-              }
-            />
+                {/* Protected routes with layout */}
+                {/* <Route
+                  path="/"
+                  element={
+                    <Layout>
+                      <JobCreation />
+                    </Layout>
+                  }
+                /> */}
+                <Route
+        path="/dashboard"
+        element={
+          <Layout>
+            <Dashboard />
+          </Layout>
+        }
+      />
+                <Route
+                  path="/job-creation"
+                  element={
+                    <Layout>
+                      <JobCreation />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/job-postings"
+                  element={
+                    <Layout>
+                      <JobPosting />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/job-requisition"
+                  element={
+                    <Layout>
+                      <JobRequisition />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/department"
+                  element={
+                    <Layout>
+                      <Department />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/skill"
+                  element={
+                    <Layout>
+                      <Skill />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/location"
+                  element={
+                    <Layout>
+                      <Location />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/job-grade"
+                  element={
+                    <Layout>
+                      <JobGrade />
+                    </Layout>
+                  }
+                />
 
-            <Route
-              path="/candidate-shortlist"
-              element={
-                <Layout>
-                  <CandidateCard />
-                </Layout>
-              }
-            />
+                <Route
+                  path="/registration"
+                  element={
+                    <Layout>
+                      <Register />
+                    </Layout>
+                  }
+                />
 
-            <Route
-              path="/candidate-portal"
-              element={
-                <Layout>
-                  <CandidatePortal />
-                </Layout>
-              }
-            />
-            {/* Redirect unknown routes */}
-            <Route path="/" element={<Navigate to="/login" />} />
-          </Routes>
-        {/* </Tokenexp> */}
-        <ToastContainer position="top-right" autoClose={5000} />
-      </Suspense>
-    </ErrorBoundary>
+                <Route
+                  path="/candidate-shortlist"
+                  element={
+                    <Layout>
+                      <CandidateCard />
+                    </Layout>
+                  }
+                />
+
+                <Route
+                  path="/candidate-portal"
+                  element={
+                    <Layout>
+                      <CandidatePortal />
+                    </Layout>
+                  }
+                />
+                {/* Redirect unknown routes */}
+                <Route path="/" element={<Navigate to="/login" />} />
+              </Routes>
+            {/* </Tokenexp> */}
+            <ToastContainer position="top-right" autoClose={5000} />
+          </Suspense>
+        </ErrorBoundary>
+      </PersistGate>
+    </Provider>
   );
 }
 
