@@ -74,19 +74,33 @@ const Location = () => {
   };
 
   const handleSave = () => {
-    const newErrors = {};
-    if (!currentLoc.location_name?.trim()) {
-      newErrors.location_name = "Location is required";
-    }
-    if (!currentLoc.city_id) {
-      newErrors.city_id = "City is required";
-    }
-    setErrr(newErrors);
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  if (!currentLoc.location_name?.trim()) {
+    newErrors.location_name = "Location is required";
+  }
+  if (!currentLoc.city_id) {
+    newErrors.city_id = "City is required";
+  }
+
+  // Duplicate check (case-insensitive)
+  const isDuplicate = locs.some((loc, index) =>
+    loc.location_name.trim().toLowerCase() === currentLoc.location_name.trim().toLowerCase() &&
+    loc.city_id === parseInt(currentLoc.city_id) && // Ensure city_id matches
+    index !== editIndex // Ignore same row if editing
+  );
+
+  if (isDuplicate) {
+    newErrors.location_name = "This location already exists for the selected city";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
 
   const handleSaveCallback = async () => {
     try {

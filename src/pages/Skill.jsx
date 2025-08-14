@@ -60,20 +60,38 @@ const Skill = () => {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const newErrors = {};
-    if (!currentSkill.skill_name?.trim()) {
-      newErrors.skill_name = "Name is required";
-    }
-    if (!currentSkill.skill_desc?.trim()) {
-      newErrors.skill_desc = "Description is required";
-    }
-    setErrr(newErrors);
+ const handleSave = () => {
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  const trimmedName = currentSkill.skill_name?.trim();
+  const trimmedDesc = currentSkill.skill_desc?.trim();
+
+  if (!trimmedName) {
+    newErrors.skill_name = "Name is required";
+  }
+  if (!trimmedDesc) {
+    newErrors.skill_desc = "Description is required";
+  }
+
+  // Duplicate check: name OR description OR both
+  const isDuplicate = skills.some((skill, index) =>
+    (skill.skill_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+     skill.skill_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+    index !== editIndex // Ignore same record when editing
+  );
+
+  if (isDuplicate) {
+    newErrors.skill_name = "Skill name or description already exists";
+    newErrors.skill_desc = "Skill name or description already exists";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
 
   const handleSaveCallback = async () => {
     try {

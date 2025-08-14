@@ -60,20 +60,39 @@ const Department = () => {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const newErrors = {};
-    if (!currentDept.department_name?.trim()) {
-      newErrors.department_name = "Name is required";
-    }
-    if (!currentDept.department_desc?.trim()) {
-      newErrors.department_desc = "Description is required";
-    }
-    setErrr(newErrors);
+ const handleSave = () => {
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  const trimmedName = currentDept.department_name?.trim();
+  const trimmedDesc = currentDept.department_desc?.trim();
+
+  if (!trimmedName) {
+    newErrors.department_name = "Name is required";
+  }
+  if (!trimmedDesc) {
+    newErrors.department_desc = "Description is required";
+  }
+
+  // Check if either name or description already exists
+  const isDuplicate = depts.some((dept, index) =>
+    (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+     dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+    index !== editIndex
+  );
+
+  if (isDuplicate) {
+    newErrors.department_name = "Department name already exists";
+    newErrors.department_desc = "Department description already exists";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
+
 
   const handleSaveCallback = async () => {
     try {

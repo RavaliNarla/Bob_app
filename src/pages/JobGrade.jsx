@@ -63,32 +63,66 @@ const JobGrade = () => {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const newErrors = {};
-    
-    if (!currentGrade.job_grade_code?.trim()) {
-      newErrors.job_grade_code = "Code is required";
-    }
-    
-     if (!currentGrade.job_scale?.trim()) {
-      newErrors.job_scale = "Scale is required";
-    }
-    if (!currentGrade.job_grade_desc?.trim()) {
-      newErrors.job_grade_desc = "Description is required";
-    }
-    if (!String(currentGrade.min_salary)?.trim()) {
-    newErrors.min_salary = "Minimum salary is required";
-    }
-    if (!String(currentGrade.max_salary)?.trim()) {
-    newErrors.max_salary = "Maximum salary is required";
-    }
+ const handleSave = () => {
+  const newErrors = {};
 
-    setErrr(newErrors);
+  const trimmedCode = currentGrade.job_grade_code?.trim();
+  const trimmedDesc = currentGrade.job_grade_desc?.trim();
+  const trimmedScale = currentGrade.job_scale?.trim();
+  const minSalary = String(currentGrade.min_salary)?.trim();
+  const maxSalary = String(currentGrade.max_salary)?.trim();
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  // Required validations
+  if (!trimmedCode) newErrors.job_grade_code = "Code is required";
+  if (!trimmedDesc) newErrors.job_grade_desc = "Description is required";
+  if (!trimmedScale) newErrors.job_scale = "Scale is required";
+  if (!minSalary) newErrors.min_salary = "Minimum salary is required";
+  if (!maxSalary) newErrors.max_salary = "Maximum salary is required";
+
+  // Numeric validation
+  if (minSalary && isNaN(Number(minSalary))) {
+    newErrors.min_salary = "Minimum salary must be a number";
+  }
+  if (maxSalary && isNaN(Number(maxSalary))) {
+    newErrors.max_salary = "Maximum salary must be a number";
+  }
+
+  // Min ≤ Max validation
+  if (
+    minSalary &&
+    maxSalary &&
+    !isNaN(Number(minSalary)) &&
+    !isNaN(Number(maxSalary)) &&
+    Number(minSalary) > Number(maxSalary)
+  ) {
+    newErrors.min_salary = "Minimum salary cannot be greater than maximum salary";
+    newErrors.max_salary = "Maximum salary cannot be less than minimum salary";
+  }
+
+  // Duplicate check (case-insensitive, trims spaces) for ANY matching field
+  const isDuplicate = grads.some((grad, index) =>
+    (
+      grad.job_grade_code?.trim().toLowerCase() === trimmedCode?.toLowerCase() ||
+      grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase() ||
+      grad.job_scale?.trim().toLowerCase() === trimmedScale?.toLowerCase()
+    ) &&
+    index !== editIndex // Ignore same record in edit mode
+  );
+
+  if (isDuplicate) {
+    newErrors.job_grade_code = "Job grade code already exists";
+    newErrors.job_grade_desc = "Job description already exists";
+    newErrors.job_scale = "Job scale already exists";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
+
 
   const handleSaveCallback = async () => {
     try {
