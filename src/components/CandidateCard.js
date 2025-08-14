@@ -299,7 +299,7 @@ const CandidateCard = () => {
             date: interviewData.interview_date,
             interview_time: interviewData.interview_time,
             // userId: 3,
-            position_id: selectedPositionId
+            position_id: selectedPositionId,
         };
 
         try {
@@ -321,9 +321,19 @@ const CandidateCard = () => {
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
-                    ? { ...candidate, profileStatus: "Interview Scheduled" }
+                    ? { ...candidate, application_status: "Scheduled",  interview_date: interviewData.interview_date, 
+                        interview_time: interviewData.interview_time, profileStatus: "Interview Scheduled" }
                     : candidate
             );
+              // If the candidate isn't in the list, add them. This handles the initial drag and drop.
+            if (!updatedInterviewed.some(c => c.candidate_id === interviewCandidate.candidate_id)) {
+                updatedInterviewed.push({
+                    ...interviewCandidate,
+                    application_status: "Scheduled",
+                    interview_date: interviewData.interview_date,
+                    interview_time: interviewData.interview_time
+                });
+            }
             setInterviewed(updatedInterviewed);
 
             setShowInterviewModal(false);
@@ -435,9 +445,40 @@ const CandidateCard = () => {
         setSelectedCandidate(candidate);
     };
 
-    const handleReschedule = (candidate) => {
-        setRescheduleCandidate(candidate);
-        setShowRescheduleModal(true);
+    // Update handleReschedule to fetch data from the API
+   const handleReschedule = async (candidate) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const payload = {
+                candidate_id: candidate.candidate_id,
+                position_id: selectedPositionId // Assuming selectedPositionId holds the current position ID
+            };
+            const response = await axios.post(`http://docs.sentrifugo.com:8080/candidate/api/candidates/interviews`, payload);
+            if (response.status === 200) {
+                const interviewDetails = response.data;
+                const scheduleAt = new Date(interviewDetails.schedule_at);
+                const date = scheduleAt.toISOString().split('T')[0];
+                const time = scheduleAt.toTimeString().split(' ')[0].substring(0, 5);
+
+                const updatedCandidate = {
+                    ...candidate,
+                    interview_date: date,
+                    interview_time: time
+                };
+                setRescheduleCandidate(updatedCandidate);
+            } else {
+                setRescheduleCandidate(candidate);
+                showToast("Could not retrieve interview details.", "warning");
+            }
+        } catch (err) {
+            console.error("Failed to fetch interview details:", err);
+            setRescheduleCandidate(candidate);
+            setError('Failed to fetch interview details');
+        } finally {
+            setLoading(false);
+            setShowRescheduleModal(true);
+        }
     };
 
     const handleCancelReschedule = () => {
@@ -446,29 +487,27 @@ const CandidateCard = () => {
     };
 
     // Function to handle the actual reschedule interview
-    const handleRescheduleInterview = async (interviewData) => {
+  const handleRescheduleInterview = async (interviewData) => {
         setLoading(true);
         setError(null);
         try {
             const payload = {
-                candidate_id: interviewCandidate?.candidate_id,
+                candidate_id: rescheduleCandidate.candidate_id,
                 date: interviewData.interview_date,
-                interview_time: interviewData.interview_time,
-                // userId: 3,
-                position_id: selectedPositionId
-                // candidate_id: rescheduleCandidate.candidate_id,
-                // ... include other necessary data from interviewData
+                time: interviewData.interview_time,
+                position_id: selectedPositionId,
+                status: 'Rescheduled',
             };
-            // API call to reschedule
-            const response = await axios.put(API_ENDPOINTS.SCHEDULE_INTERVIEW, payload);
+            const response = await axios.put('http://docs.sentrifugo.com:8080/candidate/api/candidates/update-interview-status', payload);
             if (response.status === 200) {
                 showToast("Interview rescheduled successfully!", "success");
-                // Update the candidate's data in the state
                 const updatedInterviewed = interviewed.map(c =>
                     c.candidate_id === rescheduleCandidate.candidate_id ? { ...c, ...interviewData } : c
                 );
                 setInterviewed(updatedInterviewed);
-                handleCancelReschedule();
+
+                // Update the rescheduleCandidate state with the new data
+                setRescheduleCandidate({ ...rescheduleCandidate, ...interviewData });
             }
         } catch (err) {
             console.error("Failed to reschedule interview:", err);
@@ -479,21 +518,19 @@ const CandidateCard = () => {
     };
 
     // Function to handle the cancellation of an interview
-    const handleDeleteInterview = async (interviewData) => {
+   const handleDeleteInterview = async () => {
         setLoading(true);
         setError(null);
         try {
+            // Get the date and time from the rescheduleCandidate object
             const payload = {
-                candidate_id: interviewCandidate?.candidate_id,
-                date: interviewData.interview_date,
-                interview_time: interviewData.interview_time,
-                // userId: 3,
+                candidate_id: rescheduleCandidate.candidate_id,
+                date: rescheduleCandidate.interview_date, // 👈 Corrected: Add interview date
+                time: rescheduleCandidate.interview_time, // 👈 Corrected: Add interview time
                 position_id: selectedPositionId,
-                // candidate_id: rescheduleCandidate.candidate_id,
-                interview_status: 'Canceled', // Assuming the API accepts a status field
-                // ... other data
+                status: 'Cancelled',
             };
-            const response = await axios.put(API_ENDPOINTS.SCHEDULE_INTERVIEW, payload);
+            const response = await axios.put('http://docs.sentrifugo.com:8080/candidate/api/candidates/update-interview-status', payload);
             if (response.status === 200) {
                 showToast("Interview cancelled successfully!", "success");
                 // Move candidate to a different column or remove from 'Interviewed'
