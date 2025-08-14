@@ -77,7 +77,14 @@
 .table-header-orange th {
   color: #FF7043;
   font-weight: 600;
+  padding: 12px !important;
 }
+.table-body-orange td {
+  font-family: poppins, sans-serif !important;
+  padding: 12px !important;
+}
+
+
 .gradefont {
   font-family: poppins, sans-serif !important;
 }

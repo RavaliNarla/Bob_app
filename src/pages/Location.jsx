@@ -8,7 +8,7 @@ import {
   Row,
   Col
 } from "react-bootstrap";
-import "../css/Department.css";
+import "../css/Location.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -176,7 +176,7 @@ const Location = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5 deptfon">
+    <div className="container mt-5 loctfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Location</h2>
         <Button variant="orange" onClick={() => openModal()}>
@@ -221,7 +221,7 @@ const Location = () => {
     </tr>
   </thead>
 
-  <tbody>
+  <tbody className="table-body-orange">
     {jobsToDisplay.map((job, index) => (
       <tr key={job.location_id || index}>
         <td>{job.city_name}</td>
@@ -253,7 +253,7 @@ const Location = () => {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form className="department-form">
+          <Form className="location-form">
             <Row className="g-4">
   <Col md={12}>
     <Form.Group>

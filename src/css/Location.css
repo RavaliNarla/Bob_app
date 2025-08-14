@@ -1,5 +1,5 @@
-.department-form input,
-.department-form textarea {
+.location-form input,
+.location-form textarea {
   width: 100%;
   padding: 8px;
   margin-bottom: 12px;
@@ -56,7 +56,7 @@
 }.text-orange {
   color: #FF7043;
 }
-.department-form .form-label {
+.location-form .form-label {
   font-weight: 500;
 }
 /* Modal width */
@@ -68,7 +68,7 @@
   color: #FF7043;
 }
 /* Label styling */
-.department-form .form-label {
+.location-form .form-label {
   font-weight: 600;
   margin-bottom: 6px;
   color: #333;
@@ -83,10 +83,10 @@
   font-family: poppins, sans-serif !important;
   padding: 12px !important;
 }
-.deptfon{
+.loctfon{
   font-family: poppins, sans-serif !important;
 }
-.deptfon h2{
+.loctfon h2{
   font-size: 16px;
    color: #FF7043;
    font-weight: 600;
