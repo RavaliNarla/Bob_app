@@ -12,14 +12,17 @@ import {
   faBuilding,    
   faLightbulb,   
   faMapMarkerAlt,
-  faChartLine,   
+  faChartLine,
+  faPerson,   
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Sidebar = () => {
+  const user = useSelector((state) => state.user.user);
   const location = useLocation();
   const [adminOpen, setAdminOpen] = useState(false);
-
+  // console.log("User in Sidebar:", user);
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
   };
@@ -40,11 +43,12 @@ const Sidebar = () => {
   ];
 
   const adminItems = [
-  { icon: faBuilding, text: 'Department', path: '/department' },
-  { icon: faLightbulb, text: 'Skills', path: '/skill' },
-  { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
-  { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
-];
+    { icon: faBuilding, text: 'Department', path: '/department' },
+    { icon: faLightbulb, text: 'Skills', path: '/skill' },
+    { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
+    { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
+    { icon: faPerson, text: 'Registration', path: '/registration' },
+  ];
 
   return (
     <div
@@ -74,7 +78,8 @@ const Sidebar = () => {
           </Nav.Link>
         ))}
 
-        {/* Admin Menu */}
+        {user?.role === 'admin' || user?.role === 'Admin' && (
+        <>
         <div
           className="d-flex flex-column align-items-center justify-content-center py-3"
           style={{
@@ -94,28 +99,29 @@ const Sidebar = () => {
           />
         </div>
 
-        {/* Admin Sub Menu */}
-        {adminOpen &&
-          adminItems.map((item, index) => (
-            <Nav.Link
-              key={`admin-${index}`}
-              as={Link}
-              to={item.path}
-              className={`d-flex flex-column align-items-center justify-content-center py-2 nav-item-custom ${isActive(item.path)}`}
-              style={{
-                color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-                backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
-                fontWeight: isActive(item.path) ? '600' : '400',
-                fontSize: '0.7rem',
-                textDecoration: 'none',
-                height: '50px',
-                width: '97px'
-              }}
-            >
-              <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />
-              <span className="mt-1">{item.text}</span>
-            </Nav.Link>
+          {adminOpen &&
+            adminItems.map((item, index) => (
+              <Nav.Link
+                key={`admin-${index}`}
+                as={Link}
+                to={item.path}
+                className={`d-flex flex-column align-items-center justify-content-center py-2 nav-item-custom ${isActive(item.path)}`}
+                style={{
+                  color: isActive(item.path) ? '#FF4D00' : '#6c757d',
+                  backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
+                  fontWeight: isActive(item.path) ? '600' : '400',
+                  fontSize: '0.7rem',
+                  textDecoration: 'none',
+                  height: '50px',
+                  width: '97px'
+                }}
+              >
+                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />
+                <span className="mt-1">{item.text}</span>
+              </Nav.Link>
           ))}
+        </>
+        )}
       </Nav>
 
       {/* Bottom Help section */}
