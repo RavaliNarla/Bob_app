@@ -9,6 +9,10 @@ import {
   faQuestionCircle,
   faChevronDown,
   faChevronUp,
+  faBuilding,    
+  faLightbulb,   
+  faMapMarkerAlt,
+  faChartLine,   
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -36,13 +40,11 @@ const Sidebar = () => {
   ];
 
   const adminItems = [
-    { icon: faBriefcase, text: 'Department', path: '/department' },
-    { icon: faBriefcase, text: 'Skills', path: '/skill' },
-    { icon: faBriefcase, text: 'Location', path: '/location' },
-    { icon: faBriefcase, text: 'Job Grade', path: '/job-grade' },
-       
-
-  ];
+  { icon: faBuilding, text: 'Department', path: '/department' },
+  { icon: faLightbulb, text: 'Skills', path: '/skill' },
+  { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
+  { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
+];
 
   return (
     <div
