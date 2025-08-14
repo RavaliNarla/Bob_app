@@ -454,7 +454,7 @@ const CandidateCard = () => {
                 candidate_id: candidate.candidate_id,
                 position_id: selectedPositionId // Assuming selectedPositionId holds the current position ID
             };
-            const response = await axios.post(`http://docs.sentrifugo.com:8080/candidate/api/candidates/interviews`, payload);
+            const response = await axios.post(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/interviews`, payload);
             if (response.status === 200) {
                 const interviewDetails = response.data;
                 const scheduleAt = new Date(interviewDetails.schedule_at);
@@ -498,7 +498,7 @@ const CandidateCard = () => {
                 position_id: selectedPositionId,
                 status: 'Rescheduled',
             };
-            const response = await axios.put('http://docs.sentrifugo.com:8080/candidate/api/candidates/update-interview-status', payload);
+            const response = await axios.put('https://bobjava.sentrifugo.com:8443/candidate/api/candidates/update-interview-status', payload);
             if (response.status === 200) {
                 showToast("Interview rescheduled successfully!", "success");
                 const updatedInterviewed = interviewed.map(c =>
@@ -530,7 +530,7 @@ const CandidateCard = () => {
                 position_id: selectedPositionId,
                 status: 'Cancelled',
             };
-            const response = await axios.put('http://docs.sentrifugo.com:8080/candidate/api/candidates/update-interview-status', payload);
+            const response = await axios.put('https://bobjava.sentrifugo.com:8443/candidate/api/candidates/update-interview-status', payload);
             if (response.status === 200) {
                 showToast("Interview cancelled successfully!", "success");
                 // Move candidate to a different column or remove from 'Interviewed'

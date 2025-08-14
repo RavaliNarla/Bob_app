@@ -21,7 +21,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-const API_BASE = "http://docs.sentrifugo.com:8080/jobcreation/api";
+const API_BASE = "https://bobjava.sentrifugo.com:8443/jobcreation/api";
 
 const JobRequisition = () => {
   const [showModal, setShowModal] = useState(false);

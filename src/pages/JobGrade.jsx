@@ -20,7 +20,7 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_BASE = "http://docs.sentrifugo.com:8080/master/api";
+const API_BASE = "https://bobjava.sentrifugo.com:8443/master/api";
 
 const JobGrade = () => {
   const [showModal, setShowModal] = useState(false);

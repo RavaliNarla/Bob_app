@@ -9,7 +9,7 @@ const ForgotPassword = () => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("http://bobbe.sentrifugo.com/api/auth/recruiter-forgot-password", {
+      const res = await axios.post("https://bobbe.sentrifugo.com/api/auth/recruiter-forgot-password", {
         email,
       });
 

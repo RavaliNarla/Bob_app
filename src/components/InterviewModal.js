@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Modal, Button, Form, Spinner, Alert, Badge } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://bobbe.sentrifugo.com";
 const INTERVIEWER_EMAIL = "harsha.tatapudi@sagarsoft.in"; // <-- fixed for now
 const TZ = "Asia/Kolkata";
 const SLOT_MINUTES = 60; // 1-hour slots

@@ -1,4 +1,4 @@
-const BASE_URL = "http://docs.sentrifugo.com:8080/candidate";
+const BASE_URL = "https://bobjava.sentrifugo.com:8443/candidate";
 
 export const API_ENDPOINTS = {
   SCHEDULE_INTERVIEW: `${BASE_URL}/api/candidates/schedule-interview`,
@@ -9,7 +9,7 @@ export const API_ENDPOINTS = {
 
 export const getJobRequirements = async () => {
     try {
-        const response = await fetch('http://docs.sentrifugo.com:8080/jobcreation/api/getreq');
+        const response = await fetch('https://bobjava.sentrifugo.com:8443/jobcreation/api/getreq');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -23,7 +23,7 @@ export const getJobRequirements = async () => {
 
 export const getJobPositions = async (requisition_id) => {
     try {
-        const response = await fetch(`http://docs.sentrifugo.com:8080/jobcreation/api/getpos`);
+        const response = await fetch(`https://bobjava.sentrifugo.com:8443/jobcreation/api/getpos`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -39,7 +39,7 @@ export const getJobPositions = async (requisition_id) => {
 
 export const getCandidatesByPosition = async (position_id) => {
     try {
-        const response = await fetch(`http://docs.sentrifugo.com:8080/candidate/api/candidates/details-by-position/${position_id}`);
+        const response = await fetch(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/details-by-position/${position_id}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -53,7 +53,7 @@ export const getCandidatesByPosition = async (position_id) => {
 
 export const fetchCandidatesByStatus = async (status) => {
     try {
-        const response = await fetch(`http://docs.sentrifugo.com:8080/candidate/api/candidates/get-candidates/${status}`);
+        const response = await fetch(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/get-candidates/${status}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

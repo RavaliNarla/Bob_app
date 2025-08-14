@@ -88,7 +88,7 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
       fd.append("candidateId", candidateId);
 
       const { data } = await axios.post(
-        "http://bobbe.sentrifugo.com/api/offer-letters/upload",
+        "https://bobbe.sentrifugo.com/api/offer-letters/upload",
         fd,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
