@@ -340,7 +340,7 @@ const JobPosting = () => {
                               <td>{job.position_code}</td>
                               <td>{job.preferred_experience}</td>
                               <td>{job.position_status}</td>
-                              <td className="text-center">
+                              <td>
                                 <FontAwesomeIcon
                                   icon={faPencil}
                                   className="text-info me-3 cursor-pointer"
@@ -370,20 +370,20 @@ const JobPosting = () => {
           <div className="mt-5 mb-4">
             <Row className="align-items-start">
               <Col xs={12} sm={12} md={8}>
-                <div className="d-flex flex-wrap align-items-center">
+                <div className="d-flex flex-wrap">
                   {/* Label + Error */}
-                  <div className="d-flex align-items-center">
+                  <div className="d-flex">
                     <Form.Label
-                      className="postingfont me-3 mb-0"
+                      className="postingfont mb-0"
                       style={{
-                        minWidth: "100px",
+                        minWidth: "130px",
                         alignSelf: "flex-start",
-                        paddingTop: "4px",
+                        
                       }}
                     >
                       Job Postings: <br />
                       {jobBoardError && (
-                      <span style={{ color: "red", fontSize: "0.9rem" }}>{jobBoardError}</span>
+                      <span style={{ color: "red", fontSize: "10px" }}>{jobBoardError}</span>
                     )}
                     </Form.Label>
                     

@@ -185,22 +185,31 @@ const JobRequisition = () => {
   if (loading) return <div className="text-center mt-5">Loading...</div>;
   if (error) return <div className="alert alert-danger mt-5 mx-3">{error}</div>;
    return (
-    <div className="container mt-3">
+    <div className="container my-3">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="fonall">Requisitions</h5>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+        
       </div>
-      <InputGroup className="mb-3 w-50 fonreg" >
-        <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
-          <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
-        </InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Search by title"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+  <InputGroup className="w-50 fonreg">
+    <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+      <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+    </InputGroup.Text>
+    <Form.Control
+      type="text"
+      placeholder="Search by title"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </InputGroup>
+
+  <Button 
+    onClick={() => openModal()}
+    style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', color: '#fff' }}
+  >
+    + Add
+  </Button>
+</div>
       {/* <hr /> */}
  
       {jobsToDisplay.length === 0 ? (

@@ -74,19 +74,33 @@ const Location = () => {
   };
 
   const handleSave = () => {
-    const newErrors = {};
-    if (!currentLoc.location_name?.trim()) {
-      newErrors.location_name = "Location is required";
-    }
-    if (!currentLoc.city_id) {
-      newErrors.city_id = "City is required";
-    }
-    setErrr(newErrors);
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  if (!currentLoc.location_name?.trim()) {
+    newErrors.location_name = "Location is required";
+  }
+  if (!currentLoc.city_id) {
+    newErrors.city_id = "City is required";
+  }
+
+  // Duplicate check (case-insensitive)
+  const isDuplicate = locs.some((loc, index) =>
+    loc.location_name.trim().toLowerCase() === currentLoc.location_name.trim().toLowerCase() &&
+    loc.city_id === parseInt(currentLoc.city_id) && // Ensure city_id matches
+    index !== editIndex // Ignore same row if editing
+  );
+
+  if (isDuplicate) {
+    newErrors.location_name = "This location already exists for the selected city";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
 
   const handleSaveCallback = async () => {
     try {
@@ -176,25 +190,28 @@ const Location = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5 loctfon">
+    <div className="container my-3 loctfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Location</h2>
-        <Button variant="orange" onClick={() => openModal()}>
-          + Add
-        </Button>
+        
       </div>
+      <div className="d-flex justify-content-between align-items-center">
+        <InputGroup className="w-50">
+          <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+                  <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
+        <Button variant="orange" onClick={() => openModal()}>
+            + Add
+          </Button>
 
-      <InputGroup className="mb-3 w-50">
-        <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
-                 <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
-        </InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Search by title"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
+      </div>
       <hr />
 
       {jobsToDisplay.length === 0 ? (
@@ -202,7 +219,7 @@ const Location = () => {
           No Location matches your criteria.
         </p>
       ) : (
-        <Table responsive hover>
+        <Table responsive hover className="location_table">
   <thead className="table-header-orange">
     <tr>
       <th

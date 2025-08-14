@@ -233,10 +233,7 @@
   background-color: #FF7043 !important;
   border-color: #FF7043 !important;
 }
-.checkbtnspost {
-  margin-left: 35px;
-  margin-top: 9px;
-}
+
 .job-form .form-label,
 .job-form .form-control,
 .job-form .form-select,
@@ -258,7 +255,7 @@ font-family: 'Poppins', sans-serif !important;
 }
 .postingfont{
   font-family: 'Poppins', sans-serif !important;
- 
+ width: 105px;
   font-size: 14px !important;
 }
 
@@ -275,10 +272,10 @@ font-family: 'Poppins', sans-serif !important;
   padding-bottom: 0.2rem !important;
 }
 
-.modal_container .modal-dialog .modal-content .modal-body .container-fluid {
+/* .modal_container .modal-dialog .modal-content .modal-body .container-fluid {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
-}
+} */
 
 .modal_container .modal-dialog .modal-content .modal-body .container-fluid div div div .buttons_div {
   display: none !important;
@@ -292,4 +289,8 @@ font-family: 'Poppins', sans-serif !important;
 .accordion-button:focus {
   box-shadow: none !important;
 }
+.collapsed{
+  border-radius: 10px;
+}
+
 /* ...existing code... */

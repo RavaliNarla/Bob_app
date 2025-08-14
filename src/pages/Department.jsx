@@ -60,20 +60,39 @@ const Department = () => {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const newErrors = {};
-    if (!currentDept.department_name?.trim()) {
-      newErrors.department_name = "Name is required";
-    }
-    if (!currentDept.department_desc?.trim()) {
-      newErrors.department_desc = "Description is required";
-    }
-    setErrr(newErrors);
+ const handleSave = () => {
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  const trimmedName = currentDept.department_name?.trim();
+  const trimmedDesc = currentDept.department_desc?.trim();
+
+  if (!trimmedName) {
+    newErrors.department_name = "Name is required";
+  }
+  if (!trimmedDesc) {
+    newErrors.department_desc = "Description is required";
+  }
+
+  // Check if either name or description already exists
+  const isDuplicate = depts.some((dept, index) =>
+    (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+     dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+    index !== editIndex
+  );
+
+  if (isDuplicate) {
+    newErrors.department_name = "Department name already exists";
+    newErrors.department_desc = "Department description already exists";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
+
 
   const handleSaveCallback = async () => {
     try {
@@ -174,29 +193,30 @@ const Department = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5 deptfon">
+    <div className="container my-3 deptfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Department</h2>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-
-      <InputGroup className="mb-3 w-50">
+     <div className="d-flex justify-content-between align-items-center">
+      <InputGroup className=" w-50">
         <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
           <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
         </InputGroup.Text>
         <Form.Control
           type="text"
-          placeholder="Search by title"
+          placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
+      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+    </div>
       <hr />
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No Department match your criteria.</p>
       ) : (
-        <Table responsive hover>
+        <Table className="dept_table" responsive hover>
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("department_name")} style={{ cursor: "pointer", width: "40%" }}>

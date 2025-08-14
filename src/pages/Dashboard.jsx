@@ -112,9 +112,9 @@ export default function Dashboard() {
 
   const shortlistingProgress = [
     { title: "New Applications", count: 252, note: "Last 7 days" },
-    { title: "Screening", count: 182, note: "In progress" },
+//    { title: "Screening", count: 182, note: "In progress" },
     { title: "Interviews", count: 62, note: "Scheduled" },
-    { title: "Offers", count: 36, note: "Scheduled" },
+//    { title: "Offers", count: 36, note: "Scheduled" },
     { title: "Rejected", count: 22, note: "Total" }
   ];
 
@@ -193,7 +193,7 @@ export default function Dashboard() {
 
           {/* Interviews & Notifications */}
           <Row className="mt-4">
-            <Col md={4} className="cardspace">
+            <Col md={6} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr5 fonapp">
                 <h6>Upcoming Interviews</h6>
                 <ListGroup variant="flush">
@@ -207,7 +207,7 @@ export default function Dashboard() {
                 </ListGroup>
               </Card>
             </Col>
-            <Col md={5} className="cardspace">
+            {/* <Col md={5} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr6 fonapp">
                 <h6>Recent Notifications</h6>
                 <ListGroup variant="flush">
@@ -219,7 +219,7 @@ export default function Dashboard() {
                   ))}
                 </ListGroup>
               </Card>
-            </Col>
+            </Col> */}
           </Row>
         </Col>
       </Row>

@@ -83,11 +83,17 @@
   font-family: poppins, sans-serif !important;
   padding: 12px !important;
 }
+.dept_table {
+  margin-bottom: 0px !important;
+  font-family: 'Poppins', Arial, sans-serif;
+  font-size: 14px !important;
+  font-weight: 300 !important;
+}
 .deptfon{
   font-family: poppins, sans-serif !important;
 }
 .deptfon h2{
-  font-size: 16px;
+  font-size: 18px;
    color: #FF7043;
    font-weight: 600;
 }

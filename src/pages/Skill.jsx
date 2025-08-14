@@ -60,20 +60,38 @@ const Skill = () => {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    const newErrors = {};
-    if (!currentSkill.skill_name?.trim()) {
-      newErrors.skill_name = "Name is required";
-    }
-    if (!currentSkill.skill_desc?.trim()) {
-      newErrors.skill_desc = "Description is required";
-    }
-    setErrr(newErrors);
+ const handleSave = () => {
+  const newErrors = {};
 
-    if (Object.keys(newErrors).length === 0) {
-      handleSaveCallback();
-    }
-  };
+  const trimmedName = currentSkill.skill_name?.trim();
+  const trimmedDesc = currentSkill.skill_desc?.trim();
+
+  if (!trimmedName) {
+    newErrors.skill_name = "Name is required";
+  }
+  if (!trimmedDesc) {
+    newErrors.skill_desc = "Description is required";
+  }
+
+  // Duplicate check: name OR description OR both
+  const isDuplicate = skills.some((skill, index) =>
+    (skill.skill_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+     skill.skill_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+    index !== editIndex // Ignore same record when editing
+  );
+
+  if (isDuplicate) {
+    newErrors.skill_name = "Skill name or description already exists";
+    newErrors.skill_desc = "Skill name or description already exists";
+  }
+
+  setErrr(newErrors);
+
+  if (Object.keys(newErrors).length === 0) {
+    handleSaveCallback();
+  }
+};
+
 
   const handleSaveCallback = async () => {
     try {
@@ -174,33 +192,34 @@ const Skill = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5 skillfon">
+    <div className="container my-3 skillfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Skills</h2>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-
-      <InputGroup className="mb-3 w-50">
+      <div className="d-flex justify-content-between align-items-center">
+      <InputGroup className="w-50">
          <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
             <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
         </InputGroup.Text>
         <Form.Control
           type="text"
-          placeholder="Search by title"
+          placeholder="Search by skill"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
+      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+      </div>
       <hr />
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No Skill match your criteria.</p>
       ) : (
-        <Table responsive hover>
+        <Table responsive hover className="skill_table">
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("skill_name")} style={{ cursor: "pointer", width: "40%" }}>
-                Name{getSortIndicator("skill_name")}
+                Skill{getSortIndicator("skill_name")}
               </th>
               <th onClick={() => handleSort("skill_desc")} style={{ cursor: "pointer", width: "52%" }}>
                 Description{getSortIndicator("skill_desc")}
@@ -237,12 +256,12 @@ const Skill = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Name <span className="text-danger">*</span>
+                    Skill <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter Name"
+                    placeholder="Enter skill"
                     value={currentSkill.skill_name}
                     isInvalid={!!errr.skill_name}
                     onChange={(e) =>

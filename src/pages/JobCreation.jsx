@@ -465,11 +465,11 @@ const handleInputChange = (e) => {
   };
 
   return (
-    <Container fluid className="py-2">
+    <Container fluid className="py-3">
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
-          <div className="p-1">
-            <div className="d-flex justify-content-end mb-2 gap-2 buttons_div">
+          
+            <div className="d-flex justify-content-end mb-3 gap-2 buttons_div">
               <a className='downlaodfile'
                 href="/JobCreationTemplate.xlsx"
                 style={{
@@ -527,7 +527,7 @@ const handleInputChange = (e) => {
                 requisitionData={reqs}
               />
             )}
-          </div>
+          
         </Col>
       </Row>
       <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>
