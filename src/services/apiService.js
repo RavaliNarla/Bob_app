@@ -111,6 +111,9 @@ export const apiService = {
   getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
   getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
   jobpost: (data) => api.post('/job_postings',data),
+  getDashboardQueries: () => api.get('/dashboard/queries'),
+  getDashboardMetrics: () => api.get('/dashboard/metrics'),
+  
    
 };
 
