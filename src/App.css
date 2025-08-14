@@ -108,6 +108,13 @@ body {
   font-family: poppins, sans-serif;
   font-size: 12px;
 }
+.table-responsive {
+	border-radius: 10px !important;
+}
+.form-control{
+  font-family: poppins, sans-serif;
+  
+}
 .fonreg{
   font-family: Poppins, sans-serif;
 }

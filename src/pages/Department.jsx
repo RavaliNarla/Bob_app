@@ -174,29 +174,30 @@ const Department = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container mt-5 deptfon">
+    <div className="container my-3 deptfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Department</h2>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
-
-      <InputGroup className="mb-3 w-50">
+     <div className="d-flex justify-content-between align-items-center">
+      <InputGroup className=" w-50">
         <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
           <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
         </InputGroup.Text>
         <Form.Control
           type="text"
-          placeholder="Search by title"
+          placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup>
+      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+    </div>
       <hr />
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">No Department match your criteria.</p>
       ) : (
-        <Table responsive hover>
+        <Table className="dept_table" responsive hover>
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("department_name")} style={{ cursor: "pointer", width: "40%" }}>

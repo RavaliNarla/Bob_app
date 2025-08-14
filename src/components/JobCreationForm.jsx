@@ -31,7 +31,7 @@ const JobCreationForm = ({
   // console.log('Selected Requisition:', selectedRequisition);
 
   return (
-    <div className="form-section p-2 rounded-3">
+    <div className="form-section p-4 rounded-3" style={{ backgroundColor: '#fff' }}>
       <h4 className="text-center mb-4 fonall">
         Job Posting
       </h4>
