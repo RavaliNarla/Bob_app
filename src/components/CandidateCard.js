@@ -512,53 +512,54 @@ const CandidateCard = () => {
     return (
         <Container fluid className="py-5">
             <div className="top-bar">
-                <div>
+                <div className="responsive-breadcrumb-container">
                     <Breadcrumb>
                         <BreadcrumbItem active>Jobs</BreadcrumbItem>
-                        {/* // CandidateCard.js */}
-                        <BreadcrumbItem>
-                            <select
-                                className="select-drop"
-                                name="jobReqDropdown"
-                                value={selectedRequisitionCode}
-                                onChange={handleJobReqChange}
-                            >
-                                <option value="">Select Requisition Code</option>
-                                {jobReqs.length > 0 ? (
-                                    jobReqs.map((req, index) => (
-                                        <option key={index} value={req.requisition_code}>
-                                            {req.requisition_code} - {req.requisition_title}
-                                        </option>
-                                    ))
-                                ) : (
-                                    <option value="">No job requests available</option>
-                                )}
-                            </select>
-                        </BreadcrumbItem>
-                        {selectedRequisitionCode && (
-                            <BreadcrumbItem>
-                                <select
-                                    className="select-drop"
-                                    name="jobPositionsDropdown"
-                                    value={selectedPositionId}
-                                    onChange={handleJobPositionChange}
-                                >
-                                    <option value="">Select Position Title</option>
-                                    {jobPositions.length > 0 ? (
-                                        jobPositions.map((pos, index) => (
-                                            <option key={index} value={pos.position_id}>
-                                                {pos.position_title}
-                                            </option>
-                                        ))
-                                    ) : (
-                                        <option value="">No positions available</option>
-                                    )}
-                                </select>
-                            </BreadcrumbItem>
-                        )}
                     </Breadcrumb>
+
+                    {/* // CandidateCard.js */}
+                    {/* <BreadcrumbItem> */}
+                    <select
+                        className="select-drop"
+                        name="jobReqDropdown"
+                        value={selectedRequisitionCode}
+                        onChange={handleJobReqChange}
+                    >
+                        <option value="">Select Requisition Code</option>
+                        {jobReqs.length > 0 ? (
+                            jobReqs.map((req, index) => (
+                                <option key={index} value={req.requisition_code}>
+                                    {req.requisition_code} - {req.requisition_title}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">No job requests available</option>
+                        )}
+                    </select>
+                    {/* </BreadcrumbItem> */}
+                    {selectedRequisitionCode && (
+                        // <BreadcrumbItem>
+                        <select
+                            className="select-drop"
+                            name="jobPositionsDropdown"
+                            value={selectedPositionId}
+                            onChange={handleJobPositionChange}
+                        >
+                            <option value="">Select Position Title</option>
+                            {jobPositions.length > 0 ? (
+                                jobPositions.map((pos, index) => (
+                                    <option key={index} value={pos.position_id}>
+                                        {pos.position_title}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">No positions available</option>
+                            )}
+                        </select>
+                        // </BreadcrumbItem>
+                    )}
                 </div>
-                <div className="d-flex gap-3 w-50 justify-content-end">
+                <div className="d-flex gap-3 w-50 justify-content-end mt-3">
                     <InputGroup className="search-b">
                         <Form.Control
                             placeholder="Search"
@@ -577,7 +578,7 @@ const CandidateCard = () => {
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: '82vh', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: '73vh', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Candidates</h5>
@@ -603,7 +604,7 @@ const CandidateCard = () => {
                                     <div className="colored_line_blue my-2"></div>
                                     <Droppable droppableId="candidates">
                                         {(provided) => (
-                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '66vh' }} ref={provided.innerRef} {...provided.droppableProps}>
+                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '60vh' }} ref={provided.innerRef} {...provided.droppableProps}>
                                                 {candidates
                                                     .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
                                                     .map((candidate, index) => (
@@ -642,7 +643,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "73vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Interviewed</h5>
@@ -669,7 +670,7 @@ const CandidateCard = () => {
                                     <div className="colored_line_red my-2"></div>
                                     <Droppable droppableId="interviewed">
                                         {(provided) => (
-                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '71vh' }} ref={provided.innerRef} {...provided.droppableProps}>
+                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '60vh' }} ref={provided.innerRef} {...provided.droppableProps}>
                                                 {interviewed
                                                     .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
                                                     .map((candidate, index) => (
@@ -717,7 +718,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "82vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "73vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Offered</h5>
@@ -744,7 +745,7 @@ const CandidateCard = () => {
                                     <div className="colored_line_yellow my-2"></div>
                                     <Droppable droppableId="offered">
                                         {(provided) => (
-                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '71vh' }} ref={provided.innerRef} {...provided.droppableProps}>
+                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '60vh' }} ref={provided.innerRef} {...provided.droppableProps}>
                                                 {offered
                                                     .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
                                                     .map((candidate, index) => (

@@ -133,6 +133,39 @@
     margin-left: 30px;
 }
 
+.responsive-breadcrumb-container {
+    display: flex;
+    flex-wrap: nowrap; /* Prevents wrapping to a new line */
+    align-items: center;
+    overflow-x: auto; /* Adds horizontal scrolling if content overflows */
+}
+
+/* Ensure the breadcrumb items and their contents stay on one line */
+.responsive-breadcrumb-container .breadcrumb-item {
+    white-space: nowrap; /* Prevents text from wrapping */
+    flex-shrink: 0;      /* Prevents the 'Jobs' text from shrinking */
+}
+
+/* The styles for the dropdowns */
+.select-drop {
+    font-size: 17px !important;
+    padding: 3px 10px !important; /* Reduced padding for smaller screens */
+    width: auto !important;
+    background-color: #fff !important;
+    color: black !important;
+    border: 1px solid #ced4da !important; /* Added a visible border for clarity */
+    border-radius: 5px !important;
+    margin-left: 10px !important;
+    flex-shrink: 1; /* Allows the select box to shrink if needed */
+    min-width: 100px; /* Ensures a minimum width to prevent it from disappearing */
+}
+
+/* Adjust the spacing between breadcrumb items to be more compact */
+.breadcrumb-item + .breadcrumb-item::before {
+    padding-right: 0.25rem;
+    padding-left: 0.25rem;
+}
+
 .top-bar .breadcrumb {
     margin-bottom: 5%;
 }

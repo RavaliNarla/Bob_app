@@ -189,10 +189,10 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                 </div>
                 <div>
                   <h5 className="mb-0">
-                    {candidate?.firstname} {candidate?.lastname}
+                    {candidate?.full_name} {candidate?.lastname}
                   </h5>
                   <p className="text-muted mb-0 py-1">
-                    {candidate?.location}
+                    {candidate?.address}
                   </p>
                   <p className="text-muted mb-0">{candidate?.phone}</p>
                 </div>
