@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Row,
@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap";
 import "../css/Dashboard.css";
 import { Line, Pie } from "react-chartjs-2";
+import apiService from "../services/apiService";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,42 +24,49 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
-  const stats = {
+  const [stats, setStats] = useState({
     new_positions: 0,
-    total_positions: 78,
-    interviews_today: 1,
-    offer_letters: 5,
-    open_requisition: 12
-  };
+    total_positions: 0,
+    interviews_today: 0,
+    offer_letters: 0,
+    open_requisition: 0
+  });
 
-  // Your provided JSON
-  const dashboardJson = {
-    offer_status: [
-      { count: 2, application_status: "Shortlisted" },
-      { count: 5, application_status: "Offered" },
-      { count: 63, application_status: "Scheduled" }
-    ],
-    offers_by_day: [
-      { day: "Thu", offers: 5 }
-    ],
-    interviews_by_day: [
-      { day: "Mon", interviews: 8 },
-      { day: "Wed", interviews: 2 },
-      { day: "Thu", interviews: 9 },
-      { day: "Fri", interviews: 8 },
-      { day: "Sat", interviews: 3 }
-    ],
-    applications_by_day: [
-      { day: "Fri", applications: 21 },
-      { day: "Mon", applications: 17 },
-      { day: "Tue", applications: 24 }
-    ]
-  };
+  const [dashboardJson, setDashboardJson] = useState({
+    offer_status: [],
+    offers_by_day: [],
+    interviews_by_day: [],
+    applications_by_day: []
+  });
 
-  // All days for consistent order
+  useEffect(() => {
+  apiService.getDashboardQueries()
+    .then(data => {
+      setStats({
+        new_positions: data?.new_positions || 0,
+        total_positions: data?.total_positions || 0,
+        interviews_today: data?.interviews_today || 0,
+        offer_letters: data?.offer_letters || 0,
+        open_requisition: data?.open_requisition || 0
+      });
+    })
+    .catch(err => console.error("Error fetching queries:", err));
+
+  apiService.getDashboardMetrics()
+    .then(data => {
+      setDashboardJson({
+        offer_status: data?.offer_status || [],
+        offers_by_day: data?.offers_by_day || [],
+        interviews_by_day: data?.interviews_by_day || [],
+        applications_by_day: data?.applications_by_day || []
+      });
+    })
+    .catch(err => console.error("Error fetching metrics:", err));
+}, []);
+
+
   const allDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  // Generate data arrays
   const applicationsData = allDays.map(
     (d) => dashboardJson.applications_by_day.find(a => a.day === d)?.applications || 0
   );
@@ -89,6 +97,7 @@ export default function Dashboard() {
     ],
   };
 
+  // Static demo data for now
   const upcomingInterviews = [
     { role: "Senior Developer", time: "Today at 2:00 PM", name: "Sarah Johnson" },
     { role: "Product Manager", time: "Tomorrow at 2:00 PM", name: "Michael Chen" },

@@ -199,8 +199,8 @@ const JobGrade = () => {
       </div>
 
       <InputGroup className="mb-3 w-50">
-        <InputGroup.Text>
-          <FontAwesomeIcon icon={faSearch} />
+         <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+                  <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
         </InputGroup.Text>
         <Form.Control
           type="text"
