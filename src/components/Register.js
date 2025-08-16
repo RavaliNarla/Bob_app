@@ -24,7 +24,7 @@ const Register = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://bobbe.sentrifugo.com/api/getdetails/users/all"); // Update URL if needed
+      const res = await axios.get("https://bobbe.sentrifugo.com/api/getdetails/users/all"); // Update URL if needed
       setUsersData(res.data);
       console.log("Fetched users:", res.data);
     } catch (err) {
