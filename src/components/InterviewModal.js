@@ -216,6 +216,7 @@ const InterviewModal = ({
               name="interview_date"
               value={interviewData.interview_date}
               onChange={handleChange}
+              min={new Date().toISOString().split("T")[0]}
             />
           </Form.Group>
 
@@ -226,6 +227,7 @@ const InterviewModal = ({
               name="interview_time"
               value={interviewData.interview_time}
               onChange={handleChange}
+              disabled
             />
             {!!interviewData.interview_time && (
               <div className="mt-2">

@@ -79,12 +79,22 @@ const JobRequisition = () => {
       newErrors.registration_end_date = "End date is required";
     } else if (
       currentReq.registration_start_date &&
-      new Date(currentReq.registration_end_date) <= new Date(currentReq.registration_start_date)
+      new Date(currentReq.registration_end_date) < new Date(currentReq.registration_start_date)
     ) {
       newErrors.registration_end_date = "End date must be after start date";
     }
     if (!currentReq.no_of_positions || currentReq.no_of_positions <= 0) {
       newErrors.no_of_positions = "Enter a valid number";
+    }
+
+    if (
+      reqs.some(
+        (req, idx) =>
+          req.requisition_title.trim().toLowerCase() === currentReq.requisition_title.trim().toLowerCase() &&
+          idx !== editIndex // exclude the current record being edited
+      )
+    ) {
+      newErrors.requisition_title = "Title must be unique";
     }
 
     setErrr(newErrors);
@@ -318,6 +328,7 @@ const JobRequisition = () => {
                 onChange={(e) =>
                   setCurrentReq({ ...currentReq, registration_start_date: e.target.value })
                 }
+                min={new Date().toISOString().split("T")[0]}
               />
               <Form.Control.Feedback type="invalid">
                 {errr.registration_start_date}
@@ -336,6 +347,7 @@ const JobRequisition = () => {
                 onChange={(e) =>
                   setCurrentReq({ ...currentReq, registration_end_date: e.target.value })
                 }
+                min={currentReq.registration_start_date || new Date().toISOString().split("T")[0]}
               />
               <Form.Control.Feedback type="invalid">
                 {errr.registration_end_date}

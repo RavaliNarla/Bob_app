@@ -13,7 +13,6 @@ import Register from './components/Register';
 import ForgotPassword from './components/ForgotPassword';
 import CandidateCard from './components/CandidateCard';
 import Tokenexp from './components/Tokenexp';
-import CandidatePortal from './components/CandidatePortal';
 import Dashboard from './pages/Dashboard';
 import Skill from './pages/Skill';
 import JobGrade from './pages/JobGrade';
@@ -164,15 +163,6 @@ function App() {
                   element={
                     <Layout>
                       <CandidateCard />
-                    </Layout>
-                  }
-                />
-
-                <Route
-                  path="/candidate-portal"
-                  element={
-                    <Layout>
-                      <CandidatePortal />
                     </Layout>
                   }
                 />

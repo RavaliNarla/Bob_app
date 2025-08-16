@@ -182,7 +182,13 @@ body {
   font-size: 0.85rem; /* slightly smaller for code, exp, positions */
 }
 
+/* .register_container {
+  margin-top: 0px;
+} */
 
+.register_container .table-responsive {
+  width: 100% !important;
+}
 
 
 

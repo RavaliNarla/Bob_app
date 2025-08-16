@@ -43,11 +43,11 @@ const Sidebar = () => {
   ];
 
   const adminItems = [
+    { icon: faPerson, text: 'Registration', path: '/registration' },
     { icon: faBuilding, text: 'Department', path: '/department' },
     { icon: faLightbulb, text: 'Skills', path: '/skill' },
     { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
-    { icon: faPerson, text: 'Registration', path: '/registration' },
   ];
 
   return (
@@ -92,11 +92,13 @@ const Sidebar = () => {
           onClick={() => setAdminOpen(!adminOpen)}
         >
           <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '0.8rem' }} />
-          <span className="mt-1">Admin</span>
-          <FontAwesomeIcon
-            icon={adminOpen ? faChevronUp : faChevronDown}
-            style={{ fontSize: '0.6rem', marginTop: '2px' }}
-          />
+          <div className='d-flex flex-row align-items-center justify-content-center gap-1'>
+            <span className="mt-1">Admin</span>
+            <FontAwesomeIcon
+              icon={adminOpen ? faChevronUp : faChevronDown}
+              style={{ fontSize: '0.6rem', marginTop: '5px' }}
+            />
+          </div>
         </div>
 
           {adminOpen &&
@@ -105,15 +107,15 @@ const Sidebar = () => {
                 key={`admin-${index}`}
                 as={Link}
                 to={item.path}
-                className={`d-flex flex-column align-items-center justify-content-center py-2 nav-item-custom ${isActive(item.path)}`}
+                className={`d-flex flex-column align-items-center justify-content-center py-1 nav-item-custom ${isActive(item.path)}`}
                 style={{
                   color: isActive(item.path) ? '#FF4D00' : '#6c757d',
                   backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
                   fontWeight: isActive(item.path) ? '600' : '400',
                   fontSize: '0.7rem',
                   textDecoration: 'none',
-                  height: '50px',
-                  width: '97px'
+                  // height: '50px',
+                  // width: '97px'
                 }}
               >
                 <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />

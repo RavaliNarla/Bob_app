@@ -53,6 +53,8 @@ const CandidateCard = () => {
     const [offerLetterPath, setOfferLetterPath] = useState('');
     const [showRescheduleModal, setShowRescheduleModal] = useState(false);
     const [rescheduleCandidate, setRescheduleCandidate] = useState(null);
+    const [apiLoading, setApiLoading] = useState(false);
+
     const showToast = (message, variant) => {
         alert(message);
     };
@@ -288,7 +290,7 @@ const CandidateCard = () => {
         // this.setState({ isLoading: true });
         console.log("Scheduling interview with data:", interviewData);
         if (!interviewCandidate || !interviewData.interview_date || !interviewData.interview_time) {
-            console.error("Missing required interview information.");
+            showToast("Please select both interview date and time.", "warning");
             return;
         }
 
@@ -301,6 +303,7 @@ const CandidateCard = () => {
             // userId: 3,
             position_id: selectedPositionId,
         };
+        setApiLoading(true);
 
         try {
             const response = await fetch(API_ENDPOINTS.SCHEDULE_INTERVIEW, {
@@ -343,13 +346,15 @@ const CandidateCard = () => {
             showToast("Interview scheduled successfully!");
         } catch (error) {
             console.error("Error scheduling interview:", error);
+        } finally {
+            setApiLoading(false);
         }
     };
 
 
     const handleOffer = async (offerLetterPath) => {
         if (!offerCandidate || !salary || !offerLetterPath) {
-            console.error("Missing candidate, salary, or offer letter path.");
+            showToast("Please fill in all fields before sending the offer.");
             return;
         }
 
@@ -448,6 +453,7 @@ const CandidateCard = () => {
     // Update handleReschedule to fetch data from the API
    const handleReschedule = async (candidate) => {
         setLoading(true);
+        setApiLoading(true);
         setError(null);
         try {
             const payload = {
@@ -477,6 +483,7 @@ const CandidateCard = () => {
             setError('Failed to fetch interview details');
         } finally {
             setLoading(false);
+            setApiLoading(false);
             setShowRescheduleModal(true);
         }
     };
@@ -488,7 +495,12 @@ const CandidateCard = () => {
 
     // Function to handle the actual reschedule interview
   const handleRescheduleInterview = async (interviewData) => {
+        if (!interviewData.interview_date || !interviewData.interview_time) {
+            showToast("Please select both interview date and time.", "warning");
+            return;
+        }
         setLoading(true);
+        setApiLoading(true);
         setError(null);
         try {
             const payload = {
@@ -514,12 +526,14 @@ const CandidateCard = () => {
             setError(err.message || 'Failed to reschedule interview');
         } finally {
             setLoading(false);
+            setApiLoading(false);
         }
     };
 
     // Function to handle the cancellation of an interview
    const handleDeleteInterview = async () => {
         setLoading(true);
+        setApiLoading(true);
         setError(null);
         try {
             // Get the date and time from the rescheduleCandidate object
@@ -543,6 +557,7 @@ const CandidateCard = () => {
             setError(err.message || 'Failed to cancel interview');
         } finally {
             setLoading(false);
+            setApiLoading(false);
         }
     };
 
@@ -871,6 +886,13 @@ const CandidateCard = () => {
                 offerLetterPath={offerLetterPath} // 👈 Pass the state down
                 setOfferLetterPath={setOfferLetterPath}
             />
+            {apiLoading && (
+                <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>
+                    <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            )}
         </Container>
     );
 };

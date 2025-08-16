@@ -4,6 +4,7 @@ import axios from 'axios';
 // This is the correct way to handle different API services.
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://bobjava.sentrifugo.com:8443/jobcreation/api';
 const API_BASE_URLS = process.env.REACT_APP_API_URLS || 'https://bobjava.sentrifugo.com:8443/master/api';
+const NODE_API_URL = process.env.REACT_APP_NODE_API_URL || 'https://bobbe.sentrifugo.com/api';
 
 // Create a primary axios instance for most API calls
 const api = axios.create({

@@ -68,13 +68,13 @@ const OfferModal = ({
           <Button variant="primary" onClick={handleDownloadClick}>
             Download
           </Button> */}
-          <Button variant="primary" onClick={handleDownloadClick}>
+          <Button variant="primary" onClick={handleDownloadClick} disabled={!salary || !candidate || !position_id}>
             Preview & Download
           </Button>
           <Button
             variant="primary"
             onClick={() => handleOffer(offerLetterPath)} // Pass the valid state to the handler
-            disabled={!offerLetterPath}
+            disabled={!salary || !candidate || !position_id}
           >
             Send Offer
           </Button>
