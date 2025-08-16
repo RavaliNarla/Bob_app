@@ -24,7 +24,7 @@ const Register = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/getdetails/users/all"); // Update URL if needed
+      const res = await axios.get("http://bobbe.sentrifugo.com/api/getdetails/users/all"); // Update URL if needed
       setUsersData(res.data);
       console.log("Fetched users:", res.data);
     } catch (err) {
@@ -61,7 +61,7 @@ const Register = () => {
     });
 
     // 2. Immediately try to log in (to trigger MFA)
-    // const loginRes = await axios.post("http://localhost:5000/api/auth/login", {
+    // const loginRes = await axios.post("http://bobbe.sentrifugo.com/api/auth/login", {
     //   email,
     //   password,
     // });
