@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiService from "../services/apiService";
 
 const API_BASE = "https://bobjava.sentrifugo.com:8443/master/api";
 
@@ -47,7 +48,7 @@ const JobGrade = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${API_BASE}/jobgrade/all`);
+      const res = await apiService.getallJobGrade();
       setGrads(res.data.data || res.data); // adjust if API returns differently
     } catch (err) {
       setError("Failed to fetch Grade.");
@@ -132,7 +133,8 @@ const JobGrade = () => {
           job_grade_id: grads[editIndex].job_grade_id,
         };
 
-        await axios.put(`${API_BASE}/jobgrade/update/${updatedGrad.job_grade_id}`, updatedGrad);
+        await apiService.updateJobGrade(updatedGrad.job_grade_id, updatedGrad);
+        
 
         toast.info("Grade updated successfully");
 
@@ -141,7 +143,7 @@ const JobGrade = () => {
         setGrads(updatedGrads);
       } else {
         console.log("Adding new Grade:", currentGrade);
-        const response = await axios.post(`${API_BASE}/jobgrade/add`, currentGrade);
+        const response = await apiService.addJobGrade(currentGrade);
         const newGrad = response.data?.data || currentGrade;
 
         toast.success("Grade added successfully");
@@ -158,7 +160,7 @@ const JobGrade = () => {
     const idToDelete = grads[index]?.job_grade_id;
 
     try {
-      await axios.delete(`${API_BASE}/jobgrade/delete/${idToDelete}`);
+      await apiService.deleteJobGrade(idToDelete);
       setGrads(grads.filter((grad) => grad.job_grade_id !== idToDelete));
       toast.error("Grade deleted");
     } catch (err) {

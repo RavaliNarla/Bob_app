@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiService from "../services/apiService";
 
 const API_BASE = "https://bobjava.sentrifugo.com:8443/master/api";
 
@@ -44,7 +45,7 @@ const Department = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${API_BASE}/departments/all`);
+     const res = await apiService.getallDepartment();
       setDepts(res.data.data || res.data); // adjust if API returns differently
     } catch (err) {
       setError("Failed to fetch Department.");
@@ -60,37 +61,37 @@ const Department = () => {
     setShowModal(true);
   };
 
- const handleSave = () => {
-  const newErrors = {};
+  const handleSave = () => {
+    const newErrors = {};
 
-  const trimmedName = currentDept.department_name?.trim();
-  const trimmedDesc = currentDept.department_desc?.trim();
+    const trimmedName = currentDept.department_name?.trim();
+    const trimmedDesc = currentDept.department_desc?.trim();
 
-  if (!trimmedName) {
-    newErrors.department_name = "Name is required";
-  }
-  if (!trimmedDesc) {
-    newErrors.department_desc = "Description is required";
-  }
+    if (!trimmedName) {
+      newErrors.department_name = "Name is required";
+    }
+    if (!trimmedDesc) {
+      newErrors.department_desc = "Description is required";
+    }
 
-  // Check if either name or description already exists
-  const isDuplicate = depts.some((dept, index) =>
-    (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
-     dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
-    index !== editIndex
-  );
+    // Check if either name or description already exists
+    const isDuplicate = depts.some((dept, index) =>
+      (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+        dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+      index !== editIndex
+    );
 
-  if (isDuplicate) {
-    newErrors.department_name = "Department name already exists";
-    newErrors.department_desc = "Department description already exists";
-  }
+    if (isDuplicate) {
+      newErrors.department_name = "Department name already exists";
+      newErrors.department_desc = "Department description already exists";
+    }
 
-  setErrr(newErrors);
+    setErrr(newErrors);
 
-  if (Object.keys(newErrors).length === 0) {
-    handleSaveCallback();
-  }
-};
+    if (Object.keys(newErrors).length === 0) {
+      handleSaveCallback();
+    }
+  };
 
 
 
@@ -101,8 +102,7 @@ const Department = () => {
           ...currentDept,
           department_id: depts[editIndex].department_id,
         };
-
-        await axios.put(`${API_BASE}/departments/update/${updatedDept.department_id}`, updatedDept);
+       await apiService.updateDepartment(updatedDept.department_id, updatedDept);
 
         toast.info("Department updated successfully");
 
@@ -111,7 +111,7 @@ const Department = () => {
         setDepts(updatedDepts);
       } else {
         console.log("Adding new department:", currentDept);
-        const response = await axios.post(`${API_BASE}/departments/add`, currentDept);
+        const response = await apiService.addDepartment(currentDept);
         const newDept = response.data?.data || currentDept;
 
         toast.success("Department added successfully");
@@ -128,7 +128,7 @@ const Department = () => {
     const idToDelete = depts[index]?.department_id;
 
     try {
-      await axios.delete(`${API_BASE}/departments/delete/${idToDelete}`);
+      await apiService.deleteDepartment(idToDelete);
       setDepts(depts.filter((dept) => dept.department_id !== idToDelete));
       toast.error("Department deleted");
     } catch (err) {
@@ -197,20 +197,20 @@ const Department = () => {
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Department</h2>
       </div>
-     <div className="d-flex justify-content-between align-items-center">
-      <InputGroup className=" w-50">
-        <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
-          <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
-        </InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Search by name"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
-      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
-    </div>
+      <div className="d-flex justify-content-between align-items-center">
+        <InputGroup className=" w-50">
+          <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+            <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search by name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
+        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+      </div>
       <hr />
 
       {jobsToDisplay.length === 0 ? (

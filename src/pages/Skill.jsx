@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiService from "../services/apiService";
 
 const API_BASE = "https://bobjava.sentrifugo.com:8443/master/api";
 
@@ -44,7 +45,7 @@ const Skill = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${API_BASE}/skill/all`);
+      const res = await apiService.getallSkills();
       setSkills(res.data.data || res.data); // adjust if API returns differently
     } catch (err) {
       setError("Failed to fetch Skill.");
@@ -96,21 +97,21 @@ const Skill = () => {
   const handleSaveCallback = async () => {
     try {
       if (editIndex !== null) {
-        const updatedDept = {
+        const updatedSkill = {
           ...currentSkill,
           skill_id: skills[editIndex].skill_id,
         };
-
-        await axios.put(`${API_BASE}/skill/update/${updatedDept.skill_id}`, updatedDept);
+        await apiService.updateSkill(updatedSkill.skill_id, updatedSkill);
+        console.log("Updating Skill:", updatedSkill);
 
         toast.info("Skill updated successfully");
 
         const updatedSkills = [...skills];
-        updatedSkills[editIndex] = updatedDept;
+        updatedSkills[editIndex] = updatedSkill;
         setSkills(updatedSkills);
       } else {
         console.log("Adding new Skill:", currentSkill);
-        const response = await axios.post(`${API_BASE}/skill/add`, currentSkill);
+        const response = await apiService.addSkill(currentSkill);
         const newSkill = response.data?.data || currentSkill;
 
         toast.success("Skill added successfully");
@@ -127,7 +128,8 @@ const Skill = () => {
     const idToDelete = skills[index]?.skill_id;
 
     try {
-      await axios.delete(`${API_BASE}/skill/delete/${idToDelete}`);
+      await apiService.deleteSkill(idToDelete);
+      console.log("Deleting Skill ID:", idToDelete);
       setSkills(skills.filter((skill) => skill.skill_id !== idToDelete));
       toast.error("Skill deleted");
     } catch (err) {

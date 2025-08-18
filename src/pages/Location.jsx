@@ -109,12 +109,12 @@ const Location = () => {
           ...currentLoc,
           location_id: locs[editIndex].location_id
         };
-        await axios.put(`${API_BASE}/location/update/${updatedLoc.location_id}`, updatedLoc);
+       await apiService.updateLocation(updatedLoc.location_id, updatedLoc);
 
         toast.success("Location updated successfully");
         await fetchData(); // reload with updated city name
       } else {
-        const response = await axios.post(`${API_BASE}/location/add`, currentLoc);
+        const response =  await apiService.addLocation(currentLoc);
         toast.success("Location added successfully");
         await fetchData();
       }
@@ -128,7 +128,7 @@ const Location = () => {
   const handleDelete = async (index) => {
     const idToDelete = locs[index]?.location_id;
     try {
-      await axios.delete(`${API_BASE}/location/delete/${idToDelete}`);
+      await apiService.deleteLocation(idToDelete);
       setLocs(locs.filter((loc) => loc.location_id !== idToDelete));
       toast.error("Location deleted");
     } catch (err) {
