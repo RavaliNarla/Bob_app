@@ -94,7 +94,9 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
         const jobGrades = masterDataRes.job_grade_data;
 
         setMasterData({
-          requisitionIdOptions: (requisitionDataRes.data || []).map(req => ({
+          requisitionIdOptions: (requisitionDataRes.data || [])
+          .filter(req => req.requisition_status === "Submitted")   // ✅ filter here
+          .map(req => ({
             id: req.requisition_id,
             name: req.requisition_code
           })),

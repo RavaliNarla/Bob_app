@@ -222,9 +222,17 @@ const filteredJobPostings = jobPostings.filter((job) => {
     (job.requisition_title?.toLowerCase() ?? "").includes(search) ||
     (job.requisition_code?.toLowerCase() ?? "").includes(search);
 
-  const matchesApproval =
-    selectedApproval === "" || job.requisition_status === selectedApproval;
+  let matchesApproval = true;
 
+  if (selectedApproval !== "") {
+    if (selectedApproval === "Pending") {
+      matchesApproval =
+        job.requisition_status === "Pending L1 Approval" ||
+        job.requisition_status === "Pending L2 Approval";
+    } else {
+      matchesApproval = job.requisition_status === selectedApproval;
+    }
+  }
   return matchesSearch && matchesApproval;
 });
 
