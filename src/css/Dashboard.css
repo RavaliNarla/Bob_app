@@ -6,7 +6,7 @@
 }
 .shadow-sm h6{
    font-family: poppins, sans-serif !important;
-   font-size: 14px;
+   font-size: 13px;
 }
 .cardspace{
     padding-left: 12px;
@@ -30,6 +30,7 @@
 }
 .bgcolr5{
     background-color: #F1F5FF  !important;
+    overflow-y: auto;
 }
 .bgcolr6{
     background-color: #EAF4FF !important;

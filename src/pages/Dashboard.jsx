@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"; 
 import {
   Container,
   Row,
@@ -24,6 +24,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Title, Tooltip, Legend);
 
 export default function Dashboard() {
+  // Stats for top row
   const [stats, setStats] = useState({
     new_positions: 0,
     total_positions: 0,
@@ -32,39 +33,61 @@ export default function Dashboard() {
     open_requisition: 0
   });
 
+  // Shortlisting progress (same style as stats)
+  const [shortlistingProgress, setShortlistingProgress] = useState({
+    applied_candidates: 0,
+    screening: 0,
+    interviews_scheduled: 0,
+    offers: 0,
+    rejected: 0
+  });
+
+  // Metrics for charts + interviews
   const [dashboardJson, setDashboardJson] = useState({
     offer_status: [],
     offers_by_day: [],
     interviews_by_day: [],
-    applications_by_day: []
+    applications_by_day: [],
+    upcoming_interviews: []
   });
 
   useEffect(() => {
-  apiService.getDashboardQueries()
-    .then(data => {
-      setStats({
-        new_positions: data?.new_positions || 0,
-        total_positions: data?.total_positions || 0,
-        interviews_today: data?.interviews_today || 0,
-        offer_letters: data?.offer_letters || 0,
-        open_requisition: data?.open_requisition || 0
-      });
-    })
-    .catch(err => console.error("Error fetching queries:", err));
+    // 📌 Fetch stats + progress
+    apiService.getDashboardQueries()
+      .then(data => {
+        setStats({
+          new_positions: data?.new_positions || 0,
+          total_positions: data?.total_positions || 0,
+          interviews_today: data?.interviews_today || 0,
+          offer_letters: data?.offer_letters || 0,
+          open_requisition: data?.open_requisition || 0
+        });
 
-  apiService.getDashboardMetrics()
-    .then(data => {
-      setDashboardJson({
-        offer_status: data?.offer_status || [],
-        offers_by_day: data?.offers_by_day || [],
-        interviews_by_day: data?.interviews_by_day || [],
-        applications_by_day: data?.applications_by_day || []
-      });
-    })
-    .catch(err => console.error("Error fetching metrics:", err));
-}, []);
+        setShortlistingProgress({
+          applied_candidates: data?.applied_candidates || 0,
+          screening: data?.screening || 0,
+          interviews_scheduled: data?.interviews_scheduled || 0,
+          offers: data?.offers || 0,
+          rejected: data?.rejected || 0
+        });
+      })
+      .catch(err => console.error("Error fetching queries:", err));
 
+    // 📌 Fetch metrics (includes upcoming interviews)
+    apiService.getDashboardMetrics()
+      .then(data => {
+        setDashboardJson({
+          offer_status: data?.offer_status || [],
+          offers_by_day: data?.offers_by_day || [],
+          interviews_by_day: data?.interviews_by_day || [],
+          applications_by_day: data?.applications_by_day || [],
+          upcoming_interviews: data?.upcoming_interviews || []
+        });
+      })
+      .catch(err => console.error("Error fetching metrics:", err));
+  }, []);
 
+  // Chart Data
   const allDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const applicationsData = allDays.map(
@@ -96,27 +119,6 @@ export default function Dashboard() {
       },
     ],
   };
-
-  // Static demo data for now
-  const upcomingInterviews = [
-    { role: "Senior Developer", time: "Today at 2:00 PM", name: "Sarah Johnson" },
-    { role: "Product Manager", time: "Tomorrow at 2:00 PM", name: "Michael Chen" },
-    { role: "Marketing Manager", time: "Tomorrow at 2:00 PM", name: "Michael Chen" },
-  ];
-
-  const notifications = [
-    { text: "New application received for Senior Developer", time: "2 hours ago" },
-    { text: "Interview scheduled with David Wilson", time: "5 hours ago" },
-    { text: "Offer accepted by Emily Brown", time: "1 day ago" },
-  ];
-
-  const shortlistingProgress = [
-    { title: "New Applications", count: 252, note: "Last 7 days" },
-//    { title: "Screening", count: 182, note: "In progress" },
-    { title: "Interviews", count: 62, note: "Scheduled" },
-//    { title: "Offers", count: 36, note: "Scheduled" },
-    { title: "Rejected", count: 22, note: "Total" }
-  ];
 
   return (
     <Container fluid className="dashfont">
@@ -176,13 +178,19 @@ export default function Dashboard() {
           <div className="mt-4 shortlist">
             <h5 className="mb-3">Shortlisting Progress</h5>
             <Row className="mt-4">
-              {shortlistingProgress.map((item, idx) => {
+              {[
+                { key: "applied_candidates", label: "Total Candidates", note: "Applied - Last 7 days" },
+                { key: "screening", label: "Screening", note: "In progress" },
+                { key: "interviews_scheduled", label: "Interviews", note: "Scheduled" },
+                { key: "offers", label: "Offers", note: "Given" },
+                { key: "rejected", label: "Rejected", note: "Total" }
+              ].map((item, idx) => {
                 const bgColors = ["bgcolr", "bgcolr2", "bgcolr3", "bgcolr4", "bgcolr7"];
                 return (
                   <Col md={2} className="cardspace" key={idx}>
                     <Card className={`shadow-sm p-3 ${bgColors[idx]}`}>
-                      <h6>{item.title}</h6>
-                      <h3>{item.count}</h3>
+                      <h6>{item.label}</h6>
+                      <h3>{shortlistingProgress[item.key]}</h3>
                       <small className="text-muted">{item.note}</small>
                     </Card>
                   </Col>
@@ -191,35 +199,26 @@ export default function Dashboard() {
             </Row>
           </div>
 
-          {/* Interviews & Notifications */}
+          {/* Interviews */}
           <Row className="mt-4">
             <Col md={6} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr5 fonapp">
                 <h6>Upcoming Interviews</h6>
                 <ListGroup variant="flush">
-                  {upcomingInterviews.map((item, idx) => (
-                    <ListGroup.Item key={idx}>
-                      <strong>{item.role}</strong>
-                      <br />
-                      {item.time} — {item.name}
-                    </ListGroup.Item>
-                  ))}
+                  {dashboardJson.upcoming_interviews.length > 0 ? (
+                    dashboardJson.upcoming_interviews.map((item, idx) => (
+                      <ListGroup.Item key={idx}>
+                        <strong>{item.position_title}</strong>
+                        <br />
+                        {new Date(item.scheduled_at).toLocaleString()} — {item.interviewer}
+                      </ListGroup.Item>
+                    ))
+                  ) : (
+                    <ListGroup.Item>No upcoming interviews</ListGroup.Item>
+                  )}
                 </ListGroup>
               </Card>
             </Col>
-            {/* <Col md={5} className="cardspace">
-              <Card className="shadow-sm p-3 bgcolr6 fonapp">
-                <h6>Recent Notifications</h6>
-                <ListGroup variant="flush">
-                  {notifications.map((n, idx) => (
-                    <ListGroup.Item key={idx}>
-                      {n.text} <br />
-                      <small className="text-muted">{n.time}</small>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Card>
-            </Col> */}
           </Row>
         </Col>
       </Row>
