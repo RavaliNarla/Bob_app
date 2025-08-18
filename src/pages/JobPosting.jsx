@@ -423,7 +423,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
             >
               <option value="">Select Status</option>
               <option value="Direct Approval">Direct Approval</option>
-              <option value="workflow">Workflow</option>
+              <option value="Workflow">Workflow</option>
             </Form.Select>
           </div>
         </>
