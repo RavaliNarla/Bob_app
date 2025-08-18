@@ -216,17 +216,19 @@ const JobPosting = () => {
   }
 };
 
-  const filteredJobPostings = jobPostings.filter((job) => {
-    const search = searchTerm.toLowerCase();
-    const matchesSearch =
-      job.requisition_title.toLowerCase().includes(search) ||
-      job.requisition_code.toLowerCase().includes(search);
+const filteredJobPostings = jobPostings.filter((job) => {
+  const search = searchTerm.toLowerCase();
+  const matchesSearch =
+    (job.requisition_title?.toLowerCase() ?? "").includes(search) ||
+    (job.requisition_code?.toLowerCase() ?? "").includes(search);
 
-    const matchesApproval =
-      selectedApproval === "" || job.requisition_status === selectedApproval;
+  const matchesApproval =
+    selectedApproval === "" || job.requisition_status === selectedApproval;
 
-    return matchesSearch && matchesApproval;
-  });
+  return matchesSearch && matchesApproval;
+});
+
+
 
   return (
     <Container fluid className="p-4">
