@@ -167,7 +167,7 @@ const Register = () => {
             <Modal.Title>User Registration</Modal.Title>
           </Modal.Header>
           <Modal.Body className="align-self-center">
-            <form onSubmit={handleRegister} className="d-flex flex-column my-3" style={{ width: '30vw' }}>
+            <form onSubmit={handleRegister} className="d-flex flex-column my-3" style={{ minWidth: '15vw' }}>
               <label>Role</label>
               <select
                 name="role"

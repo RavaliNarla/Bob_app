@@ -601,7 +601,7 @@ const CandidateCard = () => {
                             {jobPositions.length > 0 ? (
                                 jobPositions.map((pos, index) => (
                                     <option key={index} value={pos.position_id}>
-                                        {pos.position_title}
+                                        {pos.position_code} - {pos.position_title}
                                     </option>
                                 ))
                             ) : (
@@ -621,9 +621,9 @@ const CandidateCard = () => {
                         />
                         <i className="bi bi-search search-i"></i>
                     </InputGroup>
-                    <button className="advanced-fil">
+                    {/* <button className="advanced-fil">
                         <i className="bi bi-sliders2-vertical"></i>ADVANCED FILTER
-                    </button>
+                    </button> */}
                 </div>
             </div>
             <div className="row px-4 candidate-cards-3">

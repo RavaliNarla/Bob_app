@@ -312,6 +312,7 @@ const JobPosting = () => {
                           <th onClick={() => handleSort("positions")} style={{ cursor: "pointer" }}>
                             Position Code{getSortIndicator("positions")}
                           </th>
+                          <th>Vacancies</th>
                           <th onClick={() => handleSort("startDate")} style={{ cursor: "pointer" }}>
                             Experience{getSortIndicator("startDate")}
                           </th>
@@ -330,7 +331,7 @@ const JobPosting = () => {
                           </tr>
                         ) : (!apiData || apiData.length === 0) ? (
                           <tr>
-                            <td colSpan="6" className="text-center text-muted py-3">No positions added yet</td>
+                            <td colSpan="7" className="text-center text-muted py-3">No positions added yet</td>
                           </tr>
                         ) : (
                           apiData.map((job, index) => (
@@ -338,6 +339,7 @@ const JobPosting = () => {
                               <td>{job.position_title}</td>
                               <td>{job.description}</td>
                               <td>{job.position_code}</td>
+                              <td>{job.no_of_vacancies ?? '-'}</td>
                               <td>{job.preferred_experience}</td>
                               <td>{job.position_status}</td>
                               <td>

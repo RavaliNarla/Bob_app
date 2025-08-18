@@ -104,7 +104,8 @@
 
 .search-b {
     width: 45% !important;
-    /* margin-left: 30%; */
+    /* margin-left: 30%!important; */
+    margin-right: 50px;
 }
 
 .search-i {

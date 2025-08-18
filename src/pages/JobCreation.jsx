@@ -43,7 +43,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
     preferred_qualification: '',
     mandatory_experience: '',
     preferred_experience: '',
-    probation_period: '',
+    probation_period: 0,
     documents_required: '',
     min_credit_score: '',
     no_of_vacancies: '',
@@ -112,6 +112,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
             id: grade.job_grade_id,
             name: `${grade.job_scale} (${grade.min_salary} - ${grade.max_salary})`
           })),
+          allGrades: jobGrades,
+          
           employmentTypeOptions: ((masterDataRes.employment_type && masterDataRes.employment_type.length > 0)
             ? masterDataRes.employment_type
             : ["Full-Time", "Part-Time", "Contract"]
@@ -171,7 +173,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
             preferred_qualification: selectedPosition.preferred_qualification || '',
             mandatory_experience: selectedPosition.mandatory_experience || '',
             preferred_experience: selectedPosition.preferred_experience || '',
-            probation_period: selectedPosition.probation_period || '',
+            probation_period: selectedPosition.probation_period || 0,
             documents_required: selectedPosition.documents_required || '',
             min_credit_score: selectedPosition.min_credit_score || '',
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
@@ -331,22 +333,48 @@ const handleInputChange = (e) => {
     if (!formData.state_id) newErrors.state_id = 'State is required';
     if (!formData.city_id) newErrors.city_id = 'City is required';
     if (!formData.location_id) newErrors.location_id = 'Location is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    //if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.roles_responsibilities.trim()) newErrors.roles_responsibilities = 'Roles & Responsibilities are required';
     if (!formData.grade_id) newErrors.grade_id = 'Grade ID is required';
     if (!formData.employment_type) newErrors.employment_type = 'Employment Type is required';
     if (!formData.eligibility_age_min || isNaN(formData.eligibility_age_min) || Number(formData.eligibility_age_min) <= 0) newErrors.eligibility_age_min = 'Min Age is required and must be a positive number';
     if (!formData.eligibility_age_max || isNaN(formData.eligibility_age_max) || Number(formData.eligibility_age_max) <= 0) newErrors.eligibility_age_max = 'Max Age is required and must be a positive number';
     if (!formData.mandatory_qualification) newErrors.mandatory_qualification = 'Mandatory Qualification is required';
-    if (!formData.preferred_qualification) newErrors.preferred_qualification = 'Preferred Qualification is required';
+    //if (!formData.preferred_qualification) newErrors.preferred_qualification = 'Preferred Qualification is required';
     if (!formData.mandatory_experience || isNaN(formData.mandatory_experience) || Number(formData.mandatory_experience) <= 0) newErrors.mandatory_experience = 'Mandatory Experience is required and must be a positive number';
-    if (!formData.preferred_experience || isNaN(formData.preferred_experience) || Number(formData.preferred_experience) <= 0) newErrors.preferred_experience = 'Preferred Experience is required and must be a positive number';
-    if (!String(formData.probation_period ?? '').trim()) newErrors.probation_period = 'Probation Period is required';
+    //if (!formData.preferred_experience || isNaN(formData.preferred_experience) || Number(formData.preferred_experience) <= 0) newErrors.preferred_experience = 'Preferred Experience is required and must be a positive number';
+    //if (!formData.probation_period || isNaN(formData.probation_period) || Number(formData.probation_period) <= 0) {newErrors.probation_period = 'Probation Period is required and must be a positive number';}
     if (!formData.documents_required.trim()) newErrors.documents_required = 'Documents Required is required';
-    if (!String(formData.min_credit_score ?? '').trim()) newErrors.min_credit_score = 'Min Credit Score is required';
+    //if (!String(formData.min_credit_score ?? '').trim()) newErrors.min_credit_score = 'Min Credit Score is required';
     if (!formData.no_of_vacancies || isNaN(formData.no_of_vacancies) || Number(formData.no_of_vacancies) <= 0) newErrors.no_of_vacancies = 'Number of Positions is required and must be a positive number';
-    if (!formData.selection_procedure || !formData.selection_procedure.trim()) newErrors.selection_procedure = 'Selection Process is required';
+    //if (!formData.selection_procedure || !formData.selection_procedure.trim()) newErrors.selection_procedure = 'Selection Process is required';
+     if (
+    formData.preferred_experience !== '' &&
+    formData.preferred_experience !== null &&
+    formData.preferred_experience !== undefined &&
+    (isNaN(formData.preferred_experience) || Number(formData.preferred_experience) <= 0)
+  ) {
+    newErrors.preferred_experience = 'Preferred Experience must be a positive number';
+  }
+  if (
+    formData.probation_period !== '' &&
+    formData.probation_period !== null &&
+    formData.probation_period !== undefined &&
+    (isNaN(formData.probation_period) || Number(formData.probation_period) < 0)
+  ) {
+    newErrors.probation_period = 'Probation Period must be a positive number';
+  }
+  if (
+    formData.min_credit_score !== '' &&
+    formData.min_credit_score !== null &&
+    formData.min_credit_score !== undefined &&
+    isNaN(formData.min_credit_score)
+  ) {
+    newErrors.min_credit_score = 'Min Credit Score must be a number';
+  }
+
     return newErrors;
+
   };
 
   const handleFileChange = (e) => {
@@ -525,6 +553,7 @@ const handleInputChange = (e) => {
                 mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
                 preferredQualificationOptions={masterData.preferredQualificationOptions}
                 requisitionData={reqs}
+                gradeMeta={masterData.allGrades}
               />
             )}
           

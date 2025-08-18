@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, OverlayTrigger, Popover } from 'react-bootstrap';
+import React, { useState,useRef,useEffect } from 'react';
+import { Button, OverlayTrigger, Popover,Overlay} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,10 +18,19 @@ const JobCreationForm = ({
   locationOptions = [],
   gradeIdOptions = [],
   employmentTypeOptions = [],
+  gradeMeta = [],
   // New prop to receive full requisition data
   requisitionData = [],
 }) => {
   // Remove modal state, use popover instead
+
+  const [showGradeInfo, setShowGradeInfo] = useState(false);
+const gradeInfoRef = useRef(null);
+
+// Close popover whenever the selected grade changes or gets cleared
+useEffect(() => {
+  setShowGradeInfo(false);
+}, [formData.grade_id]);
 
   // Find the selected requisition's details (handle both string and number id)
   const selectedRequisition = requisitionData.find(
@@ -204,7 +213,7 @@ const JobCreationForm = ({
 
         {/* Description */}
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
-          <label htmlFor="description" className="form-label">Description <span className="required-asterisk">*</span></label>
+          <label htmlFor="description" className="form-label">Description <span className="required-asterisk"></span></label>
           <textarea className="form-control" id="description" name="description" value={formData.description} onChange={handleInputChange} />
           {errors.description && <small className="error">{errors.description}</small>}
         </div>
@@ -238,7 +247,7 @@ const JobCreationForm = ({
 
         {/* Selection Process */}
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
-          <label htmlFor="selection_procedure" className="form-label">Selection Process <span className="required-asterisk">*</span></label>
+          <label htmlFor="selection_procedure" className="form-label">Selection Process <span className="required-asterisk"></span></label>
           <textarea
             id="selection_procedure"
             name="selection_procedure"
@@ -250,22 +259,89 @@ const JobCreationForm = ({
         </div>
 
         {/* Grade ID */}
-        <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
-          <label htmlFor="grade_id" className="form-label">Grade ID <span className="required-asterisk">*</span></label>
-          <select
-            id="grade_id"
-            name="grade_id"
-            className="form-select"
-            value={formData.grade_id}
-            onChange={handleInputChange}
-          >
-            <option value="">Select Grade ID</option>
-            {gradeIdOptions.map(option => (
-              <option key={option.id || option.name} value={option.id}>{option.name}</option>
-            ))}
-          </select>
-          {errors.grade_id && <small className="error">{errors.grade_id}</small>}
-        </div>
+  <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
+  <div className="d-flex align-items-center" style={{ gap: '0.4em' }}>
+    <label htmlFor="grade_id" className="form-label m-0">
+      Grade/Scale <span className="required-asterisk">*</span>
+    </label>
+
+    {formData.grade_id && (
+      <>
+        <button
+          type="button"
+          ref={gradeInfoRef}
+          className="btn btn-link p-0 d-inline-flex align-items-center"
+          onClick={(e) => {
+            e.stopPropagation();          // don't bubble up
+            setShowGradeInfo(v => !v);    // manual toggle
+          }}
+          aria-label="Show grade details"
+        >
+          <FontAwesomeIcon
+            icon={faInfoCircle}
+            className="text-info"
+            style={{ fontSize: '1.1em' }}
+          />
+        </button>
+
+        <Overlay
+          target={gradeInfoRef.current}
+          show={showGradeInfo}
+          placement="right"
+          rootClose
+          onHide={() => setShowGradeInfo(false)}
+          transition={false}
+          container={typeof document !== 'undefined' ? document.body : undefined}
+          popperConfig={{
+            strategy: 'fixed',
+            modifiers: [
+              { name: 'flip', enabled: false },
+              { name: 'preventOverflow', options: { altAxis: true } },
+            ],
+          }}
+        >
+          <Popover id="grade-popover" style={{ minWidth: 220 }}>
+            <Popover.Header as="h3" style={{ fontSize: '1rem' }}>
+              Grade Details
+            </Popover.Header>
+            <Popover.Body style={{ fontSize: '0.85rem' }}>
+              {(() => {
+                const g = (gradeMeta || []).find(
+                  x => String(x.job_grade_id) === String(formData.grade_id)
+                );
+                if (!g) return <div>No details available</div>;
+                return (
+                  <>
+                    <div><strong>Scale:</strong> {g.job_scale ?? '-'}</div>
+                    <div><strong>Min Salary:</strong> {g.min_salary ?? '-'}</div>
+                    <div><strong>Max Salary:</strong> {g.max_salary ?? '-'}</div>
+                  </>
+                );
+              })()}
+            </Popover.Body>
+          </Popover>
+        </Overlay>
+      </>
+    )}
+  </div>
+
+  <select
+    id="grade_id"
+    name="grade_id"
+    className="form-select"
+    value={formData.grade_id}
+    onChange={handleInputChange}
+  >
+    <option value="">Select Grade ID</option>
+    {gradeIdOptions.map(option => (
+      <option key={option.id || option.name} value={option.id}>{option.name}</option>
+    ))}
+  </select>
+  {errors.grade_id && <small className="error">{errors.grade_id}</small>}
+</div>
+
+
+
 
         {/* Employment Type */}
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
@@ -314,7 +390,7 @@ const JobCreationForm = ({
 
         {/* Preferred Qualification */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk">*</span></label>
+          <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk"></span></label>
           <textarea
             id="preferred_qualification"
             name="preferred_qualification"
@@ -334,14 +410,14 @@ const JobCreationForm = ({
 
         {/* Preferred Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="preferred_experience" className="form-label">Preferred Experience(Years)<span className="required-asterisk">*</span></label>
+          <label htmlFor="preferred_experience" className="form-label">Preferred Experience(Years)<span className="required-asterisk"></span></label>
           <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" />
           {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
         </div>
 
         {/* Probation Period */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="probation_period" className="form-label">Probation Period(Months) <span className="required-asterisk">*</span></label>
+          <label htmlFor="probation_period" className="form-label">Probation Period(Months) <span className="required-asterisk"></span></label>
           <input type="text" className="form-control" id="probation_period" name="probation_period" value={formData.probation_period} onChange={handleInputChange} />
           {errors.probation_period && <small className="error">{errors.probation_period}</small>}
         </div>
@@ -355,7 +431,7 @@ const JobCreationForm = ({
 
         {/* Min Credit Score */}
         <div className="col-12 col-md-6 col-lg-3 mb-3 formSpace">
-          <label htmlFor="min_credit_score" className="form-label">Min Credit Score <span className="required-asterisk">*</span></label>
+          <label htmlFor="min_credit_score" className="form-label">Min Credit Score <span className="required-asterisk"></span></label>
           <input type="text" className="form-control" id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}
         </div>
