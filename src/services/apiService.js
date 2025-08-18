@@ -129,8 +129,9 @@ export const apiService = {
   addJobGrade: (data) => apis.post('/jobgrade/add', data),
   updateJobGrade: (id, data) => apis.put(`/jobgrade/update/${id}`, data),
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
+  updateApproval: (data) => api.put('/approve_job_postings', data),
+  getApprovalstatus: (role) => api.get(`/need_approval/${role}`),
   
-   
 };
 
 export default apiService;

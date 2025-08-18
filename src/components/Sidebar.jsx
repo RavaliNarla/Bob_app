@@ -16,13 +16,13 @@ import {
   faPerson,   
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const Sidebar = () => {
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
   const [adminOpen, setAdminOpen] = useState(false);
-  // console.log("User in Sidebar:", user);
+
   const isActive = (path) => {
     return location.pathname === path ? 'active' : '';
   };
@@ -41,6 +41,11 @@ const Sidebar = () => {
     // { icon: faFileInvoiceDollar, text: 'Payments', path: '/payments' },
     // { icon: faCog, text: 'Relaxation Policy', path: '/policy' },
   ];
+
+  // Conditionally add Approvals for L1 or L2 roles
+  if (user?.role === "L1" || user?.role === "L2") {
+    menuItems.push({ icon: faUserFriends, text: 'Approvals', path: '/myapproval' });
+  }
 
   const adminItems = [
     { icon: faPerson, text: 'Registration', path: '/registration' },
@@ -78,51 +83,49 @@ const Sidebar = () => {
           </Nav.Link>
         ))}
 
-        {user?.role === 'admin' || user?.role === 'Admin' && (
-        <>
-        <div
-          className="d-flex flex-column align-items-center justify-content-center py-3"
-          style={{
-            color: '#6c757d',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-            height: '60px',
-            width: '97px',
-          }}
-          onClick={() => setAdminOpen(!adminOpen)}
-        >
-          <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '0.8rem' }} />
-          <div className='d-flex flex-row align-items-center justify-content-center gap-1'>
-            <span className="mt-1">Admin</span>
-            <FontAwesomeIcon
-              icon={adminOpen ? faChevronUp : faChevronDown}
-              style={{ fontSize: '0.6rem', marginTop: '5px' }}
-            />
-          </div>
-        </div>
+        {(user?.role === 'admin' || user?.role === 'Admin') && (
+          <>
+            <div
+              className="d-flex flex-column align-items-center justify-content-center py-3"
+              style={{
+                color: '#6c757d',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                height: '60px',
+                width: '97px',
+              }}
+              onClick={() => setAdminOpen(!adminOpen)}
+            >
+              <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '0.8rem' }} />
+              <div className='d-flex flex-row align-items-center justify-content-center gap-1'>
+                <span className="mt-1">Admin</span>
+                <FontAwesomeIcon
+                  icon={adminOpen ? faChevronUp : faChevronDown}
+                  style={{ fontSize: '0.6rem', marginTop: '5px' }}
+                />
+              </div>
+            </div>
 
-          {adminOpen &&
-            adminItems.map((item, index) => (
-              <Nav.Link
-                key={`admin-${index}`}
-                as={Link}
-                to={item.path}
-                className={`d-flex flex-column align-items-center justify-content-center py-1 nav-item-custom ${isActive(item.path)}`}
-                style={{
-                  color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-                  backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
-                  fontWeight: isActive(item.path) ? '600' : '400',
-                  fontSize: '0.7rem',
-                  textDecoration: 'none',
-                  // height: '50px',
-                  // width: '97px'
-                }}
-              >
-                <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />
-                <span className="mt-1">{item.text}</span>
-              </Nav.Link>
-          ))}
-        </>
+            {adminOpen &&
+              adminItems.map((item, index) => (
+                <Nav.Link
+                  key={`admin-${index}`}
+                  as={Link}
+                  to={item.path}
+                  className={`d-flex flex-column align-items-center justify-content-center py-1 nav-item-custom ${isActive(item.path)}`}
+                  style={{
+                    color: isActive(item.path) ? '#FF4D00' : '#6c757d',
+                    backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
+                    fontWeight: isActive(item.path) ? '600' : '400',
+                    fontSize: '0.7rem',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <FontAwesomeIcon icon={item.icon} style={{ fontSize: '0.7rem' }} />
+                  <span className="mt-1">{item.text}</span>
+                </Nav.Link>
+            ))}
+          </>
         )}
       </Nav>
 
