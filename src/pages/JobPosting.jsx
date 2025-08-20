@@ -290,47 +290,55 @@ const filteredJobPostings = jobPostings.filter((job) => {
       
           {filteredJobPostings.map((job, index) => (
             <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded">
-              <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
-              <Row className="w-100 align-items-center fontreg">
-                  {/* Checkbox + Code */}
-                  <Col xs={12} md={1} className="d-flex align-items-center mb-2 mb-md-0">
-                    <Form.Check
-                      type="checkbox"
-                      className="form-check-orange me-2"
-                      checked={selectedJobIds.includes(job.requisition_id)}
-                      onChange={(e) => handleJobSelection(e, job.requisition_id)}
-                      onClick={(e) => e.stopPropagation()}
-                      disabled={job.count === 0}
-                    />
-                    <span className="job-title fw-semibold text-dark">
-                      {job.requisition_code}
-                    </span>
-                  </Col>
+           <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
+  <Row className="w-100 align-items-center fontreg">
+    
+    {/* Left side: Checkbox + Title + Requisition */}
+    <Col xs={12} md={6} className="d-flex align-items-start mb-2 mb-md-0">
+      <Form.Check
+        type="checkbox"
+        className="form-check-orange me-2 mt-1"
+        checked={selectedJobIds.includes(job.requisition_id)}
+        onChange={(e) => handleJobSelection(e, job.requisition_id)}
+        onClick={(e) => e.stopPropagation()}
+        disabled={job.count === 0}
+      />
+      <div className="fontcard">
+        <div className="fw-semibold text-dark">
+          Title: {job.requisition_title}
+        </div>
+        <div className="text-muted">
+          Requisition: {job.requisition_code}
+        </div>
+      </div>
+    </Col>
 
-                  {/* Title */}
-                  <Col xs={12} md={3} className="job-detail text-truncate mb-2 mb-md-0">
-                    Title: {job.requisition_title}
-                  </Col>
+    {/* Right side: 2 rows aligned */}
+    <Col xs={12} md={6} className="d-flex flex-column fontcard">
+      {/* Row 1 */}
+      <div className="d-flex mb-1">
+        <div className="me-4">
+          <b>Expected Positions:</b> {job.no_of_positions}
+        </div>
+        <div>
+          <b>Added Positions:</b> {job.count ? job.count : "0"}
+        </div>
+      </div>
 
-                  {/* Expected Positions */}
-                  <Col xs={6} md={2} className="job-detail mb-2 mb-md-0">
-                    Expected Positions: {job.no_of_positions}
-                  </Col>
+      {/* Row 2 */}
+      <div className="d-flex">
+        <div className="me-4">
+         <b> Postings:</b> {job.job_postings ? job.job_postings : "NA"}
+        </div>
+        <div>
+        <b>  Status:</b> {job.requisition_status}
+        </div>
+      </div>
+    </Col>
+  </Row>
+</Accordion.Header>
 
-                  {/* Added Positions */}
-                  <Col xs={6} md={2} className="job-detail mb-2 mb-md-0">
-                    Added Positions: {job.count? job.count : '0'}
-                  </Col>
-                  <Col xs={6} md={2} className="job-detail mb-2 mb-md-0">
-                    Postings: {job.job_postings ? job.job_postings : 'NA'}
-                  </Col>
 
-                  {/* Status */}
-                  <Col xs={12} md={1} className="job-detail text-md-end">
-                    Status: {job.requisition_status}
-                  </Col>
-              </Row>
-              </Accordion.Header>
               <Accordion.Body>
                 <Row>
                   <Col xs={12} className="text-muted">

@@ -304,7 +304,7 @@ if (show && isReschedule && candidate) {
             Cancel Interview
           </Button>
         )}
-        <Button variant="primary" onClick={onSave}>
+        <Button variant="primary" onClick={onSave} style={{backgroundColor: ' #FF7043 ' , color: '#fff', borderColor: ' #FF7043 ' }}>
           {isReschedule ? "Reschedule Interview" : "Schedule Interview"}
         </Button>
       </Modal.Footer>

@@ -142,7 +142,6 @@
     flex-wrap: nowrap;
     /* Prevents wrapping to a new line */
     align-items: center;
-    overflow-x: auto;
     margin-left: 7px;
     /* Adds horizontal scrolling if content overflows */
 }
@@ -195,7 +194,7 @@
 
 .top-bar .select-drop {
 	font-size: 16px !important;
-	width: 330px !important;
+	width: 400px !important;
 	background-color: #fff !important;
 	color: black !important;
 	border: none !important;
