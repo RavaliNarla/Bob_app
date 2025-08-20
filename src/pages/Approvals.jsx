@@ -81,10 +81,10 @@ const Approvals = () => {
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
-        setError("Failed to fetch job postings: Unexpected data format.");
+setError("No Approvals: Unexpected data format.");
       }
     } catch (err) {
-      setError("Failed to fetch job postings.");
+setError("No Approvals.");
       console.error("Error fetching job postings:", err);
     } finally {
       setLoading(false);
@@ -209,7 +209,14 @@ const Approvals = () => {
 
   return (
     <Container fluid className="p-4">
-      <div className="d-flex align-items-center justify-content-end mb-3">
+        <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+              <div className="d-flex align-items-center mb-2 mb-md-0">
+                <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
+                  My Approvals
+                </h5>
+                
+              </div>
+
         <div className="col-md-6 search-container fonreg">
           <InputGroup>
             <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>

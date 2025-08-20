@@ -1,3 +1,7 @@
+.foncandidate {
+    font-family: 'Poppins', sans-serif !important;
+}
+
 .review_columns {
     border: none;
     border-radius: 15px !important;
@@ -49,7 +53,7 @@
 
 .color_grey {
     color: #606060 !important;
-    /* font-size: 16px !important; */
+    font-size: 14px !important;
 }
 
 .color_light_grey {
@@ -71,13 +75,13 @@
 
 .candidate_sub_text {
     color: #767676 !important;
-    font-size: 13px !important;
+    font-size: 12px !important;
     letter-spacing: 0.5px;
 }
 
 .candidate_text {
     color: #181819 !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     letter-spacing: 0.5px;
 }
 
@@ -135,33 +139,40 @@
 
 .responsive-breadcrumb-container {
     display: flex;
-    flex-wrap: nowrap; /* Prevents wrapping to a new line */
+    flex-wrap: nowrap;
+    /* Prevents wrapping to a new line */
     align-items: center;
-    overflow-x: auto; /* Adds horizontal scrolling if content overflows */
+    overflow-x: auto;
+    margin-left: 7px;
+    /* Adds horizontal scrolling if content overflows */
 }
 
 /* Ensure the breadcrumb items and their contents stay on one line */
 .responsive-breadcrumb-container .breadcrumb-item {
-    white-space: nowrap; /* Prevents text from wrapping */
-    flex-shrink: 0;      /* Prevents the 'Jobs' text from shrinking */
+    white-space: nowrap;
+    /* Prevents text from wrapping */
+    flex-shrink: 0;
+    /* Prevents the 'Jobs' text from shrinking */
 }
 
 /* The styles for the dropdowns */
 .select-drop {
-    font-size: 17px !important;
-    padding: 3px 10px !important; /* Reduced padding for smaller screens */
-    width: auto !important;
+    font-size: 16px !important;
+    /* Reduced padding for smaller screens */
     background-color: #fff !important;
     color: black !important;
-    border: 1px solid #ced4da !important; /* Added a visible border for clarity */
+    border: 1px solid #ced4da !important;
+    /* Added a visible border for clarity */
     border-radius: 5px !important;
     margin-left: 10px !important;
-    flex-shrink: 1; /* Allows the select box to shrink if needed */
-    min-width: 100px; /* Ensures a minimum width to prevent it from disappearing */
+    flex-shrink: 1;
+    /* Allows the select box to shrink if needed */
+    min-width: 100px;
+    /* Ensures a minimum width to prevent it from disappearing */
 }
 
 /* Adjust the spacing between breadcrumb items to be more compact */
-.breadcrumb-item + .breadcrumb-item::before {
+.breadcrumb-item+.breadcrumb-item::before {
     padding-right: 0.25rem;
     padding-left: 0.25rem;
 }
@@ -179,16 +190,15 @@
     float: left;
 }
 
-.top-bar .select-drop  {
-    font-size: 17px !important;
-    padding: 3px 23px !important;
-    width: auto !important;
-    background-color: #fff  !important;
-    color: black !important;
-    border: none !important;
-    border-radius: 5px !important;
-    margin-left: 10px !important;
-
+.top-bar .select-drop {
+	font-size: 16px !important;
+	width: 330px !important;
+	background-color: #fff !important;
+	color: black !important;
+	border: none !important;
+	border-radius: 5px !important;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .top-bar .breadcrumb-item+.breadcrumb-item::before {
@@ -219,7 +229,7 @@
     cursor: pointer;
 }
 
-.req-table-top-section{
+.req-table-top-section {
     /* display: flex; */
     flex-direction: row;
 }
@@ -227,7 +237,7 @@
 .candidate-cards-3 {
     display: flex;
     /* gap: 60px; */
-    width: 134%;    
+    width: 134%;
 }
 
 .reschedule-btn {
@@ -237,4 +247,5 @@
     border: none;
     width: 100px;
     height: 50px;
+    font-size: 14px;
 }

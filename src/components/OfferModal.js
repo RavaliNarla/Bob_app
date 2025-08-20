@@ -34,9 +34,9 @@ const OfferModal = ({
 
   return (
     <>
-      <Modal show={show} onHide={handleClose} centered size="lg">
+      <Modal show={show} onHide={handleClose} centered size="lg" className="fontinter">
         <Modal.Header closeButton>
-          <Modal.Title>Offer Details</Modal.Title>
+          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>Offer Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -68,13 +68,13 @@ const OfferModal = ({
           <Button variant="primary" onClick={handleDownloadClick}>
             Download
           </Button> */}
-          <Button variant="primary" onClick={handleDownloadClick} disabled={!salary || !candidate || !position_id}>
+          <Button variant="primary" onClick={handleDownloadClick} disabled={!salary || !candidate || !position_id} style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" ,color: "#fff"}}>
             Preview & Download
           </Button>
           <Button
             variant="primary"
             onClick={() => handleOffer(offerLetterPath)} // Pass the valid state to the handler
-            disabled={!salary || !candidate || !position_id}
+            disabled={!salary || !candidate || !position_id} style={{ backgroundColor: "#FF7043", borderColor: "#FF7043", color: "#fff" }}
           >
             Send Offer
           </Button>

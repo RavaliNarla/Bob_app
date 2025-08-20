@@ -227,3 +227,16 @@ body {
   margin-left: 2px;
   font-weight: bold;
 }
+.fontinter{
+  font-family: poppins, sans-serif;
+}
+.btn-secondary:hover {
+	color: #fff !important;
+	background-color: #FF7043 !important;
+	border-color: #FF7043 !important;
+}
+.btn-secondary{
+  background-color: #fff;
+  color: #FF7043;
+  border-color: #FF7043;
+}

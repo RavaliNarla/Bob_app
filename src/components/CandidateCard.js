@@ -562,17 +562,15 @@ const CandidateCard = () => {
     };
 
     return (
-        <Container fluid className="py-5">
+        <Container fluid className="py-5 foncandidate">
             <div className="top-bar">
                 <div className="responsive-breadcrumb-container">
-                    <Breadcrumb>
-                        <BreadcrumbItem active>Jobs</BreadcrumbItem>
-                    </Breadcrumb>
+                   
 
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
                     <select
-                        className="select-drop"
+                        className="select-drop form-select"
                         name="jobReqDropdown"
                         value={selectedRequisitionCode}
                         onChange={handleJobReqChange}
@@ -592,7 +590,7 @@ const CandidateCard = () => {
                     {selectedRequisitionCode && (
                         // <BreadcrumbItem>
                         <select
-                            className="select-drop"
+                            className="select-drop form-select"
                             name="jobPositionsDropdown"
                             value={selectedPositionId}
                             onChange={handleJobPositionChange}
@@ -611,7 +609,7 @@ const CandidateCard = () => {
                         // </BreadcrumbItem>
                     )}
                 </div>
-                <div className="d-flex gap-3 w-50 justify-content-end mt-3">
+                <div className="d-flex gap-3 w-50 justify-content-end">
                     <InputGroup className="search-b">
                         <Form.Control
                             placeholder="Search"
@@ -630,7 +628,7 @@ const CandidateCard = () => {
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: '73vh', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: 'auto', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Candidates</h5>
@@ -695,7 +693,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "73vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Interviewed</h5>
@@ -770,7 +768,7 @@ const CandidateCard = () => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "73vh", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Offered</h5>

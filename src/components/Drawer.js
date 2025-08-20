@@ -169,7 +169,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
         className="drawer-slide custom-offcanvas"
       >
         <Offcanvas.Body className="p-0">
-          <Card style={{ borderRadius: "10px", height: "100vh" }}>
+          <Card style={{ borderRadius: "10px", height: "100vh" }} className="fontdraw">
             <div className="drawer_main">
               {/* <IoMdClose
                 className="close_icon"
@@ -315,36 +315,30 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Basic Information Card */}
                           <div className="info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6>Basic Information</h6>
-                              <span
-                                className="edit-info"
-                                onClick={handleEditClick}
-                              >
-                                Edit Info
-                              </span>
+                              <h6 style={{color: '#4169E1'}}>Basic Information</h6>
                             </div>
                             <Row>
-                              <Col md={6}>
-                                <div className="head-section">NAME</div>
+                              <Col md={12}>
+                                <div className="head-section">NAME:</div>
                                 <p className="sum-data">
                                   {candidate?.full_name}
                                 </p>
                               </Col>
-                              <Col md={6}>
-                                <div className="head-section">EMAIL</div>
+                              <Col md={12}>
+                                <div className="head-section">EMAIL:</div>
                                 <p className="sum-data"> {candidate?.email}</p>
                               </Col>
                             </Row>
                             <Row>
-                              <Col md={6}>
-                                <div className="head-section">LOCATION</div>
+                              <Col md={12}>
+                                <div className="head-section">LOCATION:</div>
                                 <p className="sum-data">
                                   {" "}
                                   {candidate?.location}
                                 </p>
                               </Col>
-                              <Col md={6}>
-                                <div className="head-section">CONTACT INFO</div>
+                              <Col md={12}>
+                                <div className="head-section">CONTACT INFO:</div>
                                 <p className="sum-data">
                                   {" "}
                                   {candidate?.phone}
@@ -353,7 +347,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                             </Row>
                             <Row>
                               <Col md={12}>
-                                <div className="head-section">ADDRESS</div>
+                                <div className="head-section">ADDRESS:</div>
                                 <p> {candidate?.address}</p>
                               </Col>
                             </Row>
@@ -362,27 +356,21 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Education Information Card */}
                           <div className="info-card mt-3">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6>Education Information</h6>
-                              <span
-                                className="edit-info"
-                                onClick={handleEditClick}
-                              >
-                                Edit Info
-                              </span>
+                              <h6 style={{color: '#4169E1'}}>Education Information</h6>
                             </div>
                             <div className="info-body">
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    POST GRADUATION
+                                    POST GRADUATION:
                                   </div>
                                   <p className="sum-data">
                                     {" "}
                                     {candidate?.postGraduation}
                                   </p>
                                 </Col>
-                                <Col md={6}>
-                                  <div className="head-section">UNIVERSITY</div>
+                                <Col md={12}>
+                                  <div className="head-section">UNIVERSITY:</div>
                                   <p className="sum-data">
                                     {" "}
                                     {candidate?.postGraduationUniversity}
@@ -390,17 +378,17 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                 </Col>
                               </Row>
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    GRADE/SCORE
+                                    GRADE/SCORE:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.postGraduationGrade}{" "}
                                   </p>
                                 </Col>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    YEAR OF PASSING
+                                    YEAR OF PASSING:
                                   </div>
                                   <p className="sum-data">
                                     {" "}
@@ -415,30 +403,30 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                 style={{ borderTop: "1px dashed #ccc", margin: "0.25rem 0 1.5rem 0" }}
                               />
                               <Row>
-                                <Col md={6}>
-                                  <div className="head-section">GRADUATION</div>
+                                <Col md={12}>
+                                  <div className="head-section">GRADUATION:</div>
                                   <p className="sum-data">
                                     {" "}
                                     {candidate?.graduation}
                                   </p>
                                 </Col>
-                                <Col md={6}>
-                                  <div className="head-section">UNIVERSITY</div>
+                                <Col md={12}>
+                                  <div className="head-section">UNIVERSITY:</div>
                                   <p className="sum-data">
                                     {candidate?.graduationUniversity}
                                   </p>
                                 </Col>
                               </Row>
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    GRADE/SCORE
+                                    GRADE/SCORE:
                                   </div>
                                   <p className="sum-data">{candidate?.graduationGrade}</p>
                                 </Col>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    YEAR OF PASSING
+                                    YEAR OF PASSING:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.graduationYear}
@@ -453,27 +441,21 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                         <Col md={6}>
                           <div className="pro-info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6>Professional Information</h6>
-                              <span
-                                className="edit-info"
-                                onClick={handleEditClick}
-                              >
-                                Edit Info
-                              </span>
+                              <h6 style={{color: '#4169E1'}}>Professional Information</h6>                              
                             </div>
                             <div className="info-body">
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    CURRENT JOB TITTLE
+                                    CURRENT JOB TITTLE:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.requisition_title}
                                   </p>
                                 </Col>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    TOTAL EXPERIENCE
+                                    TOTAL EXPERIENCE:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.total_experience}{" "}
@@ -481,17 +463,17 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                 </Col>
                               </Row>
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    CURRENT CTC
+                                    CURRENT CTC:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.currentCTC}
                                   </p>
                                 </Col>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    EXPECTED CTC
+                                    EXPECTED CTC:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.expectedCTC}
@@ -499,17 +481,17 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                                 </Col>
                               </Row>
                               <Row>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    CURRENT COMPANY
+                                    CURRENT COMPANY:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.currentCompany}
                                   </p>
                                 </Col>
-                                <Col md={6}>
+                                <Col md={12}>
                                   <div className="head-section">
-                                    COMPANY LOCATION
+                                    COMPANY LOCATION:
                                   </div>
                                   <p className="sum-data">
                                     {candidate?.companyLocation}
@@ -518,7 +500,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                               </Row>
                               <Row>
                                 <Col md={12}>
-                                  <div className="head-section">SKILL SET</div>
+                                  <div className="head-section">SKILL SET:</div>
                                   <div className="d-flex flex-wrap">
                                     {skills?.map((skill, index) => (
                                       <span
@@ -534,7 +516,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                               </Row>
                               <Row>
                                 <Col md={12}>
-                                  <div className="head-section">Additional Info</div>
+                                  <div className="head-section">Additional Info:</div>
                                   <div className="d-flex flex-wrap">
                                     Highly knowledgeable about the company's application
                                   </div>

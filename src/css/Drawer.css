@@ -162,8 +162,9 @@ p.sum-data {
 }
 
 .head-section {
-    color: #ababab;
+    color: #000;
     font-size: 13px;
+    font-weight: 600;
 
 }
 
@@ -212,4 +213,7 @@ p.sum-data {
     border: 1px solid #767676 !important;
     font-size: 14px !important;
     font-weight: 500 !important;
+}
+.fontdraw{
+    font-family: poppins;
 }

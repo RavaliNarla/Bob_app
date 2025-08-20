@@ -196,9 +196,9 @@ const InterviewModal = ({
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered className="fontinter">
       <Modal.Header closeButton>
-        <Modal.Title>
+        <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>
           {isReschedule ? "Reschedule Interview" : "Schedule Interview"}
         </Modal.Title>
       </Modal.Header>
