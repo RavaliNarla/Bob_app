@@ -82,6 +82,9 @@ const CandidateCard = () => {
 
     useEffect(() => {
         const fetchCandidates = async () => {
+              setCandidates([]);
+                setInterviewed([]);
+                setOffered([]);
             console.log("Fetching candidates for position ID:", selectedPositionId);
 
             if (selectedRequisitionId && selectedPositionId) {
@@ -98,7 +101,7 @@ const CandidateCard = () => {
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
                 );
-
+console.log( "Interviewed Candidates",interviewedCandidates);
                 setCandidates(shortlistedCandidates);
                 setInterviewed(interviewedCandidates);
                 setOffered(offeredCandidates);
