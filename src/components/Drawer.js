@@ -315,7 +315,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Basic Information Card */}
                           <div className="info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#4169E1'}}>Basic Information</h6>
+                              <h6 style={{color: '#FF7043'}}>Basic Information</h6>
                             </div>
                             <Row>
                               <Col md={12}>
@@ -356,7 +356,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Education Information Card */}
                           <div className="info-card mt-3">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#4169E1'}}>Education Information</h6>
+                              <h6 style={{color: '#FF7043'}}>Education Information</h6>
                             </div>
                             <div className="info-body">
                               <Row>
@@ -441,7 +441,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                         <Col md={6}>
                           <div className="pro-info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#4169E1'}}>Professional Information</h6>                              
+                              <h6 style={{color: '#FF7043'}}>Professional Information</h6>                              
                             </div>
                             <div className="info-body">
                               <Row>
