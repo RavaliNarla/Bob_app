@@ -97,7 +97,7 @@ body {
 .table th {
   font-weight: 600;
   font-family: poppins, sans-serif;
-  text-transform: capitalize;
+  /* text-transform: capitalize; */
   font-size: 12px;
   letter-spacing: 0.5px;
   color: #FF7043;

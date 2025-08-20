@@ -106,7 +106,7 @@ export const apiService = {
   jobCreation: (data) => api.post('/create_positions',data),
   getMasterData: () => apis.get('/all'),
 
-  uploadJobExcel: (data) => api.post('/create_Bulk_positions', data), // Dummy POST endpoint
+  uploadJobExcel: (data) => api.post('/create_bulk_positions', data), // Dummy POST endpoint
   postJobRequisitions :(payload) => api.post("/requisitionpost", payload),
   getallLocations: () => apis.get('/location/all'),
   getallCities: () => apis.get('/city/all'),
