@@ -326,10 +326,11 @@ const filteredJobPostings = jobPostings.filter((job) => {
                           <th onClick={() => handleSort("startDate")} style={{ cursor: "pointer" }}>
                             Experience{getSortIndicator("startDate")}
                           </th>
-                          <th onClick={() => handleSort("endDate")} style={{ cursor: "pointer" }}>
+                          {/* <th onClick={() => handleSort("endDate")} style={{ cursor: "pointer" }}>
                             Status{getSortIndicator("endDate")}
-                          </th>
-                          <th>Actions</th>
+                          </th> */}
+                          <th>{
+                                job.requisition_status==='Submitted' &&'Actions'}</th>
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
@@ -344,15 +345,15 @@ const filteredJobPostings = jobPostings.filter((job) => {
                             <td colSpan="7" className="text-center text-muted py-3">No positions added yet</td>
                           </tr>
                         ) : (
-                          apiData.map((job, index) => (
-                            <tr key={job.position_id || index}>
-                              <td>{job.position_title}</td>
-                              <td>{job.description}</td>
-                              <td>{job.position_code}</td>
-                              <td>{job.no_of_vacancies ?? '-'}</td>
-                              <td>{job.preferred_experience}</td>
-                              <td>{job.position_status}</td>
-                              <td>
+                          apiData.map((row, index) => (
+                            <tr key={row.position_id || index}>
+                              <td>{row.position_title}</td>
+                              <td>{row.description}</td>
+                              <td>{row.position_code}</td>
+                              <td>{row.no_of_vacancies ?? '-'}</td>
+                              <td>{row.mandatory_experience}</td>
+                              {/* <td>{row.position_status}</td> */}
+                              {/* <td>
                                 <FontAwesomeIcon
                                   icon={faPencil}
                                   className="text-info me-3 cursor-pointer"
@@ -363,7 +364,21 @@ const filteredJobPostings = jobPostings.filter((job) => {
                                     setShowModal(true);
                                   }}
                                 />
-                              </td>
+                              </td> */}
+                               <td>{
+                                job.requisition_status==='Submitted' && (
+                                  <FontAwesomeIcon
+                                    icon={faPencil}
+                                    className="text-info me-3 cursor-pointer"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      setEditRequisitionId(job.requisition_id);
+                                      setEditPositionId(job.position_id);
+                                      setShowModal(true);
+                                    }}
+                                  />
+                                )
+                              }</td>
                             </tr>
                           ))
                         )}

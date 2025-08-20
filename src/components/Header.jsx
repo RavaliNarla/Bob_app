@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 const Header = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user?.user);
-  console.log("User in Approvals:", user);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -39,7 +38,7 @@ const Header = () => {
           <img src={logo_Bob} alt="BobApp Logo" className="me-2" />
         </Navbar.Brand>
         
-        <div className="d-flex align-items-center w-50">
+        {/* <div className="d-flex align-items-center w-50">
           <InputGroup>
             <Form.Control
               type="search"
@@ -51,15 +50,15 @@ const Header = () => {
               <FontAwesomeIcon icon={faSearch} style={{ color: '#FF7043' }} />
             </InputGroup.Text>
           </InputGroup>
-        </div>
+        </div> */}
 
         <div className="d-flex align-items-center">
           <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faGlobe} size="lg" />
           </Button>
-          <Button variant="link" className="me-2" style={{ color: '#fff' }}>
+          {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
-          </Button>
+          </Button> */}
           <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/login')}>
             <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
           </Button>
@@ -78,8 +77,8 @@ const Header = () => {
                 className="position-absolute end-0 mt-2 p-2 bg-white border rounded shadow"
                 style={{ minWidth: "200px", zIndex: 1000 }}
               >
-                <p className="mb-1 fw-bold">Name: {user?.name}</p>
-                <p className="mb-0 text-muted">Role: {user?.role}</p>
+                <p className="mb-1 fw-bold">{user?.name}</p>
+                <p className="mb-0 text-muted">{user?.role}</p>
               </div>
             )}
           </div>
