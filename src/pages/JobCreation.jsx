@@ -687,13 +687,11 @@ const handleInputChange = (e) => {
               )} */}
             </div>
             <div
-              className="border rounded p-3 text-center mb-3 mt-4"
+              className="rounded p-3 text-center mb-3 mt-4"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
               onClick={() => fileInputRef.current && fileInputRef.current.click()}
               style={{
-                borderStyle: 'dashed',
-                backgroundColor: 'rgb(255, 231, 222)',
                 cursor: 'pointer',
                 minHeight: '60px',
                 height: '90px',
@@ -705,9 +703,8 @@ const handleInputChange = (e) => {
                 width: '350px'
               }}
             >
-              <FontAwesomeIcon icon={faUpload} size="2x" className="mb-2 text-muted" />
-              <div style={{ fontWeight: 500, color: '#FF7043', fontSize: '1.05rem' }}>Drag & Drop Excel file here</div>
-              <div style={{ color: '#757575', fontSize: '0.95rem' }}>or <span style={{ textDecoration: 'underline', color: '#FF7043', cursor: 'pointer' }}>click to browse</span></div>
+              <FontAwesomeIcon icon={faUpload} size="1x" className="mb-2 text-muted" />
+              <div style={{ color: '#757575', fontSize: '0.95rem' }}><span style={{ textDecoration: 'underline', color: '#FF7043', cursor: 'pointer' }}>click to browse</span></div>
             </div>
             <Form.Control type="file" id="file-upload" className="d-none" onChange={handleFileChange} ref={fileInputRef} />
             {errors.file && <small className="error d-block mb-2 text-danger">{errors.file}</small>}

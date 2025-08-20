@@ -26,6 +26,7 @@ import {
 import profile from '../assets/profile_icon.png';
 
 function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandidates }) {
+  console.log('candidate', candidate);
   const handleCloseIconClick = () => {
     toggleDrawer();
   };
@@ -297,9 +298,9 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                   <Nav.Item>
                     <Nav.Link eventKey="details">Details</Nav.Link>
                   </Nav.Item>
-                  {/* <Nav.Item> */}
-                    {/* <Nav.Link eventKey="resume">Resume</Nav.Link>
-                  </Nav.Item> */}
+                  <Nav.Item>
+                    <Nav.Link eventKey="resume">Resume</Nav.Link>
+                  </Nav.Item>
                   {/* <Nav.Item>
                     <Nav.Link eventKey="schedule">Schedule Interview</Nav.Link>
                   </Nav.Item>
@@ -315,7 +316,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Basic Information Card */}
                           <div className="info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#FF7043'}}>Basic Information</h6>
+                              <h6 style={{ color: '#FF7043' }}>Basic Information</h6>
                             </div>
                             <Row>
                               <Col md={12}>
@@ -356,7 +357,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                           {/* Education Information Card */}
                           <div className="info-card mt-3">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#FF7043'}}>Education Information</h6>
+                              <h6 style={{ color: '#FF7043' }}>Education Information</h6>
                             </div>
                             <div className="info-body">
                               <Row>
@@ -441,7 +442,7 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                         <Col md={6}>
                           <div className="pro-info-card">
                             <div className="info-header d-flex justify-content-between align-items-center">
-                              <h6 style={{color: '#FF7043'}}>Professional Information</h6>                              
+                              <h6 style={{ color: '#FF7043' }}>Professional Information</h6>
                             </div>
                             <div className="info-body">
                               <Row>
@@ -530,18 +531,22 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                     </Tab.Pane>
                     <Tab.Pane eventKey="resume">
                       <h6>Resume</h6>
-                      {candidate?.resume_path ? (
+                      {candidate?.fileInfo && candidate.fileInfo.length > 0 ? (
                         <div>
-                          <p>
-                            Click the link below to view or download the resume:
-                          </p>
-                          <a href={candidate.resume_path} target="_blank" rel="noopener noreferrer">View Resume</a>
+                          <p>Click the link below to view or download the resume:</p>
+                          <a
+                            href={candidate.fileInfo[0].file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {candidate.fileInfo[0].file_name || "View Resume"}
+                          </a>
 
                           <iframe
-                            src={candidate.resume_path}
+                            src={candidate.fileInfo[0].file_url}
                             width="100%"
                             height="500px"
-                            style={{ border: "none" }}
+                            style={{ border: "none", marginTop: "10px" }}
                             title="Resume Viewer"
                           />
                         </div>

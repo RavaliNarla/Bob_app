@@ -78,7 +78,7 @@ const Header = () => {
                 style={{ minWidth: "200px", zIndex: 1000 }}
               >
                 <p className="mb-1 fw-bold">{user?.name}</p>
-                <p className="mb-0 text-muted">{user?.role}</p>
+                <p className="mb-0 text-muted">{user?.role} Approver</p>
               </div>
             )}
           </div>

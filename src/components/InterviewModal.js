@@ -78,23 +78,33 @@ const InterviewModal = ({
 
   // prefill on reschedule
   useEffect(() => {
-    if (show && isReschedule && candidate) {
-      let formattedDate = "";
-      let formattedTime = "";
-      if (candidate.interview_date) {
-        formattedDate = new Date(candidate.interview_date).toISOString().split("T")[0];
-      }
-      if (candidate.interview_time) {
-        const [hour, minute] = candidate.interview_time.split(":");
-        formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-      }
-      setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
-    } else {
-      setInterviewData({ interview_date: "", interview_time: "" });
-    }
-    // reset slots when modal opens/closes
     setSlots([]);
     setSlotsError("");
+    let formattedDate = "";
+  let formattedTime = "";
+  console.log("InterviewModal useEffect triggered",show , isReschedule , candidate);
+if (show && isReschedule && candidate) {
+    if (candidate.interview_date) {
+      formattedDate = new Date(candidate.interview_date).toISOString().split("T")[0];
+    }
+
+    if (candidate.interview_time) {
+      const [hour, minute] = candidate.interview_time.split(":");
+      formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    }
+     
+    setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
+  } else {
+    console.log("Setting default date and time for new interview");
+    const now = new Date();
+    formattedDate = now.toISOString().split("T")[0];
+    const hour = now.getHours();
+    const minute = now.getMinutes();
+    formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
+  }
+    // reset slots when modal opens/closes
+    fetchSlotsForDate(formattedDate);
     setLoadingSlots(false);
   }, [show, isReschedule, candidate]);
 

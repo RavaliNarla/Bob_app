@@ -357,7 +357,7 @@ const CandidateCard = () => {
             showToast("Please fill in all fields before sending the offer.");
             return;
         }
-
+        setApiLoading(true);
         setLoading(true);
         setError(null);
 
@@ -410,6 +410,7 @@ const CandidateCard = () => {
             console.error("Failed to send offer:", err);
             setError(err.message || 'Failed to send offer');
         } finally {
+            setApiLoading(false);
             setLoading(false);
         }
     };
@@ -527,6 +528,7 @@ const CandidateCard = () => {
         } finally {
             setLoading(false);
             setApiLoading(false);
+            setShowRescheduleModal(false);
         }
     };
 
@@ -570,7 +572,7 @@ const CandidateCard = () => {
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
                     <select
-                        className="select-drop form-select"
+                        className="select-drop form-select spaceform"
                         name="jobReqDropdown"
                         value={selectedRequisitionCode}
                         onChange={handleJobReqChange}
