@@ -16,9 +16,9 @@ import {
   faTrash,
   faSearch,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import apiService from "../services/apiService";
 
 const API_BASE = "https://bobjava.sentrifugo.com:8443/jobcreation/api";
 
@@ -48,8 +48,8 @@ const JobRequisition = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get(`${API_BASE}/getreq`);
-      setReqs(res?.data?.data || []);
+      const res = await apiService.getReqData();
+      setReqs(res?.data);
     } catch (err) {
       setError("Failed to fetch requisitions.");
       console.error("GET Error:", err);
@@ -84,7 +84,7 @@ const JobRequisition = () => {
       newErrors.registration_end_date = "End date must be after start date";
     }
     if (!currentReq.no_of_positions || currentReq.no_of_positions <= 0) {
-      newErrors.no_of_positions = "Enter a valid number";
+      newErrors.no_of_positions = "Number of Positions must be a positive number";
     }
 
     if (
@@ -111,14 +111,20 @@ const JobRequisition = () => {
           ...currentReq,
           requisition_id: reqs[editIndex].requisition_id,
         };
-        await axios.put(`${API_BASE}/update_requisitions`, updatedReq);
-        toast.success("Requisition updated successfully");
-        const updatedReqs = [...reqs];
-        updatedReqs[editIndex] = updatedReq;
-        setReqs(updatedReqs);
+        const response= await apiService.updateRequisition(updatedReq);
+        console.log("Response",response)
+        if(response.success === true){
+          toast.success("Requisition updated successfully");
+          const updatedReqs = [...reqs];
+          updatedReqs[editIndex] = updatedReq;
+          setReqs(updatedReqs);
+        }
+       
       } else {
-        await axios.post(`${API_BASE}/create_requisitions`, currentReq);
-        toast.success("Requisition added successfully");
+        const response= await apiService.createRequisition(currentReq);
+        if(response.success === true){
+          toast.success("Requisition added successfully");
+        }
         fetchRequisitions();
       }
       resetForm();
@@ -130,8 +136,10 @@ const JobRequisition = () => {
   const handleDelete = async (index) => {
     try {
       const id = reqs[index]?.requisition_id;
-      await axios.delete(`${API_BASE}/delete_requisitions/${id}`);
-      toast.success("Requisition deleted successfully");
+      const response= await apiService.deleteRequisition(id);
+      if(response.success === true){
+        toast.success("Requisition deleted successfully");
+      }
       fetchRequisitions();
     } catch (err) {
       //console.error("Delete Error:", err.response?.data || err.message);
@@ -234,10 +242,10 @@ const JobRequisition = () => {
         <thead className="table-header-orange">
           <tr>
             <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer" }}>
-              Title{getSortIndicator("requisition_title")}
+              Requisition Title{getSortIndicator("requisition_title")}
             </th>
             <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer" }}>
-              Positions{getSortIndicator("no_of_positions")}
+            Number of Positions{getSortIndicator("no_of_positions")}
             </th>
             <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer" }}>
               Start Date{getSortIndicator("registration_start_date")}
@@ -253,7 +261,7 @@ const JobRequisition = () => {
           {jobsToDisplay.length === 0 ? (
             <tr>
               <td colSpan="5" className="text-center text-muted">
-                No requisitions
+                No Requisitions added yet
               </td>
             </tr>
           ) : (

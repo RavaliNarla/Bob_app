@@ -232,7 +232,7 @@ useEffect(() => {
         </div>
 
         <div className="col-12 col-md-6 col-lg-3 mb-2 formSpace">
-          <label htmlFor="no_of_vacancies" className="form-label">Number of Positions <span className="required-asterisk">*</span></label>
+          <label htmlFor="no_of_vacancies" className="form-label">Expected Number of Positions <span className="required-asterisk">*</span></label>
           <input
             type="number"
             className="form-control"

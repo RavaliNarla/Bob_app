@@ -248,8 +248,8 @@ const filteredJobPostings = jobPostings.filter((job) => {
           <Form.Select
             value={selectedApproval}
             onChange={(e) => setSelectedApproval(e.target.value)}
-            style={{ width: "200px" }}
-            className="fonreg"
+            style={{ width: "200px"}}
+            className="fonreg dropdowntext"
           >
             <option value="">All Requisitions</option>
             <option value="Submitted">Submitted</option>
@@ -274,38 +274,48 @@ const filteredJobPostings = jobPostings.filter((job) => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+          {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
           <Spinner animation="border" variant="primary" />
-        </div>
-      ) : error ? (
-        <Alert variant="danger">{error}</Alert>
-      ) : (
+          </div>
+          ) : error ? (
+          <Alert variant="danger">{error}</Alert>
+          ) : filteredJobPostings.length === 0 ? (
+          <div className="text-center text-muted py-4">
+                 No requisitions found for the selected filter.
+          </div>
+          ) :(
         <Accordion activeKey={activeKey}>
+      
           {filteredJobPostings.map((job, index) => (
             <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded">
               <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
-                <Row className="w-100 align-items-center fontreg">
-                  <Col xs={12} md={4} className="d-flex align-items-center">
-                    <Form.Check
-                      type="checkbox"
-                      className="form-check-orange me-2"
-                      checked={selectedJobIds.includes(job.requisition_id)}
-                      onChange={(e) => handleJobSelection(e, job.requisition_id)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <span className="job-title fw-semibold text-dark">{job.requisition_code}</span>
-                  </Col>
-                  <Col xs={6} md={3} className="job-detail">
-                    Title: {job.requisition_title}
-                  </Col>
-                  <Col xs={6} md={2} className="job-detail">
-                    Positions: {job.no_of_positions}
-                  </Col>
-                  <Col xs={6} md={2} className="job-detail">
-                    Status: {job.requisition_status}
-                  </Col>
-                </Row>
+              <Row className="w-100 align-items-center fontreg">
+                <Col xs={4} md={2} className="d-flex align-items-center">
+                  <Form.Check
+                    type="checkbox"
+                    className="form-check-orange me-2"
+                    checked={selectedJobIds.includes(job.requisition_id)}
+                    onChange={(e) => handleJobSelection(e, job.requisition_id)}
+                    onClick={(e) => e.stopPropagation()}
+                    disabled={!apiData || apiData.length === 0}
+                  />
+                  <span className="job-title fw-semibold text-dark">{job.requisition_code}</span>
+                </Col>
+
+                {/* ✅ Title: give more width */}
+                <Col xs={8} md={5} className="job-detail text-truncate">
+                  Title: {job.requisition_title}
+                </Col>
+
+                <Col xs={6} md={2} className="job-detail">
+                  Positions: {job.no_of_positions}
+                </Col>
+
+                <Col xs={6} md={3} className="job-detail">
+                  Status: {job.requisition_status}
+                </Col>
+              </Row>
               </Accordion.Header>
               <Accordion.Body>
                 <Row>

@@ -100,6 +100,8 @@ export const apiService = {
     
   getReqData: () => api.get('/getreq'),
   createRequisition: (data) => api.post('/create_requisitions', data),
+  updateRequisition: (data) => api.put('/update_requisitions', data),
+  deleteRequisition: (id) => api.delete(`/delete_requisitions/${id}`),
 
   jobCreation: (data) => api.post('/create_positions',data),
   getMasterData: () => apis.get('/all'),
