@@ -17,6 +17,7 @@ import Dashboard from './pages/Dashboard';
 import Skill from './pages/Skill';
 import JobGrade from './pages/JobGrade';
 import Location from './pages/Location';
+import Payments from './pages/Payments';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -172,6 +173,14 @@ function App() {
                   element={
                     <Layout>
                       < Approval />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/payments"
+                  element={
+                    <Layout>
+                      < Payments />
                     </Layout>
                   }
                 />

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Navbar, Form, Button, InputGroup } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faBell, faGlobe, faUserCircle, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faBell, faGlobe, faUserCircle, faRightFromBracket, faReceipt, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import logo_Bob from '../assets/logo_Bob.png';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -61,6 +61,9 @@ const Header = () => {
           {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
           </Button> */}
+          <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/payments')}>
+            <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
+          </Button>
           <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/login')}>
             <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
           </Button>

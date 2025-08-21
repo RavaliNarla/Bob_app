@@ -113,9 +113,9 @@ const Register = () => {
 
 
   return (
-    <div className="login-container register_container d-flex flex-column p-3 py-4">
+    <div className="login-container register_container d-flex flex-column p-3 py-4 mx-5">
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>User Registration</h5>
+        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Users</h5>
         <Button 
           onClick={() => setShowModal(true)}
           style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', color: '#fff' }}

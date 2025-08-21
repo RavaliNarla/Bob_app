@@ -237,3 +237,26 @@ body {
   color: #FF7043;
   border-color: #FF7043;
 }
+
+.success_class {
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  /* background-color: rgba(181, 237, 181, 0.951); */
+  /* border: 1px solid rgba(var(--bs-success-rgb),var(--bs-text-opacity))!important; */
+  background-color: rgba(var(--bs-success-rgb),var(--bs-text-opacity))!important;
+  color: white !important;
+}
+
+.danger_class {
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  background-color: rgba(var(--bs-danger-rgb),var(--bs-text-opacity))!important;
+  color: white !important;
+}
+
+.warning_class {
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  background-color: rgba(var(--bs-warning-rgb),var(--bs-text-opacity))!important;
+  color: white !important;
+}
