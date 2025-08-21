@@ -15,6 +15,8 @@ import OfferModal from "./OfferModal";
 import { getJobRequirements, getJobPositions, getCandidatesByPosition, fetchCandidatesByStatus, API_ENDPOINTS } from "../services/getJobRequirements";
 import profile from '../assets/profile_icon.png';
 import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
@@ -55,8 +57,24 @@ const CandidateCard = () => {
     const [rescheduleCandidate, setRescheduleCandidate] = useState(null);
     const [apiLoading, setApiLoading] = useState(false);
 
-    const showToast = (message, variant) => {
-        alert(message);
+    // const showToast = (message, variant) => {
+    //     alert(message);
+    // };
+    const showToast = (message, variant = "info") => {
+        switch (variant) {
+            case "success":
+                toast.success(message);
+                break;
+            case "error":
+                toast.error(message);
+                break;
+            case "warning":
+                toast.warn(message);
+                break;
+            default:
+                toast.info(message);
+                break;
+        }
     };
 
     useEffect(() => {
@@ -82,9 +100,9 @@ const CandidateCard = () => {
 
     useEffect(() => {
         const fetchCandidates = async () => {
-              setCandidates([]);
-                setInterviewed([]);
-                setOffered([]);
+            setCandidates([]);
+            setInterviewed([]);
+            setOffered([]);
             console.log("Fetching candidates for position ID:", selectedPositionId);
 
             if (selectedRequisitionId && selectedPositionId) {
@@ -101,7 +119,7 @@ const CandidateCard = () => {
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
                 );
-console.log( "Interviewed Candidates",interviewedCandidates);
+                console.log("Interviewed Candidates", interviewedCandidates);
                 setCandidates(shortlistedCandidates);
                 setInterviewed(interviewedCandidates);
                 setOffered(offeredCandidates);
@@ -327,11 +345,13 @@ console.log( "Interviewed Candidates",interviewedCandidates);
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
-                    ? { ...candidate, application_status: "Scheduled",  interview_date: interviewData.interview_date, 
-                        interview_time: interviewData.interview_time, profileStatus: "Interview Scheduled" }
+                    ? {
+                        ...candidate, application_status: "Scheduled", interview_date: interviewData.interview_date,
+                        interview_time: interviewData.interview_time, profileStatus: "Interview Scheduled"
+                    }
                     : candidate
             );
-              // If the candidate isn't in the list, add them. This handles the initial drag and drop.
+            // If the candidate isn't in the list, add them. This handles the initial drag and drop.
             if (!updatedInterviewed.some(c => c.candidate_id === interviewCandidate.candidate_id)) {
                 updatedInterviewed.push({
                     ...interviewCandidate,
@@ -446,7 +466,11 @@ console.log( "Interviewed Candidates",interviewedCandidates);
     };
 
     const handlePreview = () => {
-        alert(`Offer Preview for ${offerCandidate.full_name}:\nJob Position: ${jobPositionTitle}\nReq ID: ${reqId}\nSalary: ${salary}`);
+        // alert(`Offer Preview for ${offerCandidate.full_name}:\nJob Position: ${jobPositionTitle}\nReq ID: ${reqId}\nSalary: ${salary}`);
+        showToast(
+            `Offer Preview for ${offerCandidate.full_name}: Job Position: ${jobPositionTitle}, Req ID: ${reqId}, Salary: ${salary}`,
+            "info"
+        );
     };
 
     const toggleDrawer = (candidate = null) => {
@@ -455,7 +479,7 @@ console.log( "Interviewed Candidates",interviewedCandidates);
     };
 
     // Update handleReschedule to fetch data from the API
-   const handleReschedule = async (candidate) => {
+    const handleReschedule = async (candidate) => {
         setLoading(true);
         setApiLoading(true);
         setError(null);
@@ -498,7 +522,7 @@ console.log( "Interviewed Candidates",interviewedCandidates);
     };
 
     // Function to handle the actual reschedule interview
-  const handleRescheduleInterview = async (interviewData) => {
+    const handleRescheduleInterview = async (interviewData) => {
         if (!interviewData.interview_date || !interviewData.interview_time) {
             showToast("Please select both interview date and time.", "warning");
             return;
@@ -536,7 +560,7 @@ console.log( "Interviewed Candidates",interviewedCandidates);
     };
 
     // Function to handle the cancellation of an interview
-   const handleDeleteInterview = async () => {
+    const handleDeleteInterview = async () => {
         setLoading(true);
         setApiLoading(true);
         setError(null);
@@ -570,7 +594,7 @@ console.log( "Interviewed Candidates",interviewedCandidates);
         <Container fluid className="py-5 foncandidate">
             <div className="top-bar">
                 <div className="responsive-breadcrumb-container">
-                   
+
 
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
@@ -892,7 +916,7 @@ console.log( "Interviewed Candidates",interviewedCandidates);
             {apiLoading && (
                 <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>
                     <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">Loading...</span>
                     </div>
                 </div>
             )}
