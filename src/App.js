@@ -26,6 +26,7 @@ const JobRequisition = React.lazy(() => import('./pages/JobRequisition'));
 const Department = React.lazy(() => import('./pages/Department'));
 const Layout = React.lazy(() => import('./components/Layout'));
 const Approval = React.lazy(() => import('./pages/Approvals'));
+const Calendar = React.lazy(()=>import('./pages/Calendar'));
 // Loading component
 const Loading = () => (
   <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
@@ -181,6 +182,14 @@ function App() {
                   element={
                     <Layout>
                       < Payments />
+                    </Layout>
+                  }
+                />
+                <Route
+                  path="/calender"
+                  element={
+                    <Layout>
+                      < Calendar />
                     </Layout>
                   }
                 />

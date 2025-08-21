@@ -260,3 +260,8 @@ body {
   background-color: rgba(var(--bs-warning-rgb),var(--bs-text-opacity))!important;
   color: white !important;
 }
+
+.week_filter:hover {
+  background-color: #ff6a00 !important;
+  color: white !important;
+}
