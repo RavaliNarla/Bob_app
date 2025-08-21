@@ -107,7 +107,7 @@
 
 
 .search-b {
-    width: 230px !important;
+    width: 395px !important;
     /* margin-left: 30%!important; */
     margin-right: 40px;
 }
@@ -120,12 +120,13 @@
 }
 
 .search-f {
-    border-radius: 15px !important;
-    border: none !important;
-    height: 40px;
-    /* outline: none; */
+	border-radius: 5px !important;
+	/* border: none !important; */
+	/* height: 40px; */
+	/* outline: none; */
+	border-top-left-radius: 0px !important;
+	border-bottom-left-radius: 0px !important;
 }
-
 
 .top-bar {
     display: flex;
@@ -173,8 +174,8 @@
     min-width: 100px;
     /* Ensures a minimum width to prevent it from disappearing */
 }
-.spaceform{
-    margin-right: 10px !important;
+.spaceform {
+	margin-right: 52px !important;
 }
 
 /* Adjust the spacing between breadcrumb items to be more compact */
@@ -197,7 +198,7 @@
 }
 
 .top-bar .select-drop {
-	font-size: 16px !important;
+	font-size: 14px !important;
 	width: 400px !important;
 	background-color: #fff !important;
 	color: black !important;

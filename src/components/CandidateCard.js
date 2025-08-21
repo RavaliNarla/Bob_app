@@ -17,6 +17,12 @@ import profile from '../assets/profile_icon.png';
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPencil,
+  faTrash,
+  faSearch,
+} from "@fortawesome/free-solid-svg-icons";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
@@ -640,6 +646,9 @@ const CandidateCard = () => {
                 </div>
                 <div className="d-flex gap-3 w-50 justify-content-end">
                     <InputGroup className="search-b">
+                     <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+      <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+    </InputGroup.Text>
                         <Form.Control
                             placeholder="Search"
                             aria-label="Search"

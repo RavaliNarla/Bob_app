@@ -240,7 +240,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
 
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-4 fonsty">
       <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
         <div className="d-flex align-items-center mb-2 mb-md-0">
           <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
@@ -290,10 +290,10 @@ const filteredJobPostings = jobPostings.filter((job) => {
       
           {filteredJobPostings.map((job, index) => (
             <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded">
-           <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
+          <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
   <Row className="w-100 align-items-center fontreg">
     
-    {/* Left side: Checkbox + Title + Requisition */}
+    {/* Left side: Checkbox + Title + Requisition + Status */}
     <Col xs={12} md={6} className="d-flex align-items-start mb-2 mb-md-0">
       <Form.Check
         type="checkbox"
@@ -304,39 +304,37 @@ const filteredJobPostings = jobPostings.filter((job) => {
         disabled={job.count === 0}
       />
       <div className="fontcard">
-        <div className="fw-semibold text-dark">
+        <div className=" text-dark mb-1">
           Title: {job.requisition_title}
         </div>
-        <div className="text-muted">
-          Requisition: {job.requisition_code}
+        <div className="text-muted mb-1 boldnes">
+          <b>Requisition:</b> {job.requisition_code} ({job.requisition_status})
+          
         </div>
       </div>
     </Col>
 
-    {/* Right side: 2 rows aligned */}
+    {/* Right side: Expected/Added Positions + Postings */}
     <Col xs={12} md={6} className="d-flex flex-column fontcard">
       {/* Row 1 */}
-      <div className="d-flex mb-1">
-        <div className="me-4">
-          <b>Expected Positions:</b> {job.no_of_positions}
-        </div>
-        <div>
-          <b>Added Positions:</b> {job.count ? job.count : "0"}
+      <div className="d-flex">
+        <div className="boldnes">
+          <b>Postings:</b> {job.job_postings ? job.job_postings : "NA"}
         </div>
       </div>
-
       {/* Row 2 */}
-      <div className="d-flex">
-        <div className="me-4">
-         <b> Postings:</b> {job.job_postings ? job.job_postings : "NA"}
+       <div className="d-flex mb-1 mt-1">
+        <div className="me-4 boldnes">
+          <b>Expected Positions:</b> {job.no_of_positions}&nbsp;|&nbsp;
+          <b>Added Positions:</b> {job.count ? job.count : "0"}
+
         </div>
-        <div>
-        <b>  Status:</b> {job.requisition_status}
-        </div>
+        
       </div>
     </Col>
   </Row>
 </Accordion.Header>
+
 
 
               <Accordion.Body>

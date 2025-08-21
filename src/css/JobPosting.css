@@ -8,6 +8,11 @@
   font-size: 13px;
   font-weight: 400;
 }
+.dropdowntext,
+.dropdowntext option {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 14px;
+}
 
 
 /* Completely remove the dropdown toggle arrow */
@@ -188,7 +193,7 @@
 
 /* Custom checkbox styles for light orange background and dark orange tick */
 .form-check-input[type="checkbox"] {
-  background-color: #FFE0B2 !important;   /* Light orange */
+  background-color: #F94F0026 !important;   /* Light orange */
   border: 1.5px solid #FF7043 !important; /* Dark orange border */
   box-shadow: none !important;
 }
@@ -298,4 +303,14 @@ font-family: 'Poppins', sans-serif !important;
 }
 .fontcard{
   font-size: 12px;
+}
+.fontcard .text-dark{
+  font-weight: 600;
+}
+.boldnes b {
+	font-weight: 500;
+	color: #000;
+}
+.fonsty{
+  font-family: poppins;
 }
