@@ -195,7 +195,7 @@ const Department = () => {
   return (
     <div className="container my-3 deptfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Department</h2>
+       
       </div>
       <div className="d-flex justify-content-between align-items-center">
         <InputGroup className=" w-50">

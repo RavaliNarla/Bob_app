@@ -196,7 +196,7 @@ const Skill = () => {
   return (
     <div className="container my-3 skillfon">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>Skills</h2>
+       
       </div>
       <div className="d-flex justify-content-between align-items-center">
       <InputGroup className="w-50">

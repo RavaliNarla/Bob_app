@@ -129,13 +129,13 @@
 }
 
 .top-bar {
-    display: flex;
-    /* gap: 10px; */
-    /* border-bottom: 1px solid #ededed; */
-    padding-bottom: 10px;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: 47px;
+	display: flex;
+	/* gap: 10px; */
+	/* border-bottom: 1px solid #ededed; */
+	padding-bottom: 20px;
+	justify-content: space-between;
+	align-items: center;
+	margin-left: 47px;
 }
 
 .responsive-breadcrumb-container {
@@ -175,7 +175,7 @@
     /* Ensures a minimum width to prevent it from disappearing */
 }
 .spaceform {
-	margin-right: 52px !important;
+	margin-right: 15px !important;
 }
 
 /* Adjust the spacing between breadcrumb items to be more compact */
