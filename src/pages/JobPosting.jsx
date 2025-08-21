@@ -243,8 +243,8 @@ const filteredJobPostings = jobPostings.filter((job) => {
     <Container fluid className="p-4 fonsty">
       <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
         <div className="d-flex align-items-center mb-2 mb-md-0">
-          <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
-            All Requisitions
+          <h5 className="header me-3" style={{ marginBottom: "0.25rem" }}>
+           Select Status
           </h5>
           <Form.Select
             value={selectedApproval}
@@ -267,7 +267,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
             </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search requisitions"
+              placeholder="Search by Title"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -319,7 +319,16 @@ const filteredJobPostings = jobPostings.filter((job) => {
       {/* Row 1 */}
       <div className="d-flex">
         <div className="boldnes">
-          <b>Postings:</b> {job.job_postings ? job.job_postings : "NA"}
+           <b>Postings:</b>{" "}
+          {job.job_postings
+            ? job.job_postings
+                .split(",") // split into array
+                .map(
+                  (item) =>
+                    item.charAt(0).toUpperCase() + item.slice(1) // capitalize each
+                )
+                .join(", ") // join back with comma + space
+            : "NA"}
         </div>
       </div>
       {/* Row 2 */}
@@ -402,8 +411,8 @@ const filteredJobPostings = jobPostings.filter((job) => {
                                     className="text-info me-3 cursor-pointer"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
-                                      setEditRequisitionId(job.requisition_id);
-                                      setEditPositionId(job.position_id);
+                                      setEditRequisitionId(row.requisition_id);
+                                      setEditPositionId(row.position_id);
                                       setShowModal(true);
                                     }}
                                   />

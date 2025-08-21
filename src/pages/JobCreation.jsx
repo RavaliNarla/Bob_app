@@ -135,7 +135,6 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) 
   }, []);
 
   useEffect(() => {
-
     if (editPositionId) {
 
       apiService.getByPositionId(editPositionId).then((response) => {
@@ -498,7 +497,7 @@ const handleInputChange = (e) => {
     <Container fluid className="py-3">
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
-          
+         {editPositionId == null && (
             <div className="d-flex justify-content-end mb-3 gap-2 buttons_div">
               <a className='downlaodfile'
                 href="/JobCreationTemplate.xlsx"
@@ -536,6 +535,7 @@ const handleInputChange = (e) => {
              <span> Upload Excel</span>
               </Button>
             </div>
+            )}
             {selectedOption === 'direct' && (
               <JobCreationForm
                 formData={formData}
