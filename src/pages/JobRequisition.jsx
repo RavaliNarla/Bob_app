@@ -315,9 +315,12 @@ const JobRequisition = () => {
                     type="text"
                     value={currentReq.requisition_title}
                     isInvalid={!!errr.requisition_title}
-                    onChange={(e) =>
-                      setCurrentReq({ ...currentReq, requisition_title: e.target.value })
-                    }
+                    onChange={(e) => {
+                        setCurrentReq({ ...currentReq, requisition_title: e.target.value });
+                        if (errr.requisition_title) {
+                          setErrr({ ...errr, requisition_title: "" });
+                        }
+                      }}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errr.requisition_title}
@@ -335,9 +338,12 @@ const JobRequisition = () => {
                     rows={3}
                     value={currentReq.requisition_description}
                     isInvalid={!!errr.requisition_description}
-                    onChange={(e) =>
-                      setCurrentReq({ ...currentReq, requisition_description: e.target.value })
-                    }
+                    onChange={(e) => {
+                      setCurrentReq({ ...currentReq, requisition_description: e.target.value });
+                      if (errr.requisition_description) {
+                        setErrr({ ...errr, requisition_description: "" });
+                      }
+                    }}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errr.requisition_description}
@@ -355,9 +361,12 @@ const JobRequisition = () => {
                       type="date"
                       value={currentReq.registration_start_date}
                       isInvalid={!!errr.registration_start_date}
-                      onChange={(e) =>
-                        setCurrentReq({ ...currentReq, registration_start_date: e.target.value })
-                      }
+                      onChange={(e) => {
+                        setCurrentReq({ ...currentReq, registration_start_date: e.target.value });
+                        if (errr.registration_start_date) {
+                          setErrr({ ...errr, registration_start_date: "" });
+                        }
+                      }}
                       min={new Date().toISOString().split("T")[0]}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -374,9 +383,12 @@ const JobRequisition = () => {
                       type="date"
                       value={currentReq.registration_end_date}
                       isInvalid={!!errr.registration_end_date}
-                      onChange={(e) =>
-                        setCurrentReq({ ...currentReq, registration_end_date: e.target.value })
-                      }
+                     onChange={(e) => {
+                        setCurrentReq({ ...currentReq, registration_end_date: e.target.value });
+                        if (errr.registration_end_date) {
+                          setErrr({ ...errr, registration_end_date: "" });
+                        }
+                      }}
                       min={currentReq.registration_start_date || new Date().toISOString().split("T")[0]}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -397,9 +409,13 @@ const JobRequisition = () => {
                       min="1"
                       value={currentReq.no_of_positions}
                       isInvalid={!!errr.no_of_positions}
-                      onChange={(e) =>
-                        setCurrentReq({ ...currentReq, no_of_positions: e.target.value })
+                      
+                     onChange={(e) => {
+                      setCurrentReq({ ...currentReq, no_of_positions: e.target.value });
+                      if (errr.no_of_positions) {
+                        setErrr({ ...errr, no_of_positions: "" });
                       }
+                    }}
                     />
                     <Form.Control.Feedback type="invalid">
                       {errr.no_of_positions}
