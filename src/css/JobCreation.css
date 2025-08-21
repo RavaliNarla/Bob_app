@@ -31,3 +31,15 @@ background:#fff;
     padding-bottom: 5px;
     padding-top: 5px;
 }
+/* Style for input and textarea placeholders */
+.form-control::placeholder {
+  color: #a0a0a0; /* Or any specific color you want */
+  opacity: 1; /* Firefox has a different default opacity */
+}
+
+
+/* Dropdown default (when value="") should look like placeholder */
+.form-select option[value=""] {
+  color: #a0a0a0;
+}
+

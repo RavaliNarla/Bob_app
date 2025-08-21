@@ -208,9 +208,9 @@ const JobRequisition = () => {
 
   return (
     <div className="container my-3">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      {/* <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="fonall">Requisitions</h5>
-      </div>
+      </div> */}
 
       {/* Search + Add Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">

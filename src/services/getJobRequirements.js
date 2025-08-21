@@ -39,7 +39,9 @@ export const getJobPositions = async (requisition_id) => {
 
 export const getCandidatesByPosition = async (position_id) => {
     try {
-        const response = await fetch(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/details-by-position/${position_id}`);
+        //const response = await fetch(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/details-by-position/${position_id}`);
+
+        const response = await fetch(`http://192.168.20.115:8081/api/candidates/details-by-position/${position_id}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

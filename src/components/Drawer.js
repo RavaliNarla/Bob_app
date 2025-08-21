@@ -531,19 +531,19 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                     </Tab.Pane>
                     <Tab.Pane eventKey="resume">
                       <h6>Resume</h6>
-                      {candidate?.fileInfo && candidate.fileInfo.length > 0 ? (
+                      {candidate?.fileUrl ? (
                         <div>
                           <p>Click the link below to view or download the resume:</p>
                           <a
-                            href={candidate.fileInfo[0].file_url}
+                            href={candidate.fileUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {candidate.fileInfo[0].file_name || "View Resume"}
+                            {candidate.fileUrl || "View Resume"}
                           </a>
 
                           <iframe
-                            src={candidate.fileInfo[0].file_url}
+                            src={candidate.fileUrl}
                             width="100%"
                             height="500px"
                             style={{ border: "none", marginTop: "10px" }}
