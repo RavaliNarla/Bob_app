@@ -260,8 +260,8 @@ useEffect(() => {
 
         {/* Grade ID */}
   <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-  <div className="d-flex align-items-center" style={{ gap: '0.4em' }}>
-    <label htmlFor="grade_id" className="form-label m-0">
+  
+    <label htmlFor="grade_id" className="form-label">
       Grade/Scale <span className="required-asterisk">*</span>
     </label>
 
@@ -323,7 +323,7 @@ useEffect(() => {
         </Overlay>
       </>
     )}
-  </div>
+  
 
   <select
     id="grade_id"
