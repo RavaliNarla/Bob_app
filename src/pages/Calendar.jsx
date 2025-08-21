@@ -6,6 +6,7 @@ import {
 } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import profileIcon from '../assets/profile_icon.png'
 
 /** ================= CONFIG ================= */
 const API_BASE_URL = "http://192.168.20.111:8081"; // ← match your curl host
@@ -67,7 +68,7 @@ function mapApiToEvents(rows) {
       time: `${hh}:${mm}`,
       title: row.interviewTitle || "Interview",
       person: `${row.candidateName ?? ""} — ${row.candidateSkill ?? ""}`.replace(/\s—\s$/, ""),
-      avatar: "https://via.placeholder.com/42",
+      avatar: {profileIcon},
       color: "primary",
     };
   }).filter(Boolean);
@@ -76,15 +77,15 @@ function mapApiToEvents(rows) {
 /** ============ Axios GET (range) — sends epoch SECONDS ============ */
 /** ============ Axios GET (range) — epoch SECONDS, 200/204 safe ============ */
 async function httpGetRange(startDateObj, endDateObj) {
-  const toEpochSeconds = (d) => Math.floor(d.getTime() / 1000);
+  const toEpochMillis = (d) => d.getTime();
 
   // full local-day window
-  const startSeconds = toEpochSeconds(startOfDayLocal(startDateObj));
-  const endSeconds   = toEpochSeconds(endOfDayLocal(endDateObj));
+  const startMillis = toEpochMillis(startOfDayLocal(startDateObj));
+  const endMillis   = toEpochMillis(endOfDayLocal(endDateObj));
 
   // auto-fix reversed inputs
-  const from = Math.min(startSeconds, endSeconds);
-  const to   = Math.max(startSeconds, endSeconds);
+  const from = Math.min(startMillis, endMillis);
+  const to   = Math.max(startMillis, endMillis);
 
   const url = `${API_BASE_URL}${ENDPOINT}`;
 
@@ -92,7 +93,6 @@ async function httpGetRange(startDateObj, endDateObj) {
     const res = await axios.get(url, {
       params: { startTimestamp: from, endTimestamp: to },
       headers: { Accept: "application/json" },
-      // treat 204 as a success with no rows
       validateStatus: (s) => s === 200 || s === 204,
     });
 
@@ -220,9 +220,9 @@ export default function Calendar() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Button variant="outline-secondary" onClick={onWeek} className="week_filter" style={{ marginLeft: '0.5rem', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00' }}>
+            {/* <Button variant="outline-secondary" onClick={onWeek} className="week_filter" style={{ marginLeft: '0.5rem', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00' }}>
               Week ▾
-            </Button>
+            </Button> */}
           </InputGroup>
         </Col>
       </Row>
@@ -247,12 +247,12 @@ export default function Calendar() {
               return (
                 <Col key={key}>
                   <Button
-                    variant={isActive ? "success_class" : "light"}
-                    className={`w-100 fw-semibold ${isActive ? "text-white" : ""}`}
+                    variant={isActive ? "" : "light"}
+                    className={`w-100 fw-semibold ${isActive ? "text-white warning_class" : ""}`}
                     onClick={() => onSelectDay(key)}
                     style={{ borderRadius: 999 }}
                   >
-                    <div className="small text-muted mb-1">{weekday}</div>
+                    <div className="small mb-1">{weekday}</div>
                     <div className="fs-6">{d.getDate()}</div>
                   </Button>
                 </Col>
@@ -297,19 +297,19 @@ export default function Calendar() {
           )}
 
           {!loading && dayEvents.map((ev) => (
-            <Row key={ev.id} className="align-items-stretch g-3 mb-2">
+            <Row key={ev.id} className="align-items-center g-3 mb-2">
               <Col xs="auto" className="text-end pt-2" style={{ width: 90 }}>
-                <div className="text-muted fw-semibold">{to12h(ev.time)}</div>
+                <div className="text-muted fw-semibold fs-14">{to12h(ev.time)}</div>
               </Col>
               <Col>
                 <Card className="border-0 shadow-sm">
                   <Card.Body className="d-flex align-items-center">
-                    <Image roundedCircle width={42} height={42} src={ev.avatar} alt={ev.person} className="me-3 object-fit-cover" />
+                    <Image roundedCircle width={42} height={42} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
                     <div className="flex-grow-1">
                       <div className="fw-bold">{ev.title}</div>
                       <div className="text-muted small">{ev.person}</div>
                     </div>
-                    <Badge bg={mapBadge(ev.color)} className="ms-2">Interview</Badge>
+                    {/* <Badge bg={mapBadge(ev.color)} className="ms-2">Interview</Badge> */}
                   </Card.Body>
                 </Card>
               </Col>

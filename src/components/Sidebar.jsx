@@ -33,7 +33,7 @@ const Sidebar = () => {
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
-  // { icon: faUserFriends, text: 'Department', path: '/department' },
+    { icon: faUserFriends, text: 'Calendar', path: '/calendar' },
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
     // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
