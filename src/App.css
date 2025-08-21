@@ -212,15 +212,10 @@ body {
    margin-top: 4px;
    display: block;
  }
- .job-form .form-label,
-.job-form .form-control,
-.job-form .form-select,
-.job-form input,
-.job-form select,
-.job-form textarea {
-  font-family: 'Poppins', Arial, sans-serif !important;;
-  font-size: 13px !important;
-  font-weight: 400 !important;;
+.job-form .form-label, .job-form .form-control, .job-form .form-select, .job-form input, .job-form select, .job-form textarea {
+	font-family: 'Poppins', Arial, sans-serif !important;
+	font-size: 12px !important;
+	
   color:#414141 !important
 }
 

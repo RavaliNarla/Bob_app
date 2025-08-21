@@ -1,10 +1,11 @@
-.requisition-form input,
-.requisition-form textarea {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.requisition-form input, .requisition-form textarea {
+	width: 100%;
+	padding: 8px;
+	margin-bottom: 12px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	color: #414141;
+	font-weight: 300;
 }
  
 .btn-orange {
@@ -56,9 +57,7 @@
 }.text-orange {
   color: #FF7043;
 }
-.requisition-form .form-label {
-  font-weight: 500;
-}
+
 /* Modal width */
 .wide-modal {
   max-width: 900px;
@@ -69,15 +68,15 @@
 }
 /* Label styling */
 .requisition-form .form-label {
-  font-weight: 500;
-  margin-bottom: 6px;
-  color: #333;
-  font-size: 14px;
+	margin-bottom: 6px;
+	color: #414141;
+	font-size: 14px;
+	font-weight: 300 !important;
 }
 
 .req_table {
   margin-bottom: 0px !important;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family: 'poppins', Arial, sans-serif;
   font-size: 14px !important;
   font-weight: 300 !important;
   color:#414141 !important;
@@ -90,7 +89,8 @@
 }
 
 .table-body-orange td {
-  padding: 12px !important;
+	padding: 12px !important;
+	color: #414141;
 }
 
 .table-responsive {
@@ -107,4 +107,7 @@
 }
 .invalid-feedback{
   color:#ff0000 !important;
+}
+.fonsty{
+  font-family: poppins, sans-serif !important;
 }

@@ -207,7 +207,7 @@ const JobRequisition = () => {
   if (loading) return <div className="text-center mt-5">Loading...</div>;
 
   return (
-    <div className="container my-3">
+    <div className="container my-3 fonsty">
       {/* <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="fonall">Requisitions</h5>
       </div> */}
@@ -220,7 +220,7 @@ const JobRequisition = () => {
           </InputGroup.Text>
           <Form.Control
             type="text"
-            placeholder="Search by title"
+            placeholder="Search by Title"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -241,19 +241,19 @@ const JobRequisition = () => {
       <Table className="req_table" responsive hover>
         <thead className="table-header-orange">
           <tr>
-            <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer" }}>
+            <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer", width: "35%" }}>
               Requisition Title{getSortIndicator("requisition_title")}
             </th>
-            <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer" }}>
+            <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer", width: "25%"  }}>
             Number of Positions{getSortIndicator("no_of_positions")}
             </th>
-            <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer" }}>
+            <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer", width: "15%"  }}>
               Start Date{getSortIndicator("registration_start_date")}
             </th>
-            <th onClick={() => handleSort("registration_end_date")} style={{ cursor: "pointer" }}>
+            <th onClick={() => handleSort("registration_end_date")} style={{ cursor: "pointer", width: "15%"  }}>
               End Date{getSortIndicator("registration_end_date")}
             </th>
-            <th>Actions</th>
+            <th style={{width: "10%"  }}>Actions</th>
           </tr>
         </thead>
 
