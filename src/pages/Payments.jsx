@@ -41,7 +41,7 @@ const Payments = () => {
 
 	const fetchPayments = async () => {
     try {
-      const res = await axios.get("https://bobjava.sentrifugo.com:8443/api/razorpay/all"); // Update URL if needed
+      const res = await axios.get("https://bobjava.sentrifugo.com:8443/candidate/api/razorpay/all"); // Update URL if needed
       setPaymentData(res?.data?.data || []);
       console.log("Fetched payments:", res?.data?.data);
     } catch (err) {
