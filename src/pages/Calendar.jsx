@@ -9,7 +9,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import profileIcon from '../assets/profile_icon.png'
 
 /** ================= CONFIG ================= */
-const API_BASE_URL = "http://192.168.20.111:8081"; // ← match your curl host
+const API_BASE_URL = "https://bobjava.sentrifugo.com:8443/candidate"; // ← match your curl host
 const ENDPOINT = "/api/candidates/interviews/by-date-range";
 
 /** ============ Local date helpers (NO UTC drift) ============ */
