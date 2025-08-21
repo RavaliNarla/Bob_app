@@ -480,7 +480,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
             <Form.Select
               value={approvalStatus}
               onChange={(e) => setApprovalStatus(e.target.value)}
-              style={{ width: "auto", minWidth: "200px" }}
+              style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
               className="ms-2"
             >
               <option value="">Select Status</option>
