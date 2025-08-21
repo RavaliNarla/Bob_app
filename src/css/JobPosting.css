@@ -194,7 +194,7 @@
 
 /* Custom checkbox styles for light orange background and dark orange tick */
 .form-check-input[type="checkbox"] {
-  background-color: #F94F0026 !important;   /* Light orange */
+  background-color: #ffe0b2 !important;   /* Light orange */
   border: 1.5px solid #FF7043 !important; /* Dark orange border */
   box-shadow: none !important;
 }
@@ -263,6 +263,7 @@ font-family: 'Poppins', sans-serif !important;
   font-family: 'Poppins', sans-serif !important;
  width: 105px;
   font-size: 14px !important;
+  color:#414141
 }
 
 .modal_container .modal-dialog {
@@ -322,4 +323,15 @@ font-family: 'Poppins', sans-serif !important;
   font-size: 16px !important;
   margin-bottom: 0.25rem;
   color:#414141;
+}
+.checkbtnspost
+{
+  color:#414141;
+  font-weight:300;
+}
+.form-select option {
+  font-family: 'Poppins', sans-serif !important;
+  font-weight:300;
+  color: #414141 !important;
+
 }

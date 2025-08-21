@@ -84,7 +84,7 @@ const Approvals = () => {
 setError("No Approvals: Unexpected data format.");
       }
     } catch (err) {
-setError("No Approvals.");
+//setError("No Approvals.");
       console.error("Error fetching job postings:", err);
     } finally {
       setLoading(false);
@@ -210,12 +210,12 @@ setError("No Approvals.");
   return (
     <Container fluid className="p-4">
         <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
-              <div className="d-flex align-items-center mb-2 mb-md-0">
+              {/* <div className="d-flex align-items-center mb-2 mb-md-0">
                 <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
                   My Approvals
                 </h5>
                 
-              </div>
+              </div> */}
 
         <div className="col-md-6 search-container fonreg">
           <InputGroup>
@@ -224,7 +224,7 @@ setError("No Approvals.");
             </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search requisitions"
+              placeholder="Search by Title"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -232,16 +232,17 @@ setError("No Approvals.");
         </div>
       </div>
 
-      {loading ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ minHeight: "200px" }}
-        >
-          <Spinner animation="border" variant="primary" />
-        </div>
-      ) : error ? (
-        <Alert variant="danger">{error}</Alert>
-      ) : (
+    {loading ? (
+             <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+             <Spinner animation="border" variant="primary" />
+             </div>
+             ) : error ? (
+             <Alert variant="danger">{error}</Alert>
+             ) : filteredJobPostings.length === 0 ? (
+             <div className="text-center text-muted py-4">
+                    No records for approval.
+             </div>
+             )  : (
         <Accordion activeKey={activeKey}>
           {filteredJobPostings.map((job, index) => (
             <Accordion.Item
@@ -365,22 +366,24 @@ setError("No Approvals.");
       )}
 
       {/* Approve / Reject buttons */}
-      <div className="d-flex justify-content-end mt-4 gap-2">
-        <Button
-          variant="success"
-          disabled={selectedJobIds.length === 0}
-          onClick={handleApprove}
-        >
-          Approve
-        </Button>
-        <Button
-          variant="danger"
-          disabled={selectedJobIds.length === 0}
-          onClick={handleReject}
-        >
-          Reject
-        </Button>
-      </div>
+       {filteredJobPostings.length > 0 && (
+        <div className="d-flex justify-content-end mt-4 gap-2">
+          <Button
+            variant="success"
+            disabled={selectedJobIds.length === 0}
+            onClick={handleApprove}
+          >
+            Approve
+          </Button>
+          <Button
+            variant="danger"
+            disabled={selectedJobIds.length === 0}
+            onClick={handleReject}
+          >
+            Reject
+          </Button>
+        </div>
+      )}
 
       {/* Reject Modal */}
       <Modal show={showRejectModal} onHide={cancelReject} centered>

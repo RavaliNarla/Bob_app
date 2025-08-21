@@ -437,7 +437,7 @@ useEffect(() => {
         </div>
 
         <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
-          <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button>
+          {/* <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button> */}
           <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
          { formData.position_id ? 'Update' : 'Save' }
           </Button>
