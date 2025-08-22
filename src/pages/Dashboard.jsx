@@ -129,13 +129,13 @@ export default function Dashboard() {
           <Row className="mb-4">
             <Col md={2} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr">
-                <h6>New Applications</h6>
+                <h6>Job Positions</h6>
                 <h3>{stats.new_positions}</h3>
               </Card>
             </Col>
             <Col md={2} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr2">
-                <h6>Total Applications</h6>
+                <h6>Total Job Positions</h6>
                 <h3>{stats.total_positions}</h3>
               </Card>
             </Col>
@@ -145,12 +145,12 @@ export default function Dashboard() {
                 <h3>{stats.interviews_today}</h3>
               </Card>
             </Col>
-            <Col md={2} className="cardspace">
+            {/* <Col md={2} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr4">
                 <h6>Offer Letters</h6>
                 <h3>{stats.offer_letters}</h3>
               </Card>
-            </Col>
+            </Col> */}
             <Col md={2} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr7">
                 <h6>Open Requisition</h6>
@@ -180,11 +180,11 @@ export default function Dashboard() {
             <h5 className="mb-3">Shortlisting Progress</h5>
             <Row className="mt-4">
               {[
-                { key: "applied_candidates", label: "Total Candidates", note: "Applied - Last 7 days" },
-                { key: "screening", label: "Screening", note: "In progress" },
-                { key: "interviews_scheduled", label: "Interviews", note: "Scheduled" },
-                { key: "offers", label: "Offers", note: "Given" },
-                { key: "rejected", label: "Rejected", note: "Total" }
+                { key: "applied_candidates", label: "Applications Received", note: "" },
+                { key: "screening", label: "Shortlisted", note: "" },
+                { key: "interviews_scheduled", label: "Total Interviews", note: "" },
+                { key: "offers", label: "Offered", note: "" },
+                { key: "rejected", label: "Interviews Cancelled", note: "" }
               ].map((item, idx) => {
                 const bgColors = ["bgcolr", "bgcolr2", "bgcolr3", "bgcolr4", "bgcolr7"];
                 return (
