@@ -135,7 +135,15 @@ const JobPosting = () => {
     }
     setSortConfig({ key, direction });
   };
-
+  const fetchRequisitionDetails = async (requisitionId) => {
+    try {
+      const data = await apiService.getByRequisitionId(requisitionId);
+      setApiData(data?.data || []); // ✅ always an array
+    } catch (error) {
+      console.error("Error fetching requisition details:", error);
+      setApiData([]); // fallback to empty array
+    }
+  };
   const getSortIndicator = (key) => {
     if (sortConfig.key !== key) return null;
     return sortConfig.direction === "asc" ? " ▲" : " ▼";
@@ -301,7 +309,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         checked={selectedJobIds.includes(job.requisition_id)}
         onChange={(e) => handleJobSelection(e, job.requisition_id)}
         onClick={(e) => e.stopPropagation()}
-        disabled={job.count === 0}
+        disabled={job.count === 0 || job.requisition_status !== "Submitted"} 
       />
       <div className="fontcard">
         <div className=" text-dark mb-1">
@@ -361,7 +369,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
                           <th onClick={() => handleSort("positions")} style={{ cursor: "pointer" }}>
                             Position Code{getSortIndicator("positions")}
                           </th>
-                          <th>Vacancies</th>
+                          <th>Positions</th>
                           <th onClick={() => handleSort("startDate")} style={{ cursor: "pointer" }}>
                             Experience{getSortIndicator("startDate")}
                           </th>
@@ -514,6 +522,16 @@ const filteredJobPostings = jobPostings.filter((job) => {
             showModal={showModal}
             onClose={() => setShowModal(false)}
             editPositionId={editPositionId}
+            onUpdateSuccess={() => {
+              // 🔥 Immediately refresh requisition details after update
+              if (editRequisitionId) {
+               // toggleAccordion(activeKey, editRequisitionId);
+                 // ✅ Re-fetch data but keep accordion open
+                  fetchRequisitionDetails(editRequisitionId);
+              } else {
+                fetchJobPostings();
+              }
+            }}
           />
         </Modal.Body>
       </Modal>

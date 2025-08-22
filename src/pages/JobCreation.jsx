@@ -12,7 +12,7 @@ import { apiService } from '../services/apiService';
 import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
 
-const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId }) => {
+const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onUpdateSuccess}) => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('direct');
@@ -302,6 +302,7 @@ const handleInputChange = (e) => {
           console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
           onClose();
+          if (onUpdateSuccess) onUpdateSuccess(); // 🔥 notify parent
         }
         console.log('✅ Valid form data:', formData);
         console.log('✅ API response:', response);

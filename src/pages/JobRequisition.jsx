@@ -14,13 +14,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencil,
   faTrash,
-  faSearch,
+  faSearch,faEye
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiService from "../services/apiService";
 
-const API_BASE = "https://bobjava.sentrifugo.com:8443/jobcreation/api";
+
+
 
 const JobRequisition = () => {
   const [showModal, setShowModal] = useState(false);
@@ -39,7 +40,7 @@ const JobRequisition = () => {
   const [errr, setErrr] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
-
+  const [viewMode, setViewMode] = useState(false);
   useEffect(() => {
     fetchRequisitions();
   }, []);
@@ -58,10 +59,11 @@ const JobRequisition = () => {
     }
   };
 
-  const openModal = (req = currentReq, index = null) => {
+  const openModal = (req = currentReq, index = null, mode = "edit") => {
     setCurrentReq(req);
     setEditIndex(index);
     setShowModal(true);
+    setViewMode(mode === "view"); // if mode is view → disable
   };
 
   const handleSave = () => {
@@ -244,16 +246,19 @@ const JobRequisition = () => {
             <th onClick={() => handleSort("requisition_title")} style={{ cursor: "pointer", width: "35%" }}>
               Requisition Title{getSortIndicator("requisition_title")}
             </th>
-            <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer", width: "25%"  }}>
+            <th onClick={() => handleSort("no_of_positions")} style={{ cursor: "pointer", width: "15%"  }}>
             Number of Positions{getSortIndicator("no_of_positions")}
             </th>
-            <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer", width: "15%"  }}>
+            <th onClick={() => handleSort("registration_start_date")} style={{ cursor: "pointer", width: "12%"  }}>
               Start Date{getSortIndicator("registration_start_date")}
             </th>
-            <th onClick={() => handleSort("registration_end_date")} style={{ cursor: "pointer", width: "15%"  }}>
+            <th onClick={() => handleSort("registration_end_date")} style={{ cursor: "pointer", width: "12%"  }}>
               End Date{getSortIndicator("registration_end_date")}
             </th>
-            <th style={{width: "10%"  }}>Actions</th>
+            <th onClick={() => handleSort("requisition_status")} style={{ cursor: "pointer", width: "15%"  }}>
+              Status{getSortIndicator("requisition_status")}
+            </th>
+            <th style={{width: "15%"  }}>Actions</th>
           </tr>
         </thead>
 
@@ -271,8 +276,9 @@ const JobRequisition = () => {
                 <td>{job.no_of_positions}</td>
                 <td>{job.registration_start_date}</td>
                 <td>{job.registration_end_date}</td>
+                <td>{job.requisition_status}</td>
                 <td>
-                  <FontAwesomeIcon
+                  {/* <FontAwesomeIcon
                     icon={faPencil}
                     className="me-3 cursor-pointer"
                     style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
@@ -283,7 +289,30 @@ const JobRequisition = () => {
                     className="required-asterisk cursor-pointer"
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleDelete(index)}
-                  />
+                  /> */}
+                  {job.requisition_status === 'Submitted' ? (
+                    <>
+                      <FontAwesomeIcon
+                        icon={faPencil}
+                        className="me-3 cursor-pointer"
+                        style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
+                        onClick={() => openModal(job, index,"edit")}
+                      />
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        className="required-asterisk cursor-pointer"
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => handleDelete(index)}
+                      />
+                    </>
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faEye}
+                      className="me-3 cursor-pointer"
+                      style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
+                      onClick={() => openModal(job, index, "view")}
+                    />
+                  )}
                 </td>
               </tr>
             ))
@@ -299,9 +328,13 @@ const JobRequisition = () => {
         dialogClassName="wide-modal"
       >
         <Modal.Header closeButton>
-          <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
-            {editIndex !== null ? "Edit Requisition" : "Add Requisition"}
-          </Modal.Title>
+        <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
+          {viewMode 
+            ? "View Requisition" 
+            : editIndex !== null 
+              ? "Edit Requisition" 
+              : "Add Requisition"}
+        </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form className="requisition-form">
@@ -315,6 +348,7 @@ const JobRequisition = () => {
                     type="text"
                     value={currentReq.requisition_title}
                     isInvalid={!!errr.requisition_title}
+                    disabled={viewMode}
                     onChange={(e) => {
                         setCurrentReq({ ...currentReq, requisition_title: e.target.value });
                         if (errr.requisition_title) {
@@ -338,6 +372,7 @@ const JobRequisition = () => {
                     rows={3}
                     value={currentReq.requisition_description}
                     isInvalid={!!errr.requisition_description}
+                    disabled={viewMode}
                     onChange={(e) => {
                       setCurrentReq({ ...currentReq, requisition_description: e.target.value });
                       if (errr.requisition_description) {
@@ -361,6 +396,7 @@ const JobRequisition = () => {
                       type="date"
                       value={currentReq.registration_start_date}
                       isInvalid={!!errr.registration_start_date}
+                      disabled={viewMode}
                       onChange={(e) => {
                         setCurrentReq({ ...currentReq, registration_start_date: e.target.value });
                         if (errr.registration_start_date) {
@@ -383,7 +419,8 @@ const JobRequisition = () => {
                       type="date"
                       value={currentReq.registration_end_date}
                       isInvalid={!!errr.registration_end_date}
-                     onChange={(e) => {
+                      disabled={viewMode}
+                      onChange={(e) => {
                         setCurrentReq({ ...currentReq, registration_end_date: e.target.value });
                         if (errr.registration_end_date) {
                           setErrr({ ...errr, registration_end_date: "" });
@@ -409,7 +446,7 @@ const JobRequisition = () => {
                       min="1"
                       value={currentReq.no_of_positions}
                       isInvalid={!!errr.no_of_positions}
-                      
+                      disabled={viewMode}
                      onChange={(e) => {
                       setCurrentReq({ ...currentReq, no_of_positions: e.target.value });
                       if (errr.no_of_positions) {
@@ -429,6 +466,7 @@ const JobRequisition = () => {
                       as="textarea"
                       rows={2}
                       value={currentReq.requisition_comments}
+                      disabled={viewMode}
                       onChange={(e) =>
                         setCurrentReq({ ...currentReq, requisition_comments: e.target.value })
                       }
@@ -442,15 +480,17 @@ const JobRequisition = () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {viewMode ? "Close" : "Cancel"}
           </Button>
-          <Button
-            className="text-white"
-            onClick={handleSave}
-            style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
-          >
-            {editIndex !== null ? "Update Requisition" : "Save"}
-          </Button>
+          {!viewMode && (
+            <Button
+              className="text-white"
+              onClick={handleSave}
+              style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
+            >
+              {editIndex !== null ? "Update Requisition" : "Save"}
+            </Button>
+          )}
         </Modal.Footer>
       </Modal>
     </div>
