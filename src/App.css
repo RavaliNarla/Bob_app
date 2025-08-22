@@ -272,3 +272,7 @@ body {
 .fs-14 {
   font-size: 14px;
 }
+
+.fw-300 {
+  font-weight: 300 !important;
+}

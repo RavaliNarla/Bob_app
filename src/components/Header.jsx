@@ -60,14 +60,16 @@ const Header = () => {
           {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
           </Button> */}
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip id="tooltip-payments">Payments</Tooltip>}
-          >
-            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/payments')}>
-              <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
-            </Button>
-          </OverlayTrigger>
+          {(user?.role === 'admin' || user?.role === 'Admin') && (
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip id="tooltip-payments">Payments</Tooltip>}
+            >
+              <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/payments')}>
+                <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
+              </Button>
+            </OverlayTrigger>
+          )}
           <OverlayTrigger
             placement="bottom"
             overlay={<Tooltip id="tooltip-payments">Logout</Tooltip>}

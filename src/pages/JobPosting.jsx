@@ -257,7 +257,10 @@ const filteredJobPostings = jobPostings.filter((job) => {
           </h5>
           <Form.Select
             value={selectedApproval}
-            onChange={(e) => setSelectedApproval(e.target.value)}
+            onChange={(e) => {
+              setSelectedApproval(e.target.value);
+              setActiveKey(null); // close all accordions when filter changes
+            }}
             style={{ width: "200px"}}
             className="fonreg dropdowntext"
           >

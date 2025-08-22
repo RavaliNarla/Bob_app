@@ -567,15 +567,15 @@ const handleInputChange = (e) => {
           
         </Col>
       </Row>
-      <Modal show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>
+      <Modal className='fontss' show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>
         <Modal.Header closeButton>
-          <Modal.Title className='fonall'>Job Postings</Modal.Title>
+          <Modal.Title className='fonall'>Bulk Job Creation</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="upload-section fontss">
             <div>
               <Form.Group className="mb-2">
-                <Form.Label className="fw-semibold small mb-1 d-flex align-items-center fontss" style={{ gap: '0.4em' }}>
+                <Form.Label className="small mb-1 d-flex align-items-center fontss" style={{ gap: '0.4em' }}>
                   Select Requisition
                   {typeof selectedReqIndex === 'number' && reqs[selectedReqIndex] && (
                     <OverlayTrigger
@@ -609,21 +609,22 @@ const handleInputChange = (e) => {
                   )}
                 </Form.Label>
                 <Form.Select
-  size="sm"
-  value={selectedReqIndex === null ? "" : selectedReqIndex}
-  onChange={(e) => {
-    const val = e.target.value;
-    setSelectedReqIndex(val === "" ? null : Number(val));
-  }}
-  style={{ maxWidth: "300px" }}
->
-  <option value="">Select Requisition</option>
-  {reqs.map((req, index) => (
-    <option key={req.requisition_id} value={index}>
-      {req.requisition_code + " - " + req.requisition_title}
-    </option>
-  ))}
-</Form.Select>
+                  size="sm"
+                  value={selectedReqIndex === null ? "" : selectedReqIndex}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setSelectedReqIndex(val === "" ? null : Number(val));
+                  }}
+                  style={{ maxWidth: "300px" }}
+                  className='fw-300'
+                >
+                  <option value="">Select Requisition</option>
+                  {reqs.filter(req => req.requisition_status === "Submitted").map((req, index) => (
+                    <option key={req.requisition_id} value={index}>
+                      {req.requisition_code + " - " + req.requisition_title}
+                    </option>
+                  ))}
+                </Form.Select>
 
               </Form.Group>
               {/* {selectedReqIndex !== null && selectedReqIndex !== "" && (

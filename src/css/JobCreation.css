@@ -40,6 +40,7 @@ background:#fff;
 
 /* Dropdown default (when value="") should look like placeholder */
 .form-select option[value=""] {
-  color: #a0a0a0;
+  color: #a0a0a0 !important;
+  font-weight: 300 !important;
 }
 

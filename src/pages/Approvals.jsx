@@ -152,7 +152,12 @@ setError("No Approvals: Unexpected data format.");
     try {
       await apiService.updateApproval(payload);
       toast.success(`Approved ${selectedJobIds.length} requisitions`);
-      fetchJobPostings();
+
+      setJobPostings((prev) =>
+        prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
+      );
+
+      // fetchJobPostings();
       setSelectedJobIds([]);
     } catch (err) {
       console.error("Error updating approval:", err);
@@ -189,10 +194,15 @@ setError("No Approvals: Unexpected data format.");
 
     try {
       await apiService.updateApproval(payload);
-      toast.error(
+      toast.success(
         `Rejected ${selectedJobIds.length} requisitions with reason: ${rejectDescription}`
       );
-      fetchJobPostings();
+
+      setJobPostings((prev) =>
+        prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
+      );
+      
+      // fetchJobPostings();
       setSelectedJobIds([]);
       setRejectDescription("");
       setShowRejectModal(false);

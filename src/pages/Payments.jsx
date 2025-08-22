@@ -111,7 +111,7 @@ const Payments = () => {
 
 				<Row className="my-2 gap-3">
         <Col md={3}>
-					<label className='text-muted' style={{ fontWeight: 500 }}>Status</label>
+			<label className='text-muted' style={{ fontWeight: 500 }}>Status</label>
           <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option value="">All Statuses</option>
             <option value="Paid">Paid</option>
@@ -197,7 +197,7 @@ const Payments = () => {
 								<span className="text-muted">
 									Transaction ID:{" "}
 									<span style={{ fontWeight: 500 }}>
-										{row?.razorpayOrderDetails?.paymentId || "-"}
+										{row?.razorpayOrderDetails?.orderId || "-"}
 									</span>
 								</span>
 							</td>
