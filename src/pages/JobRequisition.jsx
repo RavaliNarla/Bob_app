@@ -209,10 +209,8 @@ const JobRequisition = () => {
   if (loading) return <div className="text-center mt-5">Loading...</div>;
 
   return (
-    <div className="container my-3 fonsty">
-      {/* <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5 className="fonall">Requisitions</h5>
-      </div> */}
+    <div className="register_container px-5 my-4 fonsty">
+      <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Requisitions</h5>
 
       {/* Search + Add Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">

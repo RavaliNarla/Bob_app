@@ -266,6 +266,7 @@ body {
 .week_filter:hover {
   background-color: #ff6a00 !important;
   color: white !important;
+  font-weight: 500 !important;
 }
 
 .fs-14 {

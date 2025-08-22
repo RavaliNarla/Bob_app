@@ -153,7 +153,7 @@ function App() {
                 />
 
                 <Route
-                  path="/registration"
+                  path="/users"
                   element={
                     <Layout>
                       <Register />
@@ -186,7 +186,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/calendar"
+                  path="/interviews"
                   element={
                     <Layout>
                       < Calendar />

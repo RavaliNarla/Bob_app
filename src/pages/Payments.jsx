@@ -106,10 +106,10 @@ const Payments = () => {
   }
 
   return (
-    <div className='register_container login-container d-flex flex-column p-3 py-4 mx-5'>
-        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Payments</h5>
+    <div className='register_container login-container d-flex flex-column py-3 px-5'>
+        <h5 className='mt-1' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Payments</h5>
 
-				<Row className="my-3 gap-3">
+				<Row className="my-2 gap-3">
         <Col md={3}>
 					<label className='text-muted' style={{ fontWeight: 500 }}>Status</label>
           <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>

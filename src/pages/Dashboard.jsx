@@ -121,9 +121,10 @@ export default function Dashboard() {
   };
 
   return (
-    <Container fluid className="dashfont">
+    <Container fluid className="dashfont py-4 px-4 mx-3">
+      <h5 className="mx-3 pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Dashboard</h5>
       <Row>
-        <Col md={12} className="p-4">
+        <Col md={12} className="">
           {/* Stats Row */}
           <Row className="mb-4">
             <Col md={2} className="cardspace">

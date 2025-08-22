@@ -499,42 +499,47 @@ const handleInputChange = (e) => {
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
          {editPositionId == null && (
-            <div className="d-flex justify-content-end mb-3 gap-2 buttons_div">
-              <a className='downlaodfile'
-                href="/JobCreationTemplate.xlsx"
-                style={{
-                  border: "1px solid #FF7043",
-                  backgroundColor: "transparent",
-                  color: "#FF7043",
-                  padding: "8px 15px",
-                  borderRadius: "4px",
-                  textDecoration: "none",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  minWidth: 0,
-                  minHeight: 0,
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <FontAwesomeIcon icon={faDownload} style={{ color: "#FF7043", fontSize: "1rem" }} />
-                <span> Download Template</span>
-              </a>
-              <Button className='uploadfile'
-                variant="uploadfile outline-primary"
-                onClick={() => setShowUploadModal(true)}
-                style={{
-                  borderColor: "#FF7043",
-                  color: "#FF7043",
-                  padding: "8px 15px",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  minWidth: 0,
-                  minHeight: 0,
-                }}
-              >
-                <FontAwesomeIcon icon={faUpload} style={{ color: "#FF7043", fontSize: "1rem" }} />
-             <span> Upload Excel</span>
-              </Button>
+            <div className="d-flex justify-content-between align-items-center mb-3 buttons_div">
+              <div>
+                <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
+              </div>
+              <div className='d-flex gap-3'>
+                <a className='downlaodfile'
+                  href="/JobCreationTemplate.xlsx"
+                  style={{
+                    border: "1px solid #FF7043",
+                    backgroundColor: "transparent",
+                    color: "#FF7043",
+                    padding: "8px 15px",
+                    borderRadius: "6px",
+                    textDecoration: "none",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    minWidth: 0,
+                    minHeight: 0,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faDownload} style={{ color: "#FF7043", fontSize: "1rem" }} />
+                  <span> Download Template</span>
+                </a>
+                <Button className='uploadfile'
+                  variant="uploadfile outline-primary"
+                  onClick={() => setShowUploadModal(true)}
+                  style={{
+                    borderColor: "#FF7043",
+                    color: "#FF7043",
+                    padding: "8px 15px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    minWidth: 0,
+                    minHeight: 0,
+                  }}
+                >
+                  <FontAwesomeIcon icon={faUpload} style={{ color: "#FF7043", fontSize: "1rem" }} />
+              <span> Upload Excel</span>
+                </Button>
+              </div>
             </div>
             )}
             {selectedOption === 'direct' && (

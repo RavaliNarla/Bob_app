@@ -29,12 +29,12 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { icon: faHome, text: 'Overview', path: '/dashboard' },
+    { icon: faHome, text: 'Dashboard', path: '/dashboard' },
     { icon: faFileAlt, text: 'Job Requisition', path: '/job-requisition' },
     { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
-    { icon: faCalendar, text: 'Calendar', path: '/calendar' },
+    { icon: faCalendar, text: 'Interviews', path: '/interviews' },
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
     // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
@@ -49,7 +49,7 @@ const Sidebar = () => {
   }
 
   const adminItems = [
-    { icon: faPerson, text: 'Registration', path: '/registration' },
+    { icon: faPerson, text: 'Users', path: '/users' },
     { icon: faBuilding, text: 'Department', path: '/department' },
     { icon: faLightbulb, text: 'Skills', path: '/skill' },
     { icon: faMapMarkerAlt, text: 'Location', path: '/location' },

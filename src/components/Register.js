@@ -113,9 +113,9 @@ const Register = () => {
 
 
   return (
-    <div className="login-container register_container d-flex flex-column p-3 py-4 mx-5">
+    <div className="login-container register_container d-flex flex-column py-3 px-5">
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}></h5>
+        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Users</h5>
         <Button 
           onClick={() => setShowModal(true)}
           style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', color: '#fff' }}
@@ -164,38 +164,56 @@ const Register = () => {
         </div> */}
         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
           <Modal.Header closeButton>
-            <Modal.Title>User Registration</Modal.Title>
+            <Modal.Title className="fw-bold text-orange fs-4">User Registration</Modal.Title>
           </Modal.Header>
           <Modal.Body className="align-self-center">
             <form onSubmit={handleRegister} className="d-flex flex-column my-3" style={{ minWidth: '15vw' }}>
-              <label>Role</label>
-              <select
-                name="role"
-                onChange={handleChange}
-                required
-                style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}
-                value={form.role}
-              >
-                <option value="">Select Role</option>
-                <option value="Admin">Admin</option>
-                <option value="Recruiter">Recruiter</option>
-              </select>
-              <label>Full Name</label>
-              <input name="name" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+              <div className="d-flex justify-content-between gap-3">
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
+                  <label>Role</label>
+                  <select
+                    name="role"
+                    onChange={handleChange}
+                    required
+                    style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}
+                    value={form.role}
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Recruiter">Recruiter</option>
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Full Name</label>
+                  <input name="name" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                </div>
+              </div>
 
-              <label>Email</label>
-              <input type="email" name="email" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+              <div className="d-flex justify-content-between gap-3">
+                <div>
+                  <label>Email</label>
+                  <input type="email" name="email" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                </div>
+                <div>
+                  <label>Phone</label>
+                  <input type="text" name="phone" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                </div>
+              </div>
 
-              <label>Phone</label>
-              <input type="text" name="phone" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+              <div className="d-flex justify-content-between gap-3">
+                <div>
+                  <label>Password</label>
+                  <input type="password" name="password" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                </div>
+                <div>
+                  <label>Confirm Password</label>
+                  <input type="password" name="confirmPassword" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                </div>
+              </div>
 
-              <label>Password</label>
-              <input type="password" name="password" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
-
-              <label>Confirm Password</label>
-              <input type="password" name="confirmPassword" onChange={handleChange} required style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
-
-              <button type="submit" className="login-button mt-4">Register</button>
+              <button type="submit" className="login-button mt-4 mb-0">Register</button>
               {/* {showOtpInput && (
       <>
         <input

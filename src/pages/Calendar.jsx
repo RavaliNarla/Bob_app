@@ -199,24 +199,24 @@ export default function Calendar() {
   }, [events, selectedDate, search]);
 
   return (
-    <Container fluid className="py-3">
+    <Container fluid className="py-3 px-5 fonreg">
       {/* Controls */}
       <Row className="align-items-center g-2 mb-3">
-        <Col md="auto"><h4 className="mb-0 fw-bold" style={{ color: '#ff6a00' }}>{headerTitle}</h4></Col>
+        <Col md="auto"><h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>{headerTitle}</h5></Col>
         <Col md="auto">
-          <Button size="sm" variant="" onClick={goToday} className="week_filter me-2" style={{ marginLeft: '0.5rem', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00' }}>Today</Button>
+          <Button size="sm" variant="" onClick={goToday} className="week_filter me-2" style={{ marginLeft: '0.5rem', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', padding: '0.45rem' }}>Today</Button>
           <div className="btn-group">
-            <Button size="sm" variant="outline-secondary" className="week_filter" onClick={goPrev} style={{ borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', fontWeight: 500 }}>‹</Button>
-            <Button size="sm" variant="outline-secondary" className="week_filter" onClick={goNext} style={{ marginLeft: '2px', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', fontWeight: 500 }}>›</Button>
+            <Button size="sm" variant="outline-secondary" className="week_filter" onClick={goPrev} style={{ borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', fontWeight: 500, fontSize: '1.5rem', padding: '0px 12px' }}>‹</Button>
+            <Button size="sm" variant="outline-secondary" className="week_filter" onClick={goNext} style={{ marginLeft: '2px', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', fontWeight: 500, fontSize: '1.5rem', padding: '0px 12px' }}>›</Button>
           </div>
         </Col>
-        <Col md="auto" className="ms-auto">
+        <Col md="auto" className="ms-auto" style={{ width: '40%' }}>
           <InputGroup className="w-100 fonreg">
             <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
               <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
             </InputGroup.Text>
             <Form.Control
-              placeholder="Search"
+              placeholder="Search by title or name"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -236,9 +236,9 @@ export default function Calendar() {
         </Row>
       )}
 
-      <Card className="shadow-sm border-0">
+      <div className="border-0">
         {/* Week strip */}
-        <Card.Header className="bg-white">
+        <div className="bg-white p-2 shadow-sm" style={{ borderRadius: '8px' }}>
           <Row xs={7} className="g-2 text-center">
             {days.map((d) => {
               const key = localISO(d);
@@ -259,10 +259,10 @@ export default function Calendar() {
               );
             })}
           </Row>
-        </Card.Header>
+        </div>
 
         {/* Event list */}
-        <Card.Body className="bg-light">
+        <div className="my-3">
           {loading && (
             <>
               {Array.from({ length: 3 }).map((_, i) => (
@@ -292,21 +292,21 @@ export default function Calendar() {
 
           {!loading && dayEvents.length === 0 && (
             <Card className="border-0">
-              <Card.Body className="text-muted">No interviews scheduled for this day.</Card.Body>
+              <Card.Body className="text-muted text-center">No interviews scheduled for this day.</Card.Body>
             </Card>
           )}
 
           {!loading && dayEvents.map((ev) => (
-            <Row key={ev.id} className="align-items-center g-3 mb-2">
+            <Row key={ev.id} className="align-items-center gap-2 mb-2">
               <Col xs="auto" className="text-end pt-2" style={{ width: 90 }}>
                 <div className="text-muted fw-semibold fs-14">{to12h(ev.time)}</div>
               </Col>
-              <Col>
+              <Col style={{ paddingLeft: '0px' }}>
                 <Card className="border-0 shadow-sm">
                   <Card.Body className="d-flex align-items-center">
                     <Image roundedCircle width={42} height={42} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
                     <div className="flex-grow-1">
-                      <div className="fw-bold">{ev.title}</div>
+                      <div className="fw-bold text-muted">{ev.title}</div>
                       <div className="text-muted small">{ev.person}</div>
                     </div>
                     {/* <Badge bg={mapBadge(ev.color)} className="ms-2">Interview</Badge> */}
@@ -315,8 +315,8 @@ export default function Calendar() {
               </Col>
             </Row>
           ))}
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
     </Container>
   );
 }

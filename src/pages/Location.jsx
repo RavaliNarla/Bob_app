@@ -190,12 +190,9 @@ const Location = () => {
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
-    <div className="container my-3 loctfon">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-       
-      </div>
-      <div className="d-flex justify-content-between align-items-center">
-        <InputGroup className="w-50">
+    <div className="register_container px-5 loctfon py-3">
+      <div className="d-flex justify-content-between align-items-center pb-4">
+        {/* <InputGroup className="w-50">
           <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
                   <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
           </InputGroup.Text>
@@ -205,13 +202,14 @@ const Location = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </InputGroup>
+        </InputGroup> */}
+        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Locations</h5>
         <Button variant="orange" onClick={() => openModal()}>
             + Add
           </Button>
 
       </div>
-      <hr />
+      {/* <hr /> */}
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">

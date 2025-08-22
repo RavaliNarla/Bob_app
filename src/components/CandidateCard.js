@@ -597,7 +597,8 @@ const CandidateCard = () => {
     };
 
     return (
-        <Container fluid className="py-5 foncandidate">
+        <Container fluid className="py-4 px-1 foncandidate">
+            <h5 className="pb-3 px-5" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Candidate Shortlist</h5>
             <div className="top-bar">
                 <div className="responsive-breadcrumb-container">
 

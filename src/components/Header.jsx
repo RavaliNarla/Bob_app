@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Navbar, Form, Button, InputGroup } from 'react-bootstrap';
+import { Navbar, Form, Button, InputGroup, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell, faGlobe, faUserCircle, faRightFromBracket, faReceipt, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import logo_Bob from '../assets/logo_Bob.png';
@@ -19,7 +19,6 @@ const Header = () => {
   };
 
   // Close dropdown when clicked outside
-    // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -55,27 +54,42 @@ const Header = () => {
         </div> */}
 
         <div className="d-flex align-items-center">
-          <Button variant="link" className="me-2" style={{ color: '#fff' }}>
+          {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faGlobe} size="lg" />
-          </Button>
+          </Button> */}
           {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
           </Button> */}
-          <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/payments')}>
-            <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
-          </Button>
-          <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/login')}>
-            <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
-          </Button>
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip id="tooltip-payments">Payments</Tooltip>}
+          >
+            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/payments')}>
+              <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip id="tooltip-payments">Logout</Tooltip>}
+          >
+            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/login')}>
+              <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
+            </Button>
+          </OverlayTrigger>
 
           {/* User Profile Dropdown */}
           <div className="position-relative" ref={dropdownRef}>
-            <FontAwesomeIcon
-              icon={faUserCircle}
-              size="2x"
-              style={{ color: '#fff', cursor: "pointer" }}
-              onClick={toggleDropdown}
-            />
+            <OverlayTrigger
+              placement="bottom"
+              overlay={<Tooltip id="tooltip-payments">Profile</Tooltip>}
+            >
+              <FontAwesomeIcon
+                icon={faUserCircle}
+                size="2x"
+                style={{ color: '#fff', cursor: "pointer" }}
+                onClick={toggleDropdown}
+              />
+            </OverlayTrigger>
 
             {showDropdown && (
               <div
