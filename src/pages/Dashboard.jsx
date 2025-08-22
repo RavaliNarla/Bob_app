@@ -55,6 +55,7 @@ export default function Dashboard() {
     // 📌 Fetch stats + progress
     apiService.getDashboardQueries()
       .then(data => {
+       
         setStats({
           new_positions: data?.new_positions || 0,
           total_positions: data?.total_positions || 0,
@@ -76,6 +77,7 @@ export default function Dashboard() {
     // 📌 Fetch metrics (includes upcoming interviews)
     apiService.getDashboardMetrics()
       .then(data => {
+         console.log("Dashboard  Data:", data);
         setDashboardJson({
           offer_status: data?.offer_status || [],
           offers_by_day: data?.offers_by_day || [],
@@ -113,9 +115,9 @@ export default function Dashboard() {
     labels: dashboardJson.offer_status.map(o => o.application_status),
     datasets: [
       {
-        label: "Offer Status",
+        label: "",
         data: dashboardJson.offer_status.map(o => o.count),
-        backgroundColor: ["#00c49f", "#ff4d4f", "#ffbb28"],
+        backgroundColor: ["#ff4d4f","#6610f2", "#ffbb28","#00c49f"],
       },
     ],
   };
@@ -169,7 +171,7 @@ export default function Dashboard() {
             </Col>
             <Col md={4} className="cardspace">
               <Card className="shadow-sm p-3 heightcard">
-                <h6>Offer Status</h6>
+                <h6>Candidate Application Status</h6>
                 <Pie data={pieData} />
               </Card>
             </Col>
@@ -202,7 +204,7 @@ export default function Dashboard() {
 
           {/* Interviews */}
           <Row className="mt-4">
-            <Col md={6} className="cardspace">
+            <Col md={8} className="cardspace">
               <Card className="shadow-sm p-3 bgcolr5 fonapp">
                 <h6>Upcoming Interviews</h6>
                 <ListGroup variant="flush">
@@ -211,7 +213,7 @@ export default function Dashboard() {
                       <ListGroup.Item key={idx}>
                         <strong>{item.position_title}</strong>
                         <br />
-                        {new Date(item.scheduled_at).toLocaleString()} — {item.interviewer}
+                        {new Date(item.scheduled_at).toLocaleString()} | Interviewer : {item.interviewer} | Candidate : {item.candidate_name}
                       </ListGroup.Item>
                     ))
                   ) : (
