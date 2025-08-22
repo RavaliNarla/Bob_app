@@ -177,7 +177,7 @@ const Payments = () => {
 
 							<td>
 								<span className="text-muted" style={{ fontSize: "14px", fontWeight: 500 }}>
-									{row?.positionTitle}
+									{row?.razorpayOrderDetails?.requisitionCode} - {row?.positionTitle}
 								</span>
 							</td>
 
