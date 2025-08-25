@@ -84,7 +84,7 @@ const InterviewModal = ({
       const hour = now.getHours();
       const minute = now.getMinutes();
       formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-      setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
+      setInterviewData({ interview_date: formattedDate, interview_time: "" });
     }
 
     if (formattedDate) {
