@@ -123,7 +123,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
           mandatoryQualificationOptions: (masterDataRes.mandatory_qualification || []).map(q => ({ id: q, name: q })),
           preferredQualificationOptions: (masterDataRes.preferred_qualification || []).map(q => ({ id: q, name: q })),
         });
-        setReqs(requisitionDataRes.data || []);
+        setReqs(requisitionDataRes.data.filter(req => req.requisition_status === "Submitted") || []);
       } catch (err) {
         console.error('Failed to fetch master data:', err);
         setDataError('Failed to fetch master data.');
@@ -619,7 +619,7 @@ const handleInputChange = (e) => {
                   className='fw-300'
                 >
                   <option value="">Select Requisition</option>
-                  {reqs.filter(req => req.requisition_status === "Submitted").map((req, index) => (
+                  {reqs.map((req, index) => (
                     <option key={req.requisition_id} value={index}>
                       {req.requisition_code + " - " + req.requisition_title}
                     </option>
