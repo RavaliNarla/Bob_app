@@ -310,7 +310,7 @@ export default function Calendar() {
                       <div className="fw-bold text-muted">{ev.title}</div>
                       <div className="text-muted small">{ev.person}</div>
                     </div>
-                    <Badge bg={mapBadge(ev.color)} className="ms-2">{ev?.applicationStatus}</Badge>
+                    <Badge bg={ev.applicationStatus.toLowerCase() === 'cancelled' ? 'danger' : 'primary'} className="ms-2">{ev?.applicationStatus}</Badge>
                   </Card.Body>
                 </Card>
               </Col>
