@@ -90,7 +90,17 @@ const Register = () => {
     });
   } catch (err) {
     console.error(err);
-    alert("Registration/Login failed");
+
+    if (err.response) {
+      // Example: API returns 409 Conflict if user exists
+      if (err.response.status === 400) {
+        alert("User already exists. Please login instead.");
+      } else {
+        // Or check message returned by backend
+        const msg = err.response.data?.message || "Registration/Login failed";
+        alert(msg);
+      }
+    }
   }
 };
 // const handleVerifyOtp = async () => {
