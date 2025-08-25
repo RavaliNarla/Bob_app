@@ -3,22 +3,11 @@ import { Modal, Button, Form, Spinner, Alert, Badge } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const API_BASE = "https://bobbe.sentrifugo.com";
-const INTERVIEWER_EMAIL = "harsha.tatapudi@sagarsoft.in"; // <-- fixed for now
+const INTERVIEWER_EMAIL = "harsha.tatapudi@sagarsoft.in"; // fixed for now
 const TZ = "Asia/Kolkata";
 const SLOT_MINUTES = 60; // 1-hour slots
 
-function ceilToInterval(date, minutes) {
-  const d = new Date(date);
-  const ms = minutes * 60 * 1000;
-  const t = d.getTime();
-  const rounded = Math.ceil(t / ms) * ms;
-  return new Date(rounded);
-}
-function addMinutes(date, minutes) {
-  return new Date(date.getTime() + minutes * 60 * 1000);
-}
 function fmtLabelIST(iso) {
-  // Render time label in IST without adding libraries
   try {
     return new Date(iso).toLocaleTimeString("en-IN", {
       hour: "2-digit",
@@ -30,29 +19,24 @@ function fmtLabelIST(iso) {
     return iso;
   }
 }
-function toISO(date) {
-  // safe ISO without milliseconds
-  return new Date(date).toISOString().replace(/\.\d{3}Z$/, "Z");
+
+/** Build YYYY-MM-DD string in IST for a Date/ISO */
+function ymdInIST(dOrIso) {
+  return new Date(dOrIso).toLocaleDateString("en-CA", { timeZone: TZ }); // YYYY-MM-DD
 }
 
-/**
- * Convert continuous free ranges from API into discrete slots (1-hour).
- * Each slot fully fits within a free window.
- */
+// Fallback if backend doesn't return slots (kept for safety)
 function generateSlotsFromFree(freeRanges, slotMinutes = SLOT_MINUTES) {
   const slots = [];
+  const ms = slotMinutes * 60 * 1000;
   for (const r of freeRanges || []) {
-    const start = new Date(r.start);
+    let s = new Date(r.start);
+    s.setSeconds(0, 0);
     const end = new Date(r.end);
-
-    // Align to next interval boundary (00, 60, 120…)
-    let cur = ceilToInterval(start, slotMinutes);
-    while (addMinutes(cur, slotMinutes) <= end) {
-      slots.push({
-        startISO: toISO(cur),
-        endISO: toISO(addMinutes(cur, slotMinutes)),
-      });
-      cur = addMinutes(cur, slotMinutes);
+    while (s.getTime() + ms <= end.getTime()) {
+      const e = new Date(s.getTime() + ms);
+      slots.push({ startISO: s.toISOString(), endISO: e.toISOString() });
+      s = new Date(s.getTime() + ms);
     }
   }
   return slots;
@@ -71,50 +55,51 @@ const InterviewModal = ({
     interview_time: "",
   });
 
-  // New state for available slots
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotsError, setSlotsError] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // prefill on reschedule
+  // Prefill and fetch slots
   useEffect(() => {
     setSlots([]);
     setSlotsError("");
+    setSelectedSlot(null);
+
     let formattedDate = "";
-  let formattedTime = "";
-  console.log("InterviewModal useEffect triggered",show , isReschedule , candidate);
-if (show && isReschedule && candidate) {
-    if (candidate.interview_date) {
-      formattedDate = new Date(candidate.interview_date).toISOString().split("T")[0];
+    let formattedTime = "";
+
+    if (show && isReschedule && candidate) {
+      if (candidate.interview_date) {
+        formattedDate = ymdInIST(candidate.interview_date);
+      }
+      if (candidate.interview_time) {
+        const [hour, minute] = String(candidate.interview_time).split(":");
+        formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+      }
+      setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
+    } else {
+      const now = new Date();
+      formattedDate = ymdInIST(now); // TODAY in IST
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+      formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+      setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
     }
 
-    if (candidate.interview_time) {
-      const [hour, minute] = candidate.interview_time.split(":");
-      formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    if (formattedDate) {
+      fetchSlotsForDate(formattedDate);
     }
-     
-    setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
-  } else {
-    console.log("Setting default date and time for new interview");
-    const now = new Date();
-    formattedDate = now.toISOString().split("T")[0];
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-    formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-    setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
-  }
-    // reset slots when modal opens/closes
-    fetchSlotsForDate(formattedDate);
-    setLoadingSlots(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show, isReschedule, candidate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInterviewData((prev) => ({ ...prev, [name]: value }));
 
-    // If date changes, clear chosen time and (re)fetch slots
     if (name === "interview_date") {
       setInterviewData((prev) => ({ ...prev, interview_time: "" }));
+      setSelectedSlot(null);
       if (value) {
         fetchSlotsForDate(value);
       } else {
@@ -123,34 +108,23 @@ if (show && isReschedule && candidate) {
     }
   };
 
-  // Build day window (IST) → send as ISO to API
-  function buildDayWindowISO(dateStr) {
-    // Interpret dateStr as local IST day [00:00:00, 23:59:59]
-    // Create Date in IST by composing and then adjust to ISO
-    // Simpler practical approach: create at 00:00 and 23:59:59, then toISOString
-    const start = new Date(`${dateStr}T00:00:00`);
-    const end = new Date(`${dateStr}T23:59:59`);
-    return { startISO: toISO(start), endISO: toISO(end) };
-  }
-
-  async function fetchSlotsForDate(dateStr) {
+  async function fetchSlotsForDate(ymd) {
     setLoadingSlots(true);
     setSlotsError("");
     setSlots([]);
 
     try {
-      const { startISO, endISO } = buildDayWindowISO(dateStr);
-      const token = localStorage.getItem("access_token"); // Auth0 access token
+      const token = localStorage.getItem("access_token");
       const url = new URL(`${API_BASE}/api/calendar/free-busy`);
       url.searchParams.set("email", INTERVIEWER_EMAIL);
-      url.searchParams.set("start", startISO);
-      url.searchParams.set("end", endISO);
-      url.searchParams.set("interval", String(SLOT_MINUTES)); // backend iv; we still slice client-side
+      url.searchParams.set("date", ymd); // <-- backend expects "date" now
+      url.searchParams.set("interval", String(SLOT_MINUTES));
       url.searchParams.set("tz", TZ);
 
       const resp = await fetch(url.toString(), {
         headers: {
-          Authorization: `Bearer ${token || ""}`,
+          // Keep this if your route is protected; harmless if not.
+          Authorization: token ? `Bearer ${token}` : undefined,
         },
       });
 
@@ -160,8 +134,12 @@ if (show && isReschedule && candidate) {
       }
 
       const data = await resp.json();
-      // data.free = [{start,end}]; turn into discrete 1-hour slots
-      const nextSlots = generateSlotsFromFree(data.free, SLOT_MINUTES);
+
+      // Prefer backend-provided discrete slots; fall back to free ranges if present
+      const nextSlots =
+        Array.isArray(data.slots) && data.slots.length
+          ? data.slots.map((s) => ({ startISO: s.start, endISO: s.end }))
+          : generateSlotsFromFree(data.free, SLOT_MINUTES);
 
       setSlots(nextSlots);
     } catch (err) {
@@ -172,43 +150,40 @@ if (show && isReschedule && candidate) {
   }
 
   const onSave = () => {
-    handleSave(interviewData);
+    if (!selectedSlot) return;
+    handleSave({
+      ...interviewData,
+      startISO: selectedSlot.startISO || selectedSlot.start,
+      endISO: selectedSlot.endISO || selectedSlot.end,
+      tz: TZ,
+      interviewerEmail: INTERVIEWER_EMAIL,
+    });
   };
 
-  // For highlighting selected slot
   const selectedSlotKey = useMemo(() => {
-    if (!interviewData.interview_date || !interviewData.interview_time) return "";
-    // Compare on HH:MM within IST
-    return `${interviewData.interview_date}T${interviewData.interview_time}`;
-  }, [interviewData.interview_date, interviewData.interview_time]);
+    if (!selectedSlot) return "";
+    return `${selectedSlot.startISO || selectedSlot.start}`;
+  }, [selectedSlot]);
 
   const selectSlot = (slot) => {
-    // Set date if not set (defensive)
-    if (!interviewData.interview_date) {
-      const d = new Date(slot.startISO);
-      const dateIST = new Date(
-        d.toLocaleString("en-US", { timeZone: TZ })
-      );
-      const y = dateIST.getFullYear();
-      const m = String(dateIST.getMonth() + 1).padStart(2, "0");
-      const da = String(dateIST.getDate()).padStart(2, "0");
-      setInterviewData((prev) => ({ ...prev, interview_date: `${y}-${m}-${da}` }));
-    }
-
-    // Extract HH:MM (IST) for interview_time
-    const label = new Date(slot.startISO).toLocaleTimeString("en-IN", {
+    setSelectedSlot(slot);
+    const dateIST = ymdInIST(slot.startISO || slot.start); // YYYY-MM-DD in IST
+    const timeIST = new Date(slot.startISO || slot.start).toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: false,
       timeZone: TZ,
-    }); // e.g., "10:00"
-    setInterviewData((prev) => ({ ...prev, interview_time: label }));
+    });
+    setInterviewData({ interview_date: dateIST, interview_time: timeIST });
   };
+
+  // Use IST "today" to avoid UTC shifting the min
+  const minDateIST = ymdInIST(new Date());
 
   return (
     <Modal show={show} onHide={handleClose} centered className="fontinter">
       <Modal.Header closeButton>
-        <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>
+        <Modal.Title style={{ fontSize: "18px", color: "#FF7043" }}>
           {isReschedule ? "Reschedule Interview" : "Schedule Interview"}
         </Modal.Title>
       </Modal.Header>
@@ -226,7 +201,7 @@ if (show && isReschedule && candidate) {
               name="interview_date"
               value={interviewData.interview_date}
               onChange={handleChange}
-              min={new Date().toISOString().split("T")[0]}
+              min={minDateIST} // <-- IST-safe min
             />
           </Form.Group>
 
@@ -254,27 +229,22 @@ if (show && isReschedule && candidate) {
                 <span>Loading slots…</span>
               </div>
             )}
-            {slotsError && <Alert variant="danger" className="py-2 my-2">{slotsError}</Alert>}
+            {slotsError && (
+              <Alert variant="danger" className="py-2 my-2">
+                {slotsError}
+              </Alert>
+            )}
             {!loadingSlots && !slotsError && interviewData.interview_date && (
               <>
                 {slots.length === 0 ? (
-                  <div className="text-muted">No available 1‑hour slots for this date.</div>
+                  <div className="text-muted">No available 1‑hour slots (9:00–18:00 IST).</div>
                 ) : (
                   <div className="d-flex flex-wrap gap-2">
-                    {slots.map((s, idx) => {
-                      const label = fmtLabelIST(s.startISO);
-                      const key = `${s.startISO}-${s.endISO}`;
+                    {slots.map((s) => {
+                      const label = fmtLabelIST(s.startISO || s.start);
+                      const key = `${s.startISO || s.start}-${s.endISO || s.end}`;
                       const isSelected =
-                        interviewData.interview_time &&
-                        label.startsWith(
-                          new Date(`1970-01-01T${interviewData.interview_time}:00`).toLocaleTimeString("en-IN", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                            timeZone: TZ,
-                          })
-                        );
-
+                        selectedSlotKey && selectedSlotKey === (s.startISO || s.start);
                       return (
                         <Button
                           key={key}
@@ -293,18 +263,25 @@ if (show && isReschedule && candidate) {
           </Form.Group>
 
           <div className="text-muted" style={{ fontSize: 12 }}>
-            Checking {INTERVIEWER_EMAIL} in {TZ}. Slots are 1‑hour and must be fully free.
+            Checking {INTERVIEWER_EMAIL} in {TZ}. Slots are 1‑hour within 9:00–18:00 IST.
           </div>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+        <Button variant="secondary" onClick={handleClose}>
+          Cancel
+        </Button>
         {isReschedule && (
           <Button variant="danger" onClick={handleCancelInterview}>
             Cancel Interview
           </Button>
         )}
-        <Button variant="primary" onClick={onSave} style={{backgroundColor: ' #FF7043 ' , color: '#fff', borderColor: ' #FF7043 ' }}>
+        <Button
+          variant="primary"
+          onClick={onSave}
+          disabled={!selectedSlot}
+          style={{ backgroundColor: "#FF7043", color: "#fff", borderColor: "#FF7043" }}
+        >
           {isReschedule ? "Reschedule Interview" : "Schedule Interview"}
         </Button>
       </Modal.Footer>
