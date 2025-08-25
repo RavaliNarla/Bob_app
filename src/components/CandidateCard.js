@@ -778,7 +778,7 @@ const CandidateCard = () => {
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
                                                                         {/* This is the new "Reschedule" button */}
-                                                                        {candidate.application_status === 'Scheduled' && (
+                                                                        {candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' && (
                                                                             <button
                                                                                 variant="warning"
                                                                                 size="sm"
