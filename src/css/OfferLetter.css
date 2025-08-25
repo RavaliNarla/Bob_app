@@ -110,3 +110,27 @@ body {
     padding: 8px;
   }
 }
+/* Keep your existing styles here ... */
+
+/* --- Add below fixes for PDF --- */
+@media print {
+  body {
+    background: #fff !important;
+  }
+
+  .offer-letter-container {
+    width: 210mm;        /* A4 width */
+    min-height: 297mm;   /* A4 height */
+    max-width: none;     /* remove 700px restriction */
+    max-height: none;    /* remove 80vh restriction */
+    margin: 0 auto;
+    padding: 20mm;       /* padding inside A4 */
+    box-shadow: none;    /* remove shadows */
+    border-radius: 0;    /* avoid clipping in PDF */
+    overflow: visible;   /* show all content */
+  }
+
+  .offer-preview {
+    page-break-inside: avoid; /* prevent splitting important sections */
+  }
+}

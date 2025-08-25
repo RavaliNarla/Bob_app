@@ -17,6 +17,7 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
     grossAnnual: '',
   });
 
+  const [logoLoaded, setLogoLoaded] = useState(false);
   const offerLetterRef = useRef(null);
 
   useEffect(() => {
@@ -44,6 +45,7 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
     }
   }, [candidate, jobPosition, salary, reqId]);
 
+  // Delay autoDownload until DOM + logo are ready
   useEffect(() => {
     if (
       autoDownload &&
@@ -51,11 +53,15 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
       candidate.candidate_id &&
       formData.full_name &&
       formData.location &&
-      formData.grossAnnual
+      formData.grossAnnual &&
+      logoLoaded
     ) {
-      handleDownload();
+      const timer = setTimeout(() => {
+        handleDownload();
+      }, 600); // small delay ensures DOM & images fully rendered
+      return () => clearTimeout(timer);
     }
-  }, [autoDownload, candidate, formData]);
+  }, [autoDownload, candidate, formData, logoLoaded]);
 
   const today = new Date().toLocaleDateString('en-GB', {
     day: '2-digit', month: 'long', year: 'numeric'
@@ -75,8 +81,9 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
       margin: 0.5,
       filename: filename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true }, // reduced scale for stability
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
     try {
@@ -114,7 +121,8 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
           <img
             src={logo}
             alt="Company Logo"
-            style={{ width: '100%', height: '120px' }}
+            onLoad={() => setLogoLoaded(true)} // wait for logo
+            style={{ width: '100%', height: '120px', objectFit: 'contain' }}
           />
         </div>
         <p style={{ textAlign: 'right' }}>Date: {today}</p>
@@ -128,18 +136,22 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
         <p><strong>Subject: Offer of Employment</strong></p>
         <p>Dear <b>{formData.full_name}</b>,</p>
         <p>
-          We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>Bank of Baroda</b>. Your expected date of joining will be <b>{formData.joiningDate}</b>. The terms and conditions of your employment are as follows:
+          We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>Bank of Baroda</b>. 
+          Your expected date of joining will be <b>{formData.joiningDate}</b>. 
+          The terms and conditions of your employment are as follows:
         </p>
 
         <ul>
-          <li><strong>Job Title:</strong> {formData.position_title}</li>
-          <li><strong>Location:</strong> {formData.location}</li>
-          <li><strong>Gross Salary:</strong> {formData.grossAnnual}</li>
-        </ul>
+  <li><strong>Job Title:</strong> {formData.position_title}</li>
+  <li><strong>Location:</strong> {formData.location}</li>
+  <li>
+    <strong>Gross Salary:</strong>{" "}
+    ₹ {Number(formData.grossAnnual || 0).toLocaleString("en-IN")}
+  </li>
+</ul>
 
-        <p>
-          This offer is subject to successful completion of all background checks.
-        </p>
+
+        <p>This offer is subject to successful completion of all background checks.</p>
 
         <p>Sincerely,</p>
         <p>

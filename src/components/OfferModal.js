@@ -53,9 +53,21 @@ const OfferModal = ({
               <Form.Control type="text" value={reqId} readOnly />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>Salary</Form.Label>
-              <Form.Control type="number" value={salary} onChange={(e) => setSalary(e.target.value)} />
-            </Form.Group>
+  <Form.Label>Salary</Form.Label>
+  <Form.Control
+    type="text"
+    value={
+      salary
+        ? `₹ ${Number(salary).toLocaleString("en-IN")}` // Format salary with commas
+        : ""
+    }
+    onChange={(e) => {
+      const numericValue = e.target.value.replace(/[^0-9]/g, ""); // allow only numbers
+      setSalary(numericValue);
+    }}
+  />
+</Form.Group>
+
           </Form>
         </Modal.Body>
         <Modal.Footer>
