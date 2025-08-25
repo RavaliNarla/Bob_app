@@ -120,7 +120,7 @@ const CandidateCard = () => {
                     candidate => candidate.application_status === 'Shortlisted'
                 );
                 const interviewedCandidates = fetchedCandidates.filter(
-                    candidate => candidate.application_status === 'Scheduled'
+                    candidate => candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled'
                 );
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
