@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import "../css/Approvals.css";
 import { apiService } from "../services/apiService";
-import { faPencil, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPencil, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
@@ -352,7 +352,7 @@ setError("No Approvals: Unexpected data format.");
                               <td>{job.position_status}</td>
                               <td>
                                 <FontAwesomeIcon
-                                  icon={faPencil}
+                                  icon={faEye}
                                   className="text-info me-3 cursor-pointer"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
@@ -437,6 +437,7 @@ setError("No Approvals: Unexpected data format.");
             showModal={showModal}
             onClose={() => setShowModal(false)}
             editPositionId={editPositionId}
+            readOnly={true}
           />
         </Modal.Body>
       </Modal>

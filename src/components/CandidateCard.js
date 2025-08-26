@@ -8,6 +8,7 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     Container,
+    Dropdown
 } from "react-bootstrap";
 import Drawer from "./Drawer";
 import InterviewModal from "./InterviewModal";
@@ -25,7 +26,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
 
-const CandidateCard = () => {
+const CandidateCard = ({ setTriggerDownload }) => {
     const [candidates, setCandidates] = useState([]);
     const [interviewed, setInterviewed] = useState([]);
     const [offered, setOffered] = useState([]);
@@ -63,6 +64,21 @@ const CandidateCard = () => {
     const [showRescheduleModal, setShowRescheduleModal] = useState(false);
     const [rescheduleCandidate, setRescheduleCandidate] = useState(null);
     const [apiLoading, setApiLoading] = useState(false);
+    const [reqSearch, setReqSearch] = useState("");
+    const [posSearch, setPosSearch] = useState("");
+
+    // Filtered lists
+    const filteredReqs = jobReqs.filter((req) =>
+        `${req.requisition_code} - ${req.requisition_title}`
+        .toLowerCase()
+        .includes(reqSearch.toLowerCase())
+    );
+
+    const filteredPositions = jobPositions.filter((pos) =>
+        `${pos.position_code} - ${pos.position_title}`
+        .toLowerCase()
+        .includes(posSearch.toLowerCase())
+    );
 
     // const showToast = (message, variant) => {
     //     alert(message);
@@ -660,44 +676,88 @@ const CandidateCard = () => {
 
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
-                    <select
-                        className="select-drop form-select spaceform"
-                        name="jobReqDropdown"
-                        value={selectedRequisitionCode}
-                        onChange={handleJobReqChange}
-                    >
-                        <option value="">Select Requisition Code</option>
-                        {jobReqs.length > 0 ? (
-                            jobReqs.map((req, index) => (
-                                <option key={index} value={req.requisition_code}>
+                    <Dropdown className="w-100 mb-3">
+                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', padding: '0.3rem', marginTop: '15px', overflowX: 'hidden' }}>
+                        {selectedRequisitionCode
+                            ? `${selectedRequisitionCode} - ${
+                                jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
+                                ?.requisition_title || ""
+                            }`
+                            : "Select Requisition Code"}
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className="w-100 p-2">
+                        <Form.Control
+                            type="text"
+                            placeholder="Search requisition"
+                            value={reqSearch}
+                            onChange={(e) => setReqSearch(e.target.value)}
+                            className="mb-2"
+                        />
+                        <div style={{ overflowX: 'auto' }}>
+                            {filteredReqs.length > 0 ? (
+                                filteredReqs.map((req, idx) => (
+                                <Dropdown.Item
+                                    key={idx}
+                                    onClick={() =>
+                                        handleJobReqChange({
+                                            target: { name: "jobReqDropdown", value: req.requisition_code },
+                                        })
+                                    }
+                                    style={{ fontSize: '14px' }}
+                                >
                                     {req.requisition_code} - {req.requisition_title}
-                                </option>
-                            ))
-                        ) : (
-                            <option value="">No job requests available</option>
-                        )}
-                    </select>
-                    {/* </BreadcrumbItem> */}
-                    {selectedRequisitionCode && (
-                        // <BreadcrumbItem>
-                        <select
-                            className="select-drop form-select"
-                            name="jobPositionsDropdown"
-                            value={selectedPositionId}
-                            onChange={handleJobPositionChange}
-                        >
-                            <option value="">Select Position Title</option>
-                            {jobPositions.length > 0 ? (
-                                jobPositions.map((pos, index) => (
-                                    <option key={index} value={pos.position_id}>
-                                        {pos.position_code} - {pos.position_title}
-                                    </option>
+                                </Dropdown.Item>
                                 ))
                             ) : (
-                                <option value="">No positions available</option>
+                                <Dropdown.Item disabled>No job requests available</Dropdown.Item>
                             )}
-                        </select>
-                        // </BreadcrumbItem>
+                        </div>
+                        </Dropdown.Menu>
+                    </Dropdown>
+
+                    {/* Position Dropdown */}
+                    {selectedRequisitionCode && (
+                        <Dropdown className="w-100">
+                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
+                            {selectedPositionId
+                            ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
+                                ?.position_code || ""} - ${
+                                jobPositions.find((p) => p.position_id === selectedPositionId)
+                                    ?.position_title || ""
+                                }`
+                            : "Select Position Title"}
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu className="w-100 p-2">
+                            <Form.Control
+                            type="text"
+                            placeholder="Search position"
+                            value={posSearch}
+                            onChange={(e) => setPosSearch(e.target.value)}
+                            className="mb-2"
+                            />
+                            <div style={{ overflowX: 'auto' }}>
+                                {filteredPositions.length > 0 ? (
+                                filteredPositions.map((pos, idx) => (
+                                    <Dropdown.Item
+                                        key={idx}
+                                        onClick={() =>
+                                            handleJobPositionChange({
+                                            target: { name: "jobPositionsDropdown", value: pos.position_id },
+                                            })
+                                        }
+                                        style={{ fontSize: '14px' }}
+                                    >
+                                    {pos.position_code} - {pos.position_title}
+                                    </Dropdown.Item>
+                                ))
+                                ) : (
+                                <Dropdown.Item disabled>No positions available</Dropdown.Item>
+                                )}
+                            </div>
+                        </Dropdown.Menu>
+                        </Dropdown>
                     )}
                 </div>
                 <div className="d-flex gap-3 w-50 justify-content-end">
@@ -827,25 +887,28 @@ const CandidateCard = () => {
                                                                                 src={profile}
                                                                                 alt={candidate.full_name} />
                                                                         </div>
-                                                                        <div className="w-50 px-1">
+                                                                        <div className="w-50 px-1 fonreg">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        {/* This is the new "Reschedule" button */}
-                                                                        {candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' && (
-                                                                            <button
-                                                                                variant="warning"
-                                                                                size="sm"
-                                                                                className="mt-2 reschedule-btn"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation(); // Prevents the card's onClick from firing
-                                                                                    handleReschedule(candidate);
-                                                                                }}
-                                                                            >
-                                                                                Reschedule
-                                                                            </button>
-                                                                        )}
+                                                                        <div className="d-flex flex-column">
+                                                                            <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
+                                                                            {/* This is the new "Reschedule" button */}
+                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled') && (
+                                                                                <button
+                                                                                    variant="warning"
+                                                                                    size="sm"
+                                                                                    className="mt-2 reschedule-btn"
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation(); // Prevents the card's onClick from firing
+                                                                                        handleReschedule(candidate);
+                                                                                    }}
+                                                                                >
+                                                                                    Reschedule
+                                                                                </button>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             )}

@@ -14,7 +14,7 @@ import {
 } from "react-bootstrap";
 import "../css/JobPosting.css";
 import { apiService } from "../services/apiService";
-import { faPencil, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faE, faEye, faPencil, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
@@ -60,6 +60,7 @@ const JobPosting = () => {
   const [selectedJobIds, setSelectedJobIds] = useState([]);
   
   const [jobBoardError, setJobBoardError] = useState("");
+  const [readOnly, setReadOnly] = useState(false);
 
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
@@ -264,7 +265,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
             className="fonreg dropdowntext"
           >
             <option value="">All Requisitions</option>
-            <option value="Submitted">Submitted</option>
+            <option value="New">New</option>
             <option value="Pending">Pending for Approval</option>
             <option value="Approved">Approved</option>
             <option value="Published">Published</option>
@@ -312,7 +313,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         checked={selectedJobIds.includes(job.requisition_id)}
         onChange={(e) => handleJobSelection(e, job.requisition_id)}
         onClick={(e) => e.stopPropagation()}
-        disabled={job.count === 0 || job.requisition_status !== "Submitted"} 
+        disabled={job.count === 0 || job.requisition_status !== "New"} 
       />
       <div className="fontcard">
         <div className=" text-dark mb-1">
@@ -339,7 +340,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
                     item.charAt(0).toUpperCase() + item.slice(1) // capitalize each
                 )
                 .join(", ") // join back with comma + space
-            : "NA"}
+            : "Not Posted"}
         </div>
       </div>
       {/* Row 2 */}
@@ -379,8 +380,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
                           {/* <th onClick={() => handleSort("endDate")} style={{ cursor: "pointer" }}>
                             Status{getSortIndicator("endDate")}
                           </th> */}
-                          <th>{
-                                job.requisition_status==='Submitted' &&'Actions'}</th>
+                          <th>{'Actions'}</th>
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
@@ -415,8 +415,8 @@ const filteredJobPostings = jobPostings.filter((job) => {
                                   }}
                                 />
                               </td> */}
-                               <td>{
-                                job.requisition_status==='Submitted' && (
+                               <td>
+                                {job.requisition_status==='New' ? (
                                   <FontAwesomeIcon
                                     icon={faPencil}
                                     className="text-info me-3 cursor-pointer"
@@ -425,6 +425,19 @@ const filteredJobPostings = jobPostings.filter((job) => {
                                       setEditRequisitionId(row.requisition_id);
                                       setEditPositionId(row.position_id);
                                       setShowModal(true);
+                                      setReadOnly(false);
+                                    }}
+                                  />
+                                ) : (
+                                  <FontAwesomeIcon
+                                    icon={faEye}
+                                    className="text-info me-3 cursor-pointer"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => {
+                                      setEditRequisitionId(row.requisition_id);
+                                      setEditPositionId(row.position_id);
+                                      setShowModal(true);
+                                      setReadOnly(true);
                                     }}
                                   />
                                 )
@@ -442,7 +455,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         </Accordion>
       )}
 
-      {selectedApproval === "Submitted" && (
+      {selectedApproval === "New" && (
         <>
           <div className="mt-5 mb-4">
             <Row className="align-items-start">
@@ -502,7 +515,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         </>
       )}
 
-      {selectedApproval === "Submitted" && (
+      {selectedApproval === "New" && (
         <div className="d-flex justify-content-end gap-3">
           <Button variant="outline-secondary">Cancel</Button>
           <Button
@@ -525,6 +538,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
             showModal={showModal}
             onClose={() => setShowModal(false)}
             editPositionId={editPositionId}
+            readOnly={readOnly}
             onUpdateSuccess={() => {
               // 🔥 Immediately refresh requisition details after update
               if (editRequisitionId) {

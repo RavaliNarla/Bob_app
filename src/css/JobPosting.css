@@ -23,14 +23,14 @@
 }
 
 /* Reset button styles */
-.dropdown-toggle {
+/* .dropdown-toggle {
   background: none !important;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
   box-shadow: none !important;
   line-height: 1;
-}
+} */
 
 /* Remove focus styles */
 .dropdown-toggle:focus {

@@ -12,7 +12,7 @@ import { apiService } from '../services/apiService';
 import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
 
-const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onUpdateSuccess}) => {
+const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, onUpdateSuccess, readOnly: readOnlyProp }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('direct');
@@ -48,6 +48,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
     min_credit_score: '',
     no_of_vacancies: '',
     selection_procedure: '',
+    max_salary: '',
+    min_salary: '',
     // special_cat_id: '0',
     // reservation_cat_id:'0',
     // position_status:'submitted'
@@ -74,6 +76,16 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
 
   const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState(null);
+  const [readOnly, setReadOnly] = useState(readOnlyProp ?? false);
+
+  useEffect(() => {
+    // If no modal is passed, assume direct navigation → editable
+    if (!showModal) {
+      setReadOnly(false);
+    } else {
+      setReadOnly(readOnlyProp ?? false);
+    }
+  }, [showModal, readOnlyProp]);
 
   useEffect(() => {
     const fetchAllMasterData = async () => {
@@ -95,7 +107,10 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
 
         setMasterData({
           requisitionIdOptions: (requisitionDataRes.data || [])
-          .filter(req => req.requisition_status === "Submitted")   // ✅ filter here
+          .filter(req => {
+            if (readOnly) return true;
+            return req.requisition_status === "New";
+          })
           .map(req => ({
             id: req.requisition_id,
             name: req.requisition_code
@@ -123,7 +138,10 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
           mandatoryQualificationOptions: (masterDataRes.mandatory_qualification || []).map(q => ({ id: q, name: q })),
           preferredQualificationOptions: (masterDataRes.preferred_qualification || []).map(q => ({ id: q, name: q })),
         });
-        setReqs(requisitionDataRes.data.filter(req => req.requisition_status === "Submitted") || []);
+        setReqs(requisitionDataRes.data.filter(req => {
+            if (readOnly) return true;
+            return req.requisition_status === "New";
+          }) || []);
       } catch (err) {
         console.error('Failed to fetch master data:', err);
         setDataError('Failed to fetch master data.');
@@ -179,7 +197,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId,onU
             min_credit_score: selectedPosition.min_credit_score || '',
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
             selection_procedure: selectedPosition.selection_procedure || '',
-
+            min_salary: selectedPosition.grade_id === '0' ? selectedPosition.min_salary : '',
+            max_salary: selectedPosition.grade_id === '0' ? selectedPosition.max_salary : '',
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
@@ -374,6 +393,8 @@ const handleInputChange = (e) => {
   ) {
     newErrors.min_credit_score = 'Min Credit Score must be a number';
   }
+  if (!formData.grade_id === '0' && !formData.min_salary.trim()) newErrors.min_salary = 'Min Salary is required';
+  if (!formData.grade_id === '0' && !formData.max_salary.trim()) newErrors.max_salary = 'Max Salary is required';
 
     return newErrors;
 
@@ -434,7 +455,9 @@ const handleInputChange = (e) => {
       documents_required: item["Documents Required"],
       no_of_vacancies: item["Number of Vacancies"],
       selection_procedure: item["Selection Procedure"],
-     min_credit_score:item["Min Credit Score"]
+     min_credit_score:item["Min Credit Score"],
+     min_salary:item["Min Salary"],
+     max_salary:item["Max Salary"]
     }));
   };
 
@@ -562,6 +585,7 @@ const handleInputChange = (e) => {
                 preferredQualificationOptions={masterData.preferredQualificationOptions}
                 requisitionData={reqs}
                 gradeMeta={masterData.allGrades}
+                readOnly={readOnly}
               />
             )}
           

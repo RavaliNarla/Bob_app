@@ -5,7 +5,7 @@ import { getCandidatesByPosition } from './getJobRequirements';
 // This is the correct way to handle different API services.
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://192.168.20.111:8081/api';
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS || 'http://192.168.20.115:8080/api';
-const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
+const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
 const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
 
 // Create a primary axios instance for most API calls

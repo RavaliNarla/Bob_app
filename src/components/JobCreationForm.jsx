@@ -21,6 +21,7 @@ const JobCreationForm = ({
   gradeMeta = [],
   // New prop to receive full requisition data
   requisitionData = [],
+  readOnly = false
 }) => {
   // Remove modal state, use popover instead
 
@@ -93,6 +94,7 @@ useEffect(() => {
                 className="form-select custom-placeholder"
                 value={formData.requisition_id}
                 onChange={handleInputChange}
+                disabled={readOnly}
               >
                 <option value="">Select Requisition ID</option>
                 {requisitionIdOptions.map((option) => {
@@ -123,6 +125,7 @@ useEffect(() => {
             value={formData.position_title}
             onChange={handleInputChange}
             placeholder="Enter Position Title"
+            disabled={readOnly}
           />
           {errors.position_title && <small className="error">{errors.position_title}</small>}
         </div>
@@ -136,6 +139,7 @@ useEffect(() => {
             className="form-select"
             value={formData.dept_id}
             onChange={handleInputChange}
+            disabled={readOnly}
           >
             <option value="">Select Department</option>
             {departmentOptions.map(option => (
@@ -154,6 +158,7 @@ useEffect(() => {
             className="form-select"
             value={formData.country_id}
             onChange={handleInputChange}
+            disabled={readOnly}
           >
             <option value="">Select Country</option>
             {countryOptions.map(option => (
@@ -172,6 +177,7 @@ useEffect(() => {
             className="form-select"
             value={formData.state_id}
             onChange={handleInputChange}
+            disabled={readOnly}
           >
             <option value="">Select State</option>
             {stateOptions.map(option => (
@@ -184,7 +190,7 @@ useEffect(() => {
         {/* City */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="city" className="form-label">City <span className="required-asterisk">*</span></label>
-          <select id="city" name="city_id" className="form-select" value={formData.city_id} onChange={handleInputChange}>
+          <select id="city" name="city_id" className="form-select" value={formData.city_id} disabled={readOnly} onChange={handleInputChange}>
             <option value="">Select City</option>
             {cityOptions.map(option => (
               <option key={option.id || option.name} value={option.id}>{option.name}</option>
@@ -202,6 +208,7 @@ useEffect(() => {
             className="form-select"
             value={formData.location_id}
             onChange={handleInputChange}
+            disabled={readOnly}
           >
             <option value="">Select Location</option>
             {locationOptions.map(option => (
@@ -214,7 +221,7 @@ useEffect(() => {
         {/* Description */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="description" className="form-label">Description <span className="required-asterisk"></span></label>
-          <textarea className="form-control" id="description" name="description" value={formData.description} onChange={handleInputChange} />
+          <textarea className="form-control" id="description" name="description" disabled={readOnly} value={formData.description} onChange={handleInputChange} />
           {errors.description && <small className="error">{errors.description}</small>}
         </div>
 
@@ -227,6 +234,7 @@ useEffect(() => {
             className="form-control"
             value={formData.roles_responsibilities}
             onChange={handleInputChange}
+            disabled={readOnly}
           />
           {errors.roles_responsibilities && <small className="error">{errors.roles_responsibilities}</small>}
         </div>
@@ -241,6 +249,7 @@ useEffect(() => {
             value={formData.no_of_vacancies}
             onChange={handleInputChange}
             min="1"
+            disabled={readOnly}
           />
           {errors.no_of_vacancies && <small className="error">{errors.no_of_vacancies}</small>}
         </div>
@@ -254,6 +263,7 @@ useEffect(() => {
             className="form-control"
             value={formData.selection_procedure}
             onChange={handleInputChange}
+            disabled={readOnly}
           />
           {errors.selection_procedure && <small className="error">{errors.selection_procedure}</small>}
         </div>
@@ -265,8 +275,7 @@ useEffect(() => {
       Grade/Scale <span className="required-asterisk">*</span>
     </label>
 
-    {formData.grade_id && (
-      <>
+
         <button
           type="button"
           ref={gradeInfoRef}
@@ -321,9 +330,6 @@ useEffect(() => {
             </Popover.Body>
           </Popover>
         </Overlay>
-      </>
-    )}
-  
 
   <select
     id="grade_id"
@@ -331,6 +337,7 @@ useEffect(() => {
     className="form-select"
     value={formData.grade_id}
     onChange={handleInputChange}
+    disabled={readOnly}
   >
     <option value="">Select Grade ID</option>
     {gradeIdOptions.map(option => (
@@ -340,6 +347,39 @@ useEffect(() => {
   {errors.grade_id && <small className="error">{errors.grade_id}</small>}
 </div>
 
+
+    <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+      <label htmlFor="min_salary" className="form-label">
+        Min Salary <span className="required-asterisk">*</span>
+      </label>
+      <input
+        type="text"
+        id="min_salary"
+        name="min_salary"
+        className="form-control"
+        value={formData.min_salary}
+        onChange={handleInputChange}
+        // disabled={readOnly}
+        disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+      />
+      {errors.min_salary && <div className="text-danger">{errors.min_salary}</div>}
+    </div>
+
+    <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+      <label htmlFor="max_salary" className="form-label">
+        Max Salary <span className="required-asterisk">*</span>
+      </label>
+      <input
+        type="text"
+        id="max_salary"
+        name="max_salary"
+        className="form-control"
+        value={formData.max_salary}
+        onChange={handleInputChange}
+        disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+      />
+      {errors.max_salary && <div className="text-danger">{errors.max_salary}</div>}
+    </div>
 
 
 
@@ -352,6 +392,7 @@ useEffect(() => {
             className="form-select"
             value={formData.employment_type}
             onChange={handleInputChange}
+            disabled={readOnly}
           >
             <option value="">Select Employment Type</option>
             {employmentTypeOptions.map(option => (
@@ -364,14 +405,14 @@ useEffect(() => {
         {/* Eligibility Age Min */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="eligibility_age_min" className="form-label">Eligibility Age Min <span className="required-asterisk">*</span></label>
-          <input type="number" className="form-control" id="eligibility_age_min" name="eligibility_age_min" value={formData.eligibility_age_min} onChange={handleInputChange} min="1" />
+          <input type="number" className="form-control" id="eligibility_age_min" disabled={readOnly} name="eligibility_age_min" value={formData.eligibility_age_min} onChange={handleInputChange} min="1" />
           {errors.eligibility_age_min && <small className="error">{errors.eligibility_age_min}</small>}
         </div>
 
         {/* Eligibility Age Max */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="eligibility_age_max" className="form-label">Eligibility Age Max <span className="required-asterisk">*</span></label>
-          <input type="number" className="form-control" id="eligibility_age_max" name="eligibility_age_max" value={formData.eligibility_age_max} onChange={handleInputChange} min="1" />
+          <input type="number" className="form-control" id="eligibility_age_max" disabled={readOnly} name="eligibility_age_max" value={formData.eligibility_age_max} onChange={handleInputChange} min="1" />
           {errors.eligibility_age_max && <small className="error">{errors.eligibility_age_max}</small>}
         </div>
 
@@ -384,6 +425,7 @@ useEffect(() => {
             className="form-control"
             value={formData.mandatory_qualification}
             onChange={handleInputChange}
+            disabled={readOnly}
           />
           {errors.mandatory_qualification && <small className="error">{errors.mandatory_qualification}</small>}
         </div>
@@ -397,6 +439,7 @@ useEffect(() => {
             className="form-control"
             value={formData.preferred_qualification}
             onChange={handleInputChange}
+            disabled={readOnly}
           />
           {errors.preferred_qualification && <small className="error">{errors.preferred_qualification}</small>}
         </div>
@@ -404,44 +447,46 @@ useEffect(() => {
         {/* Mandatory Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience(Years) <span className="required-asterisk">*</span></label>
-          <input type="number" className="form-control" id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" step="any"/>
+          <input type="number" className="form-control" disabled={readOnly} id="mandatory_experience" name="mandatory_experience" value={formData.mandatory_experience} onChange={handleInputChange} min="1" step="any"/>
           {errors.mandatory_experience && <small className="error">{errors.mandatory_experience}</small>}
         </div>
 
         {/* Preferred Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="preferred_experience" className="form-label">Preferred Experience(Years)<span className="required-asterisk"></span></label>
-          <input type="number" className="form-control" id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" step="any"/>
+          <input type="number" className="form-control" disabled={readOnly} id="preferred_experience" name="preferred_experience" value={formData.preferred_experience} onChange={handleInputChange} min="1" step="any"/>
           {errors.preferred_experience && <small className="error">{errors.preferred_experience}</small>}
         </div>
 
         {/* Probation Period */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="probation_period" className="form-label">Probation Period(Months) <span className="required-asterisk"></span></label>
-          <input type="text" className="form-control" id="probation_period" name="probation_period" value={formData.probation_period} onChange={handleInputChange} />
+          <input type="text" className="form-control" disabled={readOnly} id="probation_period" name="probation_period" value={formData.probation_period} onChange={handleInputChange} />
           {errors.probation_period && <small className="error">{errors.probation_period}</small>}
         </div>
 
         {/* Documents Required */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="documents_required" className="form-label">Documents Required <span className="required-asterisk">*</span></label>
-          <textarea className="form-control" id="documents_required" name="documents_required" value={formData.documents_required} onChange={handleInputChange} />
+          <textarea className="form-control" disabled={readOnly} id="documents_required" name="documents_required" value={formData.documents_required} onChange={handleInputChange} />
           {errors.documents_required && <small className="error">{errors.documents_required}</small>}
         </div>
 
         {/* Min Credit Score */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="min_credit_score" className="form-label">Min Credit Score <span className="required-asterisk"></span></label>
-          <input type="text" className="form-control" id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
+          <input type="text" className="form-control" disabled={readOnly} id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}
         </div>
 
-        <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
-          {/* <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button> */}
-          <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-         { formData.position_id ? 'Update' : 'Save' }
-          </Button>
-        </div>
+        {!readOnly && (
+          <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
+            {/* <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button> */}
+            <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
+          { formData.position_id ? 'Update' : 'Save' }
+            </Button>
+          </div>
+        )}
       </form>
     </div>
   );

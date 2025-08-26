@@ -288,7 +288,7 @@ const JobRequisition = () => {
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleDelete(index)}
                   /> */}
-                  {job.requisition_status === 'Submitted' ? (
+                  {job.requisition_status === 'New' ? (
                     <>
                       <FontAwesomeIcon
                         icon={faPencil}

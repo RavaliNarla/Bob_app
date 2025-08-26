@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import OfferLetter from './OfferLetter';
+import CandidateCard from './CandidateCard';
 
 const OfferModal = ({
   show,
@@ -17,6 +18,7 @@ const OfferModal = ({
 }) => {
   const [triggerDownload, setTriggerDownload] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [generatingOffer, setGeneratingOffer] = useState(false);
 
   // const handlePreviewClick = () => {
   //   setShowPreview(true);
@@ -24,13 +26,42 @@ const OfferModal = ({
 
   const handleDownloadClick = () => {
     setShowPreview(true);
-    setTriggerDownload(true);
+    // setTriggerDownload(true);
   };
 
-  const handleDownloadComplete = (data) => {
-    setTriggerDownload(false);
-    setOfferLetterPath(data.public_url); // Store the correct URL in state
+  const handleDownloadComplete = async (data) => {
+    setGeneratingOffer(false);
+    const url = data.public_url;
+    await handleOffer(url);
+    // setTriggerDownload(false);
+    // setOfferLetterPath(data.public_url); // Store the correct URL in state
   };
+
+  const generateOfferAndSend = async () => {
+  try {
+    const generatedUrl = await new Promise((resolve) => {
+      const handleDownloadComplete = (data) => resolve(data.public_url);
+      // Render hidden OfferLetter only for generation
+      const hidden = (
+        <OfferLetter
+          candidate={candidate}
+          jobPosition={position_title}
+          salary={salary}
+          reqId={reqId}
+          autoDownload={true}
+          onDownloadComplete={handleDownloadComplete}
+        />
+      );
+      // Attach temporarily in DOM
+      setGeneratingOffer(true);
+    });
+
+    await handleOffer(generatedUrl); // <-- call CandidateCard handleOffer
+  } catch (err) {
+    console.error("Failed to generate offer:", err);
+  }
+};
+
 
   return (
     <>
@@ -81,19 +112,28 @@ const OfferModal = ({
             Download
           </Button> */}
           <Button variant="primary" onClick={handleDownloadClick} disabled={!salary || !candidate || !position_id} style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" ,color: "#fff"}}>
-            Preview & Download
+            Preview
           </Button>
           <Button
             variant="primary"
-            onClick={() => handleOffer(offerLetterPath)} // Pass the valid state to the handler
-            disabled={!salary || !candidate || !position_id} style={{ backgroundColor: "#FF7043", borderColor: "#FF7043", color: "#fff" }}
+            // onClick={() => handleOffer(offerLetterPath)} // Pass the valid state to the handler
+            // disabled={!salary || !candidate || !position_id}
+            onClick={() => {
+              // generate the letter first
+              setShowPreview(false);
+              setTriggerDownload(true); // REMOVE this line
+              // Instead call a wrapper function
+              generateOfferAndSend();
+            }}
+            disabled={!salary || !candidate || !position_id}
+            style={{ backgroundColor: "#FF7043", borderColor: "#FF7043", color: "#fff" }}
           >
             Send Offer
           </Button>
         </Modal.Footer>
       </Modal>
 
-      {triggerDownload && (
+      {/* {triggerDownload && (
         <OfferLetter
           candidate={candidate}
           jobPosition={position_title}
@@ -102,6 +142,19 @@ const OfferModal = ({
           autoDownload={true}
           onDownloadComplete={handleDownloadComplete}
         />
+      )} */}
+
+      {generatingOffer && (
+        <div style={{ display: "none" }}>
+          <OfferLetter
+            candidate={candidate}
+            jobPosition={position_title}
+            salary={salary}
+            reqId={reqId}
+            autoDownload={true}
+            onDownloadComplete={handleDownloadComplete}
+          />
+        </div>
       )}
 
       <Modal show={showPreview} onHide={() => setShowPreview(false)} centered size="lg">

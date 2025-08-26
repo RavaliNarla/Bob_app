@@ -3,36 +3,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Col, Form, Row, Table } from 'react-bootstrap'
 import apiService from '../services/apiService'
 
-const samplePayments = [
-    {
-      candidateName: "Jane Smith",
-      candidateEmail: "janesmith@gmail.com",
-      applicationDetails: "Java Developer",
-      paymentAmount: "₹500",
-      paymentDate: "Aug 20 2025, 11:30 AM",
-      paymentId: "RZP0002",
-      status: "Paid"
-    },
-		{
-      candidateName: "John Doe",
-      candidateEmail: "johndoe@gmail.com",
-      applicationDetails: "Software Engineer",
-      paymentAmount: "₹1,500",
-      paymentDate: "Aug 21 2025, 09:30 AM",
-      paymentId: "RZP0001",
-      status: "Created"
-    },
-    {
-      candidateName: "Alice Johnson",
-      candidateEmail: "alicejohnson@gmail.com",
-      applicationDetails: "Data Scientist",
-      paymentAmount: "₹750",
-      paymentDate: "Aug 19 2025, 2:30 PM",
-      paymentId: "RZP0003",
-      status: "Failed"
-    },
-]
-
 const Payments = () => {
 	const [paymentData, setPaymentData] = useState([])
 	const [statusFilter, setStatusFilter] = useState("")
@@ -54,6 +24,11 @@ const Payments = () => {
   useEffect(() => {
     fetchPayments();
   }, []);
+
+  useEffect(() => {
+	setCurrentPage(1);
+  }, [statusFilter, dateRange]);
+
 
 	// Sorting in descending order
 	const sortedPayments = [...paymentData].sort(
