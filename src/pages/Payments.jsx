@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Col, Form, Row, Table } from 'react-bootstrap'
+import apiService from '../services/apiService'
 
 const samplePayments = [
     {
@@ -41,8 +42,9 @@ const Payments = () => {
 
 	const fetchPayments = async () => {
     try {
-      const res = await axios.get("https://bobjava.sentrifugo.com:8443/candidate/api/razorpay/all"); // Update URL if needed
-      setPaymentData(res?.data?.data || []);
+      const res = await apiService.getPayment();
+
+	  setPaymentData(res?.data?.data || []);
       console.log("Fetched payments:", res?.data?.data);
     } catch (err) {
       console.error("Failed to fetch payments:", err);

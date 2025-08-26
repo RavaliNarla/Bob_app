@@ -4,6 +4,8 @@ import "../css/Login.css";
 import pana from "../assets/pana.png";
 import boblogo from "../assets/bob-logo.png";
 import { useNavigate } from "react-router-dom";
+import apiService from "../services/apiService";
+
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -13,11 +15,8 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://bobbe.sentrifugo.com/api/auth/candidate-forgot-password", {
-        // const res = await axios.post("http://localhost:5000/api/auth/candidate-forgot-password", {
-
-        email,
-    });
+   
+     const res = await apiService.forgotPassword(email);
       alert("Password reset link sent. Check your email.");
       navigate("/login");
     } catch (error) {

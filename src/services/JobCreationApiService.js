@@ -1,12 +1,10 @@
 
 //import axios from 'axios';
 
-//const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://localhost:8080/api';
 
 export const JobCreationApiService = {
   async getGradeData() {
     try {
-      //const response = await axios.get(`${API_BASE_URL}/grades`);
       //return response.data;
       return [
         { JobGradeID: 'G1', GradeName: 'Grade 5' },
@@ -20,7 +18,6 @@ export const JobCreationApiService = {
   },
    async getBusinessunitData() {
     try {
-      //const response = await axios.get(`${API_BASE_URL}/grades`);
       //return response.data;
       return [
         { BusinessUnitID: 'G1', BusinessUnitName: 'Business 5' },
@@ -36,7 +33,6 @@ export const JobCreationApiService = {
   async getJobTitleData() {
     // Return static JSON for testing
      try {
-      //const response = await axios.get(`${API_BASE_URL}/grades`);
       //return response.data;
      return [
       { JobTitleID: 'JT1', JobTitleName: 'Associate Engineer - II' },

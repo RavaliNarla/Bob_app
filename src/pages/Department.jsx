@@ -21,7 +21,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiService from "../services/apiService";
 
-const API_BASE = "https://bobjava.sentrifugo.com:8443/master/api";
 
 const Department = () => {
   const [showModal, setShowModal] = useState(false);

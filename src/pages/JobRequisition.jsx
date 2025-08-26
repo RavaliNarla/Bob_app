@@ -263,7 +263,7 @@ const JobRequisition = () => {
         <tbody className="table-body-orange">
           {jobsToDisplay.length === 0 ? (
             <tr>
-              <td colSpan="5" className="text-center text-muted">
+              <td colSpan="6" className="text-center text-muted">
                 No Requisitions added yet
               </td>
             </tr>

@@ -7,6 +7,7 @@ import pana from "../assets/pana.png";
 import boblogo from "../assets/bob-logo.png";
 import { useDispatch } from 'react-redux';
 import { setUser, setAuthUser } from '../store/userSlice';
+import apiService from "../services/apiService";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -18,14 +19,11 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://bobbe.sentrifugo.com/api/auth/recruiter-login", {
-        email,
-        password,
-      });
+       const res = await apiService.recruiterLogin(email, password);
 
-      const dbRes = await axios.post("https://bobbe.sentrifugo.com/api/getdetails/users", {
-        email,
-      });
+
+      const dbRes = await apiService.getRecruiterDetails(email);
+
 
       if (res.data.mfa_required) {
         localStorage.setItem("mfa_token", res.data.mfa_token);
@@ -68,6 +66,15 @@ const Login = () => {
       }
     }
   };
+  const handleResendVerification = async () => {
+    try {
+      await apiService.resendVerification(unverifiedUserId);
+      alert("Verification email sent. Please check your inbox.");
+    } catch (err) {
+      alert("Failed to resend verification email.");
+    }
+  };
+
 
   return (
     <div className="login-container">
@@ -104,25 +111,21 @@ const Login = () => {
 
           {unverifiedUserId && (
             <button
+              type="button"
               className="resend-btn my-2 mb-3"
-              style={{ borderRadius: "20px", backgroundColor: "#fff", border: "1px solid #ff6b00", padding: '4px 12px', color: "#ff6b00" }}
-              onClick={async () => {
-                try {
-                  await axios.post(
-                    "https://bobbe.sentrifugo.com/api/auth/recruiter-resend-verification",
-                    {
-                      user_id: unverifiedUserId,
-                    }
-                  );
-                  alert("Verification email sent. Please check your inbox.");
-                } catch (err) {
-                  alert("Failed to resend verification email.");
-                }
+              style={{
+                borderRadius: "20px",
+                backgroundColor: "#fff",
+                border: "1px solid #ff6b00",
+                padding: "4px 12px",
+                color: "#ff6b00",
               }}
+              onClick={handleResendVerification}
             >
               Resend Verification Email
             </button>
           )}
+
 
           {/* <div className="actions">
             <span className="forgot-link">Forgot password?</span>

@@ -19,10 +19,11 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPencil,
-  faTrash,
-  faSearch,
+    faPencil,
+    faTrash,
+    faSearch,
 } from "@fortawesome/free-solid-svg-icons";
+import apiService from "../services/apiService";
 
 const CandidateCard = () => {
     const [candidates, setCandidates] = useState([]);
@@ -112,7 +113,9 @@ const CandidateCard = () => {
             console.log("Fetching candidates for position ID:", selectedPositionId);
 
             if (selectedRequisitionId && selectedPositionId) {
-                const fetchedCandidates = await getCandidatesByPosition(selectedPositionId);
+                // Correctly access the data property of the response object
+                const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
+                const fetchedCandidates = fetchedCandidatesResponse?.data || [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
@@ -138,8 +141,6 @@ const CandidateCard = () => {
 
         fetchCandidates();
     }, [selectedRequisitionId, selectedPositionId]);
-
-
 
     const calculateRatings = (candidates, skills) => {
         return candidates.map(candidate => {
@@ -333,20 +334,22 @@ const CandidateCard = () => {
         setApiLoading(true);
 
         try {
-            const response = await fetch(API_ENDPOINTS.SCHEDULE_INTERVIEW, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(interviewPayload)
-            });
+            const response = await apiService.scheduleInterview(interviewPayload);
+            console.log("Interview scheduled response:", response);
+            // const response = await fetch(API_ENDPOINTS.SCHEDULE_INTERVIEW, {
+            //     method: "PUT",
+            //     headers: {
+            //         "Content-Type": "application/json"
+            //     },
+            //     body: JSON.stringify(interviewPayload)
+            // });
 
-            const text = await response.text();
-            console.log("Response text:", text);
+            // const text = await response.text();
+            // console.log("Response text:", text);
 
-            if (!response.ok) {
-                throw new Error("Failed to schedule interview");
-            }
+            // if (!response.ok) {
+            //     throw new Error("Failed to schedule interview");
+            // }
 
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
@@ -380,41 +383,30 @@ const CandidateCard = () => {
         }
     };
 
-
     const handleOffer = async (offerLetterPath) => {
         if (!offerCandidate || !salary || !offerLetterPath) {
             showToast("Please fill in all fields before sending the offer.");
             return;
         }
+
         setApiLoading(true);
         setLoading(true);
         setError(null);
 
         try {
-            console.log("Offer Letter Path:", offerLetterPath);
-            const response = await fetch(API_ENDPOINTS.OFFER, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    candidate_id: offerCandidate?.candidate_id,
-                    position_id: positionId,
-                    salary: Number(salary),
-                    offer_letter_path: offerLetterPath
-                })
-            });
+            const payload = {
+                candidate_id: offerCandidate?.candidate_id,
+                position_id: positionId,
+                salary: Number(salary),
+                offer_letter_path: offerLetterPath,
+            };
 
-            console.log("Offer Candidate:", offerCandidate);
-            console.log("Salary:", salary);
-            console.log("Offer Letter Path:", offerLetterPath);
+            console.log("Sending offer payload:", payload);
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Error sending offer:", errorData);
-                throw new Error(errorData.message || `Error: ${response.statusText}`);
-            }
+            const response = await apiService.sendOffer(payload);
+            console.log("Offer response:", response);
 
+            // Update local state
             const updatedInterviewed = interviewed.filter(
                 (c) => c.candidate_id !== offerCandidate.candidate_id
             );
@@ -422,27 +414,88 @@ const CandidateCard = () => {
 
             const updatedOffered = [
                 ...offered,
-                { ...offerCandidate, profileStatus: "Selected", rating: offerCandidate.rating || 0 }
+                { ...offerCandidate, profileStatus: "Selected", rating: offerCandidate.rating || 0 },
             ];
             setOffered(updatedOffered);
 
             setShowOfferModal(false);
             setOfferCandidate(null);
-            setSalary('');
-            setReqId('');
-            setPositionId('');
-            setJobPositionTitle('');
+            setSalary("");
+            setReqId("");
+            setPositionId("");
+            setJobPositionTitle("");
 
             showToast("Offer sent successfully!", "success");
-
         } catch (err) {
             console.error("Failed to send offer:", err);
-            setError(err.message || 'Failed to send offer');
+            setError(err.message || "Failed to send offer");
         } finally {
             setApiLoading(false);
             setLoading(false);
         }
     };
+    // const handleOffer = async (offerLetterPath) => {
+    //     if (!offerCandidate || !salary || !offerLetterPath) {
+    //         showToast("Please fill in all fields before sending the offer.");
+    //         return;
+    //     }
+    //     setApiLoading(true);
+    //     setLoading(true);
+    //     setError(null);
+
+    //     try {
+    //         console.log("Offer Letter Path:", offerLetterPath);
+    //         const response = await fetch(API_ENDPOINTS.OFFER, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify({
+    //                 candidate_id: offerCandidate?.candidate_id,
+    //                 position_id: positionId,
+    //                 salary: Number(salary),
+    //                 offer_letter_path: offerLetterPath
+    //             })
+    //         });
+
+    //         console.log("Offer Candidate:", offerCandidate);
+    //         console.log("Salary:", salary);
+    //         console.log("Offer Letter Path:", offerLetterPath);
+
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             console.error("Error sending offer:", errorData);
+    //             throw new Error(errorData.message || `Error: ${response.statusText}`);
+    //         }
+
+    //         const updatedInterviewed = interviewed.filter(
+    //             (c) => c.candidate_id !== offerCandidate.candidate_id
+    //         );
+    //         setInterviewed(updatedInterviewed);
+
+    //         const updatedOffered = [
+    //             ...offered,
+    //             { ...offerCandidate, profileStatus: "Selected", rating: offerCandidate.rating || 0 }
+    //         ];
+    //         setOffered(updatedOffered);
+
+    //         setShowOfferModal(false);
+    //         setOfferCandidate(null);
+    //         setSalary('');
+    //         setReqId('');
+    //         setPositionId('');
+    //         setJobPositionTitle('');
+
+    //         showToast("Offer sent successfully!", "success");
+
+    //     } catch (err) {
+    //         console.error("Failed to send offer:", err);
+    //         setError(err.message || 'Failed to send offer');
+    //     } finally {
+    //         setApiLoading(false);
+    //         setLoading(false);
+    //     }
+    // };
 
     const handleCancelInterview = () => {
         if (interviewCandidate) {
@@ -494,7 +547,7 @@ const CandidateCard = () => {
                 candidate_id: candidate.candidate_id,
                 position_id: selectedPositionId // Assuming selectedPositionId holds the current position ID
             };
-            const response = await axios.post(`https://bobjava.sentrifugo.com:8443/candidate/api/candidates/interviews`, payload);
+            const response = await apiService.createInterview(payload);
             if (response.status === 200) {
                 const interviewDetails = response.data;
                 const scheduleAt = new Date(interviewDetails.schedule_at);
@@ -544,7 +597,8 @@ const CandidateCard = () => {
                 position_id: selectedPositionId,
                 status: 'Rescheduled',
             };
-            const response = await axios.put('https://bobjava.sentrifugo.com:8443/candidate/api/candidates/update-interview-status', payload);
+            const response = await apiService.updateInterviewStatus(payload);
+
             if (response.status === 200) {
                 showToast("Interview rescheduled successfully!", "success");
                 const updatedInterviewed = interviewed.map(c =>
@@ -579,7 +633,8 @@ const CandidateCard = () => {
                 position_id: selectedPositionId,
                 status: 'Cancelled',
             };
-            const response = await axios.put('https://bobjava.sentrifugo.com:8443/candidate/api/candidates/update-interview-status', payload);
+            const response = await apiService.updateInterviewStatus(payload);
+
             if (response.status === 200) {
                 showToast("Interview cancelled successfully!", "success");
                 // Move candidate to a different column or remove from 'Interviewed'
@@ -647,9 +702,9 @@ const CandidateCard = () => {
                 </div>
                 <div className="d-flex gap-3 w-50 justify-content-end">
                     <InputGroup className="search-b">
-                     <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
-      <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
-    </InputGroup.Text>
+                        <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+                            <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+                        </InputGroup.Text>
                         <Form.Control
                             placeholder="Search"
                             aria-label="Search"

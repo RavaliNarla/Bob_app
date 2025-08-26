@@ -3,6 +3,7 @@ import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import "../css/OfferLetter.css";
 import logo from '../assets/pdflogo.png';
+import apiService from '../services/apiService';
 
 const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = false, onDownloadComplete, ...props }) => {
   const [formData, setFormData] = useState({
@@ -94,11 +95,7 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
       fd.append("pdfFile", file, filename);
       fd.append("candidateId", candidateId);
 
-      const { data } = await axios.post(
-        "https://bobbe.sentrifugo.com/api/offer-letters/upload",
-        fd,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+     const data = await apiService.uploadOfferLetter(fd);
 
       console.log("Upload Response Data:", data);
 

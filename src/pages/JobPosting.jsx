@@ -93,7 +93,6 @@ const JobPosting = () => {
     setError(null);
     try {
       const responseData = await apiService.getReqData();
-      //const responseData = await axios.get('http://192.168.20.111:8080/api/getreq');
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {

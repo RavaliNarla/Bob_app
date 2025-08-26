@@ -7,10 +7,9 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import profileIcon from '../assets/profile_icon.png'
+import apiService from "../services/apiService";
 
-/** ================= CONFIG ================= */
-const API_BASE_URL = "https://bobjava.sentrifugo.com:8443/candidate"; // ← match your curl host
-const ENDPOINT = "/api/candidates/interviews/by-date-range";
+
 
 /** ============ Local date helpers (NO UTC drift) ============ */
 const localISO = (d) => {
@@ -30,9 +29,9 @@ const startOfWeek = (d) => {
 };
 
 /** ====== Epoch range in LOCAL time (SECONDS, not millis) ====== */
-const startOfDayLocal = (d) => { const x = new Date(d); x.setHours(0,0,0,0); return x; };
-const endOfDayLocal   = (d) => { const x = new Date(d); x.setHours(23,59,59,999); return x; };
-const toEpochSeconds  = (dateObj) => Math.floor(dateObj.getTime() / 1000);
+const startOfDayLocal = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+const endOfDayLocal = (d) => { const x = new Date(d); x.setHours(23, 59, 59, 999); return x; };
+const toEpochSeconds = (dateObj) => Math.floor(dateObj.getTime() / 1000);
 
 /** ============ Display helpers ============ */
 const fmtMonth = (d) => d.toLocaleDateString(undefined, { month: "long", year: "numeric" });
@@ -40,7 +39,7 @@ const to12h = (hhmm) => {
   const [h, m] = hhmm.split(":").map(Number);
   const suffix = h >= 12 ? "PM" : "AM";
   const hr = ((h + 11) % 12) + 1;
-  return `${String(hr).padStart(2,"0")}:${String(m).padStart(2,"0")} ${suffix}`;
+  return `${String(hr).padStart(2, "0")}:${String(m).padStart(2, "0")} ${suffix}`;
 };
 
 /** ============ Map API rows -> UI rows ============ */
@@ -68,42 +67,36 @@ function mapApiToEvents(rows) {
       time: `${hh}:${mm}`,
       title: row.interviewTitle || "Interview",
       person: `${row.candidateName ?? ""} — ${row.candidateSkill ?? ""}`.replace(/\s—\s$/, ""),
-      avatar: {profileIcon},
+      avatar: { profileIcon },
       color: "primary",
       applicationStatus: row?.applicationStatus
     };
   }).filter(Boolean);
 }
 
-/** ============ Axios GET (range) — sends epoch SECONDS ============ */
-/** ============ Axios GET (range) — epoch SECONDS, 200/204 safe ============ */
+
+
+/** ============ Fetch interviews using apiService ============ */
 async function httpGetRange(startDateObj, endDateObj) {
   const toEpochMillis = (d) => d.getTime();
 
   // full local-day window
   const startMillis = toEpochMillis(startOfDayLocal(startDateObj));
-  const endMillis   = toEpochMillis(endOfDayLocal(endDateObj));
+  const endMillis = toEpochMillis(endOfDayLocal(endDateObj));
 
   // auto-fix reversed inputs
   const from = Math.min(startMillis, endMillis);
-  const to   = Math.max(startMillis, endMillis);
-
-  const url = `${API_BASE_URL}${ENDPOINT}`;
+  const to = Math.max(startMillis, endMillis);
 
   try {
-    const res = await axios.get(url, {
-      params: { startTimestamp: from, endTimestamp: to },
-      headers: { Accept: "application/json" },
-      validateStatus: (s) => s === 200 || s === 204,
-    });
-
-    if (res.status === 204) return [];
-    return Array.isArray(res.data) ? res.data : [];
+    const res = await apiService.getInterviewsByDateRange(from, to);
+    return Array.isArray(res?.data) ? res.data : [];
   } catch (err) {
     const msg = err?.response?.data?.message || err.message || "Request failed";
     throw new Error(msg);
   }
 }
+
 
 
 /** ===================== Component ===================== */
@@ -161,7 +154,7 @@ export default function Calendar() {
     try {
       setLoading(true); setApiError("");
       const start = new Date(selectedDate);
-      const end   = addDays(start, 6);
+      const end = addDays(start, 6);
       const data = await httpGetRange(start, end);
       setEvents(mapApiToEvents(data));
     } catch (e) {
