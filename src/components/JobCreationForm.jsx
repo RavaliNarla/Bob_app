@@ -360,9 +360,10 @@ useEffect(() => {
         value={formData.min_salary}
         onChange={handleInputChange}
         // disabled={readOnly}
-        disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+        // disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+        disabled={!(formData.grade_id === '0' && !readOnly)}
       />
-      {errors.min_salary && <div className="text-danger">{errors.min_salary}</div>}
+      {errors.min_salary && <div className="error">{errors.min_salary}</div>}
     </div>
 
     <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
@@ -376,9 +377,10 @@ useEffect(() => {
         className="form-control"
         value={formData.max_salary}
         onChange={handleInputChange}
-        disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+        // disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
+        disabled={!(formData.grade_id === '0' && !readOnly)}
       />
-      {errors.max_salary && <div className="text-danger">{errors.max_salary}</div>}
+      {errors.max_salary && <div className="error">{errors.max_salary}</div>}
     </div>
 
 

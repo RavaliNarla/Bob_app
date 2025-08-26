@@ -184,7 +184,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
             location_id: selectedPosition.location_id || '',
             description: selectedPosition.description || '',
             roles_responsibilities: selectedPosition.roles_responsibilities || '',
-            grade_id: selectedPosition.grade_id || '',
+            grade_id: selectedPosition.grade_id.toLocaleString() || '',
             employment_type: selectedPosition.employment_type || '',
             eligibility_age_min: selectedPosition.eligibility_age_min || '',
             eligibility_age_max: selectedPosition.eligibility_age_max || '',
@@ -197,8 +197,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
             min_credit_score: selectedPosition.min_credit_score || '',
             no_of_vacancies: selectedPosition.no_of_vacancies || '',
             selection_procedure: selectedPosition.selection_procedure || '',
-            min_salary: selectedPosition.grade_id === '0' ? selectedPosition.min_salary : '',
-            max_salary: selectedPosition.grade_id === '0' ? selectedPosition.max_salary : '',
+            min_salary: selectedPosition.min_salary || '',
+            max_salary: selectedPosition.max_salary || '',
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
@@ -393,11 +393,24 @@ const handleInputChange = (e) => {
   ) {
     newErrors.min_credit_score = 'Min Credit Score must be a number';
   }
-  if (!formData.grade_id === '0' && !formData.min_salary.trim()) newErrors.min_salary = 'Min Salary is required';
-  if (!formData.grade_id === '0' && !formData.max_salary.trim()) newErrors.max_salary = 'Max Salary is required';
+  if (formData.grade_id === '0') {
+    if (!formData.min_salary) {
+      newErrors.min_salary = "Min Salary is required when Grade is Others";
+    }
+    if (!formData.max_salary) {
+      newErrors.max_salary = "Max Salary is required when Grade is Others";
+    }
 
-    return newErrors;
+    if (formData.min_salary && formData.max_salary) {
+      const min = parseFloat(formData.min_salary);
+      const max = parseFloat(formData.max_salary);
 
+      if (!isNaN(min) && !isNaN(max) && max <= min) {
+        newErrors.max_salary = "Max Salary must be greater than Min Salary";
+      }
+    }
+  }
+  return newErrors;
   };
 
   const handleFileChange = (e) => {
