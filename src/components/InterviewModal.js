@@ -5,8 +5,8 @@ import "../services/apiService";
 import apiService from "../services/apiService";
 
 const API_BASE = "https://bobbe.sentrifugo.com";
-// const INTERVIEWERS_API = `${API_BASE}/api/getdetails/users/all`; // filter role='Interviewer'
-const INTERVIEWERS_API = `http://localhost:5000/api/getdetails/users/all`; // filter role='Interviewer'
+ const INTERVIEWERS_API = `${API_BASE}/api/getdetails/users/all`; // filter role='Interviewer'
+//const INTERVIEWERS_API = `http://localhost:5000/api/getdetails/users/all`; // filter role='Interviewer'
 
 const TZ = "Asia/Kolkata";
 const SLOT_MINUTES = 30; // 1-hour slots
