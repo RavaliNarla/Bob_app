@@ -263,3 +263,8 @@
 
 	font-family: 'Poppins', sans-serif !important;
 }
+.orangeadd{
+    color: rgb(255, 112, 67) !important;
+    font-weight: 500;
+    cursor: pointer;
+}

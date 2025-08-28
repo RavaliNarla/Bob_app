@@ -20,11 +20,14 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faPlus,
     faPencil,
     faTrash,
     faSearch,
+
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
+import CandidatePortalModal from "./CandidatePortal/CandidatePortalModal";
 
 const CandidateCard = ({ setTriggerDownload }) => {
     const [candidates, setCandidates] = useState([]);
@@ -70,19 +73,35 @@ const CandidateCard = ({ setTriggerDownload }) => {
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
         `${req.requisition_code} - ${req.requisition_title}`
-        .toLowerCase()
-        .includes(reqSearch.toLowerCase())
+            .toLowerCase()
+            .includes(reqSearch.toLowerCase())
     );
 
     const filteredPositions = jobPositions.filter((pos) =>
         `${pos.position_code} - ${pos.position_title}`
-        .toLowerCase()
-        .includes(posSearch.toLowerCase())
+            .toLowerCase()
+            .includes(posSearch.toLowerCase())
     );
 
     // const showToast = (message, variant) => {
     //     alert(message);
     // };
+    const [showCandidatePortal, setShowCandidatePortal] = useState(false);
+    const toggleCandidatePortal = () => {
+        setShowCandidatePortal(!showCandidatePortal);
+    };
+
+    const [shouldRefresh, setShouldRefresh] = useState(0);
+  
+    const handleCloseModal = () => {
+        console.log("this called")
+        setShouldRefresh(prev => prev + 1);
+        setShowCandidatePortal(false);    // Close modal
+                 // Trigger data refresh
+    };
+
+
+
     const showToast = (message, variant = "info") => {
         switch (variant) {
             case "success":
@@ -106,6 +125,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             const data = response?.data || [];
             // console.log(data.filter(req => req.requisition_status === 'Approved'))
             setJobReqs(data.filter(req => req.requisition_status === 'Approved'));
+
         };
         fetchJobData();
     }, []);
@@ -157,7 +177,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         };
 
         fetchCandidates();
-    }, [selectedRequisitionId, selectedPositionId]);
+    }, [selectedRequisitionId, selectedPositionId, shouldRefresh]);
 
     const calculateRatings = (candidates, skills) => {
         return candidates.map(candidate => {
@@ -223,6 +243,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
         // if (selectedPos) {
         //     setJobPositionTitle(selectedPos.position_title);
         // }
+
+
         const positionId = event.target.value;
         setSelectedPositionId(positionId);
 
@@ -360,8 +382,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
             // if (!response.ok) {
             //     throw new Error("Failed to schedule interview");
-            // }
-
+            // } 
+                      
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
@@ -673,85 +695,85 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {/* <BreadcrumbItem> */}
                     <Dropdown className="w-100 mb-3">
                         <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', padding: '0.3rem', marginTop: '15px', overflowX: 'hidden' }}>
-                        {selectedRequisitionCode
-                            ? `${selectedRequisitionCode} - ${
-                                jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
-                                ?.requisition_title || ""
-                            }`
-                            : "Select Requisition Code"}
+                            {selectedRequisitionCode
+                                ? `${selectedRequisitionCode} - ${
+                                    jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
+                                    ?.requisition_title || ""
+                                }`
+                                : "Select Requisition Code"}
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu className="w-100 p-2">
-                        <Form.Control
-                            type="text"
-                            placeholder="Search requisition"
-                            value={reqSearch}
-                            onChange={(e) => setReqSearch(e.target.value)}
-                            className="mb-2"
-                        />
-                        <div style={{ overflowX: 'auto' }}>
-                            {filteredReqs.length > 0 ? (
-                                filteredReqs.map((req, idx) => (
-                                <Dropdown.Item
-                                    key={idx}
-                                    onClick={() =>
-                                        handleJobReqChange({
-                                            target: { name: "jobReqDropdown", value: req.requisition_code },
-                                        })
-                                    }
-                                    style={{ fontSize: '14px' }}
-                                >
-                                    {req.requisition_code} - {req.requisition_title}
-                                </Dropdown.Item>
-                                ))
-                            ) : (
-                                <Dropdown.Item disabled>No job requests available</Dropdown.Item>
-                            )}
-                        </div>
+                            <Form.Control
+                                type="text"
+                                placeholder="Search requisition"
+                                value={reqSearch}
+                                onChange={(e) => setReqSearch(e.target.value)}
+                                className="mb-2"
+                            />
+                            <div style={{ overflowX: 'auto' }}>
+                                {filteredReqs.length > 0 ? (
+                                    filteredReqs.map((req, idx) => (
+                                        <Dropdown.Item
+                                            key={idx}
+                                            onClick={() =>
+                                                handleJobReqChange({
+                                                    target: { name: "jobReqDropdown", value: req.requisition_code },
+                                                })
+                                            }
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            {req.requisition_code} - {req.requisition_title}
+                                        </Dropdown.Item>
+                                    ))
+                                ) : (
+                                    <Dropdown.Item disabled>No job requests available</Dropdown.Item>
+                                )}
+                            </div>
                         </Dropdown.Menu>
                     </Dropdown>
 
                     {/* Position Dropdown */}
                     {selectedRequisitionCode && (
                         <Dropdown className="w-100">
-                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
-                            {selectedPositionId
-                            ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
-                                ?.position_code || ""} - ${
-                                jobPositions.find((p) => p.position_id === selectedPositionId)
-                                    ?.position_title || ""
-                                }`
-                            : "Select Position Title"}
-                        </Dropdown.Toggle>
+                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
+                                {selectedPositionId
+                                    ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
+                                        ?.position_code || ""} - ${
+                                            jobPositions.find((p) => p.position_id === selectedPositionId)
+                                        ?.position_title || ""
+                                    }`
+                                    : "Select Position Title"}
+                            </Dropdown.Toggle>
 
-                        <Dropdown.Menu className="w-100 p-2">
-                            <Form.Control
-                            type="text"
-                            placeholder="Search position"
-                            value={posSearch}
-                            onChange={(e) => setPosSearch(e.target.value)}
-                            className="mb-2"
-                            />
-                            <div style={{ overflowX: 'auto' }}>
-                                {filteredPositions.length > 0 ? (
-                                filteredPositions.map((pos, idx) => (
-                                    <Dropdown.Item
-                                        key={idx}
-                                        onClick={() =>
-                                            handleJobPositionChange({
-                                            target: { name: "jobPositionsDropdown", value: pos.position_id },
-                                            })
-                                        }
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                    {pos.position_code} - {pos.position_title}
-                                    </Dropdown.Item>
-                                ))
-                                ) : (
-                                <Dropdown.Item disabled>No positions available</Dropdown.Item>
-                                )}
-                            </div>
-                        </Dropdown.Menu>
+                            <Dropdown.Menu className="w-100 p-2">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search position"
+                                    value={posSearch}
+                                    onChange={(e) => setPosSearch(e.target.value)}
+                                    className="mb-2"
+                                />
+                                <div style={{ overflowX: 'auto' }}>
+                                    {filteredPositions.length > 0 ? (
+                                        filteredPositions.map((pos, idx) => (
+                                            <Dropdown.Item
+                                                key={idx}
+                                                onClick={() =>
+                                                    handleJobPositionChange({
+                                                        target: { name: "jobPositionsDropdown", value: pos.position_id },
+                                                    })
+                                                }
+                                                style={{ fontSize: '14px' }}
+                                            >
+                                                {pos.position_code} - {pos.position_title}
+                                            </Dropdown.Item>
+                                        ))
+                                    ) : (
+                                        <Dropdown.Item disabled>No positions available</Dropdown.Item>
+                                    )}
+                                </div>
+                            </Dropdown.Menu>
                         </Dropdown>
                     )}
                 </div>
@@ -780,11 +802,24 @@ const CandidateCard = ({ setTriggerDownload }) => {
                             <div className="card-body" style={{ maxHeight: 'auto', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
-                                        <h5 className="color_grey card-title">Candidates</h5>
-                                        {isDescending.candidates ?
-                                            <i className="bi bi-sort-down sort_icon" onClick={toggleCandidateSortOrder}></i> :
-                                            <i className="bi bi-sort-up sort_icon" onClick={toggleCandidateSortOrder}></i>
-                                        }
+                                        <div className="d-flex align-items-baseline">
+                                            <h5 className="color_grey card-title">Candidates</h5>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2">
+                                            {selectedPositionId && (
+                                                <span
+                                                    className="text-info cursor-pointer d-flex align-items-center gap-1 orangeadd"
+                                                    onClick={toggleCandidatePortal}
+                                                >
+                                                    Add
+                                                    <FontAwesomeIcon icon={faPlus} />
+                                                </span>
+                                            )}
+                                            {isDescending.candidates ?
+                                                <i className="bi bi-sort-down sort_icon" onClick={toggleCandidateSortOrder}></i> :
+                                                <i className="bi bi-sort-up sort_icon" onClick={toggleCandidateSortOrder}></i>
+                                            }
+                                        </div>
                                     </div>
                                     <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
@@ -826,6 +861,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                             <h6 className="rating_text px-1">{candidate.rating}</h6>
                                                                             <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
                                                                         </div> */}
+
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -1035,8 +1071,24 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 error={error}
                 offerLetterPath={offerLetterPath} // 👈 Pass the state down
                 setOfferLetterPath={setOfferLetterPath}
-                setApiLoading={setApiLoading}
+                                setApiLoading={setApiLoading}
+
             />
+            {/* <CandidatePortalModal
+                show={showCandidatePortal}
+                handleClose={toggleCandidatePortal}
+                selectedPositionId={selectedPositionId}
+            /> */}
+
+            {showCandidatePortal && (
+                <CandidatePortalModal
+                show={showCandidatePortal}
+                handleClose={handleCloseModal}
+                selectedPositionId={selectedPositionId}
+                onSubmitSuccess={handleCloseModal}
+                />
+            )}
+
             {apiLoading && (
                 <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>
                     <div className="spinner-border" role="status">
