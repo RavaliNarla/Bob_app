@@ -14,7 +14,8 @@ const OfferModal = ({
   position_id,
   handleOffer,
   offerLetterPath,
-  setOfferLetterPath
+  setOfferLetterPath,
+  setApiLoading
 }) => {
   const [triggerDownload, setTriggerDownload] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -41,6 +42,7 @@ const OfferModal = ({
   try {
     const generatedUrl = await new Promise((resolve) => {
       const handleDownloadComplete = (data) => resolve(data.public_url);
+      // console.log("Generating offer letter...",handleDownloadComplete);
       // Render hidden OfferLetter only for generation
       const hidden = (
         <OfferLetter

@@ -104,7 +104,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
         const fetchJobData = async () => {
             const response = await getJobRequirements();
             const data = response?.data || [];
-            setJobReqs(data);
+            // console.log(data.filter(req => req.requisition_status === 'Approved'))
+            setJobReqs(data.filter(req => req.requisition_status === 'Approved'));
         };
         fetchJobData();
     }, []);
@@ -1040,6 +1041,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 error={error}
                 offerLetterPath={offerLetterPath} // 👈 Pass the state down
                 setOfferLetterPath={setOfferLetterPath}
+                setApiLoading={setApiLoading}
             />
             {apiLoading && (
                 <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>

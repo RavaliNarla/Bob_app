@@ -240,6 +240,13 @@ const handleInputChange = (e) => {
     ...prev,
     [name]: value ? "" : prev[name]
   }));
+  if (name === "grade_id" && value !== '0') {
+     setFormData((prev) => ({
+        ...prev,
+        min_salary: "",
+        max_salary: ""
+      }));
+  }
   if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 

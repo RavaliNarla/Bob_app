@@ -97,14 +97,14 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
 
      const data = await apiService.uploadOfferLetter(fd);
 
-      console.log("Upload Response Data:", data);
+      // console.log("Upload Response Data:", data?.data);
 
-      if (data?.public_url) {
-        window.open(data.public_url, "_blank", "noopener,noreferrer");
-        onDownloadComplete({ public_url: data.public_url });
+      if (data?.data?.public_url) { 
+        onDownloadComplete({ public_url: data.data.public_url });
       } else {
         throw new Error("Public URL not found in upload response.");
       }
+      // window.open(data.data.public_url, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Upload/Download error:", error);
       alert("Failed to upload and open PDF.");
