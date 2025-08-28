@@ -174,20 +174,20 @@ const JobPosting = () => {
   const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
 
   // Validation: At least 1 posting must be selected
-  if (selectedJobBoards.length < 1) {
-    setJobBoardError("Please select at least 1 posting.");
-    return;
-  } else {
-    setJobBoardError("");
-  }
+  // if (selectedJobBoards.length < 1) {
+  //   setJobBoardError("Please select at least 1 posting.");
+  //   return;
+  // } else {
+  //   setJobBoardError("");
+  // }
 
   if (approvalStatus === "") {
-    toast.info("Please select an approval status.");
+    toast.error("Please select an approval type.");
     return;
   }
 
   if (selectedJobIds.length === 0) {
-    toast.info("Please select at least one requisition to save.");
+    toast.error("Please select at least one requisition to save.");
     return;
   }
 
@@ -455,7 +455,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         </Accordion>
       )}
 
-      {selectedApproval === "New" && (
+      {(selectedApproval === "New" || selectedApproval === "") && (
         <>
           <div className="mt-5 mb-4">
             <Row className="align-items-start">
@@ -515,7 +515,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
         </>
       )}
 
-      {selectedApproval === "New" && (
+      {(selectedApproval === "New" || selectedApproval === "") && (
         <div className="d-flex justify-content-end gap-3">
           <Button variant="outline-secondary">Cancel</Button>
           <Button

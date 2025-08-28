@@ -69,7 +69,7 @@ const OfferModal = ({
     <>
       <Modal show={show} onHide={handleClose} centered size="lg" className="fontinter">
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>Offer Details</Modal.Title>
+          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}></Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>

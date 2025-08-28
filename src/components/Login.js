@@ -1,4 +1,4 @@
-// src/pages/Login.jsx
+
 import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -8,11 +8,15 @@ import boblogo from "../assets/bob-logo.png";
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setAuthUser } from '../store/userSlice';
 import apiService from "../services/apiService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+
 
 const Login = () => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [unverifiedUserId, setUnverifiedUserId] = useState(null);
   const navigate = useNavigate();
   const token = useSelector((state) => state.user.auth?.access_token);
@@ -88,14 +92,29 @@ const Login = () => {
           />
 
           <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            required
-            placeholder="Enter password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
+          <div className="" style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              required
+              placeholder="Enter password"
+              onChange={(e) => setPassword(e.target.value)}
+              style={{ paddingRight: '40px' }}
+            />
+            <FontAwesomeIcon
+              icon={showPassword ? faEye : faEyeSlash}
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '15px',
+                top: '35%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#666',
+              }}
+              title={showPassword ? 'Hide password' : 'Show password'}
+            />
+          </div>
           {unverifiedUserId && (
             <button
               type="button"

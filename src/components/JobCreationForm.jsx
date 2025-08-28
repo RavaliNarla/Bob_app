@@ -357,11 +357,21 @@ useEffect(() => {
         id="min_salary"
         name="min_salary"
         className="form-control"
-        value={formData.min_salary}
-        onChange={handleInputChange}
-        // disabled={readOnly}
-        // disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
-        disabled={!(formData.grade_id === '0' && !readOnly)}
+        value={
+          formData.min_salary
+            ? Number(formData.min_salary).toLocaleString("en-IN") // 👈 Indian format commas
+            : ""
+        }
+        onChange={(e) => {
+          // remove commas before storing in state
+          const rawValue = e.target.value.replace(/,/g, "");
+          if (!isNaN(rawValue)) {
+            handleInputChange({
+              target: { name: "min_salary", value: rawValue },
+            });
+          }
+        }}
+        disabled={!(formData.grade_id === "0" && !readOnly)}
       />
       {errors.min_salary && <div className="error">{errors.min_salary}</div>}
     </div>
@@ -375,10 +385,21 @@ useEffect(() => {
         id="max_salary"
         name="max_salary"
         className="form-control"
-        value={formData.max_salary}
-        onChange={handleInputChange}
-        // disabled={formData.grade_id === '0' ? readOnly : true} // Disable if grade is not 'Others'
-        disabled={!(formData.grade_id === '0' && !readOnly)}
+        value={
+          formData.max_salary
+            ? Number(formData.max_salary).toLocaleString("en-IN") // 👈 comma formatting
+            : ""
+        }
+        onChange={(e) => {
+          // remove commas before storing
+          const rawValue = e.target.value.replace(/,/g, "");
+          if (!isNaN(rawValue)) {
+            handleInputChange({
+              target: { name: "max_salary", value: rawValue },
+            });
+          }
+        }}
+        disabled={!(formData.grade_id === "0" && !readOnly)}
       />
       {errors.max_salary && <div className="error">{errors.max_salary}</div>}
     </div>

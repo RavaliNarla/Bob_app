@@ -26,6 +26,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
 
+
 const CandidateCard = ({ setTriggerDownload }) => {
     const [candidates, setCandidates] = useState([]);
     const [interviewed, setInterviewed] = useState([]);
@@ -47,7 +48,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [selectedPositionId, setSelectedPositionId] = useState("");
     const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
     const [jobPositionTitle, setJobPositionTitle] = useState("");
-    const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
+   const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -66,7 +67,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [apiLoading, setApiLoading] = useState(false);
     const [reqSearch, setReqSearch] = useState("");
     const [posSearch, setPosSearch] = useState("");
-
+   
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
         `${req.requisition_code} - ${req.requisition_title}`
@@ -80,6 +81,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
         .includes(posSearch.toLowerCase())
     );
 
+    // const requisitionCode = useSelector((state) => state.job.requisitionCode);
+    // const positionId = useSelector((state) => state.job.positionId);
+    // const dispatch = useDispatch();
     // const showToast = (message, variant) => {
     //     alert(message);
     // };
@@ -132,7 +136,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
             if (selectedRequisitionId && selectedPositionId) {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
-                const fetchedCandidates = fetchedCandidatesResponse?.data || [];
+                const fetchedCandidates = fetchedCandidatesResponse?.data|| [];//
+                //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
+               // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
@@ -140,7 +146,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     candidate => candidate.application_status === 'Shortlisted'
                 );
                 const interviewedCandidates = fetchedCandidates.filter(
-                    candidate => candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled'
+                    candidate => candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' || candidate.application_status === 'Cancelled'
                 );
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
@@ -204,7 +210,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const ratedInterviewed = calculateRatings(interviewed, jdSkillsLowerCase);
 
     const handleJobReqChange = (event) => {
-        const newRequisitionCode = event.target.value;
+       const newRequisitionCode = event.target.value;
         const selectedReq = jobReqs.find(req => req.requisition_code === newRequisitionCode);
         setSelectedRequisitionCode(newRequisitionCode);
         setSelectedRequisitionId(selectedReq ? selectedReq.requisition_id : "");
@@ -216,7 +222,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setOffered([]);
     };
     const handleJobPositionChange = (event) => {
-        // const positionId = event.target.value;
+// const positionId = event.target.value;
         // setSelectedPositionId(positionId);
 
         // const selectedPos = jobPositions.find(pos => pos.position_id === positionId);
@@ -230,6 +236,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         if (found) {
             setSelectedPositionTitle(found.position_title);
         }
+
     };
 
     const toggleCandidateSortOrder = () => {
@@ -890,7 +897,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                         <div className="d-flex flex-column">
                                                                             <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
                                                                             {/* This is the new "Reschedule" button */}
-                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled') && (
+                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' || candidate.application_status === 'Cancelled') && (
                                                                                 <button
                                                                                     variant="warning"
                                                                                     size="sm"

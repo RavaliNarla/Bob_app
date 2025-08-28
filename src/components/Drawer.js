@@ -26,7 +26,7 @@ import {
 import profile from '../assets/profile_icon.png';
 
 function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandidates }) {
-  console.log('candidate', candidate);
+  console.log('candidate33333333333', candidate);
   const handleCloseIconClick = () => {
     toggleDrawer();
   };
@@ -301,6 +301,9 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                   <Nav.Item>
                     <Nav.Link eventKey="resume">Resume</Nav.Link>
                   </Nav.Item>
+                  <Nav.Item>
+                    <Nav.Link eventKey="offerLetter">Offer Letter</Nav.Link>
+                  </Nav.Item>
                   {/* <Nav.Item>
                     <Nav.Link eventKey="schedule">Schedule Interview</Nav.Link>
                   </Nav.Item>
@@ -529,29 +532,113 @@ function Drawer({ isOpen, toggleDrawer, candidate, handleShortlist, ratedCandida
                       </Row>
                       <Row></Row>
                     </Tab.Pane>
-                    <Tab.Pane eventKey="resume">
+                   <Tab.Pane eventKey="resume">
                       <h6>Resume</h6>
                       {candidate?.fileUrl ? (
                         <div>
-                          <p>Click the link below to view or download the resume:</p>
-                          <a
-                            href={candidate.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {candidate.fileUrl || "View Resume"}
-                          </a>
-
+                          {(() => {
+                            const fileUrl = candidate.fileUrl;
+                            const fileExtension = fileUrl.split('.').pop().toLowerCase();
+                            const isPdf = fileExtension === 'pdf';
+                            const isDocx = fileExtension === 'docx' || fileExtension === 'doc';
+                            
+                            // Google Docs Viewer URL for DOCX files
+                            const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}&embedded=true`;
+                            
+                            return (
+                              <div>
+                                {isDocx ? (
+                                  <div>
+                                    {/* <p>This document is in DOCX format. You can:</p> */}
+                                    <div className="d-flex gap-3 mb-3">
+                                      <a 
+                                        href={googleDocsViewerUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="btn btn-outline-primary"
+                                      >
+                                        View in Google Docs
+                                      </a>
+                                      <a 
+                                        href={fileUrl}
+                                        download
+                                        className="btn btn-outline-secondary"
+                                      >
+                                        Download Document
+                                      </a>
+                                    </div>
+                                    {/* <div className="border rounded p-2">
+                                      <small className="text-muted">
+                                        Note: For best experience, download the document if it doesn't load properly.
+                                      </small>
+                                    </div> */}
+                                  </div>
+                                ) : isPdf ? (
+                                  <div>
+                                    <div className="d-flex justify-content-end mb-2">
+                                      <a 
+                                        href={fileUrl}
+                                        download
+                                        className="btn btn-sm btn-outline-secondary"
+                                      >
+                                        Download PDF
+                                      </a>
+                                    </div>
+                                    <iframe
+                                      src={fileUrl}
+                                      width="100%"
+                                      height="600px"
+                                      style={{ border: '1px solid #ddd', borderRadius: '4px' }}
+                                      title="Resume Viewer"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <p>This file format cannot be previewed. Please download it to view.</p>
+                                    <a 
+                                      href={fileUrl}
+                                      download
+                                      className="btn btn-primary"
+                                    >
+                                      Download File
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })()}
+                        </div>
+                      ) : (
+                        <div className="text-center py-4">
+                          <p>No resume available for this candidate.</p>
+                        </div>
+                      )}
+                    </Tab.Pane>
+                     <Tab.Pane eventKey="offerLetter">
+                      {/* <h6>Offer Letter</h6> */}
+                      {candidate?.offerLetterUrl ? (
+                        <div>
+                          <div className="d-flex justify-content-end mb-2">
+                            <a 
+                              href={candidate.offerLetterUrl}
+                              download
+                              className="btn btn-sm btn-outline-secondary"
+                            >
+                              Download Offer Letter
+                            </a>
+                          </div>
                           <iframe
-                            src={candidate.fileUrl}
+                            src={candidate.offerLetterUrl}
                             width="100%"
-                            height="500px"
-                            style={{ border: "none", marginTop: "10px" }}
-                            title="Resume Viewer"
+                            height="600px"
+                            style={{ border: '1px solid #ddd', borderRadius: '4px' }}
+                            title="Offer Letter Viewer"
                           />
                         </div>
                       ) : (
-                        <p>No resume available.</p>
+                        <div className="text-center py-4 fonreg">
+                          <p>No offer letter available for this candidate.</p>
+                        </div>
                       )}
                     </Tab.Pane>
                     {/* <Tab.Pane eventKey="schedule">
