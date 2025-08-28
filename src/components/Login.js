@@ -37,7 +37,7 @@ const Login = () => {
         console.log("User logged in:", res);
         console.log("User details from DB:", dbRes);
 
-        navigate("/job-requisition");
+        navigate("/dashboard");
       }
     } catch (err) {
       const errorData = err.response?.data;

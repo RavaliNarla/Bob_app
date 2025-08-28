@@ -2,13 +2,14 @@ import axios from 'axios'
 import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Col, Form, Row, Table } from 'react-bootstrap'
 import apiService from '../services/apiService'
+import PaginationControls from '../components/PaginationControls'
 
 const Payments = () => {
 	const [paymentData, setPaymentData] = useState([])
 	const [statusFilter, setStatusFilter] = useState("")
   const [dateRange, setDateRange] = useState({ start: "", end: "" })
 	const [currentPage, setCurrentPage] = useState(1)
-	const [itemsPerPage, setItemsPerPage] = useState(5)
+	const [itemsPerPage, setItemsPerPage] = useState(10)
 
 	const fetchPayments = async () => {
     try {
@@ -86,7 +87,7 @@ const Payments = () => {
     <div className='register_container login-container d-flex flex-column py-3 px-5'>
         <h5 className='mt-1' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Payments</h5>
 
-				<Row className="my-2 gap-3">
+		<Row className="my-2 gap-3">
         <Col md={3}>
 			<label className='text-muted' style={{ fontWeight: 500 }}>Status</label>
           <Form.Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
@@ -138,102 +139,80 @@ const Payments = () => {
           </tr>
         </thead>
         <tbody className="table-body-orange">
-					{currentPayments.map((row, index) => (
-						<tr key={index}>
-							<td className="text-muted" style={{ fontSize: "14px", fontWeight: 500 }}>
-								{(currentPage - 1) * itemsPerPage + index + 1}
-							</td>
+			{currentPayments.map((row, index) => (
+				<tr key={index}>
+					<td className="text-muted" style={{ fontSize: "12px", fontWeight: 500 }}>
+						{(currentPage - 1) * itemsPerPage + index + 1}
+					</td>
 
-							<td className="d-flex flex-column">
-								<span className="text-muted" style={{ fontSize: "14px", fontWeight: 500 }}>
-									{row?.candidateName}
-								</span>
-								<span className="text-muted">{row?.candidateEmail}</span>
-								<span style={{ visibility: "hidden" }}>-</span>
-							</td>
+					<td className="d-flex flex-column">
+						<span className="text-muted" style={{ fontSize: "12px", fontWeight: 500 }}>
+							{row?.candidateName}
+						</span>
+						<span className="text-muted">{row?.candidateEmail}</span>
+						<span style={{ visibility: "hidden" }}>-</span>
+					</td>
 
-							<td>
-								<span className="text-muted" style={{ fontSize: "14px", fontWeight: 500 }}>
-									{row?.razorpayOrderDetails?.requisitionCode} - {row?.positionTitle}
-								</span>
-							</td>
+					<td>
+						<span className="text-muted" style={{ fontSize: "12px", fontWeight: 500 }}>
+							{row?.razorpayOrderDetails?.requisitionCode} - {row?.positionTitle}
+						</span>
+					</td>
 
-							<td className="d-flex flex-column">
-								<span className="text-muted" style={{ fontSize: "14px", fontWeight: 500 }}>
-									₹{(row?.razorpayOrderDetails?.amount / 100).toLocaleString()}
-								</span>
-								<span className="text-muted">
-									{new Date(row?.razorpayOrderDetails?.createdAt).toLocaleString("en-IN", {
-										day: "2-digit",
-										month: "short",
-										year: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
-								</span>
-								<span className="text-muted">
-									Transaction ID:{" "}
-									<span style={{ fontWeight: 500 }}>
-										{row?.razorpayOrderDetails?.orderId || "-"}
-									</span>
-								</span>
-							</td>
+					<td className="d-flex flex-column">
+						<span className="text-muted" style={{ fontSize: "12px", fontWeight: 500 }}>
+							₹{(row?.razorpayOrderDetails?.amount / 100).toLocaleString()}
+						</span>
+						<span className="text-muted">
+							{new Date(row?.razorpayOrderDetails?.createdAt).toLocaleString("en-IN", {
+								day: "2-digit",
+								month: "short",
+								year: "numeric",
+								hour: "2-digit",
+								minute: "2-digit",
+							})}
+						</span>
+						<span className="text-muted">
+							Transaction ID:{" "}
+							<span style={{ fontWeight: 500 }}>
+								{row?.razorpayOrderDetails?.orderId || "-"}
+							</span>
+						</span>
+					</td>
 
-							<td>
-								<span
-									className={`badge ${
-										row?.razorpayOrderDetails?.status?.toLowerCase() === "paid"
-											? "text-success success_class"
-											: row?.razorpayOrderDetails?.status?.toLowerCase() === "failed"
-											? "text-danger danger_class"
-											: "text-warning warning_class"
-									}`}
-								>
-									{row?.razorpayOrderDetails?.status}
-								</span>
-							</td>
-						</tr>
-					))}
-					{currentPayments.length === 0 && (
+					<td>
+						<span
+							className={`badge ${
+								row?.razorpayOrderDetails?.status?.toLowerCase() === "paid"
+									? "text-success success_class"
+									: row?.razorpayOrderDetails?.status?.toLowerCase() === "failed"
+									? "text-danger danger_class"
+									: "text-warning warning_class"
+							}`}
+						>
+							{row?.razorpayOrderDetails?.status}
+						</span>
+					</td>
+				</tr>
+			))}
+			{currentPayments.length === 0 && (
             <tr>
               <td colSpan="5" className="text-center text-muted">No records found</td>
             </tr>
           )}
-				</tbody>
+		</tbody>
       </Table>
-			<div className="d-flex justify-content-between align-items-center mt-3">
-			<div>
-				<Form.Select
-					style={{ width: "120px" }}
-					value={itemsPerPage}
-					onChange={handleItemsPerPageChange}
-				>
-					<option value={5}>5 rows</option>
-					<option value={10}>10 rows</option>
-					<option value={20}>20 rows</option>
-				</Form.Select>
-			</div>
-
-			<nav className='pagination_container'>
-				<ul className="pagination mb-0">
-					<li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-						<button className="page-link" onClick={() => setCurrentPage(currentPage - 1)}>Previous</button>
-					</li>
-
-					{[...Array(totalPages)].map((_, idx) => (
-						<li key={idx} className={`page-item ${currentPage === idx + 1 ? "active" : ""}`}>
-							<button className="page-link" onClick={() => setCurrentPage(idx + 1)}>
-								{idx + 1}
-							</button>
-						</li>
-					))}
-
-					<li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
-						<button className="page-link" onClick={() => setCurrentPage(currentPage + 1)}>Next</button>
-					</li>
-				</ul>
-			</nav>
-		</div>
+		
+	  <PaginationControls
+		currentPage={currentPage}
+		totalPages={totalPages}
+		itemsPerPage={itemsPerPage}
+		onPageChange={(page) => setCurrentPage(page)}
+		onItemsPerPageChange={(rows) => {
+			setItemsPerPage(rows);
+			setCurrentPage(1); // ✅ reset to first page on rows change
+		}}
+	  />
     </div>
   )
 }

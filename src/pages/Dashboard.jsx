@@ -117,7 +117,7 @@ export default function Dashboard() {
       {
         label: "",
         data: dashboardJson.offer_status.map(o => o.count),
-        backgroundColor: ["#ff4d4f","#6610f2", "#ffbb28","#00c49f"],
+        backgroundColor: ["#ff4d4f", "#ffbb28", "#6610f2", "#ff8042", "#00c49f"],
       },
     ],
   };
@@ -166,13 +166,13 @@ export default function Dashboard() {
             <Col md={8} className="cardspace">
               <Card className="shadow-sm p-3 heightcard">
                 <h6>Application Metrics</h6>
-                <Line data={lineData} />
+                <Line data={lineData} className="pb-3"/>
               </Card>
             </Col>
             <Col md={4} className="cardspace">
               <Card className="shadow-sm p-3 heightcard">
                 <h6>Candidate Application Status</h6>
-                <Pie data={pieData} />
+                <Pie data={pieData} className="pb-2"/>
               </Card>
             </Col>
           </Row>
@@ -205,9 +205,9 @@ export default function Dashboard() {
           {/* Interviews */}
           <Row className="mt-4">
             <Col md={8} className="cardspace">
-              <Card className="shadow-sm p-3 bgcolr5 fonapp">
+              <Card className="shadow-sm p-3 fonapp">
                 <h6>Upcoming Interviews</h6>
-                <ListGroup variant="flush">
+                <ListGroup variant="flush" className="interview_list">
                   {dashboardJson.upcoming_interviews.length > 0 ? (
                     dashboardJson.upcoming_interviews.map((item, idx) => (
                       <ListGroup.Item key={idx}>

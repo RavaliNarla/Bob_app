@@ -46,6 +46,9 @@
   background-color: #F1F5FF  !important; /* Teal */
  
 }
+.interview_list {
+    overflow-y: auto;
+}
 .shortlist{
     padding: 20px;
     background-color: #fff;

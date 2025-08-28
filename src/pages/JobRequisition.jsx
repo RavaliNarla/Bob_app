@@ -19,9 +19,7 @@ import {
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiService from "../services/apiService";
-
-
-
+import PaginationControls from "../components/PaginationControls";
 
 const JobRequisition = () => {
   const [showModal, setShowModal] = useState(false);
@@ -41,9 +39,18 @@ const JobRequisition = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [viewMode, setViewMode] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
   useEffect(() => {
     fetchRequisitions();
   }, []);
+
+  // reset page to 1 whenever search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
 
   const fetchRequisitions = async () => {
     setLoading(true);
@@ -208,6 +215,12 @@ const JobRequisition = () => {
 
   if (loading) return <div className="text-center mt-5">Loading...</div>;
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const paginatedJobs = jobsToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(jobsToDisplay.length / itemsPerPage);
+
   return (
     <div className="register_container px-5 my-4 fonsty">
       <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Requisitions</h5>
@@ -235,8 +248,10 @@ const JobRequisition = () => {
       </div>
 
       {/* Error message (if API fails) */}
-      {error && <div className="alert alert-danger my-2">{error}</div>}
-
+      {error ? (
+        <div className="alert alert-danger my-2">{error}</div>
+      ) : (
+      <>
       {/* Table */}
       <Table className="req_table" responsive hover>
         <thead className="table-header-orange">
@@ -261,14 +276,14 @@ const JobRequisition = () => {
         </thead>
 
         <tbody className="table-body-orange">
-          {jobsToDisplay.length === 0 ? (
+          {paginatedJobs.length === 0 ? (
             <tr>
               <td colSpan="6" className="text-center text-muted">
                 No Requisitions added yet
               </td>
             </tr>
           ) : (
-            jobsToDisplay.map((job, index) => (
+            paginatedJobs.map((job, index) => (
               <tr key={job.requisition_id || index}>
                 <td>{job.requisition_title}</td>
                 <td>{job.no_of_positions}</td>
@@ -276,25 +291,13 @@ const JobRequisition = () => {
                 <td>{job.registration_end_date}</td>
                 <td>{job.requisition_status}</td>
                 <td>
-                  {/* <FontAwesomeIcon
-                    icon={faPencil}
-                    className="me-3 cursor-pointer"
-                    style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
-                    onClick={() => openModal(job, index)}
-                  />
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    className="required-asterisk cursor-pointer"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleDelete(index)}
-                  /> */}
                   {job.requisition_status === 'New' ? (
                     <>
                       <FontAwesomeIcon
                         icon={faPencil}
                         className="me-3 cursor-pointer"
                         style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
-                        onClick={() => openModal(job, index,"edit")}
+                        onClick={() => openModal(job, index, "edit")}
                       />
                       <FontAwesomeIcon
                         icon={faTrash}
@@ -317,6 +320,20 @@ const JobRequisition = () => {
           )}
         </tbody>
       </Table>
+      
+      {/* Pagination */}
+      <PaginationControls
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        onPageChange={(page) => setCurrentPage(page)}
+        onItemsPerPageChange={(rows) => {
+          setItemsPerPage(rows);
+          setCurrentPage(1); // ✅ reset when rows per page changes
+        }}
+      />
+      </>
+      )}
 
       {/* Modal */}
       <Modal

@@ -101,6 +101,8 @@ const OfferLetter = ({ candidate, jobPosition, salary, reqId, autoDownload = fal
 
       if (data?.data?.public_url) { 
         onDownloadComplete({ public_url: data.data.public_url });
+      } else if (data?.public_url) {
+        onDownloadComplete({ public_url: data.public_url });
       } else {
         throw new Error("Public URL not found in upload response.");
       }
