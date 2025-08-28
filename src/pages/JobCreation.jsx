@@ -367,6 +367,10 @@ const handleInputChange = (e) => {
     if (!formData.employment_type) newErrors.employment_type = 'Employment Type is required';
     if (!formData.eligibility_age_min || isNaN(formData.eligibility_age_min) || Number(formData.eligibility_age_min) <= 0) newErrors.eligibility_age_min = 'Min Age is required and must be a positive number';
     if (!formData.eligibility_age_max || isNaN(formData.eligibility_age_max) || Number(formData.eligibility_age_max) <= 0) newErrors.eligibility_age_max = 'Max Age is required and must be a positive number';
+
+    //  if (!formData.min_salary || isNaN(formData.min_salary) || Number(formData.min_salary) <= 0) newErrors.min_salary = 'Min Age is required and must be a positive number';
+    // if (!formData.max_salary || isNaN(formData.max_salary) || Number(formData.max_salary) <= 0) newErrors.max_salary = 'Max Age is required and must be a positive number';
+
     if (!formData.mandatory_qualification) newErrors.mandatory_qualification = 'Mandatory Qualification is required';
     //if (!formData.preferred_qualification) newErrors.preferred_qualification = 'Preferred Qualification is required';
     if (!formData.mandatory_experience || isNaN(formData.mandatory_experience) || Number(formData.mandatory_experience) <= 0) newErrors.mandatory_experience = 'Mandatory Experience is required and must be a positive number';
@@ -401,20 +405,24 @@ const handleInputChange = (e) => {
     newErrors.min_credit_score = 'Min Credit Score must be a number';
   }
   if (formData.grade_id === '0') {
-    if (!formData.min_salary) {
-      newErrors.min_salary = "Min Salary is required when Grade is Others";
-    }
-    if (!formData.max_salary) {
-      newErrors.max_salary = "Max Salary is required when Grade is Others";
+    // Validate min_salary when grade is 'Others'
+    if (!formData.min_salary || isNaN(formData.min_salary) || Number(formData.min_salary) <= 0) {
+      newErrors.min_salary = 'Minimum salary is required and must be a positive number';
+    } else if (!/^\d+(\.\d{1,2})?$/.test(formData.min_salary)) {
+      newErrors.min_salary = 'Please enter a valid salary amount (e.g., 25000 or 25000.50)';
     }
 
-    if (formData.min_salary && formData.max_salary) {
-      const min = parseFloat(formData.min_salary);
-      const max = parseFloat(formData.max_salary);
+    // Validate max_salary when grade is 'Others'
+    if (!formData.max_salary || isNaN(formData.max_salary) || Number(formData.max_salary) <= 0) {
+      newErrors.max_salary = 'Maximum salary is required and must be a positive number';
+    } else if (!/^\d+(\.\d{1,2})?$/.test(formData.max_salary)) {
+      newErrors.max_salary = 'Please enter a valid salary amount (e.g., 50000 or 50000.50)';
+    }
 
-      if (!isNaN(min) && !isNaN(max) && max <= min) {
-        newErrors.max_salary = "Max Salary must be greater than Min Salary";
-      }
+    // Additional validation to ensure max_salary is not less than min_salary
+    if (formData.min_salary && formData.max_salary && 
+        Number(formData.max_salary) < Number(formData.min_salary)) {
+      newErrors.max_salary = 'Maximum salary cannot be less than minimum salary';
     }
   }
   return newErrors;
@@ -451,35 +459,55 @@ const handleInputChange = (e) => {
     setFiles(newFiles);
   };
 
-  const convertKeysToSnakeCase = (dataArray) => {
-    console.log("Converting keys to snake case:", dataArray);
-    return dataArray.map((item) => ({
-      requisition_id: item["Requisition ID"],
-      position_title: item["Position Title"],
-      dept_id: item["Department"],
-      country_id: item["Country"],
-      state_id: item["State"],
-      city_id: item["City"],
-      location_id: item["Location"],
-      description: item["Description"],
-      roles_responsibilities: item["Roles & Responsibilities"],
-      grade_id: item["Grade ID"],
-      employment_type: item["Employment Type"],
-      eligibility_age_min: item["Eligibility Age Min"],
-      eligibility_age_max: item["Eligibility Age Max"],
-      mandatory_qualification: item["Mandatory Qualification"],
-      preferred_qualification: item["Preferred Qualification"],
-      mandatory_experience: item["Mandatory Experience"],
-      preferred_experience: item["Preferred Experience"],
-      probation_period: item["Probation Period"],
-      documents_required: item["Documents Required"],
-      no_of_vacancies: item["Number of Vacancies"],
-      selection_procedure: item["Selection Procedure"],
-     min_credit_score:item["Min Credit Score"],
-     min_salary:item["Min Salary"],
-     max_salary:item["Max Salary"]
-    }));
-  };
+  const convertKeysToSnakeCase = (dataArray = []) => {
+  return dataArray.map((raw) => {
+    const item = { ...raw };
+
+    // Normalize/parse Grade ID safely
+    const gradeIdNum = Number(
+      (item["Grade ID"] ?? item.grade_id ?? "").toString().trim()
+    );
+
+    // Helpers to coerce numeric fields
+    const asNumberOrZero = (v) =>
+      v === "" || v == null ? 0 : Number(v);
+
+    const minSalary =
+      gradeIdNum === 0 ? asNumberOrZero(item["Min Salary"]) : null;
+
+    const maxSalary =
+      gradeIdNum === 0 ? asNumberOrZero(item["Max Salary"]) : null;
+
+    return {
+      requisition_id: item["Requisition ID"] ?? null,
+      position_title: item["Position Title"] ?? null,
+      dept_id: item["Department"] ?? null,
+      country_id: item["Country"] ?? null,
+      state_id: item["State"] ?? null,
+      city_id: item["City"] ?? null,
+      location_id: item["Location"] ?? null,
+      description: item["Description"] ?? null,
+      roles_responsibilities: item["Roles & Responsibilities"] ?? null,
+      grade_id: isNaN(gradeIdNum) ? null : gradeIdNum, // store as number
+      employment_type: item["Employment Type"] ?? null,
+      eligibility_age_min: item["Eligibility Age Min"] ?? null,
+      eligibility_age_max: item["Eligibility Age Max"] ?? null,
+      mandatory_qualification: item["Mandatory Qualification"] ?? null,
+      preferred_qualification: item["Preferred Qualification"] ?? null,
+      mandatory_experience: item["Mandatory Experience"] ?? null,
+      preferred_experience: item["Preferred Experience"] ?? null,
+      probation_period: item["Probation Period"] ?? null,
+      documents_required: item["Documents Required"] ?? null,
+      no_of_vacancies: item["Number of Vacancies"] ?? null,
+      selection_procedure: item["Selection Procedure"] ?? null,
+      min_credit_score: item["Min Credit Score"] ?? null,
+      min_salary: minSalary,
+      max_salary: maxSalary,
+    };
+  });
+};
+
+
 
   const readExcel = async (file) => {
     const reader = new FileReader();
@@ -499,6 +527,7 @@ const handleInputChange = (e) => {
         }
       }
       setErrors(errorList);
+      console.log("Valid rows from Excel:", validRows);
       const formattedData = convertKeysToSnakeCase(validRows);
       setJsonData(formattedData);
     };
@@ -520,6 +549,7 @@ const handleInputChange = (e) => {
     }
     try {
       let dataToUpload = jsonData;
+      console.log('Selected Requisition Index:', dataToUpload);
       if (selectedReqIndex !== null && selectedReqIndex !== "" && reqs[selectedReqIndex]) {
         const selectedReqId = reqs[selectedReqIndex].requisition_id;
         dataToUpload = jsonData.map(obj => ({ ...obj, requisition_id: selectedReqId }));
