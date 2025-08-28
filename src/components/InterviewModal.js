@@ -4,7 +4,10 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../services/apiService";
 import apiService from "../services/apiService";
 
-const INTERVIEWER_EMAIL = "harsha.tatapudi@sagarsoft.in"; // fixed for now
+const API_BASE = "https://bobbe.sentrifugo.com";
+// const INTERVIEWERS_API = `${API_BASE}/api/getdetails/users/all`; // filter role='Interviewer'
+const INTERVIEWERS_API = `http://localhost:5000/api/getdetails/users/all`; // filter role='Interviewer'
+
 const TZ = "Asia/Kolkata";
 const SLOT_MINUTES = 30; // 1-hour slots
 
@@ -20,13 +23,9 @@ function fmtLabelIST(iso) {
     return iso;
   }
 }
-
-/** Build YYYY-MM-DD string in IST for a Date/ISO */
 function ymdInIST(dOrIso) {
   return new Date(dOrIso).toLocaleDateString("en-CA", { timeZone: TZ }); // YYYY-MM-DD
 }
-
-// Fallback if backend doesn't return slots (kept for safety)
 function generateSlotsFromFree(freeRanges, slotMinutes = SLOT_MINUTES) {
   const slots = [];
   const ms = slotMinutes * 60 * 1000;
@@ -56,67 +55,121 @@ const InterviewModal = ({
     interview_time: "",
   });
 
+  // interviewer list + selection
+  const [interviewers, setInterviewers] = useState([]); // [{id?, name, email}]
+  const [interviewerEmail, setInterviewerEmail] = useState("");
+  const [loadingInterviewers, setLoadingInterviewers] = useState(false);
+  const [interviewersError, setInterviewersError] = useState("");
+
+  // slots
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slotsError, setSlotsError] = useState("");
   const [selectedSlot, setSelectedSlot] = useState(null);
 
-  // Prefill and fetch slots
+  // Fetch interviewers when modal opens
+  useEffect(() => {
+    if (!show) return;
+    (async () => {
+      setLoadingInterviewers(true);
+      setInterviewersError("");
+      try {
+        const token =
+          localStorage.getItem("access_token") || localStorage.getItem("token");
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const resp = await fetch(INTERVIEWERS_API, { headers });
+        if (!resp.ok) {
+          const errJson = await resp.json().catch(() => ({}));
+          throw new Error(errJson.error || `HTTP ${resp.status}`);
+        }
+        const data = await resp.json();
+        const list = Array.isArray(data) ? data : data?.data || [];
+        const onlyInterviewers = list
+          .filter(
+            (u) => (u.role || u.user_role || "").toLowerCase() === "interviewer"
+          )
+          .map((u) => ({
+            id: u.userid || u.id,
+            name:
+              u.name ||
+              u.full_name ||
+              (u.email ? u.email.split("@")[0] : "Interviewer"),
+            email: u.email,
+          }));
+        setInterviewers(onlyInterviewers);
+
+        // pick from candidate if rescheduling; otherwise first interviewer
+        const candidatePick =
+          isReschedule && candidate?.interviewer_email
+            ? candidate.interviewer_email
+            : null;
+        const firstEmail = onlyInterviewers[0]?.email || "";
+        setInterviewerEmail(candidatePick || firstEmail);
+      } catch (err) {
+        setInterviewersError(err.message || "Failed to load interviewers");
+        setInterviewers([]);
+        setInterviewerEmail("");
+      } finally {
+        setLoadingInterviewers(false);
+      }
+    })();
+  }, [show, isReschedule, candidate]);
+
+  // Prefill date/time and fetch slots (on open OR interviewerEmail change)
   useEffect(() => {
     setSlots([]);
     setSlotsError("");
     setSelectedSlot(null);
+    if (!show) return;
 
     let formattedDate = "";
-    let formattedTime = "";
-
-    if (show && isReschedule && candidate) {
-      if (candidate.interview_date) {
-        formattedDate = ymdInIST(candidate.interview_date);
-      }
-      if (candidate.interview_time) {
-        const [hour, minute] = String(candidate.interview_time).split(":");
-        formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-      }
-      setInterviewData({ interview_date: formattedDate, interview_time: formattedTime });
+    if (isReschedule && candidate) {
+      if (candidate.interview_date) formattedDate = ymdInIST(candidate.interview_date);
+      const time = candidate.interview_time;
+      setInterviewData({
+        interview_date: formattedDate || ymdInIST(new Date()),
+        interview_time: time ? String(time).slice(0, 5) : "",
+      });
     } else {
       const now = new Date();
-      formattedDate = ymdInIST(now); // TODAY in IST
-      const hour = now.getHours();
-      const minute = now.getMinutes();
-      formattedTime = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+      formattedDate = ymdInIST(now);
       setInterviewData({ interview_date: formattedDate, interview_time: "" });
     }
 
-    if (formattedDate) {
-      fetchSlotsForDate(formattedDate);
+    const runDate = formattedDate || interviewData.interview_date;
+    if (runDate && interviewerEmail) {
+      fetchSlotsForDate(runDate, interviewerEmail);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, isReschedule, candidate]);
+  }, [show, isReschedule, candidate, interviewerEmail]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInterviewData((prev) => ({ ...prev, [name]: value }));
-
     if (name === "interview_date") {
       setInterviewData((prev) => ({ ...prev, interview_time: "" }));
       setSelectedSlot(null);
-      if (value) {
-        fetchSlotsForDate(value);
+      if (value && interviewerEmail) {
+        fetchSlotsForDate(value, interviewerEmail);
       } else {
         setSlots([]);
       }
     }
   };
 
-  async function fetchSlotsForDate(ymd) {
+  const onInterviewerChange = (e) => {
+    setInterviewerEmail(e.target.value);
+    setSelectedSlot(null);
+    setInterviewData((prev) => ({ ...prev, interview_time: "" }));
+  };
+
+  async function fetchSlotsForDate(ymd, email) {
     setLoadingSlots(true);
     setSlotsError("");
     setSlots([]);
-
     try {
       const data = await apiService.getFreeBusySlots(
-        INTERVIEWER_EMAIL,
+        email,
         ymd,
         SLOT_MINUTES,
         TZ
@@ -127,7 +180,6 @@ const InterviewModal = ({
         Array.isArray(data.slots) && data.slots.length
           ? data.slots.map((s) => ({ startISO: s.start, endISO: s.end }))
           : generateSlotsFromFree(data.free, SLOT_MINUTES);
-
       setSlots(nextSlots);
     } catch (err) {
       setSlotsError(err.message || "Failed to load available slots");
@@ -137,13 +189,20 @@ const InterviewModal = ({
   }
 
   const onSave = () => {
-    if (!selectedSlot) return;
+    if (!selectedSlot && !(isReschedule && interviewData.interview_time)) return;
+    const selectedInterviewer =
+      interviewers.find((iv) => iv.email === interviewerEmail) || {
+        name: "",
+        email: interviewerEmail,
+        id: undefined,
+      };
+
     handleSave({
-      ...interviewData,
-      startISO: selectedSlot.startISO || selectedSlot.start,
-      endISO: selectedSlot.endISO || selectedSlot.end,
-      tz: TZ,
-      interviewerEmail: INTERVIEWER_EMAIL,
+      interview_date: interviewData.interview_date,
+      interview_time: String(interviewData.interview_time).slice(0, 5), // "HH:mm"
+      interviewerEmail: selectedInterviewer.email,
+      interviewerName: selectedInterviewer.name,
+      interviewerId: selectedInterviewer.id,
     });
   };
 
@@ -154,17 +213,21 @@ const InterviewModal = ({
 
   const selectSlot = (slot) => {
     setSelectedSlot(slot);
-    const dateIST = ymdInIST(slot.startISO || slot.start); // YYYY-MM-DD in IST
-    const timeIST = new Date(slot.startISO || slot.start).toLocaleTimeString("en-IN", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: TZ,
-    });
-    setInterviewData({ interview_date: dateIST, interview_time: timeIST });
+    const dateIST = ymdInIST(slot.startISO || slot.start);
+    const timeIST = new Date(slot.startISO || slot.start).toLocaleTimeString(
+      "en-IN",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: TZ,
+      }
+    );
+    // ensure HH:mm
+    const hhmm = String(timeIST).slice(0, 5);
+    setInterviewData({ interview_date: dateIST, interview_time: hhmm });
   };
 
-  // Use IST "today" to avoid UTC shifting the min
   const minDateIST = ymdInIST(new Date());
 
   return (
@@ -181,6 +244,32 @@ const InterviewModal = ({
             <Form.Control type="text" value={candidate?.full_name || ""} readOnly />
           </Form.Group>
 
+          {/* Interviewer dropdown (fetched) */}
+          <Form.Group className="mb-3">
+            <Form.Label>Interviewer</Form.Label>
+            {loadingInterviewers ? (
+              <div className="d-flex align-items-center gap-2">
+                <Spinner animation="border" size="sm" />
+                <span>Loading interviewers…</span>
+              </div>
+            ) : interviewersError ? (
+              <Alert variant="danger" className="py-2 my-2">
+                {interviewersError}
+              </Alert>
+            ) : (
+              <Form.Select value={interviewerEmail} onChange={onInterviewerChange}>
+                {interviewers.map((iv) => (
+                  <option key={iv.id || iv.email} value={iv.email}>
+                    {iv.name}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            <div className="text-muted mt-1" style={{ fontSize: 12 }}>
+              Using <b>{interviewerEmail || "—"}</b> to check availability.
+            </div>
+          </Form.Group>
+
           <Form.Group className="mb-3">
             <Form.Label>Interview Date</Form.Label>
             <Form.Control
@@ -188,7 +277,7 @@ const InterviewModal = ({
               name="interview_date"
               value={interviewData.interview_date}
               onChange={handleChange}
-              min={minDateIST} // <-- IST-safe min
+              min={minDateIST}
             />
           </Form.Group>
 
@@ -224,7 +313,7 @@ const InterviewModal = ({
             {!loadingSlots && !slotsError && interviewData.interview_date && (
               <>
                 {slots.length === 0 ? (
-                  <div className="text-muted">No available 1‑hour slots (9:00–18:00 IST).</div>
+                  <div className="text-muted">No available 1-hour slots (9:00–18:00 IST).</div>
                 ) : (
                   <div className="d-flex flex-wrap gap-2">
                     {slots.map((s) => {
@@ -250,7 +339,7 @@ const InterviewModal = ({
           </Form.Group>
 
           <div className="text-muted" style={{ fontSize: 12 }}>
-            Checking {INTERVIEWER_EMAIL} in {TZ}. Slots are 1‑hour within 9:00–18:00 IST.
+            Checking availability in {TZ}. Slots are 1-hour within 9:00–18:00 IST.
           </div>
         </Form>
       </Modal.Body>
@@ -266,7 +355,10 @@ const InterviewModal = ({
         <Button
           variant="primary"
           onClick={onSave}
-          disabled={!selectedSlot}
+          disabled={
+            !interviewerEmail ||
+            (!selectedSlot && !(isReschedule && interviewData.interview_time))
+          }
           style={{ backgroundColor: "#FF7043", color: "#fff", borderColor: "#FF7043" }}
         >
           {isReschedule ? "Reschedule Interview" : "Schedule Interview"}

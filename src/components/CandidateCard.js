@@ -139,8 +139,13 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 const shortlistedCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Shortlisted'
                 );
-                const interviewedCandidates = fetchedCandidates.filter(
-                    candidate => candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled'
+                const interviewedCandidates = fetchedCandidates.filter(                 
+                  (candidate) =>
+                  candidate.application_status === "Scheduled" ||
+                  candidate.application_status === "Rescheduled" ||
+                  candidate.application_status === "Selected for next round" ||
+                  candidate.application_status === "Rejected" ||
+                  candidate.application_status === "Selected"
                 );
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
@@ -333,14 +338,17 @@ const CandidateCard = ({ setTriggerDownload }) => {
             return;
         }
 
-        const [hour, minute] = interviewTime.split(":").map(Number);
+        const timeHHMM = String(interviewData.interview_time).slice(0, 5);
 
         const interviewPayload = {
             candidate_id: interviewCandidate?.candidate_id,
             date: interviewData.interview_date,
-            interview_time: interviewData.interview_time,
+            interview_time: timeHHMM,
             // userId: 3,
             position_id: selectedPositionId,
+            interviewer_email: interviewData.interviewerEmail,
+            interviewer_name: interviewData.interviewerName,
+            interviewer_id: interviewData.interviewerId,
         };
         setApiLoading(true);
 
@@ -365,9 +373,15 @@ const CandidateCard = ({ setTriggerDownload }) => {
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
-                    ? {
-                        ...candidate, application_status: "Scheduled", interview_date: interviewData.interview_date,
-                        interview_time: interviewData.interview_time, profileStatus: "Interview Scheduled"
+                    ? {                        
+                      ...candidate,
+                      application_status: "Scheduled",
+                      interview_date: interviewData.interview_date,
+                      interview_time: timeHHMM, // use HH:mm in UI
+                      profileStatus: "Interview Scheduled",
+                      interviewer_email: interviewData.interviewerEmail,
+                      interviewer_name: interviewData.interviewerName,
+                      interviewer_id: interviewData.interviewerId,
                     }
                     : candidate
             );
@@ -376,8 +390,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 updatedInterviewed.push({
                     ...interviewCandidate,
                     application_status: "Scheduled",
-                    interview_date: interviewData.interview_date,
-                    interview_time: interviewData.interview_time
+                    interview_date: interviewData.interview_date,                 
+                    interview_time: timeHHMM, // use HH:mm in UI
+                    interviewer_email: interviewData.interviewerEmail,
+                    interviewer_name: interviewData.interviewerName,
+                    interviewer_id: interviewData.interviewerId,
                 });
             }
             setInterviewed(updatedInterviewed);
@@ -567,8 +584,14 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
                 const updatedCandidate = {
                     ...candidate,
-                    interview_date: date,
-                    interview_time: time
+                    interview_date: date,              
+                    interview_time: time,
+                    interviewer_id:
+                    candidate.interviewer_id ?? interviewDetails.interviewer_id,
+                    interviewer_email:
+                    candidate.interviewer_email ?? interviewDetails.interviewer_email,
+                    interviewer_name:
+                    candidate.interviewer_name ?? interviewDetails.interviewer_name,
                 };
                 setRescheduleCandidate(updatedCandidate);
             } else {
@@ -597,6 +620,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
             showToast("Please select both interview date and time.", "warning");
             return;
         }
+        
+        const timeHHMM = String(interviewData.interview_time).slice(0, 5);
         setLoading(true);
         setApiLoading(true);
         setError(null);
@@ -604,21 +629,41 @@ const CandidateCard = ({ setTriggerDownload }) => {
             const payload = {
                 candidate_id: rescheduleCandidate.candidate_id,
                 date: interviewData.interview_date,
-                time: interviewData.interview_time,
+                time: timeHHMM,             
+                status: "Rescheduled",
                 position_id: selectedPositionId,
-                status: 'Rescheduled',
+                user_id: interviewData.interviewerId,
+                interviewer_email: interviewData.interviewerEmail,
+                interviewer_name: interviewData.interviewerName,
             };
-            const response = await apiService.updateInterviewStatus(payload);
+            // const response = await apiService.updateInterviewStatus(payload);
+               const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
+
 
             if (response.status === 200) {
                 showToast("Interview rescheduled successfully!", "success");
-                const updatedInterviewed = interviewed.map(c =>
-                    c.candidate_id === rescheduleCandidate.candidate_id ? { ...c, ...interviewData } : c
-                );
-                setInterviewed(updatedInterviewed);
+                const updated = interviewed.map((c) =>
+                c.candidate_id === rescheduleCandidate.candidate_id ? {
+                ...c,
+                interview_date: interviewData.interview_date,
+                interview_time: timeHHMM, // keep HH:mm
+                application_status: "Rescheduled",
+                interviewer_id: interviewData.interviewerId,
+                interviewer_email: interviewData.interviewerEmail,
+                interviewer_name: interviewData.interviewerName,
+                } : c);
+                setInterviewed(updated);
 
                 // Update the rescheduleCandidate state with the new data
-                setRescheduleCandidate({ ...rescheduleCandidate, ...interviewData });
+                
+              setRescheduleCandidate((prev) => ({
+                ...prev,
+                interview_date: interviewData.interview_date,
+                interview_time: timeHHMM,
+                interviewer_id: interviewData.interviewerId,
+                interviewer_email: interviewData.interviewerEmail,
+                interviewer_name: interviewData.interviewerName,
+              }));
             }
         } catch (err) {
             console.error("Failed to reschedule interview:", err);
@@ -639,10 +684,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
             // Get the date and time from the rescheduleCandidate object
             const payload = {
                 candidate_id: rescheduleCandidate.candidate_id,
-                date: rescheduleCandidate.interview_date, // 👈 Corrected: Add interview date
-                time: rescheduleCandidate.interview_time, // 👈 Corrected: Add interview time
+                date: rescheduleCandidate.interview_date, // 👈 Corrected: Add interview date     
+                time: String(rescheduleCandidate.interview_time).slice(0, 5), // 👈 Corrected: Add interview time
                 position_id: selectedPositionId,
                 status: 'Cancelled',
+                interviewer_id: rescheduleCandidate.interviewer_id,
             };
             const response = await apiService.updateInterviewStatus(payload);
 
@@ -661,6 +707,51 @@ const CandidateCard = ({ setTriggerDownload }) => {
             setApiLoading(false);
         }
     };
+
+    
+// Called by Drawer after saving feedback to update status & interviewer fields on the board
+
+const handleFeedbackSaved = (candidateId, newStatus, interviewer) => {
+  setInterviewed((prev) =>
+  prev.map((c) =>
+  c.candidate_id === candidateId
+  ? {
+  ...c,
+  application_status: newStatus,
+  interviewer_name: interviewer?.name ?? c.interviewer_name,
+  interviewer_email: interviewer?.email ?? c.interviewer_email,
+  interviewer_id: interviewer?.id ?? c.interviewer_id,
+  }
+  : c
+  )
+  );
+  if (selectedCandidate?.candidate_id === candidateId) {
+
+setSelectedCandidate((prev) =>
+
+prev
+
+? {
+
+...prev,
+
+application_status: newStatus,
+
+interviewer_name: interviewer?.name ?? prev.interviewer_name,
+
+interviewer_email: interviewer?.email ?? prev.interviewer_email,
+
+interviewer_id: interviewer?.id ?? prev.interviewer_id,
+
+}
+
+: prev
+
+);
+
+}
+
+};
 
     return (
         <Container fluid className="py-4 px-1 foncandidate">
@@ -872,7 +963,20 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                             <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '60vh' }} ref={provided.innerRef} {...provided.droppableProps}>
                                                 {interviewed
                                                     .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
-                                                    .map((candidate, index) => (
+                                                    .map((candidate, index) => {
+                                                      const showReschedule = [
+
+                                                        "Scheduled",
+
+                                                        "Rescheduled",
+
+                                                        "Selected for next round",
+
+                                                        "Rejected",
+
+                                                      ].includes(candidate.application_status);
+
+                                                        return (
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
                                                                 <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
@@ -887,28 +991,28 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div className="d-flex flex-column">
-                                                                            <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
-                                                                            {/* This is the new "Reschedule" button */}
-                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled') && (
-                                                                                <button
-                                                                                    variant="warning"
-                                                                                    size="sm"
-                                                                                    className="mt-2 reschedule-btn"
-                                                                                    onClick={(e) => {
-                                                                                        e.stopPropagation(); // Prevents the card's onClick from firing
-                                                                                        handleReschedule(candidate);
-                                                                                    }}
-                                                                                >
-                                                                                    Reschedule
-                                                                                </button>
-                                                                            )}
+                                                                        <div className="d-flex flex-column">                                                                            
+                                                                              <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
+                                                                              {/* This is the new "Reschedule" button */}
+                                                                              {showReschedule && (
+                                                                                  <button
+                                                                                      variant="warning"
+                                                                                      size="sm"
+                                                                                      className="mt-2 reschedule-btn"
+                                                                                      onClick={(e) => {
+                                                                                          e.stopPropagation(); // Prevents the card's onClick from firing
+                                                                                          handleReschedule(candidate);
+                                                                                      }}
+                                                                                  >
+                                                                                      Reschedule
+                                                                                  </button>
+                                                                              )}
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             )}
                                                         </Draggable>
-                                                    ))
+                                                    )})
                                                 }
                                                 {provided.placeholder}
                                             </div>
@@ -992,7 +1096,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     isOpen={isOpen}
                     toggleDrawer={toggleDrawer}
                     candidate={selectedCandidate}
-                    ratedCandidates={ratedCandidates}
+                    ratedCandidates={ratedCandidates}            
+                    onFeedbackSaved={handleFeedbackSaved}
+                    positionId={selectedPositionId}
                 />
             )}
             {/* <InterviewModal
