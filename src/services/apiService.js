@@ -1,5 +1,12 @@
 import axios from 'axios';
 import { getCandidatesByPosition } from './getJobRequirements';
+import { store } from "../store"; // adjust path if needed
+import { clearUser } from "../store/userSlice";
+
+function getToken() {
+  const state = store.getState();
+  return state.user?.authUser?.token || null;
+}
 
 // Use the environment variables with a fallback to the new URLs you provided.
 // This is the correct way to handle different API services.
@@ -39,58 +46,72 @@ const nodeApi = axios.create({
 // Request interceptor to add auth token for the primary API
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling on the primary API
 api.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      store.dispatch(clearUser());
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
+
 // Request interceptor to add auth token for the secondary API
 apis.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Response interceptor for error handling on the secondary API
 apis.interceptors.response.use(
   (response) => response.data,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      store.dispatch(clearUser());
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
+
+nodeApi.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+nodeApi.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      store.dispatch(clearUser());
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
 
 export const apiService = {
   // Auth endpoints
@@ -189,9 +210,13 @@ export const apiService = {
   }),
 
   getFreeBusySlots: (email, date, interval = 60, tz = 'Asia/Kolkata') =>
-  candidateApi.get('/calendar/free-busy', {
+  nodeApi.get('/calendar/free-busy', {
     params: { email, date, interval, tz }
   }),
+
+  getAllUsers: () => nodeApi.get(`/getdetails/users/all`),
+
+  registerUser: (payload) => nodeApi.post(`/auth/recruiter-register`, payload),
    
 };
 

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Modal, Button, Form, Spinner, Alert, Badge } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "../services/apiService";
+import apiService from "../services/apiService";
 
-const API_BASE = "https://bobbe.sentrifugo.com";
 const INTERVIEWER_EMAIL = "harsha.tatapudi@sagarsoft.in"; // fixed for now
 const TZ = "Asia/Kolkata";
-const SLOT_MINUTES = 60; // 1-hour slots
+const SLOT_MINUTES = 30; // 1-hour slots
 
 function fmtLabelIST(iso) {
   try {
@@ -114,26 +115,12 @@ const InterviewModal = ({
     setSlots([]);
 
     try {
-      const token = localStorage.getItem("access_token");
-      const url = new URL(`${API_BASE}/api/calendar/free-busy`);
-      url.searchParams.set("email", INTERVIEWER_EMAIL);
-      url.searchParams.set("date", ymd); // <-- backend expects "date" now
-      url.searchParams.set("interval", String(SLOT_MINUTES));
-      url.searchParams.set("tz", TZ);
-
-      const resp = await fetch(url.toString(), {
-        headers: {
-          // Keep this if your route is protected; harmless if not.
-          Authorization: token ? `Bearer ${token}` : undefined,
-        },
-      });
-
-      if (!resp.ok) {
-        const errJson = await resp.json().catch(() => ({}));
-        throw new Error(errJson.error || `HTTP ${resp.status}`);
-      }
-
-      const data = await resp.json();
+      const data = await apiService.getFreeBusySlots(
+        INTERVIEWER_EMAIL,
+        ymd,
+        SLOT_MINUTES,
+        TZ
+      );
 
       // Prefer backend-provided discrete slots; fall back to free ranges if present
       const nextSlots =

@@ -18,6 +18,7 @@ import Skill from './pages/Skill';
 import JobGrade from './pages/JobGrade';
 import Location from './pages/Location';
 import Payments from './pages/Payments';
+import PrivateRoute from './components/PrivateRoute';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -88,109 +89,135 @@ function App() {
                   }
                 /> */}
                 <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <Dashboard />
-          </Layout>
-        }
-      />
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <Dashboard />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path="/job-creation"
                   element={
-                    <Layout>
-                      <JobCreation />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <JobCreation />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/job-postings"
                   element={
-                    <Layout>
-                      <JobPosting />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <JobPosting />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/job-requisition"
                   element={
-                    <Layout>
-                      <JobRequisition />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <JobRequisition />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/department"
                   element={
-                    <Layout>
-                      <Department />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <Department />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/skill"
                   element={
-                    <Layout>
-                      <Skill />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <Skill />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/location"
                   element={
-                    <Layout>
-                      <Location />
-                    </Layout>
+                    <PrivateRoute> 
+                      <Layout>
+                        <Location />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/job-grade"
                   element={
-                    <Layout>
-                      <JobGrade />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <JobGrade />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
 
                 <Route
                   path="/users"
                   element={
-                    <Layout>
-                      <Register />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <Register />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
 
                 <Route
                   path="/candidate-shortlist"
                   element={
-                    <Layout>
-                      <CandidateCard />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        <CandidateCard />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/myapproval"
                   element={
-                    <Layout>
-                      < Approval />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        < Approval />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/payments"
                   element={
-                    <Layout>
-                      < Payments />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        < Payments />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 <Route
                   path="/interviews"
                   element={
-                    <Layout>
-                      < Calendar />
-                    </Layout>
+                    <PrivateRoute>
+                      <Layout>
+                        < Calendar />
+                      </Layout>
+                    </PrivateRoute>
                   }
                 />
                 {/* Redirect unknown routes */}

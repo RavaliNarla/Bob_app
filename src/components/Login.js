@@ -5,7 +5,7 @@ import axios from "axios";
 import "../css/Login.css";
 import pana from "../assets/pana.png";
 import boblogo from "../assets/bob-logo.png";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser, setAuthUser } from '../store/userSlice';
 import apiService from "../services/apiService";
 
@@ -15,57 +15,44 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [unverifiedUserId, setUnverifiedUserId] = useState(null);
   const navigate = useNavigate();
+  const token = useSelector((state) => state.user.auth?.access_token);
+  // console.log("Token from Redux:", token);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-       const res = await apiService.recruiterLogin(email, password);
+      const res = await apiService.recruiterLogin(email, password);   // already res.data
+      const dbRes = await apiService.getRecruiterDetails(email);      // already res.data
 
-
-      const dbRes = await apiService.getRecruiterDetails(email);
-
-
-      if (res.data.mfa_required) {
-        localStorage.setItem("mfa_token", res.data.mfa_token);
+      if (res.mfa_required) {
+        // localStorage.setItem("mfa_token", res.mfa_token);
+        dispatch(setAuthUser({ mfaToken: res.mfa_token, mfaRequired: true }));
         alert("MFA required. Please verify your Mail.");
-        navigate("/verify-otp"); // ⬅️ You must build this page to complete OTP
+        navigate("/verify-otp");
       } else {
-        const token = res.data.access_token;
-        localStorage.setItem("access_token", token);
-        setAuthUser(res.data);
-        setUser(dbRes.data); // Store user details from DB in context
-        dispatch(setUser(dbRes.data));
-        dispatch(setAuthUser(res.data));
-        // /api/getdetails/users
-        // console.log("User logged in:", res.data);
-        // console.log("User details from DB:", dbRes.data);
+        // ✅ just dispatch directly
+        dispatch(setAuthUser(res));
+        dispatch(setUser(dbRes));
+
+        console.log("User logged in:", res);
+        console.log("User details from DB:", dbRes);
+
         navigate("/job-requisition");
-
-        // // 🔍 Decode token to get roles
-        // const decoded = jwtDecode(token);
-        // const roles = decoded["https://your-app.com/claims/roles"] || []; // Change namespace if different
-
-        // if (roles.includes("user")) {
-        //   navigate("/dashboard");
-        // } else {
-        //   alert("You are not authorized to access this app.");
-        //   localStorage.removeItem("access_token");
-        // }
       }
     } catch (err) {
       const errorData = err.response?.data;
-
       if (
         errorData?.error ===
         "Email not verified. Please verify your email before login."
       ) {
         alert("Email not verified. Click below to resend verification email.");
-        setUnverifiedUserId(errorData.user_id); // Send user_id from backend
+        setUnverifiedUserId(errorData.user_id);
       } else {
         alert(errorData?.error_description || "Login failed");
       }
     }
   };
+  
   const handleResendVerification = async () => {
     try {
       await apiService.resendVerification(unverifiedUserId);

@@ -1,48 +1,44 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiService } from '../services/apiService';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, setAuthUser, logout as logoutAction } from "../store/userSlice";
+import { apiService } from "../services/apiService";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const dispatch = useDispatch();
+  const { user, authUser } = useSelector((state) => state.user);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+
+  // token comes from redux now
+  const token = authUser?.access_token;
 
   useEffect(() => {
-    // Check if user is logged in on app start
-    if (token) {
-      // In a real app, you'd validate the token with the server
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        setUser(JSON.parse(userData));
-      }
-    }
     setLoading(false);
-  }, [token]);
+  }, []);
 
   const login = async (email, password) => {
     try {
       const response = await apiService.login(email, password);
       const { user: userData, token: userToken } = response;
-      
-      setUser(userData);
-      setToken(userToken);
-      localStorage.setItem('token', userToken);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
+
+      // ✅ Save in Redux
+      dispatch(setAuthUser({ access_token: userToken }));
+      dispatch(setUser(userData));
+
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Login failed' 
+      return {
+        success: false,
+        error: error.response?.data?.error || "Login failed",
       };
     }
   };
@@ -51,26 +47,22 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await apiService.register(name, email, password);
       const { user: userData, token: userToken } = response;
-      
-      setUser(userData);
-      setToken(userToken);
-      localStorage.setItem('token', userToken);
-      localStorage.setItem('user', JSON.stringify(userData));
-      
+
+      // ✅ Save in Redux
+      dispatch(setAuthUser({ access_token: userToken }));
+      dispatch(setUser(userData));
+
       return { success: true };
     } catch (error) {
-      return { 
-        success: false, 
-        error: error.response?.data?.error || 'Registration failed' 
+      return {
+        success: false,
+        error: error.response?.data?.error || "Registration failed",
       };
     }
   };
 
   const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    dispatch(logoutAction()); // ✅ clears redux-persist automatically
   };
 
   const value = {
@@ -80,12 +72,8 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

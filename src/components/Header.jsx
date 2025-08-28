@@ -4,9 +4,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faBell, faGlobe, faUserCircle, faRightFromBracket, faReceipt, faMoneyBillTransfer } from '@fortawesome/free-solid-svg-icons';
 import logo_Bob from '../assets/logo_Bob.png';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser } from '../store/userSlice';
 
 const Header = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user?.user);
 
@@ -74,7 +76,7 @@ const Header = () => {
             placement="bottom"
             overlay={<Tooltip id="tooltip-payments">Logout</Tooltip>}
           >
-            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => navigate('/login')}>
+            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => {dispatch(clearUser()); navigate('/login');}}>
               <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
             </Button>
           </OverlayTrigger>

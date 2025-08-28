@@ -203,12 +203,6 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const ratedOffered = calculateRatings(offered, jdSkillsLowerCase);
     const ratedInterviewed = calculateRatings(interviewed, jdSkillsLowerCase);
 
-    const profile_prictures = [
-        "https://wallpapers.com/images/hd/professional-profile-pictures-1080-x-1080-460wjhrkbwdcp1ig.jpg",
-        "https://blog-pixomatic.s3.appcnt.com/image/22/01/26/61f166e1377d4/_orig/pixomatic_1572877223091.png",
-        "https://img.freepik.com/premium-photo/professional-cv-photo-confident-business-woman-formal-attire_981640-67310.jpg",
-    ];
-
     const handleJobReqChange = (event) => {
         const newRequisitionCode = event.target.value;
         const selectedReq = jobReqs.find(req => req.requisition_code === newRequisitionCode);

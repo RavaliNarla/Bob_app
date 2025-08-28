@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Button, Modal, Table } from "react-bootstrap";
+import apiService from "../services/apiService";
 // import panaImage from "../assets/pana.png";
 // import logoImage from "../assets/bob-logo.png";
 
@@ -24,9 +25,9 @@ const Register = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("https://bobbe.sentrifugo.com/api/getdetails/users/all"); // Update URL if needed
-      setUsersData(res.data);
-      console.log("Fetched users:", res.data);
+      const res = await apiService.getAllUsers();
+      setUsersData(res);
+      console.log("Fetched users:", res);
     } catch (err) {
       console.error("Failed to fetch users:", err);
     }
@@ -52,12 +53,12 @@ const Register = () => {
 
   try {
     // 1. Register user via your backend
-    await axios.post("https://bobbe.sentrifugo.com/api/auth/recruiter-register", {
+    await apiService.registerUser({
       name,
       email,
       phone,
       password,
-      role
+      role,
     });
 
     // 2. Immediately try to log in (to trigger MFA)
@@ -151,7 +152,7 @@ const Register = () => {
           </tr>
         </thead>
         <tbody className="table-body-orange">
-          {usersData.map((user, index) => (
+          {usersData && usersData.map((user, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{user?.role}</td>
@@ -191,6 +192,7 @@ const Register = () => {
                     <option value="">Select Role</option>
                     <option value="Admin">Admin</option>
                     <option value="Recruiter">Recruiter</option>
+                    <option value="Interviewer">Interviewer</option>
                     {/* <option value="L1">L1</option>
                     <option value="L2">L2</option> */}
                   </select>
