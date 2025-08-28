@@ -1,63 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardBody,
+  Button,
+  Badge,
   Row,
   Col,
   Offcanvas,
   Tab,
   Nav,
-  Button,
   Form,
   Table,
-  Badge,
 } from "react-bootstrap";
 import "../css/Drawer.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXmark,
+  faArrowLeft,
+  faArrowRight,
+  faMarker,
+} from "@fortawesome/free-solid-svg-icons";
 import profile from "../assets/profile_icon.png";
-import apiService from "../services/apiService";
 import axios from "axios";
+import apiService from "../services/apiService";
 
+/**
+ * Drawer (merged)
+ * - Keeps your Details/Resume/OfferLetter tabs
+ * - Adds Feedback tab with add/edit + save to backend
+ *
+ * Props:
+ *   isOpen, toggleDrawer, candidate, handleShortlist, ratedCandidates
+ *   positionId? (optional)
+ *   onFeedbackSaved?(candidateId, status, interviewerObj) (optional)
+ */
 function Drawer({
   isOpen,
   toggleDrawer,
   candidate,
+  handleShortlist,
   ratedCandidates,
-  onFeedbackSaved, // callback to parent (CandidateCard)
-  positionId,      // passed from CandidateCard
+  positionId,            // optional: can come from parent
+  onFeedbackSaved,
+  interviewer,
+  interviewFeedBacks,
+         // optional: callback when feedback saved
 }) {
+  const handleCloseIconClick = () => toggleDrawer();
+
   const [activeTab, setActiveTab] = useState("details");
 
-  // ======= FEEDBACK STATE =======
-  const [feedbacks, setFeedbacks] = useState([]); // local view list (latest at index 0)
+  // ===== Your existing schedule state (kept; commented where unused) =====
+  const [meetingType, setMeetingType] = useState("online");
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [meetingLink, setMeetingLink] = useState("https://meet.google.com/jgn-bxng-zpp");
+  const [attendees, setAttendees] = useState([]);
+  const [message, setMessage] = useState("");
+  const [isInterviewListOpen, setIsInterviewListOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+
+  const skills = useMemo(() => candidate?.skills?.split(",") || [], [candidate?.skills]);
+
+  // ======= FEEDBACK STATE (from your first Drawer) =======
+  const [feedbacks, setFeedbacks] = useState(interviewFeedBacks);// newest at index 0
   const [showForm, setShowForm] = useState(false);
   const [status, setStatus] = useState("Selected for next round");
   const [comments, setComments] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
-  // edit mode for the latest feedback only
-  const [isEditing, setIsEditing] = useState(false); // when true, we edit feedbacks[0]
-
+  const [isEditing, setIsEditing] = useState(false); // edit latest only
+  // console.log(candidate)
+  //  console.log(interviewer);
+  //  console.log("interviewFeedBacks",interviewFeedBacks);
+  //  console.log("feedbacks",feedbacks);
+   
   // interviewer info (read-only — from candidate)
-  const interviewerName =
-    candidate?.interviewer_name ||
-    candidate?.interviewerName ||
-    (candidate?.interviewer_email ? candidate?.interviewer_email.split("@")[0] : "") ||
-    "";
-  const interviewerEmail = candidate?.interviewer_email || candidate?.interviewerEmail || "";
-  const interviewerId = candidate?.interviewer_id;
+  const interviewerName = interviewer?.interviewer;
+  const interviewerEmail = interviewer?.interviewer_email || interviewer?.interviewer_email || "";
+  const interviewerId = interviewer?.interviewer_id;
 
-  // Load/save feedbacks per candidate via localStorage (quick UI storage)
+  useEffect(() => {
+    setFeedbacks(interviewFeedBacks ?? []);
+  }, [interviewFeedBacks]);
+
+  // Load/save feedbacks per candidate via localStorage
   useEffect(() => {
     if (!candidate?.candidate_id) return;
-    try {
-      const raw = localStorage.getItem(`feedbacks_${candidate.candidate_id}`);
-      setFeedbacks(raw ? JSON.parse(raw) : []);
-    } catch {
-      setFeedbacks([]);
-    }
     setShowForm(false);
     setIsEditing(false);
     setError("");
@@ -67,8 +97,8 @@ function Drawer({
 
   useEffect(() => {
     if (!candidate?.candidate_id) return;
-    localStorage.setItem(`feedbacks_${candidate.candidate_id}`, JSON.stringify(feedbacks));
-  }, [feedbacks, candidate?.candidate_id]);
+    
+  }, [candidate?.candidate_id]);
 
   const startAdd = () => {
     setIsEditing(false);
@@ -86,90 +116,86 @@ function Drawer({
   };
 
   const handleSaveFeedback = async () => {
-  if (!candidate?.candidate_id || !(positionId || candidate?.position_id)) {
-    alert("Missing candidate or position.");
-    return;
-  }
-  if (!interviewerEmail) {
-    alert("Interviewer not set. Schedule the interview first.");
-    return;
-  }
-
-  setError("");
-  setSaving(true);
-
-  try {
-    const payload = {
-      comments,
-      status, // "Selected for next round" | "Selected" | "Rejected" | etc.
-      candidate_id: candidate.candidate_id,
-      position_id: positionId || candidate.position_id,
-      ...(interviewerId != null && { interviewer_id: Number(interviewerId) }),
-      interviewer_name: interviewerName || interviewerEmail,
-      interviewer_email: interviewerEmail,
-    };
-
-    const token =
-      localStorage.getItem("access_token") || localStorage.getItem("token");
-
-    await axios.post(
-      "http://192.168.20.111:8081/api/candidates/feedback",
-      payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      }
-    );
-
-    // Build entry to show in the table
-    const entry = {
-      interviewer_name: interviewerName || interviewerEmail,
-      interviewer_email: interviewerEmail,
-      status,
-      comments,
-      created_at: new Date().toISOString(),
-    };
-
-    if (isEditing) {
-      // Update latest (index 0)
-      setFeedbacks((prev) => {
-        if (!prev.length) return [entry];
-        const next = [...prev];
-        next[0] = { ...next[0], ...entry };
-        return next;
-      });
-    } else {
-      // Prepend as newest
-      setFeedbacks((prev) => [entry, ...prev]);
+    if (!candidate?.candidate_id || !(positionId || candidate?.position_id)) {
+      alert("Missing candidate or position.");
+      return;
+    }
+    if (!interviewerEmail) {
+      alert("Interviewer not set. Schedule the interview first.");
+      return;
     }
 
-    setShowForm(false);
-    setIsEditing(false);
-    setComments("");
+    setError("");
+    setSaving(true);
 
-    // Let parent column update status/interviewer fields
-    onFeedbackSaved?.(candidate?.candidate_id, status, {
-      id: interviewerId,
-      name: entry.interviewer_name,
-      email: interviewerEmail,
-    });
-  } catch (err) {
-    setError(
-      err?.response?.data?.message ||
-      err?.response?.data?.error ||
-      err?.message ||
-      "Failed to save feedback"
-    );
-  } finally {
-    setSaving(false);
-  }
-};
+    try {
+      const payload = {
+        comments,
+        status, // "Selected for next round" | "Selected" | "Rejected" | etc.
+        candidate_id: candidate.candidate_id,
+        position_id: positionId || candidate.position_id,
+        ...(interviewerId != null && { interviewer_id: Number(interviewerId) }),
+        interviewer_name: interviewerName || interviewerEmail,
+        interviewer_email: interviewerEmail,
+      };
 
-  const handleCloseIconClick = () => {
-    toggleDrawer();
+      const res = await apiService.postFeedback(payload);
+      if(res.status===200)
+      {
+         const feedbackRes = await apiService.getfeedback(candidate.candidate_id,positionId || candidate.position_id);
+                  if (feedbackRes?.status === 200) 
+                  {
+                    // console.log("feedbackRes",feedbackRes.data);
+                    
+                     setFeedbacks(feedbackRes?.data);
+                  }
+      }
+
+      // Build entry to show in the table
+      const entry = {
+        interviewer_name: interviewerName || interviewerEmail,
+        interviewer_email: interviewerEmail,
+        status,
+        comments,
+        created_at: new Date().toISOString(),
+      };
+
+      
+
+      setShowForm(false);
+      setIsEditing(false);
+      setComments("");
+
+      // Notify parent (optional)
+      onFeedbackSaved?.(candidate?.candidate_id, status, {
+        id: interviewerId,
+        name: entry.interviewer_name,
+        email: interviewerEmail,
+      });
+    } catch (err) {
+      setError(
+        err?.response?.data?.message ||
+          err?.response?.data?.error ||
+          err?.message ||
+          "Failed to save feedback"
+      );
+    } finally {
+      setSaving(false);
+    }
   };
+
+  // ===== helpers you already had for attendees (kept) =====
+  const addAttendee = (event) => {
+    if (event.key === "Enter" && inputValue.trim() !== "") {
+      event.preventDefault();
+      setAttendees((prev) => [...prev, inputValue.trim()]);
+      setInputValue("");
+    }
+  };
+  const removeAttendee = (indexToRemove) => {
+    setAttendees((prev) => prev.filter((_, i) => i !== indexToRemove));
+  };
+  const shortlistFunction = () => handleShortlist?.(candidate);
 
   return (
     <Offcanvas
@@ -199,6 +225,7 @@ function Drawer({
             </div>
           </div>
 
+          {/* TABS */}
           <Card>
             <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
               <Nav variant="tabs" className="drawer-nav">
@@ -209,13 +236,16 @@ function Drawer({
                   <Nav.Link eventKey="resume">Resume</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
+                  <Nav.Link eventKey="offerLetter">Offer Letter</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
                   <Nav.Link eventKey="feedback">Feedback</Nav.Link>
                 </Nav.Item>
               </Nav>
 
               <CardBody>
                 <Tab.Content>
-                  {/* ----- DETAILS ----- */}
+                  {/* ===== DETAILS ===== */}
                   <Tab.Pane eventKey="details">
                     <Row className="mt-3">
                       <Col md={6}>
@@ -342,11 +372,23 @@ function Drawer({
                               <Col md={12}>
                                 <div className="head-section">SKILL SET:</div>
                                 <div className="d-flex flex-wrap">
-                                  {candidate?.skills?.split(",")?.map((skill, i) => (
-                                    <span style={{ backgroundColor: "#f2f4fc" }} key={i} className="skill-pill">
+                                  {skills.map((skill, index) => (
+                                    <span
+                                      key={index}
+                                      className="skill-pill"
+                                      style={{ backgroundColor: "#f2f4fc" }}
+                                    >
                                       {skill.trim()}
                                     </span>
                                   ))}
+                                </div>
+                              </Col>
+                            </Row>
+                            <Row>
+                              <Col md={12}>
+                                <div className="head-section">Additional Info:</div>
+                                <div className="d-flex flex-wrap">
+                                  Highly knowledgeable about the company's application
                                 </div>
                               </Col>
                             </Row>
@@ -356,42 +398,110 @@ function Drawer({
                     </Row>
                   </Tab.Pane>
 
-                  {/* ----- RESUME ----- */}
+                  {/* ===== RESUME ===== */}
                   <Tab.Pane eventKey="resume">
                     <h6>Resume</h6>
                     {candidate?.fileUrl ? (
                       <div>
-                        <p>Click the link below to view or download the resume:</p>
-                        <a href={candidate.fileUrl} target="_blank" rel="noopener noreferrer">
-                          {candidate.fileUrl || "View Resume"}
-                        </a>
-                        <iframe
-                          src={candidate.fileUrl}
-                          width="100%"
-                          height="500px"
-                          style={{ border: "none", marginTop: "10px" }}
-                          title="Resume Viewer"
-                        />
+                        {(() => {
+                          const fileUrl = candidate.fileUrl;
+                          const fileExtension = fileUrl.split(".").pop().toLowerCase();
+                          const isPdf = fileExtension === "pdf";
+                          const isDocx = fileExtension === "docx" || fileExtension === "doc";
+                          const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(
+                            fileUrl
+                          )}&embedded=true`;
+
+                          return (
+                            <div>
+                              {isDocx ? (
+                                <div>
+                                  <div className="d-flex gap-3 mb-3">
+                                    <a
+                                      href={googleDocsViewerUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="btn btn-outline-primary"
+                                    >
+                                      View in Google Docs
+                                    </a>
+                                    <a href={fileUrl} download className="btn btn-outline-secondary">
+                                      Download Document
+                                    </a>
+                                  </div>
+                                </div>
+                              ) : isPdf ? (
+                                <div>
+                                  <div className="d-flex justify-content-end mb-2">
+                                    <a href={fileUrl} download className="btn btn-sm btn-outline-secondary">
+                                      Download PDF
+                                    </a>
+                                  </div>
+                                  <iframe
+                                    src={fileUrl}
+                                    width="100%"
+                                    height="600px"
+                                    style={{ border: "1px solid #ddd", borderRadius: "4px" }}
+                                    title="Resume Viewer"
+                                  />
+                                </div>
+                              ) : (
+                                <div>
+                                  <p>This file format cannot be previewed. Please download it to view.</p>
+                                  <a href={fileUrl} download className="btn btn-primary">
+                                    Download File
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </div>
                     ) : (
-                      <p>No resume available.</p>
+                      <div className="text-center py-4">
+                        <p>No resume available for this candidate.</p>
+                      </div>
                     )}
                   </Tab.Pane>
 
-                  {/* ----- FEEDBACK ----- */}
+                  {/* ===== OFFER LETTER ===== */}
+                  <Tab.Pane eventKey="offerLetter">
+                    {candidate?.offerLetterUrl ? (
+                      <div>
+                        <div className="d-flex justify-content-end mb-2">
+                          <a
+                            href={candidate.offerLetterUrl}
+                            download
+                            className="btn btn-sm btn-outline-secondary"
+                          >
+                            Download Offer Letter
+                          </a>
+                        </div>
+                        <iframe
+                          src={candidate.offerLetterUrl}
+                          width="100%"
+                          height="600px"
+                          style={{ border: "1px solid #ddd", borderRadius: "4px" }}
+                          title="Offer Letter Viewer"
+                        />
+                      </div>
+                    ) : (
+                      <div className="text-center py-4 fonreg">
+                        <p>No offer letter available for this candidate.</p>
+                      </div>
+                    )}
+                  </Tab.Pane>
+
+                  {/* ===== FEEDBACK (new) ===== */}
                   <Tab.Pane eventKey="feedback">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                       <h6 style={{ color: "#FF7043", marginBottom: 0 }}>Feedback</h6>
                       <div className="d-flex gap-2">
-                        {feedbacks.length > 0 && (
-                          <Button
-                            size="sm"
-                            variant="outline-secondary"
-                            onClick={startEditLatest}
-                          >
+                        {/* {feedbacks.length > 0 && (
+                          <Button size="sm" variant="outline-secondary" onClick={startEditLatest}>
                             Edit latest
                           </Button>
-                        )}
+                        )} */}
                         <Button
                           size="sm"
                           variant="outline-primary"
@@ -414,7 +524,9 @@ function Drawer({
                               readOnly
                               value={
                                 interviewerEmail
-                                  ? (interviewerName ? `${interviewerName} (${interviewerEmail})` : interviewerEmail)
+                                  ? interviewerName
+                                    ? `${interviewerName} (${interviewerEmail})`
+                                    : interviewerEmail
                                   : "Not set"
                               }
                             />
@@ -452,16 +564,17 @@ function Drawer({
                               onClick={handleSaveFeedback}
                               style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
                             >
-                              {saving ? "Saving..." : (isEditing ? "Update" : "Save")}
+                              {saving ? "Saving..." : isEditing ? "Update" : "Save"}
                             </Button>
-                            {showForm && (
-                              <Button
-                                variant="outline-secondary"
-                                onClick={() => { setShowForm(false); setIsEditing(false); }}
-                              >
-                                Cancel
-                              </Button>
-                            )}
+                            <Button
+                              variant="outline-secondary"
+                              onClick={() => {
+                                setShowForm(false);
+                                setIsEditing(false);
+                              }}
+                            >
+                              Cancel
+                            </Button>
                           </div>
                         </Form>
                       </div>
@@ -477,7 +590,7 @@ function Drawer({
                         </tr>
                       </thead>
                       <tbody>
-                        {feedbacks.length === 0 ? (
+                        {(feedbacks.length === 0 || feedbacks === null) ? (
                           <tr>
                             <td colSpan={4} className="text-center text-muted">
                               No feedback yet.
@@ -486,10 +599,10 @@ function Drawer({
                         ) : (
                           feedbacks.map((f, idx) => (
                             <tr key={idx}>
-                              <td>{f.interviewer_name}</td>
+                              <td>{f.interviewerName}</td>
                               <td>{f.status}</td>
                               <td>{f.comments || "-"}</td>
-                              <td>{new Date(f.created_at).toLocaleString()}</td>
+                              <td>{new Date(f.actionDate).toLocaleString()}</td>
                             </tr>
                           ))
                         )}

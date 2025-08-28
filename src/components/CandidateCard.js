@@ -20,11 +20,15 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+    faPlus,
     faPencil,
     faTrash,
     faSearch,
+
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
+import CandidatePortalModal from "./CandidatePortal/CandidatePortalModal";
+
 
 const CandidateCard = ({ setTriggerDownload }) => {
     const [candidates, setCandidates] = useState([]);
@@ -47,7 +51,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [selectedPositionId, setSelectedPositionId] = useState("");
     const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
     const [jobPositionTitle, setJobPositionTitle] = useState("");
-    const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
+   const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -66,23 +70,44 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [apiLoading, setApiLoading] = useState(false);
     const [reqSearch, setReqSearch] = useState("");
     const [posSearch, setPosSearch] = useState("");
-
+    const [selectedInterview, setSelectedInterview] = useState(null);
+    const [interviewFeedBack, setInterviewFeedBack] = useState([]);
+   
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
         `${req.requisition_code} - ${req.requisition_title}`
-        .toLowerCase()
-        .includes(reqSearch.toLowerCase())
+            .toLowerCase()
+            .includes(reqSearch.toLowerCase())
     );
 
     const filteredPositions = jobPositions.filter((pos) =>
         `${pos.position_code} - ${pos.position_title}`
-        .toLowerCase()
-        .includes(posSearch.toLowerCase())
+            .toLowerCase()
+            .includes(posSearch.toLowerCase())
     );
 
+    // const requisitionCode = useSelector((state) => state.job.requisitionCode);
+    // const positionId = useSelector((state) => state.job.positionId);
+    // const dispatch = useDispatch();
     // const showToast = (message, variant) => {
     //     alert(message);
     // };
+    const [showCandidatePortal, setShowCandidatePortal] = useState(false);
+    const toggleCandidatePortal = () => {
+        setShowCandidatePortal(!showCandidatePortal);
+    };
+
+    const [shouldRefresh, setShouldRefresh] = useState(0);
+  
+    const handleCloseModal = () => {
+        console.log("this called")
+        setShouldRefresh(prev => prev + 1);
+        setShowCandidatePortal(false);    // Close modal
+                 // Trigger data refresh
+    };
+
+
+
     const showToast = (message, variant = "info") => {
         switch (variant) {
             case "success":
@@ -106,6 +131,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             const data = response?.data || [];
             // console.log(data.filter(req => req.requisition_status === 'Approved'))
             setJobReqs(data.filter(req => req.requisition_status === 'Approved'));
+
         };
         fetchJobData();
     }, []);
@@ -132,7 +158,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
             if (selectedRequisitionId && selectedPositionId) {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
-                const fetchedCandidates = fetchedCandidatesResponse?.data || [];
+                const fetchedCandidates = fetchedCandidatesResponse?.data|| [];//
+                //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
+               // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
@@ -145,7 +173,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
                   candidate.application_status === "Rescheduled" ||
                   candidate.application_status === "Selected for next round" ||
                   candidate.application_status === "Rejected" ||
-                  candidate.application_status === "Selected"
+                  candidate.application_status === "Selected" ||
+                  candidate.application_status === "Cancelled"
                 );
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
@@ -162,7 +191,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         };
 
         fetchCandidates();
-    }, [selectedRequisitionId, selectedPositionId]);
+    }, [selectedRequisitionId, selectedPositionId, shouldRefresh]);
 
     const calculateRatings = (candidates, skills) => {
         return candidates.map(candidate => {
@@ -209,7 +238,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const ratedInterviewed = calculateRatings(interviewed, jdSkillsLowerCase);
 
     const handleJobReqChange = (event) => {
-        const newRequisitionCode = event.target.value;
+       const newRequisitionCode = event.target.value;
         const selectedReq = jobReqs.find(req => req.requisition_code === newRequisitionCode);
         setSelectedRequisitionCode(newRequisitionCode);
         setSelectedRequisitionId(selectedReq ? selectedReq.requisition_id : "");
@@ -221,13 +250,15 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setOffered([]);
     };
     const handleJobPositionChange = (event) => {
-        // const positionId = event.target.value;
+// const positionId = event.target.value;
         // setSelectedPositionId(positionId);
 
         // const selectedPos = jobPositions.find(pos => pos.position_id === positionId);
         // if (selectedPos) {
         //     setJobPositionTitle(selectedPos.position_title);
         // }
+
+
         const positionId = event.target.value;
         setSelectedPositionId(positionId);
 
@@ -235,6 +266,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         if (found) {
             setSelectedPositionTitle(found.position_title);
         }
+
     };
 
     const toggleCandidateSortOrder = () => {
@@ -343,12 +375,13 @@ const CandidateCard = ({ setTriggerDownload }) => {
         const interviewPayload = {
             candidate_id: interviewCandidate?.candidate_id,
             date: interviewData.interview_date,
-            interview_time: timeHHMM,
+            time: timeHHMM,
             // userId: 3,
             position_id: selectedPositionId,
             interviewer_email: interviewData.interviewerEmail,
             interviewer_name: interviewData.interviewerName,
             interviewer_id: interviewData.interviewerId,
+            status : "Scheduled",
         };
         setApiLoading(true);
 
@@ -368,8 +401,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
             // if (!response.ok) {
             //     throw new Error("Failed to schedule interview");
-            // }
-
+            // } 
+                      
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
@@ -560,10 +593,55 @@ const CandidateCard = ({ setTriggerDownload }) => {
         );
     };
 
-    const toggleDrawer = (candidate = null) => {
-        setIsOpen(!isOpen);
-        setSelectedCandidate(candidate);
-    };
+    // const toggleDrawer = (candidate = null) => {
+    //     setIsOpen(!isOpen);
+    //     setSelectedCandidate(candidate);
+    // };
+
+    const toggleDrawer = async (candidate=null) => {
+  if (isOpen) {
+    setIsOpen(false);
+    return;
+  }
+  const c = candidate ?? null;        // explicit fallback
+  setSelectedCandidate(c);
+  setSelectedInterview(null);
+
+  if (c) {
+    try {
+      setApiLoading(true); setError(null);
+      const res = await apiService.createInterview({
+        candidate_id: c.candidate_id,
+        position_id: selectedPositionId,
+      });
+      if (res?.status === 200) 
+        {
+          setSelectedInterview(res.data);
+           const feedbackRes = await apiService.getfeedback(c.candidate_id,selectedPositionId);
+          if (feedbackRes?.status === 200) 
+          {
+            setInterviewFeedBack(feedbackRes.data);
+            // setIsOpen(true);
+          }
+          else{
+            setInterviewFeedBack([]);
+          }
+        }
+      else setSelectedInterview(null);
+      setIsOpen(true);
+    } catch (e) {
+      setError("Failed to fetch interview details");
+      setSelectedInterview(null);
+      setInterviewFeedBack([]);
+    } finally {
+      setApiLoading(false);
+    }
+  }
+  
+};
+
+
+
 
     // Update handleReschedule to fetch data from the API
     const handleReschedule = async (candidate) => {
@@ -632,12 +710,12 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 time: timeHHMM,             
                 status: "Rescheduled",
                 position_id: selectedPositionId,
-                user_id: interviewData.interviewerId,
+                interviewer_id: interviewData.interviewerId,
                 interviewer_email: interviewData.interviewerEmail,
                 interviewer_name: interviewData.interviewerName,
             };
-            // const response = await apiService.updateInterviewStatus(payload);
-               const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
+            const response = await apiService.updateInterviewStatus(payload);
+              //  const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
 
 
             if (response.status === 200) {
@@ -676,7 +754,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     };
 
     // Function to handle the cancellation of an interview
-    const handleDeleteInterview = async () => {
+    const handleDeleteInterview = async (interviewData) => {
         setLoading(true);
         setApiLoading(true);
         setError(null);
@@ -688,8 +766,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 time: String(rescheduleCandidate.interview_time).slice(0, 5), // 👈 Corrected: Add interview time
                 position_id: selectedPositionId,
                 status: 'Cancelled',
-                interviewer_id: rescheduleCandidate.interviewer_id,
+                interviewer_id: interviewData.interviewerId,
+                interviewer_email: interviewData.interviewerEmail,
+                interviewer_name: interviewData.interviewerName,
             };
+            // console.log("myPayload",payload)
             const response = await apiService.updateInterviewStatus(payload);
 
             if (response.status === 200) {
@@ -764,85 +845,85 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                     {/* <BreadcrumbItem> */}
                     <Dropdown className="w-100 mb-3">
                         <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', padding: '0.3rem', marginTop: '15px', overflowX: 'hidden' }}>
-                        {selectedRequisitionCode
-                            ? `${selectedRequisitionCode} - ${
-                                jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
-                                ?.requisition_title || ""
-                            }`
-                            : "Select Requisition Code"}
+                            {selectedRequisitionCode
+                                ? `${selectedRequisitionCode} - ${
+                                    jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
+                                    ?.requisition_title || ""
+                                }`
+                                : "Select Requisition Code"}
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu className="w-100 p-2">
-                        <Form.Control
-                            type="text"
-                            placeholder="Search requisition"
-                            value={reqSearch}
-                            onChange={(e) => setReqSearch(e.target.value)}
-                            className="mb-2"
-                        />
-                        <div style={{ overflowX: 'auto' }}>
-                            {filteredReqs.length > 0 ? (
-                                filteredReqs.map((req, idx) => (
-                                <Dropdown.Item
-                                    key={idx}
-                                    onClick={() =>
-                                        handleJobReqChange({
-                                            target: { name: "jobReqDropdown", value: req.requisition_code },
-                                        })
-                                    }
-                                    style={{ fontSize: '14px' }}
-                                >
-                                    {req.requisition_code} - {req.requisition_title}
-                                </Dropdown.Item>
-                                ))
-                            ) : (
-                                <Dropdown.Item disabled>No job requests available</Dropdown.Item>
-                            )}
-                        </div>
+                            <Form.Control
+                                type="text"
+                                placeholder="Search requisition"
+                                value={reqSearch}
+                                onChange={(e) => setReqSearch(e.target.value)}
+                                className="mb-2"
+                            />
+                            <div style={{ overflowX: 'auto' }}>
+                                {filteredReqs.length > 0 ? (
+                                    filteredReqs.map((req, idx) => (
+                                        <Dropdown.Item
+                                            key={idx}
+                                            onClick={() =>
+                                                handleJobReqChange({
+                                                    target: { name: "jobReqDropdown", value: req.requisition_code },
+                                                })
+                                            }
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            {req.requisition_code} - {req.requisition_title}
+                                        </Dropdown.Item>
+                                    ))
+                                ) : (
+                                    <Dropdown.Item disabled>No job requests available</Dropdown.Item>
+                                )}
+                            </div>
                         </Dropdown.Menu>
                     </Dropdown>
 
                     {/* Position Dropdown */}
                     {selectedRequisitionCode && (
                         <Dropdown className="w-100">
-                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
-                            {selectedPositionId
-                            ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
-                                ?.position_code || ""} - ${
-                                jobPositions.find((p) => p.position_id === selectedPositionId)
-                                    ?.position_title || ""
-                                }`
-                            : "Select Position Title"}
-                        </Dropdown.Toggle>
+                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
+                                {selectedPositionId
+                                    ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
+                                        ?.position_code || ""} - ${
+                                            jobPositions.find((p) => p.position_id === selectedPositionId)
+                                        ?.position_title || ""
+                                    }`
+                                    : "Select Position Title"}
+                            </Dropdown.Toggle>
 
-                        <Dropdown.Menu className="w-100 p-2">
-                            <Form.Control
-                            type="text"
-                            placeholder="Search position"
-                            value={posSearch}
-                            onChange={(e) => setPosSearch(e.target.value)}
-                            className="mb-2"
-                            />
-                            <div style={{ overflowX: 'auto' }}>
-                                {filteredPositions.length > 0 ? (
-                                filteredPositions.map((pos, idx) => (
-                                    <Dropdown.Item
-                                        key={idx}
-                                        onClick={() =>
-                                            handleJobPositionChange({
-                                            target: { name: "jobPositionsDropdown", value: pos.position_id },
-                                            })
-                                        }
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                    {pos.position_code} - {pos.position_title}
-                                    </Dropdown.Item>
-                                ))
-                                ) : (
-                                <Dropdown.Item disabled>No positions available</Dropdown.Item>
-                                )}
-                            </div>
-                        </Dropdown.Menu>
+                            <Dropdown.Menu className="w-100 p-2">
+                                <Form.Control
+                                    type="text"
+                                    placeholder="Search position"
+                                    value={posSearch}
+                                    onChange={(e) => setPosSearch(e.target.value)}
+                                    className="mb-2"
+                                />
+                                <div style={{ overflowX: 'auto' }}>
+                                    {filteredPositions.length > 0 ? (
+                                        filteredPositions.map((pos, idx) => (
+                                            <Dropdown.Item
+                                                key={idx}
+                                                onClick={() =>
+                                                    handleJobPositionChange({
+                                                        target: { name: "jobPositionsDropdown", value: pos.position_id },
+                                                    })
+                                                }
+                                                style={{ fontSize: '14px' }}
+                                            >
+                                                {pos.position_code} - {pos.position_title}
+                                            </Dropdown.Item>
+                                        ))
+                                    ) : (
+                                        <Dropdown.Item disabled>No positions available</Dropdown.Item>
+                                    )}
+                                </div>
+                            </Dropdown.Menu>
                         </Dropdown>
                     )}
                 </div>
@@ -871,11 +952,24 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                             <div className="card-body" style={{ maxHeight: 'auto', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
-                                        <h5 className="color_grey card-title">Candidates</h5>
-                                        {isDescending.candidates ?
-                                            <i className="bi bi-sort-down sort_icon" onClick={toggleCandidateSortOrder}></i> :
-                                            <i className="bi bi-sort-up sort_icon" onClick={toggleCandidateSortOrder}></i>
-                                        }
+                                        <div className="d-flex align-items-baseline">
+                                            <h5 className="color_grey card-title">Candidates</h5>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2">
+                                            {selectedPositionId && (
+                                                <span
+                                                    className="text-info cursor-pointer d-flex align-items-center gap-1 orangeadd"
+                                                    onClick={toggleCandidatePortal}
+                                                >
+                                                    Add
+                                                    <FontAwesomeIcon icon={faPlus} />
+                                                </span>
+                                            )}
+                                            {isDescending.candidates ?
+                                                <i className="bi bi-sort-down sort_icon" onClick={toggleCandidateSortOrder}></i> :
+                                                <i className="bi bi-sort-up sort_icon" onClick={toggleCandidateSortOrder}></i>
+                                            }
+                                        </div>
                                     </div>
                                     <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
@@ -917,6 +1011,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                                             <h6 className="rating_text px-1">{candidate.rating}</h6>
                                                                             <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
                                                                         </div> */}
+
                                                                     </div>
                                                                 </div>
                                                             )}
@@ -991,22 +1086,22 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div className="d-flex flex-column">                                                                            
-                                                                              <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
-                                                                              {/* This is the new "Reschedule" button */}
-                                                                              {showReschedule && (
-                                                                                  <button
-                                                                                      variant="warning"
-                                                                                      size="sm"
-                                                                                      className="mt-2 reschedule-btn"
-                                                                                      onClick={(e) => {
-                                                                                          e.stopPropagation(); // Prevents the card's onClick from firing
-                                                                                          handleReschedule(candidate);
-                                                                                      }}
-                                                                                  >
-                                                                                      Reschedule
-                                                                                  </button>
-                                                                              )}
+                                                                        <div className="d-flex flex-column">
+                                                                            <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
+                                                                            {/* This is the new "Reschedule" button */}
+                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' || candidate.application_status === 'Cancelled' || candidate.application_status === 'Selected for next round') && (
+                                                                                <button
+                                                                                    variant="warning"
+                                                                                    size="sm"
+                                                                                    className="mt-2 reschedule-btn"
+                                                                                    onClick={(e) => {
+                                                                                        e.stopPropagation(); // Prevents the card's onClick from firing
+                                                                                        handleReschedule(candidate);
+                                                                                    }}
+                                                                                >
+                                                                                    Reschedule
+                                                                                </button>
+                                                                            )}
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1099,6 +1194,8 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                     ratedCandidates={ratedCandidates}            
                     onFeedbackSaved={handleFeedbackSaved}
                     positionId={selectedPositionId}
+                    interviewer={selectedInterview}
+                    interviewFeedBacks={interviewFeedBack}
                 />
             )}
             {/* <InterviewModal
@@ -1141,8 +1238,24 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                 error={error}
                 offerLetterPath={offerLetterPath} // 👈 Pass the state down
                 setOfferLetterPath={setOfferLetterPath}
-                setApiLoading={setApiLoading}
+                                setApiLoading={setApiLoading}
+
             />
+            {/* <CandidatePortalModal
+                show={showCandidatePortal}
+                handleClose={toggleCandidatePortal}
+                selectedPositionId={selectedPositionId}
+            /> */}
+
+            {showCandidatePortal && (
+                <CandidatePortalModal
+                show={showCandidatePortal}
+                handleClose={handleCloseModal}
+                selectedPositionId={selectedPositionId}
+                onSubmitSuccess={handleCloseModal}
+                />
+            )}
+
             {apiLoading && (
                 <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>
                     <div className="spinner-border" role="status">

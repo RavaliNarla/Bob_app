@@ -13,7 +13,9 @@ function getToken() {
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://192.168.20.111:8081/api';
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS || 'http://192.168.20.115:8080/api';
 const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
-const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
+//const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
+const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL || 'http://192.168.20.111:8081/api';
+
 
 // Create a primary axios instance for most API calls
 const api = axios.create({
@@ -41,6 +43,7 @@ const nodeApi = axios.create({
   baseURL: NODE_API_URL,
   headers: { "Content-Type": "application/json" },
 });
+
 
 
 // Request interceptor to add auth token for the primary API
@@ -177,17 +180,25 @@ export const apiService = {
 
   //Candidate Interview
   createInterview: (data) => candidateApi.post('/candidates/interviews', data),
-  updateInterviewStatus: (data) => candidateApi.put('/candidates/update-interview-status', data),
+  updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
+   //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
+   getfeedback: (candidate_id, position_id) =>
+  candidateApi.get("/candidates/getfeedback", {
+    params: { candidate_id, position_id },
+  }),
+
+  postFeedback: (data) => candidateApi.post('/candidates/feedback', data),
+  // updateInterviewStatus: (data) => candidateApi.put('/candidates/update-interview-status', data),
   //Payment
   getPayment: () => candidateApi.get('/razorpay/all'),
-  
+
   // --- Auth (Node API) ---
   forgotPassword: (email) => nodeApi.post('/auth/candidate-forgot-password', { email }),
-   // Register
+  // Register
   getRegister: () => nodeApi.get('/getdetails/users/all'),
   registerUser: (data) => nodeApi.post('/auth/recruiter-register', data), // Auth (Node API)
 
-  
+
   recruiterLogin: (email, password) => nodeApi.post("/auth/recruiter-login", { email, password }),
 
   resendVerification: (user_id) => nodeApi.post("/auth/recruiter-resend-verification", { user_id }),
@@ -201,22 +212,38 @@ export const apiService = {
   scheduleInterview: (interviewPayload) =>
     candidateApi.put("/candidates/schedule-interview", interviewPayload),
 
-   sendOffer: (payload) =>
+  sendOffer: (payload) =>
     candidateApi.put("/candidates/offer", payload),
 
-   getInterviewsByDateRange: (startTimestamp, endTimestamp) =>
-  candidateApi.get('/candidates/interviews/by-date-range', {
-    params: { startTimestamp, endTimestamp },
-  }),
+  getInterviewsByDateRange: (startTimestamp, endTimestamp) =>
+    candidateApi.get('/candidates/interviews/by-date-range', {
+      params: { startTimestamp, endTimestamp },
+    }),
 
   getFreeBusySlots: (email, date, interval = 60, tz = 'Asia/Kolkata') =>
   nodeApi.get('/calendar/free-busy', {
     params: { email, date, interval, tz }
   }),
 
-  getAllUsers: () => nodeApi.get(`/getdetails/users/all`),
+  getCandidateDetails: (candidate_id) => candidateApi.get(`candidates/details-by-candidates/${candidate_id}`),
+updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data),
+applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
 
-  registerUser: (payload) => nodeApi.post(`/auth/recruiter-register`, payload),
+
+parseResume: (formData) =>
+    axios.post("https://backend.sentrifugo.com/parse-resume2", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
+
+  // Candidate Registration (Node API - bobbe)
+  candidateRegister: (data) =>
+    nodeApi.post("/auth/candidate-register", data),
+
+  // Resume Upload (Node API - bobbe)
+  uploadResume: (formData) =>
+    nodeApi.post("/resume/upload", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    }),
    
 };
 

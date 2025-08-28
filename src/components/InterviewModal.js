@@ -58,6 +58,8 @@ const InterviewModal = ({
   // interviewer list + selection
   const [interviewers, setInterviewers] = useState([]); // [{id?, name, email}]
   const [interviewerEmail, setInterviewerEmail] = useState("");
+  const [interviewerName, setInterviewerName] = useState("");
+  const [interviewerId, setInterviewerId] = useState("");
   const [loadingInterviewers, setLoadingInterviewers] = useState(false);
   const [interviewersError, setInterviewersError] = useState("");
 
@@ -100,10 +102,12 @@ const InterviewModal = ({
 
         // pick from candidate if rescheduling; otherwise first interviewer
         const candidatePick =
-          isReschedule && candidate?.interviewer_email
-            ? candidate.interviewer_email
+          isReschedule && interviewers?.interviewer_email
+            ? interviewers.interviewer_email
             : null;
         const firstEmail = onlyInterviewers[0]?.email || "";
+        // console.log(candidatePick);
+        
         setInterviewerEmail(candidatePick || firstEmail);
       } catch (err) {
         setInterviewersError(err.message || "Failed to load interviewers");
@@ -157,11 +161,24 @@ const InterviewModal = ({
     }
   };
 
+  // const onInterviewerChange = (e) => {
+  //   setInterviewerEmail(e.target.value);
+  //   setSelectedSlot(null);
+  //   setInterviewData((prev) => ({ ...prev, interview_time: "" }));
+  // };
+
   const onInterviewerChange = (e) => {
-    setInterviewerEmail(e.target.value);
-    setSelectedSlot(null);
-    setInterviewData((prev) => ({ ...prev, interview_time: "" }));
-  };
+  const email = e.target.value;
+  const iv = interviewers.find((x) => x.email === email);
+
+  setInterviewerEmail(email);
+  setInterviewerName(iv?.name ?? "");
+  setInterviewerId(iv?.id ?? "");
+
+  setSelectedSlot(null);
+  setInterviewData((prev) => ({ ...prev, interview_time: "" }));
+};
+
 
   async function fetchSlotsForDate(ymd, email) {
     setLoadingSlots(true);
@@ -196,14 +213,34 @@ const InterviewModal = ({
         email: interviewerEmail,
         id: undefined,
       };
+      let interviewobj={
+      interview_date: interviewData.interview_date,
+      interview_time: String(interviewData.interview_time).slice(0, 5), // "HH:mm"
+      interviewerEmail: interviewerEmail,
+      interviewerName: interviewerName,
+      interviewerId: interviewerId,
+    }
 
-    handleSave({
+    handleSave(interviewobj);
+  };
+
+  const onCancel = () => {
+    
+    const selectedInterviewer =
+      interviewers.find((iv) => iv.email === interviewerEmail) || {
+        name: "",
+        email: interviewerEmail,
+        id: undefined,
+      };
+      let interviewobj={
       interview_date: interviewData.interview_date,
       interview_time: String(interviewData.interview_time).slice(0, 5), // "HH:mm"
       interviewerEmail: selectedInterviewer.email,
       interviewerName: selectedInterviewer.name,
       interviewerId: selectedInterviewer.id,
-    });
+    }
+
+    handleCancelInterview(interviewobj);
   };
 
   const selectedSlotKey = useMemo(() => {
@@ -348,7 +385,7 @@ const InterviewModal = ({
           Cancel
         </Button>
         {isReschedule && (
-          <Button variant="danger" onClick={handleCancelInterview}>
+          <Button variant="danger" onClick={onCancel}>
             Cancel Interview
           </Button>
         )}
