@@ -473,6 +473,7 @@ function Drawer({
                             href={candidate.offerLetterUrl}
                             download
                             className="btn btn-sm btn-outline-secondary"
+                            target="_blank"
                           >
                             Download Offer Letter
                           </a>
