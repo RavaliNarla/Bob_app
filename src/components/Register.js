@@ -29,7 +29,7 @@ const Register = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await apiService.getAllUsers();
+      const res = await apiService.getRegister();
       setUsersData(res);
       console.log("Fetched users:", res);
     } catch (err) {
