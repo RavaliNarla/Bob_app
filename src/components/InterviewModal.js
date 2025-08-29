@@ -54,12 +54,12 @@ const InterviewModal = ({
     interview_date: "",
     interview_time: "",
   });
-
+  // console.log("InterviewModal candidate:", candidate);
   // interviewer list + selection
   const [interviewers, setInterviewers] = useState([]); // [{id?, name, email}]
-  const [interviewerEmail, setInterviewerEmail] = useState("");
-  const [interviewerName, setInterviewerName] = useState("");
-  const [interviewerId, setInterviewerId] = useState("");
+  const [interviewerEmail, setInterviewerEmail] = useState(candidate?.interviewerEmail || "");
+  const [interviewerName, setInterviewerName] = useState(candidate?.interviewerName || "");
+  const [interviewerId, setInterviewerId] = useState(candidate?.interviewerId || "");
   const [loadingInterviewers, setLoadingInterviewers] = useState(false);
   const [interviewersError, setInterviewersError] = useState("");
 
@@ -108,7 +108,7 @@ const InterviewModal = ({
         const firstEmail = onlyInterviewers[0]?.email || "";
         // console.log(candidatePick);
         
-        setInterviewerEmail(candidatePick || firstEmail);
+        setInterviewerEmail(candidate?.interviewerEmail || "");
       } catch (err) {
         setInterviewersError(err.message || "Failed to load interviewers");
         setInterviewers([]);
@@ -295,6 +295,9 @@ const InterviewModal = ({
               </Alert>
             ) : (
               <Form.Select value={interviewerEmail} onChange={onInterviewerChange}>
+                <option value="" disabled>
+                  Select Interviewer
+                </option>
                 {interviewers.map((iv) => (
                   <option key={iv.id || iv.email} value={iv.email}>
                     {iv.name}

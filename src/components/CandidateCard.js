@@ -645,47 +645,48 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
     // Update handleReschedule to fetch data from the API
     const handleReschedule = async (candidate) => {
-        setLoading(true);
-        setApiLoading(true);
-        setError(null);
-        try {
-            const payload = {
-                candidate_id: candidate.candidate_id,
-                position_id: selectedPositionId // Assuming selectedPositionId holds the current position ID
-            };
-            const response = await apiService.createInterview(payload);
-            if (response.status === 200) {
-                const interviewDetails = response.data;
-                const scheduleAt = new Date(interviewDetails.schedule_at);
-                const date = scheduleAt.toISOString().split('T')[0];
-                const time = scheduleAt.toTimeString().split(' ')[0].substring(0, 5);
-
-                const updatedCandidate = {
-                    ...candidate,
-                    interview_date: date,              
-                    interview_time: time,
-                    interviewer_id:
-                    candidate.interviewer_id ?? interviewDetails.interviewer_id,
-                    interviewer_email:
-                    candidate.interviewer_email ?? interviewDetails.interviewer_email,
-                    interviewer_name:
-                    candidate.interviewer_name ?? interviewDetails.interviewer_name,
-                };
-                setRescheduleCandidate(updatedCandidate);
-            } else {
-                setRescheduleCandidate(candidate);
-                showToast("Could not retrieve interview details.", "warning");
-            }
-        } catch (err) {
-            console.error("Failed to fetch interview details:", err);
-            setRescheduleCandidate(candidate);
-            setError('Failed to fetch interview details');
-        } finally {
-            setLoading(false);
-            setApiLoading(false);
-            setShowRescheduleModal(true);
-        }
+  setLoading(true);
+  setApiLoading(true);
+  setError(null);
+  try {
+    const payload = {
+      candidate_id: candidate.candidate_id,
+      position_id: selectedPositionId,
     };
+    const response = await apiService.createInterview(payload);
+    if (response.status === 200) {
+      const interviewDetails = response.data;
+      const scheduleAt = interviewDetails.scheduled_at
+        ? new Date(interviewDetails.scheduled_at)
+        : null;
+      const date = scheduleAt ? scheduleAt.toISOString().split("T")[0] : "";
+      const time = scheduleAt
+        ? scheduleAt.toTimeString().split(" ")[0].substring(0, 5)
+        : "";
+
+      const updatedCandidate = {
+        ...candidate,
+        interviewDate: date,
+        interviewTime: time,
+        interviewerId: interviewDetails.interviewer_id,
+        interviewerEmail: interviewDetails.interviewer_email,
+        interviewerName: interviewDetails.interviewer,
+      };
+      setRescheduleCandidate(updatedCandidate);
+    } else {
+      setRescheduleCandidate(candidate);
+      showToast("Could not retrieve interview details.", "warning");
+    }
+  } catch (err) {
+    console.error("Failed to fetch interview details:", err);
+    setRescheduleCandidate(candidate);
+    setError("Failed to fetch interview details");
+  } finally {
+    setLoading(false);
+    setApiLoading(false);
+    setShowRescheduleModal(true);
+  }
+};
 
     const handleCancelReschedule = () => {
         setShowRescheduleModal(false);
@@ -1238,7 +1239,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                 error={error}
                 offerLetterPath={offerLetterPath} // 👈 Pass the state down
                 setOfferLetterPath={setOfferLetterPath}
-                                setApiLoading={setApiLoading}
+                setApiLoading={setApiLoading}
 
             />
             {/* <CandidatePortalModal
