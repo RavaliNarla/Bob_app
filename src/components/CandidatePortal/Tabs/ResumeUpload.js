@@ -25,7 +25,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     }
   };
 
-  
+
   // const handleContinue = async () => {
   //   if (!resumeFile) {
   //     alert('Please select a file');
@@ -132,24 +132,24 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     // Step 1: Parse resume
     const parseFormData = new FormData();
     parseFormData.append("resume", resumeFile);
-
-    const { data: parsedData } = await apiService.parseResume(parseFormData);
+    const parseResponse = await apiService.parseResume(parseFormData);
+    const parsedData = parseResponse?.data || parseResponse;
     console.log("Parsed resume:", parsedData);
 
     setParsedData(parsedData);
 
     // Step 2: Register candidate
-    const registerPayload = {
+    const registerResponse = await apiService.candidateRegister({
       name: parsedData.name || "",
       email: parsedData.email || "",
       mobile: 9999999999,
       password: "Sagrsoft@123",
-    };
-
-    const { data: registerResult } = await apiService.candidateRegister(registerPayload);
+    });
+    const registerResult = registerResponse?.data || registerResponse;
     console.log("Candidate registered:", registerResult);
 
     const candidateId = registerResult?.candidate_id;
+    if (!candidateId) throw new Error("Candidate registration did not return candidate_id");
     dispatch(setCandidate(candidateId));
 
     // Step 3: Upload resume
@@ -157,12 +157,16 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     uploadFormData.append("resumeFile", resumeFile);
     uploadFormData.append("candidateId", candidateId);
 
-    const { data: uploadResult } = await apiService.uploadResume(uploadFormData);
+    const uploadResponse = await apiService.uploadResume(uploadFormData);
+    const uploadResult = uploadResponse?.data || uploadResponse;
     console.log("Resume upload successful:", uploadResult);
 
+    if (!uploadResult?.public_url) {
+      throw new Error("Upload API did not return a valid public_url");
+    }
     setResumePublicUrl(uploadResult.public_url);
 
-    // Step 4: Move to next tab
+    // Step 4: Next tab
     goNext();
   } catch (err) {
     alert("Error: " + (err.response?.data?.error || err.message));
@@ -171,6 +175,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     setLoading(false);
   }
 };
+
 
 
 
