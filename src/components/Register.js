@@ -4,6 +4,8 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Button, Modal, Table } from "react-bootstrap";
 import apiService from "../services/apiService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 // import panaImage from "../assets/pana.png";
 // import logoImage from "../assets/bob-logo.png";
 
@@ -19,6 +21,8 @@ const Register = () => {
   });
   const [usersData, setUsersData] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 //   const [otp, setOtp] = useState("");
 // const [mfaToken, setMfaToken] = useState("");
 // const [showOtpInput, setShowOtpInput] = useState(false);
@@ -217,11 +221,69 @@ const Register = () => {
               <div className="d-flex justify-content-between gap-3">
                 <div>
                   <label>Password</label>
-                  <input type="password" name="password" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                  <div style={{ position: "relative" }}>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      onChange={handleChange}
+                      required
+                      style={{
+                        borderRadius: "5px",
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        width: "100%",
+                        paddingRight: "40px",
+                      }}
+                    />
+                    <FontAwesomeIcon
+                      icon={showPassword ? faEye : faEyeSlash}
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#666",
+                      }}
+                      title={showPassword ? "Hide password" : "Show password"}
+                    />
+                  </div>
                 </div>
                 <div>
                   <label>Confirm Password</label>
-                  <input type="password" name="confirmPassword" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
+                    <div style={{ position: "relative" }}>
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      onChange={handleChange}
+                      required
+                      style={{
+                        borderRadius: "5px",
+                        backgroundColor: "#fff",
+                        border: "1px solid #ccc",
+                        padding: "8px",
+                        width: "100%",
+                        paddingRight: "40px",
+                      }}
+                    />
+                    <FontAwesomeIcon
+                      icon={showConfirmPassword ? faEye : faEyeSlash}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      style={{
+                        position: "absolute",
+                        right: "10px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#666",
+                      }}
+                      title={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
