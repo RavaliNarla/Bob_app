@@ -305,7 +305,7 @@ export default function Calendar() {
                     <Image roundedCircle width={42} height={42} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
                     <div className="flex-grow-1">
                       <div className="fw-bold text-muted fontbold">{ev?.requisitionCode} - {ev.title}</div>
-                      <div className="text-muted small">{ev.person} | Interviewer: {ev?.interviewerName}</div>
+                      <div className="text-muted small fontregular">{ev.person} | Interviewer: {ev?.interviewerName}</div>
                     </div>
                     {/* <div className="text-muted small"></div> */}
                     {/* <Badge bg={ev.applicationStatus.toLowerCase() === 'cancelled' ? 'danger' : 'primary'} className="ms-2">{ev?.applicationStatus}</Badge> */}

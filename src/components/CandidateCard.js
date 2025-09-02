@@ -1127,7 +1127,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                                             placement="bottom"
                                                                                             overlay={
                                                                                                 <Tooltip id="tooltip-reschedule">
-                                                                                                    Reschedule Interview
+                                                                                                    Reschedule\Cancel
                                                                                                 </Tooltip>
                                                                                             }
                                                                                         >
