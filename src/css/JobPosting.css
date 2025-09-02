@@ -289,7 +289,7 @@ font-family: 'Poppins', sans-serif !important;
 }
 
 .job-postings-page .accordion-button:not(.collapsed) {
-  background-color: #FF7043 !important;
+  background-color: #f7e1d7 !important;
   /* color: #fff !important; */
 }
 
@@ -320,7 +320,7 @@ font-family: 'Poppins', sans-serif !important;
 {
   font-family: 'Poppins', sans-serif !important;
   font-weight: 600 !important; /* 600 = semibold */
-  font-size: 16px !important;
+  font-size: 14px !important;
   margin-bottom: 0.25rem;
   color:#414141;
 }
@@ -334,4 +334,16 @@ font-family: 'Poppins', sans-serif !important;
   font-weight:300;
   color: #414141 !important;
 
+}
+
+.searchinput {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 50%;
+  float: right;
+}
+.title{
+  font-size:12px;
 }

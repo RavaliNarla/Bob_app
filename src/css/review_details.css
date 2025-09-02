@@ -1,0 +1,9 @@
+.review_input label, .review_input input, .review_input textarea{
+    font-size:14px;
+}
+.nav-links.active{
+    color: black !important;
+}
+.bornav {
+    color: black;
+}

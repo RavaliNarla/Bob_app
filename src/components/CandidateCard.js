@@ -24,10 +24,12 @@ import {
     faPencil,
     faTrash,
     faSearch,
-
+    faCalendarAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
 import CandidatePortalModal from "./CandidatePortal/CandidatePortalModal";
+import reschedule from '../assets/reschedule.png';
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 
 const CandidateCard = ({ setTriggerDownload }) => {
@@ -51,7 +53,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [selectedPositionId, setSelectedPositionId] = useState("");
     const [selectedRequisitionId, setSelectedRequisitionId] = useState("");
     const [jobPositionTitle, setJobPositionTitle] = useState("");
-   const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
+    const [selectedPositionTitle, setSelectedPositionTitle] = useState("");
 
     const [showInterviewModal, setShowInterviewModal] = useState(false);
     const [interviewCandidate, setInterviewCandidate] = useState(null);
@@ -72,7 +74,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [posSearch, setPosSearch] = useState("");
     const [selectedInterview, setSelectedInterview] = useState(null);
     const [interviewFeedBack, setInterviewFeedBack] = useState([]);
-   
+
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
         `${req.requisition_code} - ${req.requisition_title}`
@@ -98,12 +100,12 @@ const CandidateCard = ({ setTriggerDownload }) => {
     };
 
     const [shouldRefresh, setShouldRefresh] = useState(0);
-  
+
     const handleCloseModal = () => {
         console.log("this called")
         setShouldRefresh(prev => prev + 1);
         setShowCandidatePortal(false);    // Close modal
-                 // Trigger data refresh
+        // Trigger data refresh
     };
 
 
@@ -158,23 +160,23 @@ const CandidateCard = ({ setTriggerDownload }) => {
             if (selectedRequisitionId && selectedPositionId) {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
-                const fetchedCandidates = fetchedCandidatesResponse?.data|| [];//
+                const fetchedCandidates = fetchedCandidatesResponse?.data || [];//
                 //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
-               // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
+                // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
                 const shortlistedCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Shortlisted'
                 );
-                const interviewedCandidates = fetchedCandidates.filter(                 
-                  (candidate) =>
-                  candidate.application_status === "Scheduled" ||
-                  candidate.application_status === "Rescheduled" ||
-                  candidate.application_status === "Selected for next round" ||
-                  candidate.application_status === "Rejected" ||
-                  candidate.application_status === "Selected" ||
-                  candidate.application_status === "Cancelled"
+                const interviewedCandidates = fetchedCandidates.filter(
+                    (candidate) =>
+                        candidate.application_status === "Scheduled" ||
+                        candidate.application_status === "Rescheduled" ||
+                        candidate.application_status === "Selected for next round" ||
+                        candidate.application_status === "Rejected" ||
+                        candidate.application_status === "Selected" ||
+                        candidate.application_status === "Cancelled"
                 );
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
@@ -238,7 +240,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const ratedInterviewed = calculateRatings(interviewed, jdSkillsLowerCase);
 
     const handleJobReqChange = (event) => {
-       const newRequisitionCode = event.target.value;
+        const newRequisitionCode = event.target.value;
         const selectedReq = jobReqs.find(req => req.requisition_code === newRequisitionCode);
         setSelectedRequisitionCode(newRequisitionCode);
         setSelectedRequisitionId(selectedReq ? selectedReq.requisition_id : "");
@@ -250,7 +252,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setOffered([]);
     };
     const handleJobPositionChange = (event) => {
-// const positionId = event.target.value;
+        // const positionId = event.target.value;
         // setSelectedPositionId(positionId);
 
         // const selectedPos = jobPositions.find(pos => pos.position_id === positionId);
@@ -381,7 +383,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             interviewer_email: interviewData.interviewerEmail,
             interviewer_name: interviewData.interviewerName,
             interviewer_id: interviewData.interviewerId,
-            status : "Scheduled",
+            status: "Scheduled",
         };
         setApiLoading(true);
 
@@ -402,19 +404,19 @@ const CandidateCard = ({ setTriggerDownload }) => {
             // if (!response.ok) {
             //     throw new Error("Failed to schedule interview");
             // } 
-                      
+
             // Update status locally
             const updatedInterviewed = interviewed.map(candidate =>
                 candidate.candidate_id === interviewCandidate.candidate_id
-                    ? {                        
-                      ...candidate,
-                      application_status: "Scheduled",
-                      interview_date: interviewData.interview_date,
-                      interview_time: timeHHMM, // use HH:mm in UI
-                      profileStatus: "Interview Scheduled",
-                      interviewer_email: interviewData.interviewerEmail,
-                      interviewer_name: interviewData.interviewerName,
-                      interviewer_id: interviewData.interviewerId,
+                    ? {
+                        ...candidate,
+                        application_status: "Scheduled",
+                        interview_date: interviewData.interview_date,
+                        interview_time: timeHHMM, // use HH:mm in UI
+                        profileStatus: "Interview Scheduled",
+                        interviewer_email: interviewData.interviewerEmail,
+                        interviewer_name: interviewData.interviewerName,
+                        interviewer_id: interviewData.interviewerId,
                     }
                     : candidate
             );
@@ -423,7 +425,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 updatedInterviewed.push({
                     ...interviewCandidate,
                     application_status: "Scheduled",
-                    interview_date: interviewData.interview_date,                 
+                    interview_date: interviewData.interview_date,
                     interview_time: timeHHMM, // use HH:mm in UI
                     interviewer_email: interviewData.interviewerEmail,
                     interviewer_name: interviewData.interviewerName,
@@ -606,95 +608,93 @@ const CandidateCard = ({ setTriggerDownload }) => {
     //     setSelectedCandidate(candidate);
     // };
 
-    const toggleDrawer = async (candidate=null) => {
-  if (isOpen) {
-    setIsOpen(false);
-    return;
-  }
-  const c = candidate ?? null;        // explicit fallback
-  setSelectedCandidate(c);
-  setSelectedInterview(null);
-
-  if (c) {
-    try {
-      setApiLoading(true); setError(null);
-      const res = await apiService.createInterview({
-        candidate_id: c.candidate_id,
-        position_id: selectedPositionId,
-      });
-      if (res?.status === 200) 
-        {
-          setSelectedInterview(res.data);
-           const feedbackRes = await apiService.getfeedback(c.candidate_id,selectedPositionId);
-          if (feedbackRes?.status === 200) 
-          {
-            setInterviewFeedBack(feedbackRes.data);
-            // setIsOpen(true);
-          }
-          else{
-            setInterviewFeedBack([]);
-          }
+    const toggleDrawer = async (candidate = null) => {
+        if (isOpen) {
+            setIsOpen(false);
+            return;
         }
-      else setSelectedInterview(null);
-      setIsOpen(true);
-    } catch (e) {
-      setError("Failed to fetch interview details");
-      setSelectedInterview(null);
-      setInterviewFeedBack([]);
-    } finally {
-      setApiLoading(false);
-    }
-  }
-  
-};
+        const c = candidate ?? null;        // explicit fallback
+        setSelectedCandidate(c);
+        setSelectedInterview(null);
+
+        if (c) {
+            try {
+                setApiLoading(true); setError(null);
+                const res = await apiService.createInterview({
+                    candidate_id: c.candidate_id,
+                    position_id: selectedPositionId,
+                });
+                if (res?.status === 200) {
+                    setSelectedInterview(res.data);
+                    const feedbackRes = await apiService.getfeedback(c.candidate_id, selectedPositionId);
+                    if (feedbackRes?.status === 200) {
+                        setInterviewFeedBack(feedbackRes.data);
+                        // setIsOpen(true);
+                    }
+                    else {
+                        setInterviewFeedBack([]);
+                    }
+                }
+                else setSelectedInterview(null);
+                setIsOpen(true);
+            } catch (e) {
+                setError("Failed to fetch interview details");
+                setSelectedInterview(null);
+                setInterviewFeedBack([]);
+            } finally {
+                setApiLoading(false);
+            }
+        }
+
+    };
 
 
 
 
     // Update handleReschedule to fetch data from the API
     const handleReschedule = async (candidate) => {
-  setLoading(true);
-  setApiLoading(true);
-  setError(null);
-  try {
-    const payload = {
-      candidate_id: candidate.candidate_id,
-      position_id: selectedPositionId,
-    };
-    const response = await apiService.createInterview(payload);
-    if (response.status === 200) {
-      const interviewDetails = response.data;
-      const scheduleAt = interviewDetails.scheduled_at
-        ? new Date(interviewDetails.scheduled_at)
-        : null;
-      const date = scheduleAt ? scheduleAt.toISOString().split("T")[0] : "";
-      const time = scheduleAt
-        ? scheduleAt.toTimeString().split(" ")[0].substring(0, 5)
-        : "";
+        setLoading(true);
+        setApiLoading(true);
+        setError(null);
+        try {
+            const payload = {
+                candidate_id: candidate.candidate_id,
+                position_id: selectedPositionId,
+            };
+            const response = await apiService.createInterview(payload);
+            if (response.status === 200) {
+                const interviewDetails = response.data;
+                const scheduleAt = interviewDetails.scheduled_at
+                    ? new Date(interviewDetails.scheduled_at)
+                    : null;
+                const date = scheduleAt ? scheduleAt.toISOString().split("T")[0] : "";
+                const time = scheduleAt
+                    ? scheduleAt.toTimeString().split(" ")[0].substring(0, 5)
+                    : "";
 
-      const updatedCandidate = {
-        ...candidate,
-        interviewDate: date,
-        interviewTime: time,
-        interviewerId: interviewDetails.interviewer_id,
-        interviewerEmail: interviewDetails.interviewer_email,
-        interviewerName: interviewDetails.interviewer,
-      };
-      setRescheduleCandidate(updatedCandidate);
-    } else {
-      setRescheduleCandidate(candidate);
-      showToast("Could not retrieve interview details.", "warning");
-    }
-  } catch (err) {
-    console.error("Failed to fetch interview details:", err);
-    setRescheduleCandidate(candidate);
-    setError("Failed to fetch interview details");
-  } finally {
-    setLoading(false);
-    setApiLoading(false);
-    setShowRescheduleModal(true);
-  }
-};
+                const updatedCandidate = {
+                    ...candidate,
+                    interviewDate: date,
+                    interviewTime: time,
+                    interviewerId: interviewDetails.interviewer_id,
+                    interviewerEmail: interviewDetails.interviewer_email,
+                    interviewerName: interviewDetails.interviewer,
+                };
+                setRescheduleCandidate(updatedCandidate);
+            } else {
+                setRescheduleCandidate(candidate);
+                showToast("Could not retrieve interview details.", "warning");
+            }
+        } catch (err) {
+            console.error("Failed to fetch interview details:", err);
+            setRescheduleCandidate(candidate);
+            setError("Failed to fetch interview details");
+        } finally {
+            setLoading(false);
+            setApiLoading(false);
+            setShowRescheduleModal(true);
+        }
+    };
 
     const handleCancelReschedule = () => {
         setShowRescheduleModal(false);
@@ -708,7 +708,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             showToast("Please select both interview date and time.", "warning");
             return;
         }
-        
+
         const timeHHMM = String(interviewData.interview_time).slice(0, 5);
         setLoading(true);
         setApiLoading(true);
@@ -717,7 +717,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             const payload = {
                 candidate_id: rescheduleCandidate.candidate_id,
                 date: interviewData.interview_date,
-                time: timeHHMM,             
+                time: timeHHMM,
                 status: "Rescheduled",
                 position_id: selectedPositionId,
                 interviewer_id: interviewData.interviewerId,
@@ -725,33 +725,33 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 interviewer_name: interviewData.interviewerName,
             };
             const response = await apiService.updateInterviewStatus(payload);
-              //  const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
+            //  const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
 
 
             if (response.status === 200) {
                 showToast("Interview rescheduled successfully!", "success");
                 const updated = interviewed.map((c) =>
-                c.candidate_id === rescheduleCandidate.candidate_id ? {
-                ...c,
-                interview_date: interviewData.interview_date,
-                interview_time: timeHHMM, // keep HH:mm
-                application_status: "Rescheduled",
-                interviewer_id: interviewData.interviewerId,
-                interviewer_email: interviewData.interviewerEmail,
-                interviewer_name: interviewData.interviewerName,
-                } : c);
+                    c.candidate_id === rescheduleCandidate.candidate_id ? {
+                        ...c,
+                        interview_date: interviewData.interview_date,
+                        interview_time: timeHHMM, // keep HH:mm
+                        application_status: "Rescheduled",
+                        interviewer_id: interviewData.interviewerId,
+                        interviewer_email: interviewData.interviewerEmail,
+                        interviewer_name: interviewData.interviewerName,
+                    } : c);
                 setInterviewed(updated);
 
                 // Update the rescheduleCandidate state with the new data
-                
-              setRescheduleCandidate((prev) => ({
-                ...prev,
-                interview_date: interviewData.interview_date,
-                interview_time: timeHHMM,
-                interviewer_id: interviewData.interviewerId,
-                interviewer_email: interviewData.interviewerEmail,
-                interviewer_name: interviewData.interviewerName,
-              }));
+
+                setRescheduleCandidate((prev) => ({
+                    ...prev,
+                    interview_date: interviewData.interview_date,
+                    interview_time: timeHHMM,
+                    interviewer_id: interviewData.interviewerId,
+                    interviewer_email: interviewData.interviewerEmail,
+                    interviewer_name: interviewData.interviewerName,
+                }));
             }
         } catch (err) {
             console.error("Failed to reschedule interview:", err);
@@ -800,54 +800,54 @@ const CandidateCard = ({ setTriggerDownload }) => {
         }
     };
 
-    
-// Called by Drawer after saving feedback to update status & interviewer fields on the board
 
-const handleFeedbackSaved = (candidateId, newStatus, interviewer) => {
-  setInterviewed((prev) =>
-  prev.map((c) =>
-  c.candidate_id === candidateId
-  ? {
-  ...c,
-  application_status: newStatus,
-  interviewer_name: interviewer?.name ?? c.interviewer_name,
-  interviewer_email: interviewer?.email ?? c.interviewer_email,
-  interviewer_id: interviewer?.id ?? c.interviewer_id,
-  }
-  : c
-  )
-  );
-  if (selectedCandidate?.candidate_id === candidateId) {
+    // Called by Drawer after saving feedback to update status & interviewer fields on the board
 
-setSelectedCandidate((prev) =>
+    const handleFeedbackSaved = (candidateId, newStatus, interviewer) => {
+        setInterviewed((prev) =>
+            prev.map((c) =>
+                c.candidate_id === candidateId
+                    ? {
+                        ...c,
+                        application_status: newStatus,
+                        interviewer_name: interviewer?.name ?? c.interviewer_name,
+                        interviewer_email: interviewer?.email ?? c.interviewer_email,
+                        interviewer_id: interviewer?.id ?? c.interviewer_id,
+                    }
+                    : c
+            )
+        );
+        if (selectedCandidate?.candidate_id === candidateId) {
 
-prev
+            setSelectedCandidate((prev) =>
 
-? {
+                prev
 
-...prev,
+                    ? {
 
-application_status: newStatus,
+                        ...prev,
 
-interviewer_name: interviewer?.name ?? prev.interviewer_name,
+                        application_status: newStatus,
 
-interviewer_email: interviewer?.email ?? prev.interviewer_email,
+                        interviewer_name: interviewer?.name ?? prev.interviewer_name,
 
-interviewer_id: interviewer?.id ?? prev.interviewer_id,
+                        interviewer_email: interviewer?.email ?? prev.interviewer_email,
 
-}
+                        interviewer_id: interviewer?.id ?? prev.interviewer_id,
 
-: prev
+                    }
 
-);
+                    : prev
 
-}
+            );
 
-};
+        }
+
+    };
 
     return (
         <Container fluid className="py-4 px-1 foncandidate">
-            <h5 className="pb-3 px-5" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Candidate Shortlist</h5>
+            <h5 className="pb-3 px-5" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Candidate Shortlist</h5>
             <div className="top-bar">
                 <div className="responsive-breadcrumb-container">
 
@@ -857,14 +857,13 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                     <Dropdown className="w-100 mb-3">
                         <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', padding: '0.3rem', marginTop: '15px', overflowX: 'hidden' }}>
                             {selectedRequisitionCode
-                                ? `${selectedRequisitionCode} - ${
-                                    jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
+                                ? `${selectedRequisitionCode} - ${jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
                                     ?.requisition_title || ""
                                 }`
                                 : "Select Requisition Code"}
                         </Dropdown.Toggle>
 
-                        <Dropdown.Menu className="w-100 p-2">
+                        <Dropdown.Menu className="w-100 p-2 menuopen">
                             <Form.Control
                                 type="text"
                                 placeholder="Search requisition"
@@ -900,9 +899,8 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                             <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
                                 {selectedPositionId
                                     ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
-                                        ?.position_code || ""} - ${
-                                            jobPositions.find((p) => p.position_id === selectedPositionId)
-                                        ?.position_title || ""
+                                        ?.position_code || ""} - ${jobPositions.find((p) => p.position_id === selectedPositionId)
+                                            ?.position_title || ""
                                     }`
                                     : "Select Position Title"}
                             </Dropdown.Toggle>
@@ -938,15 +936,15 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                         </Dropdown>
                     )}
                 </div>
-                <div className="d-flex gap-3 w-50 justify-content-end">
-                    <InputGroup className="search-b">
+                <div className="d-flex gap-3 w-50 justify-content-end  ">
+                    <InputGroup className="search-b searchinput">
                         <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
                             <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
                         </InputGroup.Text>
                         <Form.Control
                             placeholder="Search"
                             aria-label="Search"
-                            className="search-f"
+                            className="search-f title"
                             onChange={(e) => { setSearch(e.target.value) }}
                         />
                         <i className="bi bi-search search-i"></i>
@@ -972,8 +970,9 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                     className="text-info cursor-pointer d-flex align-items-center gap-1 orangeadd"
                                                     onClick={toggleCandidatePortal}
                                                 >
-                                                    Add
                                                     <FontAwesomeIcon icon={faPlus} />
+                                                    Add
+
                                                 </span>
                                             )}
                                             {isDescending.candidates ?
@@ -982,7 +981,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                             }
                                         </div>
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    {/* <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
                                             <h5 className="fs-20 px-1">0</h5>
                                             <h6 className="color_light_grey align-content-center">
@@ -995,7 +994,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                 TOTAL
                                             </h6>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="colored_line_blue my-2"></div>
                                     <Droppable droppableId="candidates">
                                         {(provided) => (
@@ -1005,14 +1004,14 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                     .map((candidate, index) => (
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
-                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex gap-3">
+                                                                <div className="candidate_card_container card" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
+                                                                    <div className="candidate_card card-body d-flex gap-1">
                                                                         <div>
                                                                             <img className="candidate_image"
                                                                                 src={profile}
                                                                                 alt={candidate.full_name} />
                                                                         </div>
-                                                                        <div className="w-50 px-1">
+                                                                        <div className="px-1">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
@@ -1049,7 +1048,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                             <i className="bi bi-sort-up sort_icon" onClick={toggleInterviewedSortOrder}></i>
                                         )}
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    {/* <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
                                             <h5 className="fs-20 px-1">0</h5>
                                             <h6 className="color_light_grey align-content-center">
@@ -1062,7 +1061,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                 TOTAL
                                             </h6>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="colored_line_red my-2"></div>
                                     <Droppable droppableId="interviewed">
                                         {(provided) => (
@@ -1070,55 +1069,88 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                 {interviewed
                                                     .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
                                                     .map((candidate, index) => {
-                                                      const showReschedule = [
+                                                        const showReschedule = [
 
-                                                        "Scheduled",
+                                                            "Scheduled",
 
-                                                        "Rescheduled",
+                                                            "Rescheduled",
 
-                                                        "Selected for next round",
+                                                            "Selected for next round",
 
-                                                        "Rejected",
+                                                            "Rejected",
 
-                                                      ].includes(candidate.application_status);
+                                                        ].includes(candidate.application_status);
 
                                                         return (
-                                                        <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
-                                                            {(provided) => (
-                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex gap-3" style={{ cursor: "pointer" }}>
-                                                                        <div>
-                                                                            <img className="candidate_image"
-                                                                                src={profile}
-                                                                                alt={candidate.full_name} />
-                                                                        </div>
-                                                                        <div className="w-50 px-1 fonreg">
-                                                                            <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
-                                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
-                                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
-                                                                        </div>
-                                                                        <div className="d-flex flex-column">
-                                                                            <p className="text-muted fs-14 fw-semibold">{candidate.application_status}</p>
-                                                                            {/* This is the new "Reschedule" button */}
-                                                                            {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' || candidate.application_status === 'Cancelled' || candidate.application_status === 'Selected for next round') && (
-                                                                                <button
-                                                                                    variant="warning"
-                                                                                    size="sm"
-                                                                                    className="mt-2 reschedule-btn"
-                                                                                    onClick={(e) => {
-                                                                                        e.stopPropagation(); // Prevents the card's onClick from firing
-                                                                                        handleReschedule(candidate);
-                                                                                    }}
+                                                            <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
+                                                                {(provided) => (
+                                                                    <div className="candidate_card_container card" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
+                                                                        <div className="candidate_card card-body d-flex gap-1" style={{ cursor: "pointer" }}>
+                                                                            <div>
+                                                                                <img className="candidate_image"
+                                                                                    src={profile}
+                                                                                    alt={candidate.full_name} />
+                                                                            </div>
+                                                                            <div className="px-1 fonreg address">
+                                                                                <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
+                                                                                <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                                                <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                                            </div>
+                                                                            <div className="d-flex flex-column statusdiv">
+                                                                                {/* <p className="status_reschedule text-muted fs-14 fw-semibold">{candidate.application_status}</p> */}
+                                                                                <p
+                                                                                    className={`text-muted fs-14 fw-semibold
+      ${candidate.application_status === "Scheduled" ? "schedule status_schedule" : ""}
+      ${candidate.application_status === "Rescheduled" ? "reschedule status_reschedule" : ""}
+            ${candidate.application_status === "Selected for next round" ? "selectednext status_selected" : ""}
+              ${candidate.application_status === "Selected" ? "selected status_selected" : ""}
+                ${candidate.application_status === "Cancelled" ? "cancel status_reject" : ""}
+                   ${candidate.application_status === "Rejected" ? "reject status_reject" : ""}
+                    ${candidate.application_status === "Not available" ? "not available status_notavailabel" : ""}
+
+    `}
                                                                                 >
-                                                                                    Reschedule
-                                                                                </button>
-                                                                            )}
+                                                                                    {candidate.application_status}
+                                                                                </p>
+                                                                                {/* This is the new "Reschedule" button */}
+                                                                                {(candidate.application_status === 'Scheduled' || candidate.application_status === 'Rescheduled' || candidate.application_status === 'Cancelled' || candidate.application_status === 'Selected for next round') && (
+                                                                                    <a
+                                                                                        variant="warning"
+                                                                                        size="sm"
+                                                                                        className="mt-2 reschedule-btn"
+                                                                                        onClick={(e) => {
+                                                                                            e.stopPropagation(); // Prevents the card's onClick from firing
+                                                                                            handleReschedule(candidate);
+                                                                                        }}
+                                                                                    >
+                                                                                        <OverlayTrigger
+                                                                                            placement="bottom"
+                                                                                            overlay={
+                                                                                                <Tooltip id="tooltip-reschedule">
+                                                                                                    Reschedule Interview
+                                                                                                </Tooltip>
+                                                                                            }
+                                                                                        >
+                                                                                            <img
+                                                                                                src={reschedule}
+                                                                                                alt="Reschedule Icon"
+                                                                                                style={{ width: "32px", cursor: "pointer" }}
+                                                                                                onClick={(e) => {
+                                                                                                    e.stopPropagation();
+                                                                                                    handleReschedule(candidate);
+                                                                                                }}
+                                                                                            />
+                                                                                        </OverlayTrigger>
+
+                                                                                    </a>
+                                                                                )}
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                            )}
-                                                        </Draggable>
-                                                    )})
+                                                                )}
+                                                            </Draggable>
+                                                        )
+                                                    })
                                                 }
                                                 {provided.placeholder}
                                             </div>
@@ -1140,7 +1172,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                             <i className="bi bi-sort-up sort_icon" onClick={toggleOfferedSortOrder}></i>
                                         )}
                                     </div>
-                                    <div className="d-flex justify-content-between">
+                                    {/* <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
                                             <h5 className="fs-20 px-1">0</h5>
                                             <h6 className="color_light_grey align-content-center">
@@ -1153,7 +1185,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                 TOTAL
                                             </h6>
                                         </div>
-                                    </div>
+                                    </div> */}
                                     <div className="colored_line_yellow my-2"></div>
                                     <Droppable droppableId="offered">
                                         {(provided) => (
@@ -1163,15 +1195,15 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                                                     .map((candidate, index) => (
                                                         <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
                                                             {(provided) => (
-                                                                <div className="candidate_card_container card my-4" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex gap-3" style={{ cursor: "pointer" }}>
+                                                                <div className="candidate_card_container card" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
+                                                                    <div className="candidate_card card-body d-flex gap-1" style={{ cursor: "pointer" }}>
                                                                         <div>
                                                                             <img className="candidate_image"
                                                                                 // src={profile_prictures[index % profile_prictures.length]}
                                                                                 src={profile}
                                                                             />
                                                                         </div>
-                                                                        <div className="w-50 px-1">
+                                                                        <div className="px-1">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
@@ -1202,7 +1234,7 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
                     isOpen={isOpen}
                     toggleDrawer={toggleDrawer}
                     candidate={selectedCandidate}
-                    ratedCandidates={ratedCandidates}            
+                    ratedCandidates={ratedCandidates}
                     onFeedbackSaved={handleFeedbackSaved}
                     positionId={selectedPositionId}
                     interviewer={selectedInterview}
@@ -1260,10 +1292,10 @@ interviewer_id: interviewer?.id ?? prev.interviewer_id,
 
             {showCandidatePortal && (
                 <CandidatePortalModal
-                show={showCandidatePortal}
-                handleClose={handleCloseModal}
-                selectedPositionId={selectedPositionId}
-                onSubmitSuccess={handleCloseModal}
+                    show={showCandidatePortal}
+                    handleClose={handleCloseModal}
+                    selectedPositionId={selectedPositionId}
+                    onSubmitSuccess={handleCloseModal}
                 />
             )}
 

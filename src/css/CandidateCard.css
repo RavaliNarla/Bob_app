@@ -44,10 +44,12 @@
     background-color: #F2F4F7 !important;
     border: 1px solid #E5E5E5 !important;
     border-radius: 15px !important;
+    margin: 15px 0px;
+    box-shadow: 0 6px 6px hsl(0deg 0% 0% / 0.15);
 }
 
 .candidate_image {
-    width: 60px;
+    width: 45px;
     border-radius: 10px;
 }
 
@@ -71,18 +73,23 @@
     margin-bottom: 0px !important;
     font-size: 14px !important;
     align-self: center;
+
 }
 
 .candidate_sub_text {
     color: #767676 !important;
     font-size: 12px !important;
     letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    font-weight: normal;
 }
 
 .candidate_text {
     color: #181819 !important;
-    font-size: 14px !important;
+    font-size: 13px !important;
     letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    font-weight: normal;
 }
 
 .rating_container {
@@ -250,12 +257,14 @@
 
 .reschedule-btn {
     border-radius: 10px;
-    background-color: rgb(255, 77, 0) !important;
-    color: white;
+    /* background-color: rgb(255, 77, 0) !important; */
+    color: blue;
     border: none;
-    width: 100px;
-    height: 50px;
-    font-size: 14px;
+    width: auto;
+    height: 35px;
+    font-size: 13px;
+    text-decoration: underline;
+    margin-top: 0px;
 }
 .spaceform option {
 	/* font-size: 14px !important; */
@@ -264,7 +273,90 @@
 	font-family: 'Poppins', sans-serif !important;
 }
 .orangeadd{
-    color: rgb(255, 112, 67) !important;
-    font-weight: 500;
-    cursor: pointer;
+   color: rgb(255, 112, 67) !important;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid rgb(255, 112, 67);
+  padding: 0px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* css styles written by veeresh */
+p.status_reschedule{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: #FFCA02;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+p.status_schedule{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: #2cb4f3;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+p.status_reject{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: red;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+p.status_notavailable{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: red;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+p.status_selected{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: green;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.statusdiv{
+    text-align: right;
+    right: 15px;
+    position: absolute;
+}
+.address{
+    width:58%;
+}
+.menuopen{
+    height:350px;
+    overflow-y:auto;
+}
+.modal-title{
+    font-size:16px !important;
+    color:#FF4F46
+}
+.searchinput {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 50%;
+  float: right;
+}
+.title{
+  font-size:12px;
 }

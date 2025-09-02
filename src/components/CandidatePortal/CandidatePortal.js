@@ -144,7 +144,7 @@ const CandidatePortal = ({ selectedPositionId, onSubmitSuccess }) => {
   {isResumeStepDone && (
     <li className="nav-item">
       <button
-        className={`nav-link bornav ${activeTab === 'info' ? 'active' : ''}`}
+        className={`nav-link bornav navs-link ${activeTab === 'info' ? 'active' : ''}`}
         onClick={() => setActiveTab('info')}
       >
         Review Details

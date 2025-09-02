@@ -111,3 +111,14 @@
 .fonsty{
   font-family: poppins, sans-serif !important;
 }
+.searchinput {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 25%;
+  float: right;
+}
+.title{
+  font-size:12px;
+}

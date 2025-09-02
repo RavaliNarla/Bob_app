@@ -1,0 +1,53 @@
+.status_reschedule{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: #FFCA02 !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.status_schedule{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: #2cb4f3 !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.status_reject{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: red !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.status_notavailable{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: red !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.status_selected{
+    text-align: right;
+  color: #fff !important;
+  font-size: 10px;
+  margin-bottom: 5px;
+  background: green !important;
+  padding: 5px 10px;
+  border-radius: 10px;
+  cursor: text;
+}
+.fontbold{
+    font-weight: 500 !important;
+}

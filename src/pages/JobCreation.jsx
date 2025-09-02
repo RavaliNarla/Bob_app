@@ -574,7 +574,7 @@ const handleInputChange = (e) => {
          {editPositionId == null && (
             <div className="d-flex justify-content-between align-items-center mb-3 buttons_div">
               <div>
-                <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
+                <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
               </div>
               <div className='d-flex gap-3'>
                 <a className='downlaodfile'
@@ -591,9 +591,13 @@ const handleInputChange = (e) => {
                     minWidth: 0,
                     minHeight: 0,
                     whiteSpace: "nowrap",
+                    fontSize: "13px",
+                    fontWeight: "400",
+                    right: "10px",
+                    position: "relative",
                   }}
                 >
-                  <FontAwesomeIcon icon={faDownload} style={{ color: "#FF7043", fontSize: "1rem" }} />
+                  <FontAwesomeIcon icon={faDownload} style={{ color: "#FF7043", fontSize: "1rem" }} />&nbsp;
                   <span> Download Template</span>
                 </a>
                 <Button className='uploadfile'
@@ -607,9 +611,13 @@ const handleInputChange = (e) => {
                     alignItems: "center",
                     minWidth: 0,
                     minHeight: 0,
+                    fontSize: "13px",
+                    fontWeight: "400",
+                    right: "10px",
+                    position: "relative",
                   }}
                 >
-                  <FontAwesomeIcon icon={faUpload} style={{ color: "#FF7043", fontSize: "1rem" }} />
+                  <FontAwesomeIcon icon={faUpload} style={{ color: "#FF7043", fontSize: "1rem" }} /> &nbsp;
               <span> Upload Excel</span>
                 </Button>
               </div>

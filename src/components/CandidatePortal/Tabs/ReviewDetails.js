@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { apiService } from '../../../services/apiService';
 import { toast } from 'react-toastify';
 import { useSelector } from "react-redux";
+import '../../../css/review_details.css';
 
 const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPositionId, onSubmitSuccess }) => {
   const [formData, setFormData] = useState(initialData);
@@ -101,10 +102,10 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
   }
 
   return (
-    <div className="form-content-section text-start p-4 spaceform">
+    <div className="form-content-section text-start spaceform">
       <form className="row g-4" onSubmit={handleSubmit}>
-        <div className="col-md-4">
-          <label htmlFor="name" className="form-label">Name *</label>
+        <div className="col-md-4  p-2 review_input">
+          <label htmlFor="name" className="form-label ">Name *</label>
           <input
             type="text"
             className="form-control"
@@ -115,8 +116,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="dob" className="form-label">Date of Birth *</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="dob" className="form-label ">Date of Birth *</label>
           <input
             type="date"
             className="form-control"
@@ -127,8 +128,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="email" className="form-label">Email *</label>
+        <div className="col-md-4 p-2 review_input" >
+          <label htmlFor="email" className="form-label ">Email *</label>
           <input
             type="email"
             className="form-control"
@@ -140,8 +141,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="gender" className="form-label">Gender *</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="gender" className="form-label ">Gender *</label>
           <select
             className="form-select"
             id="gender"
@@ -155,8 +156,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           </select>
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="id_proof" className="form-label">ID Proof*</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="id_proof" className="form-label ">ID Proof*</label>
           <input
             type="text"
             className="form-control"
@@ -168,8 +169,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="phone" className="form-label">Phone *</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="phone" className="form-label ">Phone *</label>
           <input
             type="text"
             className="form-control"
@@ -180,8 +181,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="education_qualification" className="form-label">Education Qualification *</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="education_qualification" className="form-label ">Education Qualification *</label>
           <input
             type="text"
             className="form-control"
@@ -192,8 +193,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="skills" className="form-label">Skills</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="skills" className="form-label ">Skills</label>
           <textarea
             className="form-control"
             id="skills"
@@ -203,8 +204,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="totalExperience" className="form-label">Total Experience</label>
+        <div className="col-md-4 p-2 review_input" >
+          <label htmlFor="totalExperience" className="form-label ">Total Experience</label>
           <input
             type="text"
             className="form-control"
@@ -214,8 +215,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="currentDesignation" className="form-label">Current Designation</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="currentDesignation" className="form-label ">Current Designation</label>
           <input
             type="text"
             className="form-control"
@@ -225,8 +226,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="currentEmployer" className="form-label">Current Employer</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="currentEmployer" className="form-label ">Current Employer</label>
           <input
             type="text"
             className="form-control"
@@ -236,8 +237,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="address" className="form-label">Address</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="address" className="form-label ">Address</label>
           <textarea
             className="form-control"
             id="address"
@@ -247,8 +248,8 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4">
-          <label htmlFor="nationality_id" className="form-label">Nationality *</label>
+        <div className="col-md-4 p-2 review_input">
+          <label htmlFor="nationality_id" className="form-label ">Nationality *</label>
           <select
             className="form-select"
             id="nationality_id"

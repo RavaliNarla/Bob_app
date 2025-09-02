@@ -182,8 +182,8 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
 
   return (
     <div className="form-content-section text-center">
-      <h2>Upload Resume</h2>
-      <p>Resume/CV* (Supported format: .docx/.pdf; Max size: 4.5 MB)</p>
+      {/* <h2 style={{fontSize:'16px'}}>Upload Resume</h2> */}
+      <p style={{fontSize:'13px'}}>Resume/CV* (Supported format: .docx/.pdf; Max size: 4.5 MB)</p>
 
       {/* Show existing resume if available */}
       {resumePublicUrl && (
@@ -206,16 +206,16 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
         <div className="dropzone-text">
           {resumePublicUrl ? (
             <>
-              Click here to upload your resume or{' '}
+              <span style={{fontSize:'14px'}}>Click here to upload your resume or{' '}</span>
               <span style={{ color: '#ff7043', cursor: 'pointer' }}>
-                browse to upload
+                <b>Browse to Upload</b>
               </span>
             </>
           ) : (
             <>
-              Click here to Upload your files here or{' '}
+              <span style={{fontSize:'14px'}}>Click here to upload your resume or{' '}</span>
               <span style={{ color: '#ff7043', cursor: 'pointer' }}>
-                browse to upload
+               <b>Browse to Upload</b>
               </span>
             </>
           )}
@@ -235,6 +235,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
           className="btn btn-primary"
           style={{
             backgroundColor: '#ff7043',
+            color: '#fff',
             border: 'none',
             padding: '8px 24px',
             borderRadius: '4px'

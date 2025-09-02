@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import profileIcon from '../assets/profile_icon.png'
 import apiService from "../services/apiService";
+import '../css/Calender.css';
 
 
 
@@ -198,7 +199,7 @@ export default function Calendar() {
     <Container fluid className="py-3 px-5 fonreg">
       {/* Controls */}
       <Row className="align-items-center g-2 mb-3">
-        <Col md="auto"><h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>{headerTitle}</h5></Col>
+        <Col md="auto"><h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{headerTitle}</h5></Col>
         <Col md="auto">
           <Button size="sm" variant="" onClick={goToday} className="week_filter me-2" style={{ marginLeft: '0.5rem', borderRadius: '5px', borderColor: '#ff6a00', color: '#ff6a00', padding: '0.45rem' }}>Today</Button>
           <div className="btn-group">
@@ -207,11 +208,12 @@ export default function Calendar() {
           </div>
         </Col>
         <Col md="auto" className="ms-auto" style={{ width: '40%' }}>
-          <InputGroup className="w-100 fonreg">
+          <InputGroup className="w-100 fonreg searchinput">
             <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
               <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
             </InputGroup.Text>
             <Form.Control
+              className="title"
               placeholder="Search by title or name"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -302,11 +304,17 @@ export default function Calendar() {
                   <Card.Body className="d-flex align-items-center">
                     <Image roundedCircle width={42} height={42} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
                     <div className="flex-grow-1">
-                      <div className="fw-bold text-muted">{ev?.requisitionCode} - {ev.title}</div>
+                      <div className="fw-bold text-muted fontbold">{ev?.requisitionCode} - {ev.title}</div>
                       <div className="text-muted small">{ev.person} | Interviewer: {ev?.interviewerName}</div>
                     </div>
                     {/* <div className="text-muted small"></div> */}
-                    <Badge bg={ev.applicationStatus.toLowerCase() === 'cancelled' ? 'danger' : 'primary'} className="ms-2">{ev?.applicationStatus}</Badge>
+                    {/* <Badge bg={ev.applicationStatus.toLowerCase() === 'cancelled' ? 'danger' : 'primary'} className="ms-2">{ev?.applicationStatus}</Badge> */}
+
+<Badge
+  className={`ms-2 ${getStatusClasses(ev.applicationStatus)}`}
+>
+  {ev?.applicationStatus}
+</Badge>
                   </Card.Body>
                 </Card>
               </Col>
@@ -325,4 +333,24 @@ function mapBadge(c) {
   if (c === "warning") return "warning";
   if (c === "danger") return "danger";
   return "secondary";
+}
+function getStatusClasses(status) {
+  switch (status) {
+    case "Scheduled":
+      return "schedule status_schedule";
+    case "Rescheduled":
+      return "reschedule status_reschedule";
+    case "Selected for next round":
+      return "selectednext status_selected";
+    case "Selected":
+      return "selected status_selected";
+    case "Cancelled":
+      return "cancel status_reject";
+    case "Rejected":
+      return "reject status_reject";
+    case "Not available":
+      return "not-available status_notavailable"; // fixed spelling
+    default:
+      return "";
+  }
 }
