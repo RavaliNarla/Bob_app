@@ -168,7 +168,24 @@ const JobPosting = () => {
       comments: "",
     });
     setEditRequisitionId(null);
+    setEditPositionId(null);
+    setReadOnly(false);
+  
+    // 🔥 Reset filters and selections
+    setSelectedJobIds([]);
+    setApprovalStatus("");
+    setSelectedApproval("");
+    setJobBoards({
+      linkedin: false,
+      careerPage: false,
+      naukri: false,
+      glassDoor: false,
+      indeed: false,
+      foundit: false,
+      freshersWorld: false,
+    });
   };
+  
 
   const handleSavePostings = async () => {
   const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
@@ -517,7 +534,12 @@ const filteredJobPostings = jobPostings.filter((job) => {
 
       {(selectedApproval === "New" || selectedApproval === "") && (
         <div className="d-flex justify-content-end gap-3">
-          <Button variant="outline-secondary">Cancel</Button>
+         <Button 
+            variant="outline-secondary" 
+            onClick={resetForm}
+          >
+            Cancel
+          </Button>
           <Button
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
             className="text-white"
@@ -530,7 +552,13 @@ const filteredJobPostings = jobPostings.filter((job) => {
 
       <Modal show={showModal} onHide={resetForm} className="modal_container">
         <Modal.Header closeButton>
-          <Modal.Title className="fonall">{editRequisitionId !== null ? "Edit Job Posting" : "Add Job Posting"}</Modal.Title>
+        <Modal.Title className="fonall">
+  {readOnly
+    ? "View Job Posting"
+    : editRequisitionId !== null
+      ? "Edit Job Posting"
+      : "Add Job Posting"}
+</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <JobCreation
