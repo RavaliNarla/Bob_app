@@ -165,9 +165,17 @@ const JobRequisition = () => {
     }
   };
 
-  const handleDelete = async (index) => {
+  const handleDelete = async (req = null,index) => {
     try {
-      const id = reqs[index]?.requisition_id;
+      const reqIndex = reqs.findIndex(
+            r => r.requisition_id === req.requisition_id
+          );
+
+          if (reqIndex === -1) {
+            toast.error("Requisition not found in list");
+            return;
+          }
+      const id = reqs[reqIndex]?.requisition_id;
       const response= await apiService.deleteRequisition(id);
       if(response.success === true){
         toast.success("Requisition deleted successfully");
@@ -326,7 +334,7 @@ const JobRequisition = () => {
                         icon={faTrash}
                         className="required-asterisk cursor-pointer"
                         style={{ cursor: 'pointer' }}
-                        onClick={() => handleDelete(index)}
+                        onClick={() => handleDelete(job,index)}
                       />
                     </>
                   ) : (
