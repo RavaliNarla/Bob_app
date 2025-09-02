@@ -248,7 +248,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
 
 
   return (
-    <Container fluid className="p-4 px-5 fonsty">
+    <Container fluid className="p-4 px-5 fonsty job-postings-page">
       <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Job Postings</h5>
       <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
         <div className="d-flex align-items-center mb-2 mb-md-0">

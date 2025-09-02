@@ -109,6 +109,9 @@ const InterviewModal = ({
         // console.log(candidatePick);
         
         setInterviewerEmail(candidate?.interviewerEmail || "");
+          setInterviewerName(candidate?.interviewerName ||"");
+          setInterviewerId(candidate?.interviewerId ||  "");
+      
       } catch (err) {
         setInterviewersError(err.message || "Failed to load interviewers");
         setInterviewers([]);
@@ -128,8 +131,8 @@ const InterviewModal = ({
 
     let formattedDate = "";
     if (isReschedule && candidate) {
-      if (candidate.interview_date) formattedDate = ymdInIST(candidate.interview_date);
-      const time = candidate.interview_time;
+      if (candidate.interviewDate) formattedDate = ymdInIST(candidate.interviewDate);
+      const time = candidate.interviewTime;
       setInterviewData({
         interview_date: formattedDate || ymdInIST(new Date()),
         interview_time: time ? String(time).slice(0, 5) : "",
@@ -207,12 +210,7 @@ const InterviewModal = ({
 
   const onSave = () => {
     if (!selectedSlot && !(isReschedule && interviewData.interview_time)) return;
-    const selectedInterviewer =
-      interviewers.find((iv) => iv.email === interviewerEmail) || {
-        name: "",
-        email: interviewerEmail,
-        id: undefined,
-      };
+
       let interviewobj={
       interview_date: interviewData.interview_date,
       interview_time: String(interviewData.interview_time).slice(0, 5), // "HH:mm"

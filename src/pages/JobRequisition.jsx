@@ -24,6 +24,7 @@ import PaginationControls from "../components/PaginationControls";
 const JobRequisition = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentReq, setCurrentReq] = useState({
+    requisition_id: "",
     requisition_title: "",
     requisition_description: "",
     no_of_positions: "",
@@ -66,11 +67,27 @@ const JobRequisition = () => {
     }
   };
 
-  const openModal = (req = currentReq, index = null, mode = "edit") => {
-    setCurrentReq(req);
-    setEditIndex(index);
+  const openModal = (req = null, index = null, mode = "edit") => {
+    if (req) {
+      // console.log("Editing/View Requisition:", req);
+      setCurrentReq({ ...req });   // ✅ keeps requisition_id
+
+      setEditIndex(index);
+      // console.log("index:", index);
+    } else {
+      setCurrentReq({
+        requisition_id: "",
+        requisition_title: "",
+        requisition_description: "",
+        no_of_positions: "",
+        registration_start_date: "",
+        registration_end_date: "",
+        requisition_comments: "",
+      });
+      setEditIndex(null);
+    }
     setShowModal(true);
-    setViewMode(mode === "view"); // if mode is view → disable
+    setViewMode(mode === "view");
   };
 
   const handleSave = () => {
@@ -98,13 +115,13 @@ const JobRequisition = () => {
 
     if (
       reqs.some(
-        (req, idx) =>
+        (req) =>
           req.requisition_title.trim().toLowerCase() === currentReq.requisition_title.trim().toLowerCase() &&
-          idx !== editIndex
-      )
-    ) {
-      newErrors.requisition_title = "Title must be unique";
-    }
+          req.requisition_id !== currentReq.requisition_id // ✅ ignore self
+        )
+      ) {
+        newErrors.requisition_title = "Title must be unique";
+      }
 
     setErrr(newErrors);
 
@@ -116,16 +133,22 @@ const JobRequisition = () => {
   const handleSaveCallback = async () => {
     try {
       if (editIndex !== null) {
-        const updatedReq = {
-          ...currentReq,
-          requisition_id: reqs[editIndex].requisition_id,
-        };
+        const updatedReq = { ...currentReq };
+        // console.log("Updating Requisition:", updatedReq);
         const response= await apiService.updateRequisition(updatedReq);
-        console.log("Response",response)
+        // console.log("Response",response)
         if(response.success === true){
           toast.success("Requisition updated successfully");
+          const reqIndex = reqs.findIndex(
+            r => r.requisition_id === currentReq.requisition_id
+          );
+
+          if (reqIndex === -1) {
+            toast.error("Requisition not found in list");
+            return;
+          }
           const updatedReqs = [...reqs];
-          updatedReqs[editIndex] = updatedReq;
+          updatedReqs[reqIndex] = updatedReq;
           setReqs(updatedReqs);
         }
        
@@ -365,11 +388,15 @@ const JobRequisition = () => {
                     isInvalid={!!errr.requisition_title}
                     disabled={viewMode}
                     onChange={(e) => {
-                        setCurrentReq({ ...currentReq, requisition_title: e.target.value });
-                        if (errr.requisition_title) {
-                          setErrr({ ...errr, requisition_title: "" });
-                        }
-                      }}
+                      setCurrentReq({
+                        ...currentReq,
+                        requisition_id: currentReq.requisition_id, // ✅ explicitly keep ID
+                        requisition_title: e.target.value,
+                      });
+                      if (errr.requisition_title) {
+                        setErrr({ ...errr, requisition_title: "" });
+                      }
+                    }}
                   />
                   <Form.Control.Feedback type="invalid">
                     {errr.requisition_title}

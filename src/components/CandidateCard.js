@@ -436,7 +436,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             setInterviewCandidate(null);
             setInterviewDate("");
             setInterviewTime("");
-            showToast("Interview scheduled successfully!");
+            toast.success("Interview scheduled successfully!");
         } catch (error) {
             console.error("Error scheduling interview:", error);
         } finally {
@@ -467,17 +467,25 @@ const CandidateCard = ({ setTriggerDownload }) => {
             const response = await apiService.sendOffer(payload);
             console.log("Offer response:", response);
 
+            const updatedCandidate = {
+                ...offerCandidate,
+                profileStatus: "Selected",
+                rating: offerCandidate.rating || 0,
+                offer_letter_path: offerLetterPath, // 👈 make sure Drawer can use this
+            };
+
             // Update local state
             const updatedInterviewed = interviewed.filter(
                 (c) => c.candidate_id !== offerCandidate.candidate_id
             );
             setInterviewed(updatedInterviewed);
 
-            const updatedOffered = [
-                ...offered,
-                { ...offerCandidate, profileStatus: "Selected", rating: offerCandidate.rating || 0 },
-            ];
+            const updatedOffered = [...offered, updatedCandidate];
             setOffered(updatedOffered);
+
+            if (selectedCandidate?.candidate_id === offerCandidate.candidate_id) {
+                setSelectedCandidate(updatedCandidate);
+            }
 
             setShowOfferModal(false);
             setOfferCandidate(null);
@@ -486,7 +494,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
             setPositionId("");
             setJobPositionTitle("");
 
-            showToast("Offer sent successfully!", "success");
+            toast.success("Offer sent successfully!");
         } catch (err) {
             console.error("Failed to send offer:", err);
             setError(err.message || "Failed to send offer");
