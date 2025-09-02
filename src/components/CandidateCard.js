@@ -699,6 +699,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const handleCancelReschedule = () => {
         setShowRescheduleModal(false);
         setRescheduleCandidate(null);
+        setShouldRefresh(prev => prev + 1);
     };
 
     // Function to handle the actual reschedule interview
@@ -771,8 +772,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
             // Get the date and time from the rescheduleCandidate object
             const payload = {
                 candidate_id: rescheduleCandidate.candidate_id,
-                date: rescheduleCandidate.interview_date, // 👈 Corrected: Add interview date     
-                time: String(rescheduleCandidate.interview_time).slice(0, 5), // 👈 Corrected: Add interview time
+                date: rescheduleCandidate.interviewDate, // 👈 Corrected: Add interview date     
+                time: String(rescheduleCandidate.interviewTime).slice(0, 5), // 👈 Corrected: Add interview time
                 position_id: selectedPositionId,
                 status: 'Cancelled',
                 interviewer_id: interviewData.interviewerId,
@@ -795,6 +796,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         } finally {
             setLoading(false);
             setApiLoading(false);
+            
         }
     };
 
