@@ -16,12 +16,15 @@ import {
 } from "react-bootstrap";
 import "../css/JobPosting.css";
 import { apiService } from "../services/apiService";
-import { faE, faEye, faPencil, faPlus, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faE, faEye, faPencil, faPlus, faSearch, faTrash, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import DownloadReqPdfButton from "../components/DownloadReqPdfButton";
+import { faDownload } from "@fortawesome/free-solid-svg-icons"; // ensure this import exists
+
 const EllipsisIcon = () => (
   <svg
     width="16"
@@ -45,6 +48,7 @@ const JobPosting = () => {
     foundit: false,
     freshersWorld: false,
   });
+const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: positions[] }
 
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +88,9 @@ const JobPosting = () => {
       setTableLoading(true);
       try {
         const data = await apiService.getByRequisitionId(requisition_id);
-        setApiData(data?.data || []);
+        const arr = data?.data || [];
+        setApiData(arr);
+        setReqPositions(prev => ({ ...prev, [requisition_id]: arr }));
       } catch (err) {
         if (err.response && err.response.status === 404) {
           setApiData([]);
@@ -594,6 +600,17 @@ const fetchRequisitions = async () => {
                             style={{ color: '#FF7043', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
+  <OverlayTrigger placement="top" overlay={<Tooltip>Download</Tooltip>}>
+  <DownloadReqPdfButton
+    requisition_id={job.requisition_id}
+    requisition={job}
+  >
+    <FontAwesomeIcon
+      icon={faDownload}
+      style={{ color: "#FF7043", cursor: "pointer" }}
+    />
+  </DownloadReqPdfButton>
+</OverlayTrigger>
                       </>
                     )}
                   </Col>
