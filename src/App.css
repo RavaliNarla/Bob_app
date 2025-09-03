@@ -63,7 +63,7 @@ body {
 	border-radius: 0.5rem;
 	/* box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); */
 	background: none !important;
-  max-height: 445px;
+  /* max-height: 445px; */
   /* overflow-y: auto; */
   /* padding-right: 10px; */
 }
