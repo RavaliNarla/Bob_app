@@ -25,6 +25,7 @@ import {
     faTrash,
     faSearch,
     faCalendarAlt,
+    faCubesStacked,
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
 import CandidatePortalModal from "./CandidatePortal/CandidatePortalModal";
@@ -74,6 +75,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [posSearch, setPosSearch] = useState("");
     const [selectedInterview, setSelectedInterview] = useState(null);
     const [interviewFeedBack, setInterviewFeedBack] = useState([]);
+    const [showPopup, setShowPopup] = useState(false);
+    const [stackRank, setStackRank] = useState(false);
 
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
@@ -250,6 +253,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setCandidates([]);
         setInterviewed([]);
         setOffered([]);
+        setStackRank(false)
     };
     const handleJobPositionChange = (event) => {
         // const positionId = event.target.value;
@@ -998,40 +1002,64 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                     <div className="colored_line_blue my-2"></div>
                                     <Droppable droppableId="candidates">
                                         {(provided) => (
-                                            <div className="candidates overflow-auto px-2" style={{ minHeight: '100px', maxHeight: '60vh' }} ref={provided.innerRef} {...provided.droppableProps}>
-                                                {candidates
-                                                    .filter((candidate) => candidate.full_name.toLowerCase().includes(search.toLowerCase()))
-                                                    .map((candidate, index) => (
-                                                        <Draggable key={candidate.candidate_id} draggableId={candidate.candidate_id.toString()} index={index}>
-                                                            {(provided) => (
-                                                                <div className="candidate_card_container card" ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} onClick={() => toggleDrawer(candidate)}>
-                                                                    <div className="candidate_card card-body d-flex gap-1">
-                                                                        <div>
-                                                                            <img className="candidate_image"
-                                                                                src={profile}
-                                                                                alt={candidate.full_name} />
-                                                                        </div>
-                                                                        <div className="px-1">
-                                                                            <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
-                                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
-                                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
-                                                                        </div>
-                                                                        {/* <div className="card-status-label">{candidate.profileStatus}</div> */}
-                                                                        {/* <div className="rating_container d-flex align-self-end p-1">
-                                                                            <h6 className="rating_text px-1">{candidate.rating}</h6>
-                                                                            <i className="bi bi-star-fill" style={{ color: "#f6ca5a" }}></i>
-                                                                        </div> */}
-
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </Draggable>
-                                                    ))
+                                            <div
+                                            className="candidates overflow-auto px-2"
+                                            style={{ minHeight: "100px", maxHeight: "60vh" }}
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            >
+                                            {candidates
+                                                .filter((candidate) =>
+                                                candidate.full_name.toLowerCase().includes(search.toLowerCase())
+                                                )
+                                                .sort((a, b) => {
+                                                if (stackRank) {
+                                                    // Ascending order by rank
+                                                    return a.rank - b.rank;
+                                                } else {
+                                                    // Shuffle randomly
+                                                    return Math.random() - 0.5;
                                                 }
-                                                {provided.placeholder}
+                                                })
+                                                .map((candidate, index) => (
+                                                <Draggable
+                                                    key={candidate.candidate_id}
+                                                    draggableId={candidate.candidate_id.toString()}
+                                                    index={index}
+                                                >
+                                                    {(provided) => (
+                                                    <div
+                                                        className="candidate_card_container card"
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                        onClick={() => toggleDrawer(candidate)}
+                                                    >
+                                                        <div className="candidate_card card-body d-flex gap-1">
+                                                        <div>
+                                                            <img
+                                                            className="candidate_image"
+                                                            src={profile}
+                                                            alt={candidate.full_name}
+                                                            />
+                                                        </div>
+                                                        <div className="px-1">
+                                                            <h5 className="candidate_text fw-bold">
+                                                            {candidate.full_name}
+                                                            </h5>
+                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                        </div>
+                                                        {/* <div className="card-status-label">{candidate.rank}</div> */}
+                                                        </div>
+                                                    </div>
+                                                    )}
+                                                </Draggable>
+                                                ))}
+                                            {provided.placeholder}
                                             </div>
                                         )}
-                                    </Droppable>
+                                        </Droppable>
                                 </div>
                             </div>
                         </div>
@@ -1047,6 +1075,14 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                         ) : (
                                             <i className="bi bi-sort-up sort_icon" onClick={toggleInterviewedSortOrder}></i>
                                         )}
+                                        {/* { (selectedRequisitionCode=="JREQ-1151" && (selectedPositionTitle=="Manager - Digital Product" || selectedPositionTitle=="Sc Engineer"))&&(         */}
+                                            <button
+                                            className="btn btn-sm btn-outline-primary"
+                                            onClick={() => setShowPopup(true)}
+                                        >
+                                            <FontAwesomeIcon icon={faCubesStacked} />
+                                        </button>
+                                        {/* )} */}
                                     </div>
                                     {/* <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
@@ -1306,6 +1342,26 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 <div className="d-flex justify-content-center align-items-center" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh", background: "rgba(255,255,255,0.5)", zIndex: 9999 }}>
                     <div className="spinner-border" role="status">
                         <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            )}
+
+            {showPopup && (
+                <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75">
+                    <div className="bg-white p-3 rounded shadow-lg" style={{ width: "80%", height: "80%" }}>
+                        <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h6 className="mb-0">Stack Rank</h6>
+                            <button   onClick={() => { setStackRank(true) 
+                                setShowPopup(false)}}
+                                >Push</button>
+                            <button className="btn-close" onClick={() => setShowPopup(false)}></button>
+                        </div>
+                        <iframe
+                            src="https://app.powerbi.com/view?r=eyJrIjoiMDlhYWQyMDItNzhkNS00NzVkLWExNTItODEwOTM5NGMxZTc5IiwidCI6ImE5ODU5ZDU3LWI1MjQtNDE5Ny1hMjNhLWRmOGE2ODc1YjRhOSJ9"
+                            width="100%"
+                            height="596.5"
+                            frameborder="0" allowFullScreen="true"
+                        ></iframe>
                     </div>
                 </div>
             )}
