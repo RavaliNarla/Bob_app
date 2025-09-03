@@ -466,11 +466,11 @@ function Drawer({
 
                   {/* ===== OFFER LETTER ===== */}
                   <Tab.Pane eventKey="offerLetter">
-                    {candidate?.offer_letter_path  ? (
+                    {(candidate?.offer_letter_path || candidate?.offerLetterUrl)  ? (
                       <div>
                         <div className="d-flex justify-content-end mb-2">
                           <a
-                            href={candidate.offer_letter_path }
+                            href={candidate?.offer_letter_path || candidate?.offerLetterUrl}
                             download
                             className="btn btn-sm btn-outline-secondary"
                             target="_blank"
@@ -479,7 +479,7 @@ function Drawer({
                           </a>
                         </div>
                         <iframe
-                          src={candidate.offer_letter_path }
+                          src={candidate?.offer_letter_path || candidate?.offerLetterUrl}
                           width="100%"
                           height="600px"
                           style={{ border: "1px solid #ddd", borderRadius: "4px" }}
