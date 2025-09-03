@@ -124,7 +124,7 @@ export default function Dashboard() {
 
   return (
     <Container fluid className="dashfont py-4 px-4 mx-3">
-      <h5 className="mx-3 pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Dashboard</h5>
+      <h5 className="mx-3 pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>My Dashboard</h5>
       <Row>
         <Col md={12} className="">
           {/* Stats Row */}

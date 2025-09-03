@@ -1041,7 +1041,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                             <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
-                                        <h5 className="color_grey card-title">Interviewed</h5>
+                                        <h5 className="color_grey card-title">Screening</h5>
                                         {isDescending.interviewed !== null ? (
                                             <i className="bi bi-sort-down sort_icon" onClick={toggleInterviewedSortOrder}></i>
                                         ) : (
@@ -1165,7 +1165,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                             <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
-                                        <h5 className="color_grey card-title">Offered</h5>
+                                        <h5 className="color_grey card-title">Offers</h5>
                                         {isDescending.offered !== null ? (
                                             <i className="bi bi-sort-down sort_icon" onClick={toggleOfferedSortOrder}></i>
                                         ) : (
@@ -1207,6 +1207,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className="selectednext status_selected">{candidate.application_status}</p>
                                                                         </div>
                                                                         {/* <div className="card-status-label">{candidate.profileStatus}</div> */}
                                                                         {/* <div className="rating_container d-flex align-self-end p-1">

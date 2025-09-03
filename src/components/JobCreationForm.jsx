@@ -21,7 +21,8 @@ const JobCreationForm = ({
   gradeMeta = [],
   // New prop to receive full requisition data
   requisitionData = [],
-  readOnly = false
+  readOnly = false,
+  positionList = []
 }) => {
   // Remove modal state, use popover instead
 
@@ -89,26 +90,25 @@ useEffect(() => {
             )}
           
           <select
-                id="requisition_id"
-                name="requisition_id"
-                className="form-select custom-placeholder"
-                value={formData.requisition_id}
-                onChange={handleInputChange}
-                disabled={readOnly}
-              >
-                <option value="">Select Requisition ID</option>
-                {requisitionIdOptions.map((option) => {
-                  // Find matching requisition details for title
-                  const reqDetails = requisitionData.find(
-                    (req) => String(req.requisition_id) === String(option.id)
-                  );
-                  return (
-                    <option key={option.name} value={option.id}>
-                      {option.name} 
-                      {reqDetails?.requisition_title ? ` - ${reqDetails.requisition_title}` : ""}
-                    </option>
-                  );
-                })}
+            id="requisition_id"
+            name="requisition_id"
+            className="form-select custom-placeholder"
+            value={formData.requisition_id || ""}   // ✅ bind to formData
+            onChange={handleInputChange}
+            disabled={!!formData.requisition_id}    // ✅ lock if preselected
+          >
+            <option value="">Select Requisition ID</option>
+            {requisitionIdOptions.map((option) => {
+              const reqDetails = requisitionData.find(
+                (req) => String(req.requisition_id) === String(option.id)
+              );
+              return (
+                <option key={option.id} value={option.id}>
+                  {option.name}
+                  {reqDetails?.requisition_title ? ` - ${reqDetails.requisition_title}` : ""}
+                </option>
+              );
+            })}
           </select>
           {errors.requisition_id  && <small className="error">{errors.requisition_id}</small>}
         </div>
@@ -116,17 +116,68 @@ useEffect(() => {
         
         {/* Position Title */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="position_title" className="form-label">Position Title <span className="required-asterisk">*</span></label>
-          <input
-            type="text"
+          <label htmlFor="position_title" className="form-label">
+            Position Title <span className="required-asterisk">*</span>
+          </label>
+          <select
             id="position_title"
             name="position_title"
-            className="form-control"
-            value={formData.position_title}
-            onChange={handleInputChange}
-            placeholder="Enter Position Title"
+            className="form-select"
+            value={formData.position_title || ""}
+            onChange={(e) => {
+              const selectedTitle = e.target.value;
+              handleInputChange({ target: { name: "position_title", value: selectedTitle } });
+
+              // Auto populate from staticPositions
+              const selectedPosition = (positionList || []).find(
+                (pos) => pos.position_title === selectedTitle
+              );
+
+              if (selectedPosition) {
+                const fieldsToUpdate = [
+                  "dept_id",
+                  "country_id",
+                  "state_id",
+                  "city_id",
+                  "location_id",
+                  "description",
+                  "roles_responsibilities",
+                  "grade_id",
+                  "employment_type",
+                  "eligibility_age_min",
+                  "eligibility_age_max",
+                  "mandatory_qualification",
+                  "preferred_qualification",
+                  "mandatory_experience",
+                  "preferred_experience",
+                  "probation_period",
+                  "documents_required",
+                  "min_credit_score",
+                  "no_of_vacancies",
+                  "selection_procedure",
+                  "max_salary",
+                  "min_salary",
+                  "position_code"
+                ];
+
+                fieldsToUpdate.forEach((field) => {
+                  if (selectedPosition[field] !== undefined) {
+                    handleInputChange({
+                      target: { name: field, value: selectedPosition[field] },
+                    });
+                  }
+                });
+              }
+            }}
             disabled={readOnly}
-          />
+          >
+            <option value="">Select Position Title</option>
+            {(positionList || []).map((pos, idx) => (
+              <option key={idx} value={pos.position_title}>
+                {pos.position_title}
+              </option>
+            ))}
+          </select>
           {errors.position_title && <small className="error">{errors.position_title}</small>}
         </div>
 
@@ -218,27 +269,6 @@ useEffect(() => {
           {errors.location_id && <small className="error">{errors.location_id}</small>}
         </div>
 
-        {/* Description */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="description" className="form-label">Description <span className="required-asterisk"></span></label>
-          <textarea className="form-control" id="description" name="description" disabled={readOnly} value={formData.description} onChange={handleInputChange} />
-          {errors.description && <small className="error">{errors.description}</small>}
-        </div>
-
-        {/* Roles & Responsibilities */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="roles_responsibilities" className="form-label">Roles & Responsibilities <span className="required-asterisk">*</span></label>
-          <textarea
-            id="roles_responsibilities"
-            name="roles_responsibilities"
-            className="form-control"
-            value={formData.roles_responsibilities}
-            onChange={handleInputChange}
-            disabled={readOnly}
-          />
-          {errors.roles_responsibilities && <small className="error">{errors.roles_responsibilities}</small>}
-        </div>
-
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="no_of_vacancies" className="form-label">Expected Number of Positions <span className="required-asterisk">*</span></label>
           <input
@@ -252,20 +282,6 @@ useEffect(() => {
             disabled={readOnly}
           />
           {errors.no_of_vacancies && <small className="error">{errors.no_of_vacancies}</small>}
-        </div>
-
-        {/* Selection Process */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="selection_procedure" className="form-label">Selection Process <span className="required-asterisk"></span></label>
-          <textarea
-            id="selection_procedure"
-            name="selection_procedure"
-            className="form-control"
-            value={formData.selection_procedure}
-            onChange={handleInputChange}
-            disabled={readOnly}
-          />
-          {errors.selection_procedure && <small className="error">{errors.selection_procedure}</small>}
         </div>
 
         {/* Grade ID */}
@@ -439,34 +455,6 @@ useEffect(() => {
           {errors.eligibility_age_max && <small className="error">{errors.eligibility_age_max}</small>}
         </div>
 
-        {/* Mandatory Qualification */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="mandatory_qualification" className="form-label">Mandatory Qualification <span className="required-asterisk">*</span></label>
-          <textarea
-            id="mandatory_qualification"
-            name="mandatory_qualification"
-            className="form-control"
-            value={formData.mandatory_qualification}
-            onChange={handleInputChange}
-            disabled={readOnly}
-          />
-          {errors.mandatory_qualification && <small className="error">{errors.mandatory_qualification}</small>}
-        </div>
-
-        {/* Preferred Qualification */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk"></span></label>
-          <textarea
-            id="preferred_qualification"
-            name="preferred_qualification"
-            className="form-control"
-            value={formData.preferred_qualification}
-            onChange={handleInputChange}
-            disabled={readOnly}
-          />
-          {errors.preferred_qualification && <small className="error">{errors.preferred_qualification}</small>}
-        </div>
-
         {/* Mandatory Experience */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="mandatory_experience" className="form-label">Mandatory Experience(Years) <span className="required-asterisk">*</span></label>
@@ -488,18 +476,87 @@ useEffect(() => {
           {errors.probation_period && <small className="error">{errors.probation_period}</small>}
         </div>
 
-        {/* Documents Required */}
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="documents_required" className="form-label">Documents Required <span className="required-asterisk">*</span></label>
-          <textarea className="form-control" disabled={readOnly} id="documents_required" name="documents_required" value={formData.documents_required} onChange={handleInputChange} />
-          {errors.documents_required && <small className="error">{errors.documents_required}</small>}
-        </div>
-
         {/* Min Credit Score */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
           <label htmlFor="min_credit_score" className="form-label">Min Credit Score <span className="required-asterisk"></span></label>
           <input type="text" className="form-control" disabled={readOnly} id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}
+        </div>
+
+        <div className='row p-0'>
+          {/* Description */}
+          <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+            <label htmlFor="description" className="form-label">Description <span className="required-asterisk"></span></label>
+            <textarea className="form-control" rows={6} id="description" name="description" disabled={readOnly} value={formData.description} onChange={handleInputChange} />
+            {errors.description && <small className="error">{errors.description}</small>}
+          </div>
+
+          {/* Roles & Responsibilities */}
+          <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+            <label htmlFor="roles_responsibilities" className="form-label">Roles & Responsibilities <span className="required-asterisk">*</span></label>
+            <textarea
+              id="roles_responsibilities"
+              name="roles_responsibilities"
+              className="form-control"
+              value={formData.roles_responsibilities}
+              onChange={handleInputChange}
+              disabled={readOnly}
+              rows={6}
+            />
+            {errors.roles_responsibilities && <small className="error">{errors.roles_responsibilities}</small>}
+          </div>
+        </div>
+
+        {/* Documents Required */}
+        <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+          <label htmlFor="documents_required" className="form-label">Documents Required <span className="required-asterisk">*</span></label>
+          <textarea className="form-control" rows={6} disabled={readOnly} id="documents_required" name="documents_required" value={formData.documents_required} onChange={handleInputChange} />
+          {errors.documents_required && <small className="error">{errors.documents_required}</small>}
+        </div>
+
+        {/* Selection Process */}
+        <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+          <label htmlFor="selection_procedure" className="form-label">Selection Process <span className="required-asterisk"></span></label>
+          <textarea
+            id="selection_procedure"
+            name="selection_procedure"
+            className="form-control"
+            value={formData.selection_procedure}
+            onChange={handleInputChange}
+            disabled={readOnly}
+            rows={6}
+          />
+          {errors.selection_procedure && <small className="error">{errors.selection_procedure}</small>}
+        </div>
+
+        {/* Mandatory Qualification */}
+        <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+          <label htmlFor="mandatory_qualification" className="form-label">Mandatory Qualification <span className="required-asterisk">*</span></label>
+          <textarea
+            id="mandatory_qualification"
+            name="mandatory_qualification"
+            className="form-control"
+            value={formData.mandatory_qualification}
+            onChange={handleInputChange}
+            disabled={readOnly}
+            rows={6}
+          />
+          {errors.mandatory_qualification && <small className="error">{errors.mandatory_qualification}</small>}
+        </div>
+
+        {/* Preferred Qualification */}
+        <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
+          <label htmlFor="preferred_qualification" className="form-label">Preferred Qualification <span className="required-asterisk"></span></label>
+          <textarea
+            id="preferred_qualification"
+            name="preferred_qualification"
+            className="form-control"
+            value={formData.preferred_qualification}
+            onChange={handleInputChange}
+            disabled={readOnly}
+            rows={6}
+          />
+          {errors.preferred_qualification && <small className="error">{errors.preferred_qualification}</small>}
         </div>
 
         {!readOnly && (

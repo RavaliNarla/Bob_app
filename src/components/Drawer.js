@@ -423,10 +423,10 @@ function Drawer({
                                       rel="noopener noreferrer"
                                       className="btn btn-outline-primary"
                                     >
-                                      View in Google Docs
+                                      View Resume
                                     </a>
                                     <a href={fileUrl} download className="btn btn-outline-secondary">
-                                      Download Document
+                                      Download Resume
                                     </a>
                                   </div>
                                 </div>
@@ -509,7 +509,7 @@ function Drawer({
                           onClick={startAdd}
                           style={{ borderColor: "#FF7043", color: "#FF7043" }}
                         >
-                          {showForm && !isEditing ? "Close" : "Add"}
+                          {showForm && !isEditing ? "Close" : "Action"}
                         </Button>
                       </div>
                     </div>
@@ -539,7 +539,7 @@ function Drawer({
                           </Form.Group>
 
                           <Form.Group className="mb-2">
-                            <Form.Label>Status</Form.Label>
+                            <Form.Label>Update Status</Form.Label>
                             <Form.Select value={status} onChange={(e) => setStatus(e.target.value)}>
                               <option value="Selected for next round">Selected for next round</option>
                               <option value="Selected">Selected</option>

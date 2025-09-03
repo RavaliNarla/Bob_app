@@ -29,9 +29,9 @@ const Sidebar = () => {
   };
 
   const menuItems = [
-    { icon: faHome, text: 'Dashboard', path: '/dashboard' },
-    { icon: faFileAlt, text: 'Job Requisition', path: '/job-requisition' },
-    { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
+    { icon: faHome, text: 'My Dashboard', path: '/dashboard' },
+    // { icon: faFileAlt, text: 'Job Requisition', path: '/job-requisition' },
+    // { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },

@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { Button, Modal, Table } from "react-bootstrap";
+import { Button, Form, InputGroup, Modal, Table } from "react-bootstrap";
 import apiService from "../services/apiService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash, faSearch } from "@fortawesome/free-solid-svg-icons";
 // import panaImage from "../assets/pana.png";
 // import logoImage from "../assets/bob-logo.png";
 
@@ -23,6 +23,7 @@ const Register = () => {
   const [showModal, setShowModal] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 //   const [otp, setOtp] = useState("");
 // const [mfaToken, setMfaToken] = useState("");
 // const [showOtpInput, setShowOtpInput] = useState(false);
@@ -43,6 +44,13 @@ const Register = () => {
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
+
+  const filteredUsers = usersData.filter(
+    (user) =>
+      user?.role?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
  const handleRegister = async (e) => {
   e.preventDefault();
@@ -138,6 +146,22 @@ const Register = () => {
           + Add
         </Button>
       </div>
+
+      {/* 🔎 Search Bar */}
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <InputGroup className="w-50 fonreg searchinput">
+          <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
+            <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }} />
+          </InputGroup.Text>
+          <Form.Control
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
+      </div>
+
       <Table className="req_table mt-2" responsive hover>
         <thead className="table-header-orange">
           <tr>
@@ -156,7 +180,7 @@ const Register = () => {
           </tr>
         </thead>
         <tbody className="table-body-orange">
-          {usersData && usersData.map((user, index) => (
+          {usersData && filteredUsers.map((user, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{user?.role}</td>

@@ -78,7 +78,7 @@ const Login = () => {
       <div className="right-panel">
         <div className="logo">
           <img src={boblogo} alt="Logo" />
-          <h4>Recruitment</h4>
+          <h4>Recruitment Tracking System</h4>
         </div>
 
         <form className="login_form" onSubmit={handleLogin}>

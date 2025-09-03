@@ -7,13 +7,72 @@ import JobCreationForm from './../components/JobCreationForm';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
 
+const staticPositions = [
+  {
+      // "requisition_id": "22b12a66-f1f2-46b4-8064-6dd529e03071",
+      "position_title": "Bank Teller",
+      "position_code": "JPOS-0001",
+      "dept_id": "1",
+      "country_id": "1",
+      "state_id": "1",
+      "city_id": "1",
+      "location_id": "6",
+      "description": "",
+      "roles_responsibilities": "roles",
+      "grade_id": "2",
+      "employment_type": "Full-Time",
+      "eligibility_age_min": "20",
+      "eligibility_age_max": "35",
+      "mandatory_qualification": "be",
+      "preferred_qualification": "",
+      "mandatory_experience": "5.5",
+      "preferred_experience": "",
+      "probation_period": 0,
+      "documents_required": "docs",
+      "min_credit_score": "",
+      "no_of_vacancies": "15",
+      "selection_procedure": "",
+      "max_salary": "",
+      "min_salary": ""
+  },
+  {
+      // "requisition_id": "22b12a66-f1f2-46b4-8064-6dd529e03071",
+      "position_title": "Bank Manager",
+      "position_code": "JPOS-0002",
+      "dept_id": "1",
+      "country_id": "1",
+      "state_id": "1",
+      "city_id": "1",
+      "location_id": "6",
+      "description": "",
+      "roles_responsibilities": "roles",
+      "grade_id": "2",
+      "employment_type": "Full-Time",
+      "eligibility_age_min": "30",
+      "eligibility_age_max": "40",
+      "mandatory_qualification": "BBA",
+      "preferred_qualification": "MBA",
+      "mandatory_experience": "8",
+      "preferred_experience": "",
+      "probation_period": 0,
+      "documents_required": "PAN",
+      "min_credit_score": "",
+      "no_of_vacancies": "5",
+      "selection_procedure": "",
+      "max_salary": "",
+      "min_salary": ""
+  }
+]
+
 const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, onUpdateSuccess, readOnly: readOnlyProp }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const requisitionId = location.state?.requisitionId || "";
   const fileInputRef = useRef(null);
   const [selectedOption, setSelectedOption] = useState('direct');
   const [files, setFiles] = useState([]);
@@ -77,6 +136,15 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState(null);
   const [readOnly, setReadOnly] = useState(readOnlyProp ?? false);
+
+  useEffect(() => {
+    if (requisitionId) {
+      setFormData((prev) => ({
+        ...prev,
+        requisition_id: requisitionId
+      }));
+    }
+  }, [requisitionId]);
 
   useEffect(() => {
     // If no modal is passed, assume direct navigation → editable
@@ -598,7 +666,7 @@ const handleInputChange = (e) => {
                   }}
                 >
                   <FontAwesomeIcon icon={faDownload} style={{ color: "#FF7043", fontSize: "1rem" }} />&nbsp;
-                  <span> Download Template</span>
+                  <span> Download Bulk Template</span>
                 </a>
                 <Button className='uploadfile'
                   variant="uploadfile outline-primary"
@@ -618,7 +686,7 @@ const handleInputChange = (e) => {
                   }}
                 >
                   <FontAwesomeIcon icon={faUpload} style={{ color: "#FF7043", fontSize: "1rem" }} /> &nbsp;
-              <span> Upload Excel</span>
+              <span> Upload Bulk Jobs</span>
                 </Button>
               </div>
             </div>
@@ -644,6 +712,7 @@ const handleInputChange = (e) => {
                 requisitionData={reqs}
                 gradeMeta={masterData.allGrades}
                 readOnly={readOnly}
+                positionList={staticPositions}
               />
             )}
           

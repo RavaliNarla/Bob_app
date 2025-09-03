@@ -119,7 +119,7 @@
   /* position: relative; */
   /* margin: 0 auto 1.5rem; */
   /* max-width: 500px; */
-  /* width: 100%; */
+  width: 50%;
 }
 
 .job-postings-page .search-input {
@@ -347,3 +347,7 @@ font-family: 'Poppins', sans-serif !important;
 .title{
   font-size:12px;
 }
+
+/* .job-postings-page .posting-search {
+  width: 40%;
+} */

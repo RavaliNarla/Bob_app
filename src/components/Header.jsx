@@ -62,7 +62,7 @@ const Header = () => {
           {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faBell} size="lg" />
           </Button> */}
-          {(user?.role === 'admin' || user?.role === 'Admin') && (
+          {/* {(user?.role === 'admin' || user?.role === 'Admin') && (
             <OverlayTrigger
               placement="bottom"
               overlay={<Tooltip id="tooltip-payments">Payments</Tooltip>}
@@ -71,7 +71,7 @@ const Header = () => {
                 <FontAwesomeIcon icon={faMoneyBillTransfer} size="lg" />
               </Button>
             </OverlayTrigger>
-          )}
+          )} */}
           <OverlayTrigger
             placement="bottom"
             overlay={<Tooltip id="tooltip-payments">Logout</Tooltip>}
