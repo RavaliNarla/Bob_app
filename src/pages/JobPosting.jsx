@@ -551,6 +551,17 @@ const fetchRequisitions = async () => {
                   </Col>
 
                   <Col xs={12} md={1} className="d-flex gap-2 px-2">
+                    <OverlayTrigger placement="top" overlay={<Tooltip>Download</Tooltip>}>
+                      <DownloadReqPdfButton
+                        requisition_id={job.requisition_id}
+                        requisition={job}
+                      >
+                        <FontAwesomeIcon
+                          icon={faDownload}
+                          style={{ color: "#FF7043", cursor: "pointer" }}
+                        />
+                      </DownloadReqPdfButton>
+                    </OverlayTrigger>
                     {job?.requisition_status === "New" ? (
                       <>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Add Position</Tooltip>}>
@@ -600,17 +611,6 @@ const fetchRequisitions = async () => {
                             style={{ color: '#FF7043', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
-  <OverlayTrigger placement="top" overlay={<Tooltip>Download</Tooltip>}>
-  <DownloadReqPdfButton
-    requisition_id={job.requisition_id}
-    requisition={job}
-  >
-    <FontAwesomeIcon
-      icon={faDownload}
-      style={{ color: "#FF7043", cursor: "pointer" }}
-    />
-  </DownloadReqPdfButton>
-</OverlayTrigger>
                       </>
                     )}
                   </Col>

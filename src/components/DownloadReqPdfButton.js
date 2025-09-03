@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 // eslint-disable-next-line
 import * as html2pdf from "html2pdf.js";
 import { apiService } from "../services/apiService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDownload } from "@fortawesome/free-solid-svg-icons";
 
 const fmt = (d) => (d ? dayjs(d).format("DD.MM.YYYY") : undefined);
 const ORANGE = "#FF6F00";
@@ -170,14 +172,16 @@ export default function DownloadReqPdfButton(props) {
 
   return (
     <>
-      <button
-        className="btn btn-outline-primary"
+      <FontAwesomeIcon
+        // className="btn btn-outline-primary"
         onClick={handleDownload}
         disabled={loading}
         title="Download"
-      >
-        {loading ? "Preparing…" : "Download"}
-      </button>
+        icon={faDownload}
+        style={{ color: '#FF7043' }}
+      />
+        {/* {loading ? "Preparing…" : "Download"}
+      </button> */}
       {err && <span style={{ color: "crimson", marginLeft: 8 }}>{err}</span>}
 
       {/* Hidden render area */}
