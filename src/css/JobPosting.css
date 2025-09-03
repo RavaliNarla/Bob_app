@@ -263,7 +263,8 @@ font-family: 'Poppins', sans-serif !important;
   font-family: 'Poppins', sans-serif !important;
  width: 105px;
   font-size: 14px !important;
-  color:#414141
+  color: #162b75 !important;
+  font-weight:500;
 }
 
 .modal_container .modal-dialog {
@@ -289,7 +290,7 @@ font-family: 'Poppins', sans-serif !important;
 }
 
 .job-postings-page .accordion-button:not(.collapsed) {
-  background-color: #f7e1d7 !important;
+  background-color: rgba(247,225,215, 0.4) !important
   /* color: #fff !important; */
 }
 
@@ -308,6 +309,7 @@ font-family: 'Poppins', sans-serif !important;
 }
 .fontcard .text-dark{
   font-weight: 600;
+  color: rgb(255, 112, 67) !important;
 }
 .boldnes b {
 	font-weight: 500;
@@ -326,7 +328,7 @@ font-family: 'Poppins', sans-serif !important;
 }
 .checkbtnspost
 {
-  color:#414141;
+  color:#000;
   font-weight:300;
 }
 .job-postings-page .form-select option {
@@ -351,3 +353,61 @@ font-family: 'Poppins', sans-serif !important;
 /* .job-postings-page .posting-search {
   width: 40%;
 } */
+
+.modal-header{
+  padding:15px 25px;
+}
+.modal-title{
+  font-size: 16px !important;
+}
+.requisition-form .form-label
+{
+  color: #162b75;
+  font-size:14px;
+  font-weight:500;
+}
+.requisition-form .form-control{
+color: #000;
+  font-size:14px;
+}
+.fontcard, .text-dark, .boldnes, .boldnes b{
+  font-size: 14px !important;
+  color: #162b75 !important;
+}
+.boldnes{
+  font-size: 14px !important;
+  color: #414141 !important;
+}
+.viewicon{
+  text-align: right;
+  right: 0px !important;
+  position: absolute;
+}
+.accordion .list{
+  background: #fff 0% 0% no-repeat padding-box;
+  box-shadow: 0 10px 30px #1a2c7133;
+  border-radius: 20px !important;
+  margin-bottom: 20px !important;
+  
+}
+.accordion button{
+  border-radius: 20px !important;
+}
+.req_table  th{
+  font-size:14px;
+  color:#FF7043;
+}
+.req_table  td{
+  font-size:14px;
+  color:#000;
+  font-weight:400;
+}
+.checkbtnspost label{
+  font-size:14px;
+  color:#000;
+  margin-top: 0px;
+  float: left;
+}
+.form-select{
+  font-size:14px;
+}

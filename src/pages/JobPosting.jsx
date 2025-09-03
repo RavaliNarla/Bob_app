@@ -492,7 +492,7 @@ const fetchRequisitions = async () => {
         ) :(
         <Accordion activeKey={activeKey}>
           {filteredJobPostings.map((job, index) => (
-            <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded">
+            <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded list">
               <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
                 <Row className="w-100 align-items-center fontreg">
                   
@@ -536,9 +536,9 @@ const fetchRequisitions = async () => {
                     {/* Row 2 */}
                     <div className="d-flex mb-1 mt-1">
                       <div className="me-4 boldnes">
-                        <b>Start Date:</b> {job?.registration_start_date}&nbsp;|&nbsp;
-                        <b>End Date:</b> {job?.registration_end_date}&nbsp;|&nbsp;
-                        <b>Vacancies:</b> {job.count ? job.count : "0"}&nbsp;|&nbsp;
+                        <b>Start Date:</b> {job?.registration_start_date}&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <b>End Date:</b> {job?.registration_end_date}&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <b>Vacancies:</b> {job.count ? job.count : "0"}<br></br>
                         <b>Status:</b> {
                           new Date() > new Date(job?.registration_end_date)
                             ? "Expired"
@@ -608,7 +608,7 @@ const fetchRequisitions = async () => {
                               e.stopPropagation();
                               addRequisitionModal(job, index, "view");
                             }}
-                            style={{ color: '#FF7043', cursor: 'pointer' }}
+                            style={{ color: '#FF7043', cursor: 'pointer', textAlign: 'right', right:'92px', position: 'absolute', top:'38px' }}
                           />
                         </OverlayTrigger>
                       </>
@@ -716,9 +716,9 @@ const fetchRequisitions = async () => {
 
       {(selectedApproval === "New" || selectedApproval === "") && (
         <>
-          <div className="mt-5 mb-4">
+          <div className="mt-5 mb-3">
             <Row className="align-items-start">
-              <Col xs={12} sm={12} md={8}>
+              <Col xs={12} sm={12} md={12}>
                 <div className="d-flex flex-wrap">
                   {/* Label + Error */}
                   <div className="d-flex">

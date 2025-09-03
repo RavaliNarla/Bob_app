@@ -69,23 +69,23 @@ const OfferModal = ({
     <>
       <Modal show={show} onHide={handleClose} centered size="lg" className="fontinter">
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}></Modal.Title>
+          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>Offers</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 form45">
               <Form.Label>Candidate Name</Form.Label>
               <Form.Control type="text" value={candidate?.full_name} readOnly />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 form45">
               <Form.Label>Job Position</Form.Label>
               <Form.Control type="text" value={position_title} readOnly />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 form45">
               <Form.Label>Requisition ID</Form.Label>
               <Form.Control type="text" value={reqId} readOnly />
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group className="mb-3 form45">
   <Form.Label>Salary</Form.Label>
   <Form.Control
     type="text"

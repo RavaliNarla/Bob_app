@@ -274,13 +274,13 @@ const InterviewModal = ({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3 form45">
             <Form.Label>Candidate</Form.Label>
             <Form.Control type="text" value={candidate?.full_name || ""} readOnly />
           </Form.Group>
 
           {/* Interviewer dropdown (fetched) */}
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3 form45">
             <Form.Label>Interviewer</Form.Label>
             {loadingInterviewers ? (
               <div className="d-flex align-items-center gap-2">
@@ -308,7 +308,7 @@ const InterviewModal = ({
             </div>
           </Form.Group>
 
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3 form45">
             <Form.Label>Interview Date</Form.Label>
             <Form.Control
               type="date"
@@ -319,7 +319,7 @@ const InterviewModal = ({
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-3 form45">
             <Form.Label>Interview Time</Form.Label>
             <Form.Control
               type="time"
@@ -386,11 +386,12 @@ const InterviewModal = ({
           Cancel
         </Button>
         {isReschedule && (
-          <Button variant="danger" onClick={onCancel}>
+          <Button variant="danger" onClick={onCancel} className="btn_action">
             Cancel Interview
           </Button>
         )}
         <Button
+        className="btn_action"
           variant="primary"
           onClick={onSave}
           disabled={

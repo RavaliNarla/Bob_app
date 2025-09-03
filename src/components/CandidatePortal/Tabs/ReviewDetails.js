@@ -104,7 +104,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
   return (
     <div className="form-content-section text-start spaceform">
       <form className="row g-4" onSubmit={handleSubmit}>
-        <div className="col-md-4  p-2 review_input">
+        <div className="col-md-3  p-2 review_input">
           <label htmlFor="name" className="form-label ">Name *</label>
           <input
             type="text"
@@ -116,7 +116,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4 p-2 review_input">
+        <div className="col-md-3 p-2 review_input">
           <label htmlFor="dob" className="form-label ">Date of Birth *</label>
           <input
             type="date"
@@ -128,7 +128,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4 p-2 review_input" >
+        <div className="col-md-3 p-2 review_input" >
           <label htmlFor="email" className="form-label ">Email *</label>
           <input
             type="email"
@@ -141,7 +141,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4 p-2 review_input">
+        <div className="col-md-3 p-2 review_input">
           <label htmlFor="gender" className="form-label ">Gender *</label>
           <select
             className="form-select"
@@ -156,7 +156,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           </select>
         </div>
 
-        <div className="col-md-4 p-2 review_input">
+        <div className="col-md-3 p-2 review_input">
           <label htmlFor="id_proof" className="form-label ">ID Proof*</label>
           <input
             type="text"
@@ -169,7 +169,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4 p-2 review_input">
+        <div className="col-md-3 p-2 review_input">
           <label htmlFor="phone" className="form-label ">Phone *</label>
           <input
             type="text"
@@ -181,7 +181,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
           />
         </div>
 
-        <div className="col-md-4 p-2 review_input">
+        <div className="col-md-3 p-2 review_input">
           <label htmlFor="education_qualification" className="form-label ">Education Qualification *</label>
           <input
             type="text"
@@ -192,63 +192,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
             required
           />
         </div>
-
-        <div className="col-md-4 p-2 review_input">
-          <label htmlFor="skills" className="form-label ">Skills</label>
-          <textarea
-            className="form-control"
-            id="skills"
-            rows="3"
-            value={formData.skills || ''}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-md-4 p-2 review_input" >
-          <label htmlFor="totalExperience" className="form-label ">Total Experience</label>
-          <input
-            type="text"
-            className="form-control"
-            id="totalExperience"
-            value={formData.totalExperience || ''}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-md-4 p-2 review_input">
-          <label htmlFor="currentDesignation" className="form-label ">Current Designation</label>
-          <input
-            type="text"
-            className="form-control"
-            id="currentDesignation"
-            value={formData.currentDesignation || ''}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-md-4 p-2 review_input">
-          <label htmlFor="currentEmployer" className="form-label ">Current Employer</label>
-          <input
-            type="text"
-            className="form-control"
-            id="currentEmployer"
-            value={formData.currentEmployer || ''}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-md-4 p-2 review_input">
-          <label htmlFor="address" className="form-label ">Address</label>
-          <textarea
-            className="form-control"
-            id="address"
-            rows="3"
-            value={formData.address || ''}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="col-md-4 p-2 review_input">
+<div className="col-md-3 p-2 review_input">
           <label htmlFor="nationality_id" className="form-label ">Nationality *</label>
           <select
             className="form-select"
@@ -265,6 +209,62 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
             ))}
           </select>
         </div>
+        
+
+        <div className="col-md-3 p-2 review_input" >
+          <label htmlFor="totalExperience" className="form-label ">Total Experience</label>
+          <input
+            type="text"
+            className="form-control"
+            id="totalExperience"
+            value={formData.totalExperience || ''}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="col-md-3 p-2 review_input">
+          <label htmlFor="currentDesignation" className="form-label ">Current Designation</label>
+          <input
+            type="text"
+            className="form-control"
+            id="currentDesignation"
+            value={formData.currentDesignation || ''}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="col-md-3 p-2 review_input">
+          <label htmlFor="currentEmployer" className="form-label ">Current Employer</label>
+          <input
+            type="text"
+            className="form-control"
+            id="currentEmployer"
+            value={formData.currentEmployer || ''}
+            onChange={handleChange}
+          />
+        </div>
+<div className="col-md-3 p-2 review_input">
+          <label htmlFor="skills" className="form-label ">Skills</label>
+          <textarea
+            className="form-control"
+            id="skills"
+            rows="3"
+            value={formData.skills || ''}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="col-md-3 p-2 review_input lastfiled">
+          <label htmlFor="address" className="form-label ">Address</label>
+          <textarea
+            className="form-control"
+            id="address"
+            rows="3"
+            value={formData.address || ''}
+            onChange={handleChange}
+          />
+        </div>
+
+        
 
         <div className="col-12">
           <button

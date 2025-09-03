@@ -42,7 +42,7 @@ useEffect(() => {
   // console.log('Selected Requisition:', selectedRequisition);
 
   return (
-    <div className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff' }}>
+    <div className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
       {/* <h4 className="text-center mb-4 fonall">
         Job Posting
       </h4> */}

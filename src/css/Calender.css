@@ -1,57 +1,74 @@
 .status_reschedule{
-    text-align: right;
-  color: #fff !important;
-  font-size: 10px;
+     text-align: right;
+  color: #FFCA02 !important;
+  font-size: 12px;
   margin-bottom: 5px;
-  background: #FFCA02 !important;
+  background: #fff !important;
+    border:1px solid #FFCA02;
   padding: 5px 10px;
   border-radius: 10px;
   cursor: text;
 }
 .status_schedule{
-    text-align: right;
-  color: #fff !important;
-  font-size: 10px;
+  text-align: right;
+  color: #2cb4f3 !important;
+  font-size: 12px;
   margin-bottom: 5px;
-  background: #2cb4f3 !important;
+  background: #fff !important;
+    border:1px solid #2cb4f3;
   padding: 5px 10px;
   border-radius: 10px;
   cursor: text;
 }
 .status_reject{
-    text-align: right;
-  color: #fff !important;
-  font-size: 10px;
+   text-align: right;
+  color: red !important;
+  font-size: 12px;
   margin-bottom: 5px;
-  background: red !important;
+  background: #fff !important;
+  border:1px solid red;
   padding: 5px 10px;
   border-radius: 10px;
   cursor: text;
 }
 .status_notavailable{
     text-align: right;
-  color: #fff !important;
-  font-size: 10px;
+  color: gray !important;
+  font-size: 12px;
   margin-bottom: 5px;
-  background: red !important;
+  background: #fff !important;
+  border:1px solid gray;
   padding: 5px 10px;
   border-radius: 10px;
   cursor: text;
 }
 .status_selected{
     text-align: right;
-  color: #fff !important;
-  font-size: 10px;
+  color: green !important;
+  font-size: 12px;
   margin-bottom: 5px;
-  background: green !important;
+  background: #fff !important;
+  border:1px solid green;
   padding: 5px 10px;
   border-radius: 10px;
   cursor: text;
 }
 .fontbold{
     font-weight: 600 !important;
-    font-size: 12px;
+    font-size: 14px;
+    color: #162b75 !important;
 }
 .fontregular{
-  font-size: 12px;
+  font-size: 14px;
+  color:#000 !important;
+}
+.date{
+  font-size:14px;
+}
+.datesbg{
+  background:rgba(255, 79, 70,0.1) !important;
+}
+.col button:hover{
+  background:#fff !important;
+  color:#000 !important;
 }

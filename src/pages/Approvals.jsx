@@ -265,8 +265,8 @@ setError("No Approvals: Unexpected data format.");
                   toggleAccordion(index.toString(), job.requisition_id)
                 }
               >
-                <Row className="w-100 align-items-center fontreg">
-                  <Col xs={12} md={4} className="d-flex align-items-center">
+                <Row className="w-100 align-items-center fontreg ">
+                  <Col xs={12} md={4} className="d-flex align-items-center ">
                     <Form.Check
                       type="checkbox"
                       className="form-check-orange me-2"
@@ -378,19 +378,20 @@ setError("No Approvals: Unexpected data format.");
       {/* Approve / Reject buttons */}
        {filteredJobPostings.length > 0 && (
         <div className="d-flex justify-content-end mt-4 gap-2">
-          <Button
-            variant="success"
-            disabled={selectedJobIds.length === 0}
-            onClick={handleApprove}
-          >
-            Approve
-          </Button>
+          
           <Button
             variant="danger"
             disabled={selectedJobIds.length === 0}
             onClick={handleReject}
           >
             Reject
+          </Button>
+          <Button
+            variant="success"
+            disabled={selectedJobIds.length === 0}
+            onClick={handleApprove}
+          >
+            Approve
           </Button>
         </div>
       )}

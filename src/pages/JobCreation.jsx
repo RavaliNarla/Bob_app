@@ -869,8 +869,8 @@ const handleInputChange = (e) => {
         </Modal.Header>
         <Modal.Body>
           <div className="upload-section fontss">
-            <div>
-              <Form.Group className="mb-2">
+            <div className="popform">
+              <Form.Group className="mb-2 job-form">
                 <Form.Label className="small mb-1 d-flex align-items-center fontss" style={{ gap: '0.4em' }}>
                   Select Requisition
                   {typeof selectedReqIndex === 'number' && reqs[selectedReqIndex] && (
@@ -1003,7 +1003,10 @@ const handleInputChange = (e) => {
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: 'auto',
-                width: '350px'
+                width: '350px',
+                border:'1px dashed #FF7043',
+                backgroundColor: '#f5f5f5',
+                borderStyle: 'dashed',
               }}
             >
               <FontAwesomeIcon icon={faUpload} size="1x" className="mb-2 text-muted" />

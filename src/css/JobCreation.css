@@ -43,4 +43,22 @@ background:#fff;
   color: #a0a0a0 !important;
   font-weight: 300 !important;
 }
-
+.job-form .form-label
+{
+  color: #162b75 !important;
+  font-size:14px !important;
+  font-weight:500 !important;
+}
+.job-form .form-select, .job-form input,.job-form textarea{
+color: #000 !important;
+  font-size:14px !important;
+  font-weight:400 !important
+}
+.job-form .fontss{
+    color: #162b75 !important;
+  font-size:14px !important;
+  font-weight:500 !important;
+}
+.popform{
+    float:left; width:45%
+}

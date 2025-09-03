@@ -116,7 +116,7 @@ const CandidatePortal = ({ selectedPositionId, onSubmitSuccess }) => {
   return (
     <div>
       <div className="d-flex">
-        <div className="flex-grow-1 m-4">
+        <div className="flex-grow-1">
           {/* Tabs */}
           <ul className="nav nav-tabs navbarupload justify-content-start">
             <li className="nav-item">

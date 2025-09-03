@@ -236,17 +236,18 @@ export default function Calendar() {
 
       <div className="border-0">
         {/* Week strip */}
-        <div className="bg-white p-2 shadow-sm" style={{ borderRadius: '8px' }}>
+        <div className="bg-white p-2 shadow-sm datesbg" style={{ borderRadius: '8px' }}>
           <Row xs={7} className="g-2 text-center">
             {days.map((d) => {
               const key = localISO(d);
               const isActive = key === selectedDate;
               const weekday = d.toLocaleDateString(undefined, { weekday: "short" });
               return (
-                <Col key={key}>
+                
+                <Col key={key} >
                   <Button
                     variant={isActive ? "" : "light"}
-                    className={`w-100 fw-semibold ${isActive ? "text-white warning_class" : ""}`}
+                    className={`w-100 fw-semibold date ${isActive ? "text-white warning_class" : ""}`}
                     onClick={() => onSelectDay(key)}
                     style={{ borderRadius: 999 }}
                   >
@@ -254,6 +255,7 @@ export default function Calendar() {
                     <div className="fs-6">{d.getDate()}</div>
                   </Button>
                 </Col>
+                
               );
             })}
           </Row>

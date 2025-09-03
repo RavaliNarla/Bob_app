@@ -858,8 +858,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
-                    <Dropdown className="w-100 mb-3">
-                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', padding: '0.3rem', marginTop: '15px', overflowX: 'hidden' }}>
+                    <Dropdown className="w-100 mb-3" style={{marginRight: '4%'}}>
+                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', marginTop: '15px', overflowX: 'hidden' }}>
                             {selectedRequisitionCode
                                 ? `${selectedRequisitionCode} - ${jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
                                     ?.requisition_title || ""
@@ -873,7 +873,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                 placeholder="Search requisition"
                                 value={reqSearch}
                                 onChange={(e) => setReqSearch(e.target.value)}
-                                className="mb-2"
+                                className="mb-2 search_req"
                             />
                             <div style={{ overflowX: 'auto' }}>
                                 {filteredReqs.length > 0 ? (
@@ -900,7 +900,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {/* Position Dropdown */}
                     {selectedRequisitionCode && (
                         <Dropdown className="w-100">
-                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px', padding: '0.3rem', overflowX: 'hidden' }}>
+                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px',  overflowX: 'hidden' }}>
                                 {selectedPositionId
                                     ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
                                         ?.position_code || ""} - ${jobPositions.find((p) => p.position_id === selectedPositionId)
@@ -962,7 +962,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 <DragDropContext onDragEnd={handleOnDragEnd}>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: 'auto', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: 'auto', backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden', boxShadow: '0 10px 30px #1a2c7133' }}>
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <div className="d-flex align-items-baseline">
@@ -983,6 +983,15 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                 <i className="bi bi-sort-down sort_icon" onClick={toggleCandidateSortOrder}></i> :
                                                 <i className="bi bi-sort-up sort_icon" onClick={toggleCandidateSortOrder}></i>
                                             }
+
+                                            {/* { (selectedRequisitionCode=="JREQ-1151" && (selectedPositionTitle=="Manager - Digital Product" || selectedPositionTitle=="Sc Engineer"))&&(         */}
+                                            <button
+                                                className="btn btn-sm btn-outline-primary"
+                                                onClick={() => setShowPopup(true)}
+                                            >
+                                                <FontAwesomeIcon icon={faCubesStacked} />
+                                            </button>
+                                            {/* )} */}
                                         </div>
                                     </div>
                                     {/* <div className="d-flex justify-content-between">
@@ -1066,7 +1075,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden',boxShadow: '0 10px 30px #1a2c7133' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Screening</h5>
@@ -1075,14 +1084,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                         ) : (
                                             <i className="bi bi-sort-up sort_icon" onClick={toggleInterviewedSortOrder}></i>
                                         )}
-                                        {/* { (selectedRequisitionCode=="JREQ-1151" && (selectedPositionTitle=="Manager - Digital Product" || selectedPositionTitle=="Sc Engineer"))&&(         */}
-                                            <button
-                                            className="btn btn-sm btn-outline-primary"
-                                            onClick={() => setShowPopup(true)}
-                                        >
-                                            <FontAwesomeIcon icon={faCubesStacked} />
-                                        </button>
-                                        {/* )} */}
+                                        
                                     </div>
                                     {/* <div className="d-flex justify-content-between">
                                         <div className="d-flex gap-1">
@@ -1198,7 +1200,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     </div>
                     <div className="col-12 col-md-6 col-lg-3 px-4">
                         <div className="review_columns card">
-                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden' }}>
+                            <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden',boxShadow: '0 10px 30px #1a2c7133' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <h5 className="color_grey card-title">Offers</h5>
@@ -1244,7 +1246,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
-                                                                        <div>
+                                                                        <div class="statusdiv">
                                                                             <p className="selectednext status_selected">{candidate.application_status}</p>
                                                                         </div>
                                                                         {/* <div className="card-status-label">{candidate.profileStatus}</div> */}

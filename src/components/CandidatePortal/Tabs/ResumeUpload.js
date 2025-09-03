@@ -227,7 +227,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
-        {fileName && <div className="mt-2">{fileName}</div>}
+        {fileName && <div className="mt-2 filename">{fileName}</div>}
       </div>
 
       <div className="mt-4">

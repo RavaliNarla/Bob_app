@@ -44,6 +44,7 @@ body {
   border-radius: 0.25rem;
   margin: 0.25rem 0;
   transition: all 0.2s;
+  margin-bottom:5px;
 }
 
 .sidebar .nav-link:hover, 
@@ -54,7 +55,7 @@ body {
 }
 
 .sidebar .nav-link.active {
-  border-left: 3px solid #ffc107;
+  border-left: 3px solid rgb(255, 77, 0);
 }
 
 /* Card styles */
