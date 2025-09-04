@@ -785,7 +785,19 @@ const handleInputChange = (e) => {
       <Row className="justify-content-center">
         <Col xs={12} md={10} lg={8}>
          {editPositionId == null && (
-            <div className="d-flex justify-content-between align-items-center mb-3 buttons_div">
+            <div className="d-flex justify-content-between align-items-center mb-3 mx-2 buttons_div">
+              <Button
+                variant="outline-secondary"
+                onClick={() => navigate("/job-postings")}
+                style={{
+                  padding: "6px 15px",
+                  fontSize: "13px",
+                  fontWeight: "400",
+                  borderRadius: "6px"
+                }}
+              >
+                ← Back
+              </Button>
               <div>
                 <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
               </div>

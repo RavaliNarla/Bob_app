@@ -976,7 +976,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                 <div className="pb-1">
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
                                         <div className="d-flex align-items-baseline">
-                                            <h5 className="color_grey card-title">Candidates</h5>
+                                            <h5 className="color_grey card-title">Shortlisted Candidates</h5>
                                         </div>
                                         <div className="d-flex align-items-center gap-2">
                                             {selectedPositionId && (
@@ -1089,7 +1089,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                             <div className="card-body" style={{ maxHeight: "auto", backgroundColor: '#fff', borderRadius: '15px', overflowY: 'hidden',boxShadow: '0 10px 30px #1a2c7133' }}>
                                 <div>
                                     <div className="d-flex justify-content-between align-items-baseline py-2">
-                                        <h5 className="color_grey card-title">Screening</h5>
+                                        <h5 className="color_grey card-title">Screening/Schedule</h5>
                                         {isDescending.interviewed !== null ? (
                                             <i className="bi bi-sort-down sort_icon" onClick={toggleInterviewedSortOrder}></i>
                                         ) : (
