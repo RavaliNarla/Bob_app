@@ -236,10 +236,10 @@ function Drawer({
                   <Nav.Link eventKey="resume">Resume</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="offerLetter">Offer Letter</Nav.Link>
+                  <Nav.Link eventKey="feedback">Feedback</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="feedback">Feedback</Nav.Link>
+                  <Nav.Link eventKey="offerLetter">Offer Letter</Nav.Link>
                 </Nav.Item>
               </Nav>
 
