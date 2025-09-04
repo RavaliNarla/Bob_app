@@ -788,7 +788,7 @@ const fetchRequisitions = async () => {
             className="text-white"
             onClick={handleSavePostings}
           >
-            Save
+            Submit
           </Button>
         </div>
       )}
