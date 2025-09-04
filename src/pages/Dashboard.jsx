@@ -55,8 +55,8 @@ export default function Dashboard() {
   // Shortlisting progress (same style as stats)
   const [shortlistingProgress, setShortlistingProgress] = useState({
     applied_candidates: 0,
-    screening: 0,
-    interviews_scheduled: 0,
+        eligible: 0,
+    Shortlisted: 0,
     offers: 0,
     rejected: 0,
     Interviewed: 0,
@@ -95,8 +95,8 @@ export default function Dashboard() {
 
         setShortlistingProgress({
           applied_candidates: data?.applied_candidates || 0,
-          screening: data?.screening || 0,
-          interviews_scheduled: data?.interviews_scheduled || 0,
+          eligible: data?.eligible || 0,
+                    Shortlisted: data?.Shortlisted || 0,
           offers: data?.offers || 0,
           rejected: data?.rejected || 0,
           Interviewed: data?.Interviewed || 0,
@@ -280,8 +280,8 @@ export default function Dashboard() {
             <div className="pipeline-container">
               {[
                 { key: "applied_candidates", label: "Applications\nReceived", color: "#42a5f5" },
-                { key: "interviews_scheduled", label: "Eligible", color: "#ffa726" }, // Orange
-                 { key: "screening", label: "Shortlisted", color: "#66bb6a" }, // Green
+                { key: "eligible", label: "Eligible", color: "#ffa726" }, // Orange
+                 { key: "Shortlisted", label: "Shortlisted", color: "#66bb6a" }, // Green
                 { key: "Interviewed", label: "Interviewed", color: "#ab47bc" }, // Purple
                 { key: "offers", label: "Offered", color: "#ef5350" }, // Red
                 { key: "Joined", label: "Joined", color: "#26c6da" }, // Teal
