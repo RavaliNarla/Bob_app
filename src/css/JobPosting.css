@@ -377,6 +377,7 @@ color: #000;
 .boldnes{
   font-size: 14px !important;
   color: #414141 !important;
+  line-height: 24px;
 }
 .viewicon{
   text-align: right;

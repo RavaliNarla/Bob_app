@@ -293,7 +293,7 @@ const Location = () => {
     </Form.Group>
   </Col>
 
-  <Col md={12}>
+  <Col md={12} style={{ marginTop: '10px' }}>
     <Form.Group>
       <Form.Label>
         Location Name <span className="text-danger">*</span>

@@ -409,3 +409,20 @@ color: #000 !important;
 .btn_action{
     font-size:14px;
 }
+.pushbtn{
+    background:rgb(255, 112, 67) !important;
+    color:#fff;
+    width:auto;
+    padding:5px 12px;
+    border-radius:6px;
+    float:right;
+    border:none;
+    display: flex;
+  right: 10%;
+  position: absolute;
+  font-size:14px;
+}
+.rank{
+    color:rgb(255, 112, 67) !important;
+    font-size:16px;
+}

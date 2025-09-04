@@ -246,7 +246,7 @@ function Drawer({
               <CardBody>
                 <Tab.Content>
                   {/* ===== DETAILS ===== */}
-                  <Tab.Pane eventKey="details">
+                   <Tab.Pane eventKey="details">
                     <Row className="mt-3">
                       <Col md={6}>
                         <div className="info-card">
@@ -280,20 +280,17 @@ function Drawer({
                             </Col>
                           </Row>
                         </div>
-
+ 
                         <div className="info-card mt-3">
                           <div className="info-header d-flex justify-content-between align-items-center">
                             <h6 style={{ color: "#FF7043" }}>Education Information</h6>
+                           
                           </div>
                           <div className="info-body">
                             <Row>
                               <Col md={12}>
-                                <div className="head-section">POST GRADUATION:</div>
-                                <p className="sum-data">{candidate?.postGraduation}</p>
-                              </Col>
-                              <Col md={12}>
-                                <div className="head-section">UNIVERSITY:</div>
-                                <p className="sum-data">{candidate?.postGraduationUniversity}</p>
+                                <div className="head-section">Education:</div>
+                                <p className="sum-data">{candidate?.education_qualification}</p>
                               </Col>
                             </Row>
                             <Row>
@@ -308,7 +305,7 @@ function Drawer({
                             </Row>
                             <div style={{ borderTop: "1px dashed #ccc", margin: "1.5rem 0 0 0" }} />
                             <div style={{ borderTop: "1px dashed #ccc", margin: "0.25rem 0 1.5rem 0" }} />
-                            <Row>
+                            {/* <Row>
                               <Col md={12}>
                                 <div className="head-section">GRADUATION:</div>
                                 <p className="sum-data">{candidate?.graduation}</p>
@@ -317,8 +314,8 @@ function Drawer({
                                 <div className="head-section">UNIVERSITY:</div>
                                 <p className="sum-data">{candidate?.graduationUniversity}</p>
                               </Col>
-                            </Row>
-                            <Row>
+                            </Row> */}
+                            {/* <Row>
                               <Col md={12}>
                                 <div className="head-section">GRADE/SCORE:</div>
                                 <p className="sum-data">{candidate?.graduationGrade}</p>
@@ -327,11 +324,11 @@ function Drawer({
                                 <div className="head-section">YEAR OF PASSING:</div>
                                 <p className="sum-data">{candidate?.graduationYear}</p>
                               </Col>
-                            </Row>
+                            </Row> */}
                           </div>
                         </div>
                       </Col>
-
+ 
                       <Col md={6}>
                         <div className="pro-info-card">
                           <div className="info-header d-flex justify-content-between align-items-center">
@@ -341,7 +338,7 @@ function Drawer({
                             <Row>
                               <Col md={12}>
                                 <div className="head-section">CURRENT JOB TITTLE:</div>
-                                <p className="sum-data">{candidate?.requisition_title}</p>
+                                <p className="sum-data">{candidate?.current_designation}</p>
                               </Col>
                               <Col md={12}>
                                 <div className="head-section">TOTAL EXPERIENCE:</div>
@@ -361,7 +358,7 @@ function Drawer({
                             <Row>
                               <Col md={12}>
                                 <div className="head-section">CURRENT COMPANY:</div>
-                                <p className="sum-data">{candidate?.currentCompany}</p>
+                                <p className="sum-data">{candidate?.current_employer}</p>
                               </Col>
                               <Col md={12}>
                                 <div className="head-section">COMPANY LOCATION:</div>
@@ -397,6 +394,7 @@ function Drawer({
                       </Col>
                     </Row>
                   </Tab.Pane>
+ 
 
                   {/* ===== RESUME ===== */}
                   <Tab.Pane eventKey="resume">

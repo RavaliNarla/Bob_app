@@ -33,7 +33,7 @@ body {
 
 /* Sidebar styles */
 .sidebar {
-  height: calc(100vh - 56px);
+  height: 100vh;
   /* overflow-y: auto; */
   position: sticky;
   /* top: 56px; */
@@ -276,4 +276,7 @@ body {
 
 .fw-300 {
   font-weight: 300 !important;
+}
+.modal-body{
+  padding:10px 25px;
 }

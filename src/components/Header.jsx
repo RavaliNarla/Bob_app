@@ -37,7 +37,7 @@ const Header = () => {
   return (
     <Navbar bg="warning" variant="light" expand="lg" className="py-2">
       <div className="container-fluid">
-        <Navbar.Brand href="#" className="fw-bold logobob">
+        <Navbar.Brand href="#" className="fw-bold logobob" style={{marginLeft: '10px'}}>
           <img src={logo_Bob} alt="BobApp Logo" className="me-2" />
         </Navbar.Brand>
         
@@ -72,14 +72,7 @@ const Header = () => {
               </Button>
             </OverlayTrigger>
           )} */}
-          <OverlayTrigger
-            placement="bottom"
-            overlay={<Tooltip id="tooltip-payments">Logout</Tooltip>}
-          >
-            <Button variant="link" className="me-2" style={{ color: '#fff' }} onClick={() => {dispatch(clearUser()); navigate('/login');}}>
-              <FontAwesomeIcon icon={faRightFromBracket} size="lg" />
-            </Button>
-          </OverlayTrigger>
+          
 
           {/* User Profile Dropdown */}
           <div className="position-relative" ref={dropdownRef}>
@@ -104,6 +97,9 @@ const Header = () => {
                 <p className="mb-0 text-muted">{user?.role === "L1" || user?.role === "L2"
                   ? `${user.role} Approver`
                   : user?.role}</p>
+                  <hr className="my-2" />
+ 
+    <p onClick={() => navigate('/login')} style={{cursor: 'pointer', margin: 0}}>Logout</p>
               </div>
             )}
           </div>

@@ -25,12 +25,13 @@ import {
     faTrash,
     faSearch,
     faCalendarAlt,
-    faCubesStacked,
+    faChartBar,
 } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
 import CandidatePortalModal from "./CandidatePortal/CandidatePortalModal";
 import reschedule from '../assets/reschedule.png';
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+
 
 
 const CandidateCard = ({ setTriggerDownload }) => {
@@ -77,6 +78,15 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [interviewFeedBack, setInterviewFeedBack] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
     const [stackRank, setStackRank] = useState(false);
+
+    const hashString=(str) =>{
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+    }
 
     // Filtered lists
     const filteredReqs = jobReqs.filter((req) =>
@@ -859,7 +869,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
                     <Dropdown className="w-100 mb-3" style={{marginRight: '4%'}}>
-                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '30px', marginTop: '15px', overflowX: 'hidden' }}>
+                        <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '35px', marginTop: '15px', overflow: 'hidden' }}>
                             {selectedRequisitionCode
                                 ? `${selectedRequisitionCode} - ${jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
                                     ?.requisition_title || ""
@@ -900,7 +910,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {/* Position Dropdown */}
                     {selectedRequisitionCode && (
                         <Dropdown className="w-100">
-                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '30px',  overflowX: 'hidden' }}>
+                            <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '35px',  overflow: 'hidden' }}>
                                 {selectedPositionId
                                     ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
                                         ?.position_code || ""} - ${jobPositions.find((p) => p.position_id === selectedPositionId)
@@ -989,7 +999,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                 className="btn btn-sm btn-outline-primary"
                                                 onClick={() => setShowPopup(true)}
                                             >
-                                                <FontAwesomeIcon icon={faCubesStacked} />
+                                                <FontAwesomeIcon icon={faChartBar} />
                                             </button>
                                             {/* )} */}
                                         </div>
@@ -1009,66 +1019,67 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                         </div>
                                     </div> */}
                                     <div className="colored_line_blue my-2"></div>
-                                    <Droppable droppableId="candidates">
-                                        {(provided) => (
-                                            <div
-                                            className="candidates overflow-auto px-2"
-                                            style={{ minHeight: "100px", maxHeight: "60vh" }}
-                                            ref={provided.innerRef}
-                                            {...provided.droppableProps}
+                                      <Droppable droppableId="candidates">
+                                    {(provided) => (
+                                        <div
+                                        className="candidates overflow-auto px-2"
+                                        style={{ minHeight: "100px", maxHeight: "60vh" }}
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        >
+                                        {candidates
+                                            .filter((candidate) =>
+                                            candidate.full_name.toLowerCase().includes(search.toLowerCase())
+                                            )
+                                            .sort((a, b) => {
+                                            if (stackRank) {
+                                                // Ascending order by rank
+                                                return a.rank - b.rank;
+                                            } else {
+                                                // Shuffle randomly
+                                                //return Math.random() - 0.5;
+                                                return hashString(a.candidate_id.toString()) - hashString(b.candidate_id.toString());
+                                            }
+                                            })
+                                            .map((candidate, index) => (
+                                            <Draggable
+                                                key={candidate.candidate_id}
+                                                draggableId={candidate.candidate_id.toString()}
+                                                index={index}
                                             >
-                                            {candidates
-                                                .filter((candidate) =>
-                                                candidate.full_name.toLowerCase().includes(search.toLowerCase())
-                                                )
-                                                .sort((a, b) => {
-                                                if (stackRank) {
-                                                    // Ascending order by rank
-                                                    return a.rank - b.rank;
-                                                } else {
-                                                    // Shuffle randomly
-                                                    return Math.random() - 0.5;
-                                                }
-                                                })
-                                                .map((candidate, index) => (
-                                                <Draggable
-                                                    key={candidate.candidate_id}
-                                                    draggableId={candidate.candidate_id.toString()}
-                                                    index={index}
+                                                {(provided) => (
+                                                <div
+                                                    className="candidate_card_container card"
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    onClick={() => toggleDrawer(candidate)}
                                                 >
-                                                    {(provided) => (
-                                                    <div
-                                                        className="candidate_card_container card"
-                                                        ref={provided.innerRef}
-                                                        {...provided.draggableProps}
-                                                        {...provided.dragHandleProps}
-                                                        onClick={() => toggleDrawer(candidate)}
-                                                    >
-                                                        <div className="candidate_card card-body d-flex gap-1">
-                                                        <div>
-                                                            <img
-                                                            className="candidate_image"
-                                                            src={profile}
-                                                            alt={candidate.full_name}
-                                                            />
-                                                        </div>
-                                                        <div className="px-1">
-                                                            <h5 className="candidate_text fw-bold">
-                                                            {candidate.full_name}
-                                                            </h5>
-                                                            <h6 className="candidate_sub_text">{candidate.address}</h6>
-                                                            <h6 className="candidate_sub_text">{candidate.phone}</h6>
-                                                        </div>
-                                                        {/* <div className="card-status-label">{candidate.rank}</div> */}
-                                                        </div>
+                                                    <div className="candidate_card card-body d-flex gap-1">
+                                                    <div>
+                                                        <img
+                                                        className="candidate_image"
+                                                        src={profile}
+                                                        alt={candidate.full_name}
+                                                        />
                                                     </div>
-                                                    )}
-                                                </Draggable>
-                                                ))}
-                                            {provided.placeholder}
-                                            </div>
-                                        )}
-                                        </Droppable>
+                                                    <div className="px-1">
+                                                        <h5 className="candidate_text fw-bold">
+                                                        {candidate.full_name}
+                                                        </h5>
+                                                        <h6 className="candidate_sub_text">{candidate.address}</h6>
+                                                        <h6 className="candidate_sub_text">{candidate.phone}</h6>
+                                                    </div>
+                                                    {/* <div className="card-status-label">{candidate.rank}</div> */}
+                                                    </div>
+                                                </div>
+                                                )}
+                                            </Draggable>
+                                            ))}
+                                        {provided.placeholder}
+                                        </div>
+                                    )}
+                                    </Droppable>
                                 </div>
                             </div>
                         </div>
@@ -1350,10 +1361,10 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
             {showPopup && (
                 <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-dark bg-opacity-75">
-                    <div className="bg-white p-3 rounded shadow-lg" style={{ width: "80%", height: "80%" }}>
+                    <div className="bg-white p-3 rounded shadow-lg" style={{ width: "88%" }}>
                         <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h6 className="mb-0">Stack Rank</h6>
-                            <button   onClick={() => { setStackRank(true) 
+                            <h6 className="mb-0 rank">Stack Rank</h6>
+                            <button className="pushbtn"  onClick={() => { setStackRank(true) 
                                 setShowPopup(false)}}
                                 >Push</button>
                             <button className="btn-close" onClick={() => setShowPopup(false)}></button>

@@ -280,8 +280,8 @@ export default function Dashboard() {
             <div className="pipeline-container">
               {[
                 { key: "applied_candidates", label: "Applications\nReceived", color: "#42a5f5" },
-                { key: "screening", label: "Shortlisted", color: "#66bb6a" }, // Green
                 { key: "interviews_scheduled", label: "Eligible", color: "#ffa726" }, // Orange
+                 { key: "screening", label: "Shortlisted", color: "#66bb6a" }, // Green
                 { key: "Interviewed", label: "Interviewed", color: "#ab47bc" }, // Purple
                 { key: "offers", label: "Offered", color: "#ef5350" }, // Red
                 { key: "Joined", label: "Joined", color: "#26c6da" }, // Teal

@@ -432,6 +432,7 @@ const fetchRequisitions = async () => {
 
 
   return (
+    
     <Container fluid className="p-4 px-5 fonsty job-postings-page">
       <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Postings</h5>
       <div className="d-flex flex-row align-items-end justify-content-between mb-3">
@@ -608,7 +609,7 @@ const fetchRequisitions = async () => {
                               e.stopPropagation();
                               addRequisitionModal(job, index, "view");
                             }}
-                            style={{ color: '#FF7043', cursor: 'pointer', textAlign: 'right', right:'92px', position: 'absolute', top:'38px' }}
+                            style={{ color: '#FF7043', cursor: 'pointer', textAlign: 'right', right:'92px', position: 'absolute', top:'48px' }}
                           />
                         </OverlayTrigger>
                       </>

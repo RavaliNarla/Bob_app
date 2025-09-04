@@ -207,7 +207,7 @@ const Register = () => {
           </Modal.Header>
           <Modal.Body className="align-self-center">
             <form onSubmit={handleRegister} className="d-flex flex-column my-3" style={{ minWidth: '15vw' }}>
-              <div className="d-flex justify-content-between gap-3">
+              <div className="d-flex justify-content-between mb-4 gap-3">
                 <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Role</label>
                   <select
@@ -225,25 +225,25 @@ const Register = () => {
                     <option value="L2">L2</option> */}
                   </select>
                 </div>
-                <div>
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Full Name</label>
                   <input name="name" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between gap-3">
-                <div>
+              <div className="d-flex justify-content-between mb-4 gap-3">
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Email</label>
                   <input type="email" name="email" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
                 </div>
-                <div>
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Phone</label>
                   <input type="text" name="phone" onChange={handleChange} required style={{ borderRadius: "5px", backgroundColor: "#fff", border: "1px solid #ccc", padding: '8px 12px' }}/>
                 </div>
               </div>
 
-              <div className="d-flex justify-content-between gap-3">
-                <div>
+              <div className="d-flex justify-content-between mb-4 gap-3">
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Password</label>
                   <div style={{ position: "relative" }}>
                     <input
@@ -275,7 +275,7 @@ const Register = () => {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="d-flex flex-column" style={{ width: '65%' }}>
                   <label>Confirm Password</label>
                     <div style={{ position: "relative" }}>
                     <input
