@@ -103,7 +103,7 @@ const Department = () => {
         };
        await apiService.updateDepartment(updatedDept.department_id, updatedDept);
 
-        toast.info("Department updated successfully");
+        toast.success("Department updated successfully");
 
         const updatedDepts = [...depts];
         updatedDepts[editIndex] = updatedDept;
@@ -115,6 +115,7 @@ const Department = () => {
 
         toast.success("Department added successfully");
         setDepts(prev => [...prev, newDept]);
+        await fetchDepartment();
       }
       resetForm();
     } catch (err) {

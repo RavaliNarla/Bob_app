@@ -147,6 +147,7 @@ const JobGrade = () => {
 
         toast.success("Grade added successfully");
         setGrads(prev => [...prev, newGrad]);
+        await fetchGrade();
       }
       resetForm();
     } catch (err) {
@@ -273,7 +274,14 @@ const JobGrade = () => {
 
           <tbody className="table-body-orange">
             {jobsToDisplay.map((job, index) => (
-              <tr key={job.job_grade_id || index}>
+              //<tr key={job.job_grade_id || index}>
+              <tr
+  key={
+    job.job_grade_id ??
+    `${String(job.job_grade_code)}__${String(job.job_grade_desc)}__${String(job.job_scale)}`
+  }
+>
+
                 <td>{job.job_grade_code}</td>
                 <td>{job.job_grade_desc}</td>
                 <td>{job.job_scale}</td>

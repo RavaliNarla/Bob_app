@@ -347,7 +347,7 @@ export default function Dashboard() {
 
          {/* ✅ Section 2: Position Fulfillment Tracker */}
 <Row className="mt-4">
-  <Col md={12} className="cardspace">
+  <Col md={8} className="cardspace">
     <Card className="shadow-sm p-3 fonapp">
       <h6 className="mb-3">Position Fulfillment Tracker</h6>
       {dashboardJson.position_fulfillment_tracker.map((p, idx) => (
@@ -373,15 +373,7 @@ export default function Dashboard() {
       ))}
     </Card>
   </Col>
-</Row>
-
-
-
-
-
-          {/* Interviews */}
-          <Row className="mt-4">
-            <Col md={8} className="cardspace">
+  <Col md={4} className="cardspace">
               <Card className="shadow-sm p-3 fonapp">
                 <h6>Upcoming Interviews</h6>
                 <ListGroup variant="flush" className="interview_list">
@@ -399,6 +391,15 @@ export default function Dashboard() {
                 </ListGroup>
               </Card>
             </Col>
+</Row>
+
+
+
+
+
+          {/* Interviews */}
+          <Row className="mt-4">
+            
           </Row>
 
 

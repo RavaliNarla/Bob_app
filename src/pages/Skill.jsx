@@ -115,6 +115,7 @@ const Skill = () => {
 
         toast.success("Skill added successfully");
         setSkills(prev => [...prev, newSkill]);
+        await fetchSkill();
       }
       resetForm();
     } catch (err) {

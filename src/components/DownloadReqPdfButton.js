@@ -6,6 +6,8 @@ import * as html2pdf from "html2pdf.js";
 import { apiService } from "../services/apiService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const fmt = (d) => (d ? dayjs(d).format("DD.MM.YYYY") : undefined);
 const ORANGE = "#FF6F00";
@@ -75,7 +77,9 @@ export default function DownloadReqPdfButton(props) {
     const { positions } = await loadDataIfNeeded();
 
     if (!Array.isArray(positions) || positions.length === 0) {
-      setErr("No position data yet for this requisition.");
+      console.log("No positions data yet for this requisition.");
+    //  setErr("No position data yet for this requisition.");
+    toast.info("No position data yet for this requisition.");
       return;
     }
 
@@ -182,7 +186,7 @@ export default function DownloadReqPdfButton(props) {
       />
         {/* {loading ? "Preparing…" : "Download"}
       </button> */}
-      {err && <span style={{ color: "crimson", marginLeft: 8 }}>{err}</span>}
+      {/* {err && <span style={{ color: "crimson", marginLeft: 8 }}>{err}</span>} */}
 
       {/* Hidden render area */}
       <div
