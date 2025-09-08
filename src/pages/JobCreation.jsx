@@ -456,8 +456,9 @@ const handleInputChange = (e) => {
     console.log('Selected country ID:', countryId);
     if (countryId) {
       // Filter states based on the countryId
+      console.log('All states:', masterData.allStates);
       const states = masterData.allStates.filter(
-        (s) => s.countryId === countryId
+        (s) => s.country_id === countryId
       );
       setFilteredStates(states);
     } else {
@@ -858,7 +859,7 @@ const handleInputChange = (e) => {
                 requisitionIdOptions={masterData.requisitionIdOptions}
                 departmentOptions={masterData.departmentOptions}
                 countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
-                stateOptions={filteredStates.map(s => ({ id: s.stateId, name: s.stateName }))}
+                stateOptions={filteredStates.map(s => ({ id: s.state_id, name: s.state_name }))}
                 cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
                 locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
                 gradeIdOptions={masterData.gradeIdOptions}
