@@ -405,9 +405,8 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });
-
           const states = masterData.allStates.filter(
-    (s) => s.countryId === Number(selectedPosition.country_id)
+    (s) => s.country_id === Number(selectedPosition.country_id)
   );
   setFilteredStates(states);
 

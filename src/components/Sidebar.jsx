@@ -35,7 +35,7 @@ const Sidebar = () => {
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },
-    { icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
+   // { icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
     // { icon: faCalendarAlt, text: 'Schedule Interview', path: '/interviews' },
@@ -45,9 +45,9 @@ const Sidebar = () => {
   ];
 
   // Conditionally add Approvals for L1 or L2 roles
-  // if (user?.role === "L1" || user?.role === "L2") {
-  //   menuItems.push({ icon: faUserFriends, text: 'Approvals', path: '/myapproval' });
-  // }
+  if (user?.role === "L1" || user?.role === "L2" || user?.role === "Admin") {
+    menuItems.push({ icon: faUserFriends, text: 'Approvals', path: '/myapproval' });
+  }
 
   const adminItems = [
     { icon: faPerson, text: 'Users', path: '/users' },

@@ -77,7 +77,8 @@ const Approvals = () => {
     setError(null);
     try {
       // Pass the user's role to the API service
-      const responseData = await apiService.getApprovalstatus(user.role);
+      console.log("User role:", user);
+      const responseData = await apiService.getApprovalstatus(user.userid);
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
@@ -140,15 +141,13 @@ setError("No Approvals: Unexpected data format.");
     }
 
     const payload = {
-      role: user.role,
-      requisitionId: selectedJobIds,
-      status: "APPROVED",
-      description: rejectDescription,
-      userid: user.userid,
-    };
-
     
-
+      requisitionIdList: selectedJobIds,
+      status: "approved",
+      description: rejectDescription,
+      userId: user.userid,
+    };
+    
     try {
       await apiService.updateApproval(payload);
       toast.success(`Approved ${selectedJobIds.length} requisitions`);
