@@ -10,11 +10,10 @@ function getToken() {
 
 // Use the environment variables with a fallback to the new URLs you provided.
 // This is the correct way to handle different API services.
-const API_BASE_URL = 'https://bobjava.sentrifugo.com:8443/jobcreation/api/v1'
-const API_BASE_URLS = 'https://bobjava.sentrifugo.com:8443/master/api'
-const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
-//const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
-const CANDIDATE_API_URL = 'https://bobjava.sentrifugo.com:8443/candidate/api/v1'
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
+const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
+const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
 
 
 // Create a primary axios instance for most API calls
@@ -181,7 +180,7 @@ export const apiService = {
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
 
   // Approvals
-  updateApproval: (data) => api.post('/job-requisitions/approve', data), // not found in swagger
+  updateApproval: (data) => api.post('/job-requisitions/approve', data), 
   getApprovalstatus: (role) => api.get(`job-requisitions/need-approval/${role}`),
 
   //Candidate Interview
