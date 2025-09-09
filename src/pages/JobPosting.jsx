@@ -24,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import DownloadReqPdfButton from "../components/DownloadReqPdfButton";
 import { faDownload } from "@fortawesome/free-solid-svg-icons"; // ensure this import exists
-
+import { useDispatch, useSelector } from 'react-redux';
 const EllipsisIcon = () => (
   <svg
     width="16"
@@ -55,6 +55,7 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [error, setError] = useState(null);
   const [selectedApproval, setSelectedApproval] = useState("");
   const [approvalStatus, setApprovalStatus] = useState("");
+  const [noOfApprovals, setNoOfApprovals] = useState(1); // New state for number of approvals
   const [activeKey, setActiveKey] = useState(null);
   const [reqs, setReqs] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -78,7 +79,8 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [showReqModal, setReqShowModal] = useState(false);
   const [errr, setErrr] = useState({});
   const [selectedReq, setSelectedReq] = useState(null);
-
+  const user = useSelector((state) => state?.user?.user);
+  
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
     setActiveKey(newKey);
@@ -193,6 +195,7 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
     // 🔥 Reset filters and selections
     setSelectedJobIds([]);
     setApprovalStatus("");
+    setNoOfApprovals(1); // Reset to default value
     setSelectedApproval("");
     setJobBoards({
       linkedin: false,
@@ -227,10 +230,13 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
     return;
   }
 
+console.log("noOfApprovals",noOfApprovals);
   const payload = {
     requisition_id: selectedJobIds,
     job_postings: selectedJobBoards,
     approval_status: approvalStatus,
+    noOfApprovals: approvalStatus === "Workflow" ? noOfApprovals : 0, // Include noOfApprovals in payload only if WorkFlow is selected
+    userId: user?.userid// Default user ID as per the payload structure
   };
 
   try {
@@ -241,6 +247,7 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
     // ✅ Reset all filters, selections, and checkboxes
     setSelectedJobIds([]);
     setApprovalStatus("");
+    setNoOfApprovals(1); // Reset to default value
     setSelectedApproval("");
     setJobBoards({
       linkedin: false,
@@ -765,18 +772,40 @@ const fetchRequisitions = async () => {
           </div>
 
           <div className="d-flex align-items-center mb-4">
-            <span className="postingfont me-3">Approval Type</span>
-            <Form.Select
-              value={approvalStatus}
-              onChange={(e) => setApprovalStatus(e.target.value)}
-              style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
-              className="ms-2"
-            >
-              <option value="">Select Status</option>
-              <option value="Direct Approval">Direct Approval</option>
-              <option value="Workflow">Workflow</option>
-            </Form.Select>
-          </div>
+          {/* Approval Type */}
+          <span className="postingfont me-3">Approval Type</span>
+          <Form.Select
+            value={approvalStatus}
+            style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
+            className="me-4"
+            onChange={(e) => {
+              setApprovalStatus(e.target.value);
+              if (e.target.value !== "Workflow") {
+                setNoOfApprovals(1);
+              }
+            }}
+          >
+            <option value="">Select Status</option>
+            <option value="Direct Approval">Direct Approval</option>
+            <option value="Workflow">Workflow</option>
+          </Form.Select>
+
+          {/* Number of Approvals (only if Workflow is selected) */}
+          {approvalStatus === "Workflow" && (
+            <>
+              <span className="postingfont me-3">Number of Approvals</span>
+              <Form.Select
+                style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
+                value={noOfApprovals}
+                onChange={(e) => setNoOfApprovals(parseInt(e.target.value))}
+              >
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+              </Form.Select>
+            </>
+          )}
+        </div>
+
         </>
       )}
 
