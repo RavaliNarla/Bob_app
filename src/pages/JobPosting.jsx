@@ -359,38 +359,43 @@ const fetchRequisitions = async () => {
   };
 
   const handleReqSaveCallback = async () => {
-    try {
-      if (editIndex !== null) {
-        const updatedReq = { ...currentReq };
-        const response = await apiService.updateRequisition(updatedReq);
+  try {
+    if (editIndex !== null) {
+      const updatedReq = { ...currentReq };
+      const id = updatedReq.requisition_id; 
 
-        if (response.success === true) {
-          toast.success("Requisition updated successfully");
+      const response = await apiService.updateRequisition(id, updatedReq);
 
-          // Update the list in state
-          const updatedReqs = reqs.map((r) =>
-            r.requisition_id === updatedReq.requisition_id ? updatedReq : r
-          );
-          setReqs(updatedReqs);
-        }
-      } else {
-        const response = await apiService.createRequisition({
-          ...currentReq,
-          comments: "",
-          no_of_positions: "1",
-        });
-        if (response.success === true) {
-          toast.success("Requisition added successfully");
-        }
-        fetchRequisitions();
+      if (response.success === true) {
+        toast.success("Requisition updated successfully");
+
+        // Update the list in state
+        const updatedReqs = reqs.map((r) =>
+          r.requisition_id === updatedReq.requisition_id ? updatedReq : r
+        );
+        setReqs(updatedReqs);
+      }
+    } else {
+      const response = await apiService.createRequisition({
+        ...currentReq,
+        comments: "",
+        no_of_positions: "1",
+      });
+
+      if (response.success === true) {
+        toast.success("Requisition added successfully");
       }
 
-      resetReqForm();
-      fetchJobPostings();
-    } catch (err) {
-      toast.error("Save failed");
+      fetchRequisitions();
     }
-  };
+
+    resetReqForm();
+    fetchJobPostings();
+  } catch (err) {
+    toast.error("Save failed");
+  }
+};
+
 
 
   const resetReqForm = () => {

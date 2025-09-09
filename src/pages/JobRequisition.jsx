@@ -131,39 +131,47 @@ const JobRequisition = () => {
   };
 
   const handleSaveCallback = async () => {
-    try {
-      if (editIndex !== null) {
-        const updatedReq = { ...currentReq };
-        // console.log("Updating Requisition:", updatedReq);
-        const response= await apiService.updateRequisition(updatedReq);
-        // console.log("Response",response)
-        if(response.success === true){
-          toast.success("Requisition updated successfully");
-          const reqIndex = reqs.findIndex(
-            r => r.requisition_id === currentReq.requisition_id
-          );
+  try {
+    if (editIndex !== null) {
+      const updatedReq = { ...currentReq };
+              // console.log("Updating Requisition:", updatedReq);
 
-          if (reqIndex === -1) {
-            toast.error("Requisition not found in list");
-            return;
-          }
-          const updatedReqs = [...reqs];
-          updatedReqs[reqIndex] = updatedReq;
-          setReqs(updatedReqs);
+      const id = updatedReq.requisition_id; // get requisition id
+
+      const response = await apiService.updateRequisition(id, updatedReq);
+
+      if (response.success === true) {
+        toast.success("Requisition updated successfully");
+
+        const reqIndex = reqs.findIndex(
+          (r) => r.requisition_id === currentReq.requisition_id
+        );
+
+        if (reqIndex === -1) {
+          toast.error("Requisition not found in list");
+          return;
         }
-       
-      } else {
-        const response= await apiService.createRequisition(currentReq);
-        if(response.success === true){
-          toast.success("Requisition added successfully");
-        }
-        fetchRequisitions();
+
+        const updatedReqs = [...reqs];
+        updatedReqs[reqIndex] = updatedReq;
+        setReqs(updatedReqs);
       }
-      resetForm();
-    } catch (err) {
-      toast.error("Save failed");
+    } else {
+      const response = await apiService.createRequisition(currentReq);
+
+      if (response.success === true) {
+        toast.success("Requisition added successfully");
+      }
+
+      fetchRequisitions();
     }
-  };
+
+    resetForm();
+  } catch (err) {
+    toast.error("Save failed");
+  }
+};
+
 
   const handleDelete = async (req = null,index) => {
     try {

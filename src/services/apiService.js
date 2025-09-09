@@ -10,15 +10,21 @@ function getToken() {
 
 // Use the environment variables with a fallback to the new URLs you provided.
 // This is the correct way to handle different API services.
-const API_BASE_URL = 'https://bobjava.sentrifugo.com:8443/jobcreation/api'
+const API_BASE_URL = 'https://bobjava.sentrifugo.com:8443/jobcreation/api/v1'
 const API_BASE_URLS = 'https://bobjava.sentrifugo.com:8443/master/api'
 const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
 //const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
-const CANDIDATE_API_URL = 'https://bobjava.sentrifugo.com:8443/candidate/api'
+const CANDIDATE_API_URL = 'https://bobjava.sentrifugo.com:8443/candidate/api/v1'
 
 
 // Create a primary axios instance for most API calls
 const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+const api_dashboard = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
@@ -136,29 +142,29 @@ export const apiService = {
   deleteData: (id) => api.delete(`/data/${id}`),
 
 
-  getReqData: () => api.get('/getreq'),
-  getPosData: () => api.get('/getpos'),
+  getReqData: () => api.get('/job-requisitions/all'),
+  getPosData: () => api.get('/job-positions/all'),
   getCanByPosition: (position_id) => candidateApi.get(`/candidates/details-by-position/${position_id}`),
-  getCanByStatus: (status) => candidateApi.get(`/candidates/get-candidates/${status}`),
+  getCanByStatus: (status) => candidateApi.get(`/candidates/get-by-status/${status}`),
 
-  createRequisition: (data) => api.post('/create_requisitions', data),
-  updateRequisition: (data) => api.put('/update_requisitions', data),
-  deleteRequisition: (id) => api.delete(`/delete_requisitions/${id}`),
+  createRequisition: (data) => api.post('/job-requisitions/create', data),
+  updateRequisition: (id, data) => api.put(`/job-requisitions/update/${id}`, data),
+  deleteRequisition: (id) => api.delete(`/job-requisitions/delete/${id}`),
 
-  jobCreation: (data) => api.post('/create_positions', data),
+  jobCreation: (data) => api.post('/job-positions/create', data),
   getMasterData: () => apis.get('/all'),
 
-  uploadJobExcel: (data) => api.post('/create_bulk_positions', data), // Dummy POST endpoint
-  postJobRequisitions: (payload) => api.post("/requisitionpost", payload),
+  uploadJobExcel: (data) => api.post('/job-positions/create-bulk', data), 
+  postJobRequisitions: (payload) => api.post("/requisitionpost", payload), // Not using this anywhere
+  getByRequisitionId: (requisition_id) => api.get(`job-positions/get-by-requisition/${requisition_id}`), 
+  jobpost: (data) => api.post('/job-requisitions/submit-for-approval', data),
   getallLocations: () => apis.get('/location/all'),
   getallCities: () => apis.get('/city/all'),
   addLocation: (data) => apis.post("/location/add", data),
   updateLocation: (id, data) => apis.put(`/location/update/${id}`, data),
   deleteLocation: (id) => apis.delete(`/location/delete/${id}`),
-  updateJob: (data) => api.put('/update_positions', data),
-  getByRequisitionId: (requisition_id) => api.get(`getbyreq/${requisition_id}`),
-  getByPositionId: (position_id) => api.get(`getByPositionId/${position_id}`),
-  jobpost: (data) => api.post('/job_postings', data),
+  updateJob: (data) => api.put('/job-positions/update', data),
+  getByPositionId: (position_id) => api.get(`job-positions/get/${position_id}`),
   getDashboardQueries: () => api.get('/dashboard/queries'),
   getDashboardMetrics: () => api.get('/dashboard/metrics'),
   getallDepartment: () => apis.get('/departments/all'),
@@ -175,15 +181,15 @@ export const apiService = {
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
 
   // Approvals
-  updateApproval: (data) => api.put('/approve_job_postings', data),
-  getApprovalstatus: (role) => api.get(`/need_approval/${role}`),
+  updateApproval: (data) => api.post('/job-requisitions/approve', data), // not found in swagger
+  getApprovalstatus: (role) => api.get(`job-requisitions/need-approval/${role}`),
 
   //Candidate Interview
   createInterview: (data) => candidateApi.post('/candidates/interviews', data),
   updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
    //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
    getfeedback: (candidate_id, position_id) =>
-  candidateApi.get("/candidates/getfeedback", {
+  candidateApi.get("/candidates/get-feedback", {
     params: { candidate_id, position_id },
   }),
 
@@ -225,7 +231,7 @@ export const apiService = {
     params: { email, date, interval, tz }
   }),
 
-  getCandidateDetails: (candidate_id) => candidateApi.get(`candidates/details-by-candidates/${candidate_id}`),
+  getCandidateDetails: (candidate_id) => candidateApi.get(`candidates/get-by-candidate/${candidate_id}`),
 updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data),
 applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
 
