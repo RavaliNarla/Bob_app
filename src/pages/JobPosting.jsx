@@ -279,8 +279,7 @@ const filteredJobPostings = jobPostings.filter((job) => {
   if (selectedApproval !== "") {
     if (selectedApproval === "Pending") {
       matchesApproval =
-        job.requisition_status === "Pending L1 Approval" ||
-        job.requisition_status === "Pending L2 Approval";
+        job.requisition_status === "Pending for Approval" 
     } else {
       matchesApproval = job.requisition_status === selectedApproval;
     }

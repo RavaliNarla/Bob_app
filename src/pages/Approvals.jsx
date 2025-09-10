@@ -37,7 +37,7 @@ const Approvals = () => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectDescription, setRejectDescription] = useState("");
-
+  const [workflowApprovals, setWorkflowApprovals] = useState([]);
   // Toggle accordion and fetch requisition details
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
@@ -65,8 +65,7 @@ const Approvals = () => {
   };
 
   // Fetch requisitions and positions based on user's role
-  const fetchJobPostings = async () => {
-    // Ensure the user and their role are available before fetching
+   const fetchJobPostings = async () => {
     if (!user || !user.role) {
       setError("User role not found. Cannot fetch data.");
       setLoading(false);
@@ -76,25 +75,30 @@ const Approvals = () => {
     setLoading(true);
     setError(null);
     try {
-      // Pass the user's role to the API service
-      console.log("User role:", user);
+      // ✅ get job postings
       const responseData = await apiService.getApprovalstatus(user.userid);
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
-setError("No Approvals: Unexpected data format.");
+        setError("No Approvals: Unexpected data format.");
+      }
+
+      // ✅ get workflow approvals
+      const approvalsRes = await apiService.getWorkflowApprovals(user.userid);
+      if (approvalsRes && Array.isArray(approvalsRes.data)) {
+        setWorkflowApprovals(approvalsRes.data);
       }
     } catch (err) {
-//setError("No Approvals.");
       console.error("Error fetching job postings:", err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Re-run the fetch operation whenever the user object changes
   useEffect(() => {
-    fetchJobPostings();
+    if (user?.userid) {
+      fetchJobPostings();
+    }
   }, [user]);
 
   // Checkbox selection
@@ -150,13 +154,13 @@ setError("No Approvals: Unexpected data format.");
     
     try {
       await apiService.updateApproval(payload);
-      toast.success(`Approved ${selectedJobIds.length} requisitions`);
+      toast.success(`Approved ${selectedJobIds.length} requisitions successfully`);
 
-      setJobPostings((prev) =>
-        prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
-      );
+      // setJobPostings((prev) =>
+      //   prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
+      // );
 
-      // fetchJobPostings();
+       fetchJobPostings();
       setSelectedJobIds([]);
     } catch (err) {
       console.error("Error updating approval:", err);
@@ -253,7 +257,11 @@ setError("No Approvals: Unexpected data format.");
              </div>
              )  : (
         <Accordion activeKey={activeKey}>
-          {filteredJobPostings.map((job, index) => (
+          {filteredJobPostings.map((job, index) => {
+            const approval = workflowApprovals.find(
+                (a) => a.entityId === job.requisition_id
+              );
+           return  (
             <Accordion.Item
               eventKey={index.toString()}
               key={index}
@@ -272,6 +280,7 @@ setError("No Approvals: Unexpected data format.");
                       checked={selectedJobIds.includes(job.requisition_id)}
                       onChange={(e) => handleJobSelection(e, job.requisition_id)}
                       onClick={(e) => e.stopPropagation()}
+                      disabled={(approval ? approval.action : job.requisition_status)?.toLowerCase() === "approved"}
                     />
                     <span className="job-title fw-semibold text-dark">
                       {job.requisition_code}
@@ -284,7 +293,10 @@ setError("No Approvals: Unexpected data format.");
                     Positions: {job.no_of_positions}
                   </Col>
                   <Col xs={6} md={3} className="job-detail">
-                    <span>Status: {job.requisition_status}</span>
+             
+                    <span>
+                        Status: {approval ? approval.action : job.requisition_status}
+                      </span>
                   </Col>
                 </Row>
               </Accordion.Header>
@@ -370,7 +382,8 @@ setError("No Approvals: Unexpected data format.");
                 </Row>
               </Accordion.Body>
             </Accordion.Item>
-          ))}
+          )
+          })}
         </Accordion>
       )}
 

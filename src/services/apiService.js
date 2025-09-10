@@ -203,7 +203,7 @@ export const apiService = {
   // Approvals
   updateApproval: (data) => api.post('/job-requisitions/approve', data), 
   getApprovalstatus: (userid) => api.get(`job-requisitions/approvals/${userid}`),
-
+getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${userid}`),
   //Candidate Interview
   createInterview: (data) => candidateApi.post('/candidates/interviews', data),
   updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
