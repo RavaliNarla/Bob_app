@@ -476,6 +476,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 position_id: positionId,
                 salary: Number(salary),
                 offer_letter_path: offerLetterPath,
+                 designation:
+        selectedPositionTitle ||
+        jobPositionTitle ||
+        jobPositions.find(p => p.position_id === positionId)?.position_title ||
+        "",
             };
 
             console.log("Sending offer payload:", payload);
