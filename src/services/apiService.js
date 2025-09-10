@@ -23,12 +23,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-const api_dashboard = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+
 
 // Create a secondary axios instance for the master data API call
 const apis = axios.create({
@@ -48,6 +43,11 @@ const nodeApi = axios.create({
   baseURL: NODE_API_URL,
   headers: { "Content-Type": "application/json" },
 });
+const parseResumeApi = axios.create({
+  baseURL: process.env.REACT_APP_PARSE_RESUME_URL,
+  headers: { "Content-Type": "multipart/form-data" },
+});
+
 
 
 
@@ -119,6 +119,27 @@ nodeApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+parseResumeApi.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+parseResumeApi.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
+    if (error.response?.status === 401) {
+      store.dispatch(clearUser());
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 
 export const apiService = {
@@ -181,7 +202,7 @@ export const apiService = {
 
   // Approvals
   updateApproval: (data) => api.post('/job-requisitions/approve', data), 
-  getApprovalstatus: (userid) => api.get(`job-requisitions/pending-approvals/${userid}`),
+  getApprovalstatus: (userid) => api.get(`job-requisitions/approvals/${userid}`),
 
   //Candidate Interview
   createInterview: (data) => candidateApi.post('/candidates/interviews', data),
@@ -235,10 +256,7 @@ updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data
 applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
 
 
-parseResume: (formData) =>
-    axios.post("https://backend.sentrifugo.com/parse-resume2", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    }),
+parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
 
   // Candidate Registration (Node API - bobbe)
   candidateRegister: (data) =>
