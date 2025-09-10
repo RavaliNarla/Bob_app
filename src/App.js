@@ -19,6 +19,7 @@ import JobGrade from './pages/JobGrade';
 import Location from './pages/Location';
 import Payments from './pages/Payments';
 import PrivateRoute from './components/PrivateRoute';
+import TemplateMainCompo from './components/OfferTemplate/TemplateMainCompo';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -72,158 +73,37 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ErrorBoundary>
           <Suspense fallback={<Loading />}>
-            {/* <Tokenexp> */}
               <Routes>
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
 
-                {/* Protected routes with layout */}
-                {/* <Route
-                  path="/"
-                  element={
-                    <Layout>
-                      <JobCreation />
-                    </Layout>
-                  }
-                /> */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <Dashboard />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/job-creation"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <JobCreation />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/job-postings"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <JobPosting />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/job-requisition"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <JobRequisition />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/department"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <Department />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/skill"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <Skill />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/location"
-                  element={
-                    <PrivateRoute> 
-                      <Layout>
-                        <Location />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/job-grade"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <JobGrade />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route
-                  path="/users"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <Register />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route
-                  path="/candidate-shortlist"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        <CandidateCard />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/myapproval"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        < Approval />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/payments"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        < Payments />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
-                <Route
-                  path="/interviews"
-                  element={
-                    <PrivateRoute>
-                      <Layout>
-                        < Calendar />
-                      </Layout>
-                    </PrivateRoute>
-                  }
-                />
+                {/* Protected routes */}
+                <Route element={<Tokenexp />}>
+                  <Route element={<PrivateRoute />}>
+                    <Route element={<Layout />}>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/job-creation" element={<JobCreation />} />
+                      <Route path="/job-postings" element={<JobPosting />} />
+                      <Route path="/job-requisition" element={<JobRequisition />} />
+                      <Route path="/department" element={<Department />} />
+                      <Route path="/skill" element={<Skill />} />
+                      <Route path="/location" element={<Location />} />
+                      <Route path="/job-grade" element={<JobGrade />} />
+                      <Route path="/users" element={<Register />} />
+                      <Route path="/candidate-shortlist" element={<CandidateCard />} />
+                      <Route path="/myapproval" element={<Approval />} />
+                      <Route path="/payments" element={<Payments />} />
+                      <Route path="/interviews" element={<Calendar />} />
+                      <Route path="/template" element={<TemplateMainCompo />} />
+                    </Route>
+                  </Route>
+                </Route>
                 {/* Redirect unknown routes */}
                 <Route path="/" element={<Navigate to="/login" />} />
               </Routes>
-            {/* </Tokenexp> */}
+              {/* </Tokenexp> */}
             <ToastContainer position="top-right" autoClose={5000} />
           </Suspense>
         </ErrorBoundary>

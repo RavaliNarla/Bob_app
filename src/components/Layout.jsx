@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { Container, Row, Col, Spinner, InputGroup, Form } from 'react-bootstrap';
 import { faE, faEye, faPencil, faPlus, faSearch, faTrash, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Outlet } from 'react-router-dom';
 const Header = React.lazy(() => import('./Header'));
 const Sidebar = React.lazy(() => import('./Sidebar'));
 
@@ -24,7 +25,7 @@ const Layout = ({ children }) => (
           <Container fluid className="h-100">
             <Row className="h-100">
               <Col className="p-0" style={{ borderRight: '1px solid #dee2e6' }}>
-                {children}
+                <Outlet />
               </Col>
             </Row>
           </Container>

@@ -14,7 +14,8 @@ import {
   faMapMarkerAlt,
   faChartLine,
   faPerson,
-  faCalendar,   
+  faCalendar,
+  faFile,   
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -55,6 +56,7 @@ const Sidebar = () => {
     { icon: faLightbulb, text: 'Skills', path: '/skill' },
     { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
+    { icon: faFile, text: 'Template', path: '/template' },
   ];
 
   return (

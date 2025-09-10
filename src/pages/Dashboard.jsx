@@ -277,7 +277,7 @@ console.log("Dashboard JSON:", setDashboardJson);
           </Row>
 
           {/* Shortlisting Progress */}
-          <div className="mt-4 shortlist">
+          <div className="mt-4 shortlist shadow-sm mx-2">
             <h5 className="mb-3">Candidate Pipeline</h5>
             <div className="pipeline-container">
               {[
@@ -319,7 +319,7 @@ console.log("Dashboard JSON:", setDashboardJson);
       <Row>
         {dashboardJson.openpositions_status?.map((pos, idx) => (
           <Col md={4} key={idx} className="mb-3">
-            <Card className="h-100 shadow-sm p-2">
+            <Card className="h-100 shadow p-2">
               <Card.Body>
                 <h6 className="fw-bold">{pos.position_title}</h6>
                 <p className="mb-1">

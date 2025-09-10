@@ -1,17 +1,17 @@
 // src/components/PrivateRoute.js
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const PrivateRoute = ({ children }) => {
-  const { authUser, user } = useSelector((state) => state.user);
+const PrivateRoute = () => {
+  const { user } = useSelector((state) => state.user);
 
   // ✅ Only allow if both exist
-  if (!authUser || !user) {
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <Outlet />; // 🔑 renders the nested route (Layout, Dashboard, etc.)
 };
 
 export default PrivateRoute;

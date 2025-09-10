@@ -11,9 +11,10 @@ import { setUser, setAuthUser } from '../store/userSlice';
 import apiService from "../services/apiService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-
+import CryptoJS from "crypto-js";
 
 const Login = () => {
+  const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,10 +24,16 @@ const Login = () => {
   const token = useSelector((state) => state.user.auth?.access_token);
   // console.log("Token from Redux:", token);
 
+  const encryptPassword = (password) => {
+    return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await apiService.recruiterLogin(email, password);   // already res.data
+      const encryptedPassword = encryptPassword(password);
+
+      const res = await apiService.recruiterLogin(email, encryptedPassword);   // already res.data
       const dbRes = await apiService.getRecruiterDetails(email);      // already res.data
 
       if (res.mfa_required) {
@@ -36,10 +43,10 @@ const Login = () => {
         navigate("/verify-otp");
       } else {
         // ✅ just dispatch directly
-        dispatch(setAuthUser(res));
+        // dispatch(setAuthUser(res));
         dispatch(setUser(dbRes));
 
-        console.log("User logged in:", res);
+        // console.log("User logged in:", res);
         console.log("User details from DB:", dbRes);
 
         navigate("/dashboard");

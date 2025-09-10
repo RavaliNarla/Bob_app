@@ -8,8 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash, faSearch } from "@fortawesome/free-solid-svg-icons";
 // import panaImage from "../assets/pana.png";
 // import logoImage from "../assets/bob-logo.png";
+import CryptoJS from "crypto-js";
 
 const Register = () => {
+  const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
@@ -27,6 +29,10 @@ const Register = () => {
 //   const [otp, setOtp] = useState("");
 // const [mfaToken, setMfaToken] = useState("");
 // const [showOtpInput, setShowOtpInput] = useState(false);
+
+  const encryptPassword = (password) => {
+    return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+  };
 
   const fetchUsers = async () => {
     try {
@@ -64,12 +70,13 @@ const Register = () => {
   }
 
   try {
+    const encryptedPassword = encryptPassword(password);
     // 1. Register user via your backend
     await apiService.registerUser({
       name,
       email,
       phone,
-      password,
+      password: encryptedPassword,
       role,
     });
 

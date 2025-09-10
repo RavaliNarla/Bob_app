@@ -3,11 +3,19 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCandidate, setUser } from '../../../store/userSlice';
 import apiService from '../../../services/apiService';
+import CryptoJS from "crypto-js";
+
 const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePublicUrl, goNext, resumePublicUrl }) => {
+  const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const [fileName, setFileName] = useState(resumeFile ? resumeFile.name : '');
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+
+  // 🔒 Helper
+  function encryptPassword(password) {
+    return CryptoJS.AES.encrypt(password, SECRET_KEY).toString();
+  }
   // console.log(user)
   const candidateId = user?.candidate_id;
   const handleFileChange = (e) => {
@@ -139,11 +147,13 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     setParsedData(parsedData);
 
     // Step 2: Register candidate
+    const encryptedPassword = encryptPassword("Sagrsoft@123");
+
     const registerResponse = await apiService.candidateRegister({
       name: parsedData.name || "",
       email: parsedData.email || "",
       mobile: 9999999999,
-      password: "Sagrsoft@123",
+      password: encryptedPassword,
     });
     const registerResult = registerResponse?.data || registerResponse;
     console.log("Candidate registered:", registerResult);

@@ -3,9 +3,40 @@ import { getCandidatesByPosition } from './getJobRequirements';
 import { store } from "../store"; // adjust path if needed
 import { clearUser } from "../store/userSlice";
 
+// --- JWT Decoder helper ---
+function decodeJWT(token) {
+  try {
+    const base64Url = token.split('.')[1]; // payload part
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const payload = JSON.parse(window.atob(base64));
+    return payload;
+  } catch (err) {
+    console.error("Failed to decode token", err);
+    return null;
+  }
+}
+
+
 function getToken() {
   const state = store.getState();
-  return state.user?.authUser?.token || null;
+  const token = state.user?.authUser?.token || null;
+
+  if (token) {
+    const decoded = decodeJWT(token);
+    if (decoded?.exp) {
+      const expiry = new Date(decoded.exp * 1000);
+      console.log("🔑 Token will expire at:", expiry.toLocaleString());
+
+      const timeLeft = expiry.getTime() - Date.now();
+      console.log("⏳ Time left (ms):", timeLeft, "≈", Math.round(timeLeft / 60000), "minutes");
+
+      if (timeLeft < 3 * 60 * 1000) {
+        console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
+      }
+    }
+  }
+
+  return token;
 }
 
 // Use the environment variables with a fallback to the new URLs you provided.
@@ -14,6 +45,27 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
 const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
 const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
+// const API_BASE_URL = 'https://bobjava.sentrifugo.com:8443/jobcreation/api/v1'
+// const API_BASE_URLS = 'https://bobjava.sentrifugo.com:8443/master/api'
+// const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
+// const NODE_API_URL = 'http://localhost:5000/api';
+// //const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
+// const CANDIDATE_API_URL = 'https://bobjava.sentrifugo.com:8443/candidate/api/v1'
+
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
 
 
 // Create a primary axios instance for most API calls
@@ -42,6 +94,13 @@ const candidateApi = axios.create({
 const nodeApi = axios.create({
   baseURL: NODE_API_URL,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+});
+
+  const templateApi = axios.create({
+  baseURL: NODE_API_URL,
+  headers: { "Content-Type": "multipart/form-data" },
+  withCredentials: true,
 });
 const parseResumeApi = axios.create({
   baseURL: process.env.REACT_APP_PARSE_RESUME_URL,
@@ -63,13 +122,38 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// api.interceptors.response.use(
+//   (response) => response.data,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       store.dispatch(clearUser());
+//       window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
 api.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      store.dispatch(clearUser());
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.warn("⚠️ Java API session expired (api). Trying refresh...");
+      originalRequest._retry = true;
+
+      try {
+        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+
+        console.log("✅ Token refreshed (api). Retrying:", originalRequest.url);
+        return api(originalRequest); // retry original request on api
+      } catch (err) {
+        console.error("⛔ Refresh failed (api). Redirecting to login");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -87,13 +171,38 @@ apis.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// apis.interceptors.response.use(
+//   (response) => response.data,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       store.dispatch(clearUser());
+//       window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
 apis.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      store.dispatch(clearUser());
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.warn("⚠️ Java API session expired (apis). Trying refresh...");
+      originalRequest._retry = true;
+
+      try {
+        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+
+        console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
+        return apis(originalRequest); // retry original request on apis
+      } catch (err) {
+        console.error("⛔ Refresh failed (apis). Redirecting to login");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -111,11 +220,28 @@ nodeApi.interceptors.request.use(
 
 nodeApi.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    if (error.response?.status === 401) {
-      store.dispatch(clearUser());
-      window.location.href = '/login';
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If 401 Unauthorized occurs, the cookie has likely expired
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Try refreshing token automatically; backend reads refresh cookie
+        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+
+        console.log("Token refreshed and original request retried", originalRequest);
+        // Retry the original request; cookies are sent automatically
+        console.log("🔄 Token refresh successful, retrying original request");
+        return nodeApi(originalRequest);
+      } catch (err) {
+        // Refresh failed → clear user and redirect to login
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
     }
+
     return Promise.reject(error);
   }
 );
@@ -140,6 +266,7 @@ parseResumeApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
 
 
 export const apiService = {
@@ -267,6 +394,17 @@ parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
     nodeApi.post("/resume/upload", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+
+  // refreshToken: (refresh_token) =>
+  // nodeApi.post("/auth/recruiter-refresh-token", { refresh_token }),
+  refreshToken: () =>
+    nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true }),
+
+  uploadTemplate: (data) => templateApi.post('/offer-templates/upload', data),
+  getTemplates: () => templateApi.get('/offer-templates'),
+  getTemplateContent: (id) => templateApi.get(`/offer-templates/${encodeURIComponent(id)}/content`, {
+    responseType: 'text',
+  }),
    
 };
 
