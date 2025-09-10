@@ -1,0 +1,96 @@
+/* ============ PREVIEW (right side) ============ */
+.offer-page {
+  position: relative;
+  padding: 24px;
+  background: #fff;
+  min-height: 1122px;               /* ~A4 at 96dpi */
+  box-shadow: 0 0 8px rgba(0,0,0,0.08);
+  max-width: 794px;                 /* centered A4 look */
+  margin: 0 auto;
+}
+.offer-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+}
+.offer-content { position: relative; z-index: 1; }
+
+/* ============ LAYOUT WRAPPERS ============ */
+.studio-wrap {
+  padding: 16px;                    /* Layout’s Col is p-0; add breathing room */
+  min-height: 100%;
+}
+.studio-left {
+  display: grid;                    /* stack left cards cleanly */
+  gap: 12px;                        /* vertical rhythm between cards */
+  isolation: isolate;               /* new stacking context: prevents cross-card z-index bleed */
+}
+
+/* cards shouldn’t clip toolbars/dropdowns */
+.studio-left .card,
+.studio-wrap .card {
+  position: relative;
+  overflow: visible;
+}
+
+/* consistent spacing INSIDE card bodies */
+.studio-left .card-body > * + *,
+.studio-wrap .card-body > * + * {
+  margin-top: 0.75rem;
+}
+.studio-left .card-body hr,
+.studio-wrap .card-body hr {
+  margin: 1rem 0;
+}
+
+/* ============ REACT-QUILL FIXES ============ */
+/* keep toolbar above its own editor only (not over next card) */
+.studio-left .ql-toolbar,
+.studio-wrap .ql-toolbar {
+  position: relative;
+  z-index: 2;
+}
+.studio-left .ql-container,
+.studio-wrap .ql-container {
+  display: block;
+  min-height: 180px;                /* ensure editor area has room */
+}
+.studio-left .ql-editor,
+.studio-wrap .ql-editor {
+  min-height: 140px;
+}
+
+/* Namespace so global CSS can't stomp these rules */
+.ts-scope.ts-left {
+  display: grid;                 /* vertical stack */
+  grid-auto-rows: min-content;   /* rows sized by content */
+  gap: 12px;                     /* spacing between cards */
+  isolation: isolate;            /* new stacking context */
+}
+
+/* ← THIS is the fix for vertical overlapping */
+.ts-scope.ts-left > .card {
+  position: static !important;   /* override any absolute/fixed */
+  float: none !important;        /* kill legacy float layouts */
+  display: block !important;
+  clear: both !important;
+  margin: 0 !important;          /* gaps handled by grid */
+  z-index: auto !important;
+  overflow: visible !important;  /* don't clip inner toolbars */
+}
+
+.ts-scope.ts-left > .card .card-body {
+  position: static !important;   /* ensure body participates in layout */
+}
+
+/* tidy spacing inside cards */
+.ts-scope.ts-left .card-body > * + * { margin-top: 0.75rem; }
+.ts-scope.ts-left .card-body hr { margin: 1rem 0; }
+
+/* Quill stays above its own editor only */
+.ts-scope.ts-left .ql-toolbar { position: relative !important; z-index: 2 !important; }
+.ts-scope.ts-left .ql-container { display: block !important; min-height: 180px !important; }
+.ts-scope.ts-left .ql-editor { min-height: 140px !important; }

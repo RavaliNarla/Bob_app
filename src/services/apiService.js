@@ -15,7 +15,7 @@ const API_BASE_URLS = 'https://bobjava.sentrifugo.com:8443/master/api'
 const NODE_API_URL = 'https://bobbe.sentrifugo.com/api';
 //const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;
 const CANDIDATE_API_URL = 'https://bobjava.sentrifugo.com:8443/candidate/api'
-
+const TEMPLATE_API_URL = 'http://localhost:5000/api'
 
 // Create a primary axios instance for most API calls
 const api = axios.create({
@@ -44,7 +44,10 @@ const nodeApi = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-
+const templateApi = axios.create({
+  baseURL: TEMPLATE_API_URL,
+  headers: { "Content-Type": "multipart/form-data" },
+});
 
 // Request interceptor to add auth token for the primary API
 api.interceptors.request.use(
@@ -229,6 +232,11 @@ export const apiService = {
 updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data),
 applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
 
+  uploadTemplate: (data) => templateApi.post('/offer-templates/upload', data),
+  getTemplates: () => templateApi.get('/offer-templates'),
+  getTemplateContent: (id) => templateApi.get(`/offer-templates/${encodeURIComponent(id)}/content`, {
+    responseType: 'text',
+  }),
 
 parseResume: (formData) =>
     axios.post("https://backend.sentrifugo.com/parse-resume2", formData, {

@@ -1,0 +1,41 @@
+{
+  "templateName": "",
+  "branding": {
+    "logoUrl": "",
+    "backgroundLogoUrl": "",
+    "backgroundLogoSizePx": 120,
+    "backgroundLogoOpacity": 0.06
+  },
+  "sections": {
+    "header": true,
+    "salutation": true,
+    "jobDetails": true,
+    "compensation": true,
+    "terms": true,
+    "signature": true,
+    "footer": true
+  },
+  "fields": {
+    "companyName": "",
+    "companyAddress": "",
+    "hrName": "",
+    "hrTitle": "",
+    "reportingManager": "",
+    "dateFormat": "dd MMM yyyy",
+
+    "joiningDatePlusDays": 15,
+    "joiningDateManual": "",
+
+    "positionTitle": "{{job.position}}",
+    "location": "{{candidate.location}}",
+    "grossAnnual": "{{job.salary_inr}}"
+  },
+  "content": {
+    "subject": "Offer of Employment",
+    "intro": "We are pleased to offer you the position of <b>{{fields.positionTitle}}</b> at <b>{{fields.companyName}}</b>. Your expected date of joining will be <b>{{fields.joiningDate}}</b>.",
+    "jobDetailsHtml": "<ul><li><b>Job Title:</b> {{fields.positionTitle}}</li><li><b>Location:</b> {{fields.location}}</li><li><b>Gross Salary:</b> {{fields.grossAnnual}}</li></ul>",
+    "termsHtml": "<p>This offer is subject to successful completion of all background checks.</p>",
+    "signatureHtml": "<p>{{fields.hrName}}<br/>{{fields.hrTitle}}<br/>{{fields.companyName}}</p>",
+    "footerHtml": ""
+  }
+}

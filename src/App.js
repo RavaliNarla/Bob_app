@@ -19,6 +19,7 @@ import JobGrade from './pages/JobGrade';
 import Location from './pages/Location';
 import Payments from './pages/Payments';
 import PrivateRoute from './components/PrivateRoute';
+import TemplateMainCompo from './components/template-studio/TemplateMainCompo';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -168,7 +169,17 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-
+                <Route
+                  path="/template"
+                  element={
+                    <PrivateRoute>
+                      <Layout>
+                        <TemplateMainCompo />
+                      </Layout>
+                    </PrivateRoute>
+                  }
+                />
+                
                 <Route
                   path="/users"
                   element={
