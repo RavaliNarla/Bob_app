@@ -560,10 +560,10 @@ const handleInputChange = (e) => {
     if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
     if (!formData.position_title.trim()) newErrors.position_title = 'Position Title is required';
     if (!formData.dept_id) newErrors.dept_id = 'Department is required';
-    if (!formData.country_id) newErrors.country_id = 'Country is required';
-    if (!formData.state_id) newErrors.state_id = 'State is required';
-    if (!formData.city_id) newErrors.city_id = 'City is required';
-    if (!formData.location_id) newErrors.location_id = 'Location is required';
+   // if (!formData.country_id) newErrors.country_id = 'Country is required';
+   // if (!formData.state_id) newErrors.state_id = 'State is required';
+   // if (!formData.city_id) newErrors.city_id = 'City is required';
+   // if (!formData.location_id) newErrors.location_id = 'Location is required';
     //if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.roles_responsibilities.trim()) newErrors.roles_responsibilities = 'Roles & Responsibilities are required';
     if (!formData.grade_id) newErrors.grade_id = 'Grade ID is required';

@@ -212,10 +212,11 @@
 	color: #414141 !important;
 	border: none !important;
 	border-radius: 5px !important;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	 padding-right: 15px;
+     float: right;
 	
 }
+
 
 .top-bar .breadcrumb-item+.breadcrumb-item::before {
     padding-right: 0.25rem;
@@ -285,59 +286,77 @@
 
 /* css styles written by veeresh */
 p.status_reschedule{
-    text-align: right;
   color: #FFCA02 !important;
-  font-size: 11px;
+   font-size: 10px;
+  width: 80px;
+  text-align: center;
   margin-bottom: 5px;
   background: #fff !important;
     border:1px solid #FFCA02;
-  padding: 5px 10px;
+  padding: 5px;
   border-radius: 10px;
   cursor: text;
 }
 p.status_schedule{
-    text-align: right;
   color: #2cb4f3 !important;
-  font-size: 11px;
+   font-size: 10px;
+  width: 80px;
+  text-align: center;
   margin-bottom: 5px;
   background: #fff !important;
     border:1px solid #2cb4f3;
-  padding: 5px 10px;
+  padding: 5px;
   border-radius: 10px;
   cursor: text;
 }
 p.status_reject{
-    text-align: right;
   color: red !important;
-  font-size: 11px;
+   font-size: 10px;
+  width: 80px;
+  text-align: center;
   margin-bottom: 5px;
   background: #fff !important;
   border:1px solid red;
-  padding: 5px 10px;
+  padding: 5px;
   border-radius: 10px;
   cursor: text;
 }
 p.status_notavailable{
-    text-align: right;
   color: gray !important;
-  font-size: 11px;
+  font-size: 10px;
+  width: 80px;
+  text-align: center;
   margin-bottom: 5px;
   background: #fff !important;
   border:1px solid gray;
-  padding: 5px 10px;
+  padding: 5px;
   border-radius: 10px;
   cursor: text;
 }
 p.status_selected{
-    text-align: right;
   color: green !important;
-  font-size: 11px;
+  font-size: 10px;
+  width: 80px;
+  text-align: center;
   margin-bottom: 5px;
   background: #fff !important;
   border:1px solid green;
-  padding: 5px 10px;
+  padding: 5px;
   border-radius: 10px;
   cursor: text;
+}
+p.status_offered{
+    color: green !important;
+  font-size: 10px;
+  width: 80px;
+  text-align: center;
+  margin-bottom: 5px;
+  background: #fff !important;
+  border:1px solid green;
+  padding: 5px;
+  border-radius: 10px;
+  cursor: text;
+  font-weight: 600;
 }
 .statusdiv{
     text-align: right;
@@ -350,6 +369,7 @@ p.status_selected{
 .menuopen{
     height:350px;
     overflow-y:auto;
+    overflow-x: hidden;
 }
 .modal-title{
     font-size:16px !important;
@@ -428,4 +448,28 @@ color: #000 !important;
 }
 .candidate_card{
     min-height: 100px;
+}
+.req_dropdown a.req_item{
+display: block;
+  width: 400px;
+  padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
+  clear: both;
+  font-weight: 400;
+  color: var(--bs-dropdown-link-color);
+  text-align: inherit;
+  text-decoration: none;
+  
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--bs-dropdown-item-border-radius,0);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.select-drop span{
+     width: 380px !important;
+    text-overflow: ellipsis;
+  overflow: hidden !important;
+  white-space: nowrap;
+  display: block !important;
 }

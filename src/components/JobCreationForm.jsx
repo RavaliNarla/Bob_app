@@ -202,7 +202,7 @@ useEffect(() => {
 
         {/* Country */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="country" className="form-label">Country <span className="required-asterisk">*</span></label>
+          <label htmlFor="country" className="form-label">Country</label>
           <select
             id="country"
             name="country_id"
@@ -221,7 +221,7 @@ useEffect(() => {
 
         {/* State */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="state" className="form-label">State <span className="required-asterisk">*</span></label>
+          <label htmlFor="state" className="form-label">State</label>
           <select
             id="state"
             name="state_id"
@@ -240,7 +240,7 @@ useEffect(() => {
 
         {/* City */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="city" className="form-label">City <span className="required-asterisk">*</span></label>
+          <label htmlFor="city" className="form-label">City</label>
           <select id="city" name="city_id" className="form-select" value={formData.city_id} disabled={readOnly} onChange={handleInputChange}>
             <option value="">Select City</option>
             {cityOptions.map(option => (
@@ -252,7 +252,7 @@ useEffect(() => {
 
         {/* Location */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="location" className="form-label">Location <span className="required-asterisk">*</span></label>
+          <label htmlFor="location" className="form-label">Location</label>
           <select
             id="location"
             name="location_id"
@@ -270,7 +270,7 @@ useEffect(() => {
         </div>
 
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="no_of_vacancies" className="form-label">Expected Number of Positions <span className="required-asterisk">*</span></label>
+          <label htmlFor="no_of_vacancies" className="form-label">Vacancies <span className="required-asterisk">*</span></label>
           <input
             type="number"
             className="form-control"

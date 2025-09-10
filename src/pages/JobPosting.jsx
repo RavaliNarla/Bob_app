@@ -849,6 +849,7 @@ const fetchRequisitions = async () => {
                // toggleAccordion(activeKey, editRequisitionId);
                  // ✅ Re-fetch data but keep accordion open
                   fetchRequisitionDetails(editRequisitionId);
+                  fetchJobPostings();
               } else {
                 fetchJobPostings();
               }

@@ -870,11 +870,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {/* <BreadcrumbItem> */}
                     <Dropdown className="w-100 mb-3" style={{marginRight: '4%'}}>
                         <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '35px', marginTop: '15px', overflow: 'hidden' }}>
-                            {selectedRequisitionCode
+                        <span>  {selectedRequisitionCode
                                 ? `${selectedRequisitionCode} - ${jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)
                                     ?.requisition_title || ""
                                 }`
-                                : "Select Requisition Code"}
+                                : "Select Requisition Code"}</span> 
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu className="w-100 p-2 menuopen">
@@ -885,7 +885,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                 onChange={(e) => setReqSearch(e.target.value)}
                                 className="mb-2 search_req"
                             />
-                            <div style={{ overflowX: 'auto' }}>
+                            <div className="req_dropdown">
                                 {filteredReqs.length > 0 ? (
                                     filteredReqs.map((req, idx) => (
                                         <Dropdown.Item
@@ -895,7 +895,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                     target: { name: "jobReqDropdown", value: req.requisition_code },
                                                 })
                                             }
-                                            style={{ fontSize: '14px' }}
+                                            style={{ fontSize: '14px' }} className="req_item"
                                         >
                                             {req.requisition_code} - {req.requisition_title}
                                         </Dropdown.Item>
@@ -911,12 +911,12 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     {selectedRequisitionCode && (
                         <Dropdown className="w-100">
                             <Dropdown.Toggle className="w-100 text-start select-drop spaceform align-items-center d-flex justify-content-between" style={{ height: '35px',  overflow: 'hidden' }}>
-                                {selectedPositionId
+                               <span> {selectedPositionId
                                     ? `${jobPositions.find((p) => p.position_id === selectedPositionId)
                                         ?.position_code || ""} - ${jobPositions.find((p) => p.position_id === selectedPositionId)
                                             ?.position_title || ""
                                     }`
-                                    : "Select Position Title"}
+                                    : "Select Position Title"}</span>
                             </Dropdown.Toggle>
 
                             <Dropdown.Menu className="w-100 p-2">
@@ -1252,13 +1252,13 @@ const CandidateCard = ({ setTriggerDownload }) => {
                                                                                 src={profile}
                                                                             />
                                                                         </div>
-                                                                        <div className="px-1">
+                                                                        <div className="px-1 address">
                                                                             <h5 className="candidate_text fw-bold">{candidate.full_name}</h5>
                                                                             <h6 className="candidate_sub_text">{candidate.address}</h6>
                                                                             <h6 className="candidate_sub_text">{candidate.phone}</h6>
                                                                         </div>
                                                                         <div class="statusdiv">
-                                                                            <p className="selectednext status_selected">{candidate.application_status}</p>
+                                                                            <p className="selectednext status_offered">{candidate.application_status}</p>
                                                                         </div>
                                                                         {/* <div className="card-status-label">{candidate.profileStatus}</div> */}
                                                                         {/* <div className="rating_container d-flex align-self-end p-1">
