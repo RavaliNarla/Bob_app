@@ -1,11 +1,16 @@
+// OfferModal.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import OfferLetter from './OfferLetter';
-// import CandidateCard from './CandidateCard'; // (unused here)
 
-const TEMPLATES_API =
-  `http://localhost:5000/api/offer-templates`; 
-// -> your Express router base path that serves the routes shown
+const TEMPLATES_API = `http://localhost:5000/api/offer-templates`;
+
+// Helper: local YYYY-MM-DD (avoid timezone off-by-one)
+function localISODate(date = new Date()) {
+  const tz = date.getTimezoneOffset();
+  const local = new Date(date.getTime() - tz * 60000);
+  return local.toISOString().slice(0, 10);
+}
 
 const OfferModal = ({
   show,
@@ -16,28 +21,31 @@ const OfferModal = ({
   salary,
   setSalary,
   position_id,
-  handleOffer,
-  offerLetterPath,            // (unused by this flow, can remove later)
-  setOfferLetterPath,         // (unused by this flow, can remove later)
-  setApiLoading               // (optional)
+  handleOffer,              // expect (offerLetterUrl, joiningDate)
+  offerLetterPath,          // (unused)
+  setOfferLetterPath,       // (unused)
+  setApiLoading
 }) => {
-  const [triggerDownload, setTriggerDownload] = useState(false); // legacy flag not used
   const [showPreview, setShowPreview] = useState(false);
   const [generatingOffer, setGeneratingOffer] = useState(false);
 
-  // NEW: templates state
+  // Joining Date with validation
+  const [joiningDate, setJoiningDate] = useState('');
+  const minDate = localISODate(); // today
+
+  // Templates
   const [templates, setTemplates] = useState([]);
   const [tplLoading, setTplLoading] = useState(false);
   const [tplError, setTplError] = useState('');
   const [selectedTemplateId, setSelectedTemplateId] = useState('');
 
-  // Build the content URL the OfferLetter will fetch
+  // Build selected template content URL
   const selectedTemplateContentUrl = useMemo(() => {
     if (!selectedTemplateId) return '';
     return `${TEMPLATES_API}/${encodeURIComponent(selectedTemplateId)}/content`;
   }, [selectedTemplateId]);
 
-  // Fetch templates whenever modal opens
+  // Load templates whenever modal opens
   useEffect(() => {
     if (!show) return;
 
@@ -47,12 +55,11 @@ const OfferModal = ({
         setTplLoading(true);
         setApiLoading?.(true);
 
-        const res = await fetch(`${TEMPLATES_API}`);
+        const res = await fetch(TEMPLATES_API);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json(); // [{id,name,type,path}, ...]
 
-        setTemplates(data);
-        // Default select: keep previous selection if still present, else first item
+        setTemplates(data || []);
         if (data?.length) {
           const stillValid = data.some(t => t.id === selectedTemplateId);
           setSelectedTemplateId(stillValid ? selectedTemplateId : data[0].id);
@@ -72,43 +79,43 @@ const OfferModal = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show]);
 
-  const handleDownloadClick = () => {
-    setShowPreview(true);
-  };
+  const handleDownloadClick = () => setShowPreview(true);
 
-  // Called by hidden OfferLetter generator
+  // Called by hidden OfferLetter generator after upload
   const handleDownloadComplete = async (data) => {
     setGeneratingOffer(false);
     const url = data.public_url;
-    await handleOffer(url);
+    await handleOffer(url, joiningDate); // include joining date
   };
 
-  // Generate & send using the selected template
-  const generateOfferAndSend = async () => {
+  // Generate (hidden) and send using selected template
+  const generateOfferAndSend = () => {
     if (!selectedTemplateContentUrl) return;
-
-    try {
-      setShowPreview(false);
-      setGeneratingOffer(true);
-
-      // We render a hidden <OfferLetter> below. It will call our onDownloadComplete.
-      // No need to manually create promises or setTriggerDownload.
-      // The `generatingOffer` flag will render it.
-    } catch (err) {
-      console.error("Failed to generate offer:", err);
-      setGeneratingOffer(false);
-    }
+    setShowPreview(false);
+    setGeneratingOffer(true);
   };
 
+  // Past-date validation (covers manual typing)
+  const isJoiningPast = joiningDate && joiningDate < minDate;
+
+  // Disable actions unless all required inputs are set
   const isActionDisabled =
-    !salary || !candidate || !position_id || !selectedTemplateId || tplLoading || !!tplError;
+    !salary ||
+    !joiningDate ||
+    isJoiningPast ||
+    !candidate ||
+    !position_id ||
+    !selectedTemplateId ||
+    tplLoading ||
+    !!tplError;
 
   return (
     <>
       <Modal show={show} onHide={handleClose} centered size="lg" className="fontinter">
         <Modal.Header closeButton>
-          <Modal.Title style={{ fontSize: "18px", color: ' #FF7043 ' }}>Offers</Modal.Title>
+          <Modal.Title style={{ fontSize: "18px", color: '#FF7043' }}>Offers</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
           {tplError && <Alert variant="danger" className="mb-3">{tplError}</Alert>}
           <Form>
@@ -127,7 +134,7 @@ const OfferModal = ({
               <Form.Control type="text" value={reqId || ''} readOnly />
             </Form.Group>
 
-            {/* NEW: Template dropdown */}
+            {/* Template dropdown */}
             <Form.Group className="mb-3 form45">
               <Form.Label>Offer Template</Form.Label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
@@ -139,9 +146,7 @@ const OfferModal = ({
                   {tplLoading && <option>Loading templates…</option>}
                   {!tplLoading && templates.length === 0 && <option>No templates found</option>}
                   {!tplLoading && templates.map(t => (
-                    <option key={t.id} value={t.id}>
-                      {t.name}
-                    </option>
+                    <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
                 </Form.Select>
                 {tplLoading && <Spinner animation="border" size="sm" />}
@@ -158,6 +163,21 @@ const OfferModal = ({
                   setSalary(numericValue);
                 }}
               />
+            </Form.Group>
+
+            {/* Joining Date with validation */}
+            <Form.Group className="mb-3 form45">
+              <Form.Label>Joining Date</Form.Label>
+              <Form.Control
+                type="date"
+                min={minDate}                     // disables past dates in picker
+                value={joiningDate}
+                isInvalid={!!joiningDate && isJoiningPast}
+                onChange={(e) => setJoiningDate(e.target.value)} // YYYY-MM-DD
+              />
+              <Form.Control.Feedback type="invalid">
+                Joining date cannot be earlier than today.
+              </Form.Control.Feedback>
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -194,15 +214,16 @@ const OfferModal = ({
         </Modal.Footer>
       </Modal>
 
-      {/* Hidden generator: renders only while generatingOffer is true */}
+      {/* Hidden generator: only renders while generatingOffer is true */}
       {generatingOffer && (
         <div style={{ display: "none" }}>
           <OfferLetter
             candidate={candidate}
             jobPosition={position_title}
             salary={salary}
+            joiningDate={joiningDate}                 // pass to generator
             reqId={reqId}
-            templateUrl={selectedTemplateContentUrl}   // NEW
+            templateUrl={selectedTemplateContentUrl}
             autoDownload={true}
             onDownloadComplete={handleDownloadComplete}
           />
@@ -219,8 +240,9 @@ const OfferModal = ({
             candidate={candidate}
             jobPosition={position_title}
             salary={salary}
+            joiningDate={joiningDate}                 // pass to preview
             reqId={reqId}
-            templateUrl={selectedTemplateContentUrl}   // NEW
+            templateUrl={selectedTemplateContentUrl}
             autoDownload={false}
             onDownloadComplete={() => {}}
           />

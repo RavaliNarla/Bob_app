@@ -460,7 +460,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         }
     };
 
-    const handleOffer = async (offerLetterPath) => {
+    const handleOffer = async (offerLetterPath,joiningDate) => {
         if (!offerCandidate || !salary || !offerLetterPath) {
             showToast("Please fill in all fields before sending the offer.");
             return;
@@ -481,6 +481,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
         jobPositionTitle ||
         jobPositions.find(p => p.position_id === positionId)?.position_title ||
         "",
+        joining_date:joiningDate,
             };
 
             console.log("Sending offer payload:", payload);
@@ -492,7 +493,10 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 ...offerCandidate,
                 profileStatus: "Selected",
                 rating: offerCandidate.rating || 0,
-                offer_letter_path: offerLetterPath, // 👈 make sure Drawer can use this
+                offer_letter_path: offerLetterPath,
+                designation: payload.designation,
+                joining_date: joiningDate,
+                 // 👈 make sure Drawer can use this
             };
 
             // Update local state

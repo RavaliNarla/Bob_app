@@ -1,6 +1,6 @@
+// OfferLetter.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
-import axios from 'axios';
 import "../css/OfferLetter.css";
 import logo from '../assets/pdflogo.png';
 import apiService from '../services/apiService';
@@ -12,7 +12,8 @@ const OfferLetter = ({
   reqId,
   autoDownload = false,
   onDownloadComplete,
-  templateUrl, // <-- pass /offer-templates/:id/content from the modal
+  templateUrl,    // e.g. /api/offer-templates/:id/content
+  joiningDate,    // YYYY-MM-DD from OfferModal
   ...props
 }) => {
   const [formData, setFormData] = useState({
@@ -20,52 +21,59 @@ const OfferLetter = ({
     address1: '',
     address2: '',
     position_title: jobPosition || '',
-    companyName: '',
-    joiningDate: '',
+    companyName: 'Bank of Baroda',
+    joiningDate: '',            // will resolve below
     location: '',
-    reportingManager: '',
+    reportingManager: 'John Doe',
     grossAnnual: '',
-    hrName: '',
+    hrName: 'HR Department',
   });
 
   const [logoLoaded, setLogoLoaded] = useState(false);
   const [templateHtml, setTemplateHtml] = useState('');
   const offerLetterRef = useRef(null);
 
+  // Seed formData from candidate + props, preferring provided joiningDate
   useEffect(() => {
-    if (candidate) {
-      const addressParts = candidate.address?.split(',') || [];
-      const joiningDate = new Date();
-      joiningDate.setDate(joiningDate.getDate() + 15);
-      const joiningDateString = joiningDate.toLocaleDateString('en-CA');
-      const location = candidate.location_details
-        ? Object.values(candidate.location_details).join(', ')
-        : '';
+    if (!candidate) return;
 
-      setFormData(prev => ({
-        ...prev,
-        full_name: candidate.full_name,
-        address1: addressParts[0]?.trim() || '',
-        address2: addressParts.slice(1).join(',').trim() || '',
-        position_title: jobPosition || '',
-        companyName: 'Bank of Baroda',
-        joiningDate: joiningDateString,
-        location,
-        reportingManager: 'John Doe',
-        grossAnnual: salary,
-        hrName: 'HR Department',
-      }));
+    const addressParts = candidate.address?.split(',') || [];
+    // Prefer the prop; fallback to +15 days from today in YYYY-MM-DD
+    let resolvedJoiningDate = joiningDate;
+    if (!resolvedJoiningDate) {
+      const d = new Date();
+      d.setDate(d.getDate() + 15);
+      // en-CA ensures YYYY-MM-DD
+      resolvedJoiningDate = d.toLocaleDateString('en-CA');
     }
-  }, [candidate, jobPosition, salary, reqId]);
 
-  // Load selected template (if provided) and merge placeholders
+    const location = candidate.location_details
+      ? Object.values(candidate.location_details).join(', ')
+      : '';
+
+    setFormData(prev => ({
+      ...prev,
+      full_name: candidate.full_name || '',
+      address1: addressParts[0]?.trim() || '',
+      address2: addressParts.slice(1).join(',').trim() || '',
+      position_title: jobPosition || '',
+      companyName: 'Bank of Baroda',
+      joiningDate: resolvedJoiningDate,
+      location,
+      reportingManager: prev.reportingManager || 'John Doe',
+      grossAnnual: salary,
+      hrName: prev.hrName || 'HR Department',
+    }));
+  }, [candidate, jobPosition, salary, reqId, joiningDate]);
+
+  // Load selected HTML template and merge placeholders
   useEffect(() => {
     let abort = false;
 
     async function loadTemplate() {
       if (!templateUrl) {
         setTemplateHtml('');
-        return; // fallback to built-in JSX below
+        return;
       }
       try {
         const res = await fetch(templateUrl, { headers: { 'Accept': 'text/html' } });
@@ -79,11 +87,11 @@ const OfferLetter = ({
         );
         setTemplateHtml(merged);
 
-        // Ensure autoDownload isn’t blocked waiting for <img> in fallback JSX
+        // ensure autoDownload not blocked by image in fallback JSX
         setLogoLoaded(true);
       } catch (e) {
         console.error('Template load error:', e);
-        setTemplateHtml(''); // fallback JSX will render
+        setTemplateHtml(''); // fallback to JSX
       }
     }
 
@@ -91,21 +99,20 @@ const OfferLetter = ({
     return () => { abort = true; };
   }, [templateUrl, formData, reqId]);
 
-  // Auto-download once DOM (+logo or template) is ready
+  // Auto-download after ready
   useEffect(() => {
     if (
       autoDownload &&
       candidate &&
       candidate.candidate_id &&
       formData.full_name &&
-      formData.location &&
       formData.grossAnnual &&
       logoLoaded
     ) {
-      const timer = setTimeout(() => {
+      const t = setTimeout(() => {
         handleDownload();
       }, 600);
-      return () => clearTimeout(timer);
+      return () => clearTimeout(t);
     }
   }, [autoDownload, candidate, formData, logoLoaded]);
 
@@ -125,7 +132,7 @@ const OfferLetter = ({
 
     const opt = {
       margin: 0.5,
-      filename: filename,
+      filename,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true },
       jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
@@ -138,38 +145,34 @@ const OfferLetter = ({
 
       const fd = new FormData();
       fd.append("pdfFile", file, filename);
-      fd.append("candidateId", candidateId);
+      fd.append("candidateId", String(candidateId));
 
       const data = await apiService.uploadOfferLetter(fd);
 
-      if (data?.data?.public_url) {
-        onDownloadComplete?.({ public_url: data.data.public_url });
-      } else if (data?.public_url) {
-        onDownloadComplete?.({ public_url: data.public_url });
-      } else {
-        throw new Error("Public URL not found in upload response.");
-      }
+      const publicUrl =
+        data?.data?.public_url ||
+        data?.public_url ||
+        null;
+
+      if (!publicUrl) throw new Error("Public URL not found in upload response.");
+
+      onDownloadComplete?.({ public_url: publicUrl });
     } catch (error) {
       console.error("Upload/Download error:", error);
       alert("Failed to upload and open PDF.");
     }
   };
 
-  // ========= Helpers =========
+  // ===== Helpers =====
   function safe(v) { return (v ?? '').toString(); }
   function formatINR(v) {
     const n = Number(v || 0);
     return `₹ ${n.toLocaleString('en-IN')}`;
   }
-
-  // Take the rightmost segment after a dot. E.g. "candidate.full_name" -> "full_name"
-  // "fields.positionTitle" -> "positionTitle"
   function extractCoreKey(s) {
     const parts = (s || '').toString().split('.');
     return parts[parts.length - 1] || '';
   }
-
-  // Normalize keys: lowercase and remove spaces/._-
   function normalizeKey(s) {
     return (s || '')
       .toString()
@@ -193,7 +196,6 @@ const OfferLetter = ({
       hr_name: safe(formData.hrName || 'HR Department'),
     };
 
-    // Aliases (to support camelCase and common wording in templates)
     const aliases = {
       // full name
       fullname: base.full_name,
@@ -210,29 +212,29 @@ const OfferLetter = ({
       position: base.position_title,
       jobposition: base.position_title,
       role: base.position_title,
-      positiontitle: base.position_title, // camelCase alias support
+      positiontitle: base.position_title,
 
       // company
       company: base.company_name,
       employer: base.company_name,
       organization: base.company_name,
       organisation: base.company_name,
-      companyname: base.company_name, // camelCase alias support
+      companyname: base.company_name,
 
       // joining date
       doj: base.joining_date,
       dateofjoining: base.joining_date,
       joining: base.joining_date,
-      joiningdate: base.joining_date, // camelCase alias support
+      joiningdate: base.joining_date,
 
-      // salary
+      // salary / CTC
       salary: base.gross_annual,
       grosssalary: base.gross_annual,
       ctc: base.gross_annual,
       annualsalary: base.gross_annual,
       annualctc: base.gross_annual,
       package: base.gross_annual,
-      grossannual: base.gross_annual, // camelCase alias support
+      grossannual: base.gross_annual,
 
       // location
       joblocation: base.location,
@@ -261,17 +263,14 @@ const OfferLetter = ({
     return finalMap;
   }
 
-  // Replace all {{ ... }}:
-  //  1) extract rightmost segment after dot (handles "candidate.full_name", "fields.positionTitle")
-  //  2) normalize and match using valuesMap + aliases
   function mergeTemplateSmart(html, valuesMap) {
     if (!html) return html;
     const tokenRegex = /{{\s*([^}]+?)\s*}}/g;
     const unmatched = new Set();
 
     const out = html.replace(tokenRegex, (m, raw) => {
-      const core = extractCoreKey(raw);       // strip prefixes like "candidate.", "fields."
-      const norm = normalizeKey(core);        // lowercase, remove spaces/._-
+      const core = extractCoreKey(raw);
+      const norm = normalizeKey(core);
       if (norm in valuesMap) return valuesMap[norm];
       unmatched.add(raw.trim());
       return m; // leave token as-is if not matched
@@ -283,16 +282,16 @@ const OfferLetter = ({
     return out;
   }
 
-  // ========= Render =========
+  // ===== Render =====
   return (
     <>
       {templateHtml ? (
-        // TEMPLATE MODE: render merged HTML
+        // TEMPLATE MODE
         <div className='offer-letter-container' ref={offerLetterRef}>
           <div dangerouslySetInnerHTML={{ __html: templateHtml }} />
         </div>
       ) : (
-        // FALLBACK: your original static JSX (unchanged)
+        // FALLBACK JSX (used if no template or template fetch fails)
         <div className='offer-letter-container' ref={offerLetterRef}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
             <img
@@ -302,6 +301,7 @@ const OfferLetter = ({
               style={{ width: '100%', height: '120px', objectFit: 'contain' }}
             />
           </div>
+
           <p style={{ textAlign: 'right' }}>Date: {today}</p>
           <p>
             To,<br />
@@ -313,7 +313,7 @@ const OfferLetter = ({
           <p><strong>Subject: Offer of Employment</strong></p>
           <p>Dear <b>{formData.full_name}</b>,</p>
           <p>
-            We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>Bank of Baroda</b>.
+            We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>{formData.companyName}</b>.
             Your expected date of joining will be <b>{formData.joiningDate}</b>.
             The terms and conditions of your employment are as follows:
           </p>
@@ -322,8 +322,7 @@ const OfferLetter = ({
             <li><strong>Job Title:</strong> {formData.position_title}</li>
             <li><strong>Location:</strong> {formData.location}</li>
             <li>
-              <strong>Gross Salary:</strong>{" "}
-              ₹ {Number(formData.grossAnnual || 0).toLocaleString("en-IN")}
+              <strong>Gross Salary:</strong> {formatINR(formData.grossAnnual)}
             </li>
           </ul>
 
@@ -331,8 +330,8 @@ const OfferLetter = ({
 
           <p>Sincerely,</p>
           <p>
-            {formData.hrName || 'HR Department'}<br />
-            Bank of Baroda
+            {formData.hrName}<br />
+            {formData.companyName}
           </p>
         </div>
       )}
