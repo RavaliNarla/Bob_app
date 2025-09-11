@@ -221,7 +221,7 @@ const Approvals = () => {
   };
 
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-4 approvals_tab">
         <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
               {/* <div className="d-flex align-items-center mb-2 mb-md-0">
                 <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
@@ -230,8 +230,8 @@ const Approvals = () => {
                 
               </div> */}
 
-        <div className="col-md-6 search-container fonreg">
-          <InputGroup>
+        <div className="col-md-12 search-container fonreg">
+          <InputGroup className="searchinput">
             <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>
               <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
             </InputGroup.Text>
@@ -239,6 +239,7 @@ const Approvals = () => {
               type="text"
               placeholder="Search by Title"
               value={searchTerm}
+              className="title"
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </InputGroup>

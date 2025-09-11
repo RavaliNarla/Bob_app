@@ -66,6 +66,7 @@ const Skill = () => {
   const trimmedName = currentSkill.skill_name?.trim();
   const trimmedDesc = currentSkill.skill_desc?.trim();
 
+  // Step 1: Required fields
   if (!trimmedName) {
     newErrors.skill_name = "Name is required";
   }
@@ -73,17 +74,20 @@ const Skill = () => {
     newErrors.skill_desc = "Description is required";
   }
 
-  // Duplicate check: name OR description OR both
-  const isDuplicate = skills.some((skill, index) =>
-    (skill.skill_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
-     skill.skill_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
-    index !== editIndex // Ignore same record when editing
-  );
+  // Step 2: Only check duplicate name (description can repeat)
+  if (trimmedName) {
+    const isDuplicateName = skills.some(
+      (skill, index) =>
+        skill.skill_name?.trim().toLowerCase() === trimmedName.toLowerCase() &&
+        index !== editIndex
+    );
 
-  if (isDuplicate) {
-    newErrors.skill_name = "Skill name or description already exists";
-    newErrors.skill_desc = "Skill name or description already exists";
+    if (isDuplicateName) {
+      newErrors.skill_name = "Skill name already exists";
+    }
   }
+
+  // ✅ Description is not checked for duplicates (can repeat)
 
   setErrr(newErrors);
 
@@ -91,6 +95,7 @@ const Skill = () => {
     handleSaveCallback();
   }
 };
+
 
 
   const handleSaveCallback = async () => {
@@ -103,7 +108,7 @@ const Skill = () => {
         await apiService.updateSkill(updatedSkill.skill_id, updatedSkill);
         console.log("Updating Skill:", updatedSkill);
 
-        toast.info("Skill updated successfully");
+        toast.success("Skill updated successfully");
 
         const updatedSkills = [...skills];
         updatedSkills[editIndex] = updatedSkill;
@@ -131,7 +136,7 @@ const Skill = () => {
       await apiService.deleteSkill(idToDelete);
       console.log("Deleting Skill ID:", idToDelete);
       setSkills(skills.filter((skill) => skill.skill_id !== idToDelete));
-      toast.error("Skill deleted");
+      toast.success("Skill deleted");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");

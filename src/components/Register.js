@@ -9,6 +9,7 @@ import { faEye, faEyeSlash, faSearch } from "@fortawesome/free-solid-svg-icons";
 // import panaImage from "../assets/pana.png";
 // import logoImage from "../assets/bob-logo.png";
 import CryptoJS from "crypto-js";
+import '../css/Register.css';
 
 const Register = () => {
   const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
@@ -164,6 +165,7 @@ const Register = () => {
             type="text"
             placeholder="Search"
             value={searchTerm}
+            className="title"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </InputGroup>
@@ -208,7 +210,7 @@ const Register = () => {
           <img src={logoImage} alt="Logo" />
           <h4>Recruitment</h4>
         </div> */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered className="user-register-modal">
           <Modal.Header closeButton>
             <Modal.Title className="fw-bold text-orange fs-4">User Registration</Modal.Title>
           </Modal.Header>
