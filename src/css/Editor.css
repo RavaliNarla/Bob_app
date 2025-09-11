@@ -94,3 +94,25 @@
 .ts-scope.ts-left .ql-toolbar { position: relative !important; z-index: 2 !important; }
 .ts-scope.ts-left .ql-container { display: block !important; min-height: 180px !important; }
 .ts-scope.ts-left .ql-editor { min-height: 140px !important; }
+
+/* .quill-token {
+  background: #f5f5f5;
+  color: #d35400;
+  border-radius: 3px;
+  padding: 0 2px;
+  margin: 0 1px;
+  font-weight: 600;
+  cursor: not-allowed;
+  user-select: all;
+} */
+ .quill-token {
+  background: #f5f5f5;
+  color: #d35400;
+  border-radius: 3px;
+  padding: 0 4px;
+  margin: 0 2px;
+  font-weight: 600;
+  cursor: not-allowed;
+  user-select: all;   /* allows copy but not editing */
+  pointer-events: none; /* blocks mouse edits */
+}

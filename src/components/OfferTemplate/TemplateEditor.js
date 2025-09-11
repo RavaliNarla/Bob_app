@@ -1,3 +1,4 @@
+// src/template-studio/components/TemplateEditor.js
 import { Row, Col, Card, Form, InputGroup } from "react-bootstrap";
 import { useTemplateStore } from '../../store/useTemplateStore';
 import SectionToggles from "./SectionToggles";
@@ -7,12 +8,14 @@ import LivePreview from "./LivePreview";
 import Toolbar from "./Toolbar";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { useEffect } from "react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import defaultTemplate from "./defaultTemplate.json";
+import '../../css/Editor.css';
+
 // --- Custom Quill Blot for tokens ---
 const TOKEN_REGEX = /(\{\{fields\.(positionTitle|companyName|joiningDate)\}\})/g;
-
 const Inline = Quill.import("blots/inline");
+
 class TokenBlot extends Inline {
   static create(value) {
     let node = super.create();
@@ -26,95 +29,102 @@ class TokenBlot extends Inline {
     return node.getAttribute("data-token");
   }
 }
+
 TokenBlot.blotName = "token";
 TokenBlot.tagName = "span";
+TokenBlot.className = "quill-token";
 Quill.register(TokenBlot);
 
 // --- Utility to convert tokens in HTML to Quill tokens ---
-function htmlToDeltaWithTokens(html) {
-  // Replace tokens with <span> for Quill
+export function htmlToDeltaWithTokens(html) {
+  if (!html) return "";
   return html.replace(TOKEN_REGEX, (match) => {
     return `<span class="quill-token" data-token="${match}" contenteditable="false">${match}</span>`;
   });
 }
+
+// --- Initialize template with processed intro content ---
+const initialTemplate = {
+  ...defaultTemplate,
+  content: {
+    ...defaultTemplate.content,
+    intro: htmlToDeltaWithTokens(defaultTemplate.content.intro)
+  }
+};
 
 export default function TemplateEditor() {
   const template = useTemplateStore((s) => s.template);
   const setTemplateName = useTemplateStore((s) => s.setTemplateName);
   const setField = useTemplateStore((s) => s.setField);
   const setContent = useTemplateStore((s) => s.setContent);
-const quillRef = useRef();
+  const quillRef = useRef();
 
-useEffect(() => {
-  if (template.content.intro) {
-    const processed = htmlToDeltaWithTokens(template.content.intro);
-    if (processed !== template.content.intro) {
-      setContent("intro", processed);
-    }
-  }
-}, []); // run once on mount
+  useEffect(() => {
+    // Reset state on unmount
+    return () => {
+      useTemplateStore.setState({
+        template: initialTemplate, // show styled tokens on fresh open
+        candidate: {
+          full_name: "",
+          address: "",
+          address1: "",
+          address2: "",
+          location: ""
+        },
+        job: {
+          position: "",
+          salary: ""
+        },
+        layout: "template1"
+      });
+    };
+  }, []);
 
-  // Handler to process input and re-tokenize if needed
- const handleIntroChange = (value) => {
-  setContent("intro", value);
-};
+  const handleIntroChange = (value) => {
+    setContent("intro", value);
+  };
 
-// Prevent deleting tokens via keyboard
+  // Prevent deleting tokens via keyboard
   useEffect(() => {
     const quill = quillRef.current && quillRef.current.getEditor && quillRef.current.getEditor();
     if (!quill) return;
 
-    function preventTokenDelete(range, context) {
-      // Get all tokens in editor
+    function preventTokenDelete() {
       const tokens = quill.container.querySelectorAll(".quill-token");
-      if (!tokens.length) return;
-
-      // Check if selection overlaps a token
+      if (!tokens.length) return false;
       const selection = quill.getSelection();
-      if (!selection) return;
+      if (!selection) return false;
 
-      // For each token, check if selection includes it
       for (let token of tokens) {
         const blot = Quill.find(token);
         if (!blot) continue;
-        const [index, length] = [blot.offset(quill.scroll), blot.length()];
-        // If selection covers any part of the token, block delete/backspace
-        if (
-          (selection.index < index + length && selection.index + selection.length > index)
-        ) {
+        const index = blot.offset(quill.scroll);
+        const length = blot.length();
+        if (selection.index < index + length && selection.index + selection.length > index) {
           return true;
         }
       }
       return false;
     }
 
-    // Listen for keyboard events
-    quill.root.addEventListener("keydown", (e) => {
-      if (
-        (e.key === "Backspace" || e.key === "Delete") &&
-        preventTokenDelete()
-      ) {
+    const handleKeyDown = (e) => {
+      if ((e.key === "Backspace" || e.key === "Delete") && preventTokenDelete()) {
         e.preventDefault();
         e.stopPropagation();
       }
-    });
-
-    // Cleanup
-    return () => {
-      quill.root.removeEventListener("keydown", () => {});
     };
+
+    quill.root.addEventListener("keydown", handleKeyDown);
+    return () => quill.root.removeEventListener("keydown", handleKeyDown);
   }, [template.content.intro]);
 
   return (
     <>
       <Toolbar />
       <Row className="mt-3 g-3">
-        {/* ===== Left column: editor ===== */}
+        {/* Left column: editor */}
         <Col md={4}>
-          <div
-            className="ts-scope ts-left shadow"
-            style={{ background: "#fff", padding: "2rem" }}
-          >
+          <div className="ts-scope ts-left shadow" style={{ background: "#fff", padding: "2rem" }}>
             <Card.Body>
               <Form.Label>Template Name</Form.Label>
               <InputGroup>
@@ -133,16 +143,21 @@ useEffect(() => {
               <SectionToggles />
             </Card.Body>
 
-            {/* ===== Dynamic Fields (only 4 kept) ===== */}
             <Card.Body>
               <h6 className="mb-3">Fields</h6>
 
               <Form.Group className="mb-2">
-                <Form.Label>HR Name</Form.Label>
+                <Form.Label>Signature</Form.Label>
                 <Form.Control
+                  className="mb-2"
                   value={template.fields.hrName}
                   onChange={(e) => setField("hrName", e.target.value)}
                   placeholder="e.g. HR Department"
+                />
+                <Form.Control
+                  value={template.fields.companyName}
+                  onChange={(e) => setField("companyName", e.target.value)}
+                  placeholder="e.g. Company Name"
                 />
               </Form.Group>
 
@@ -171,7 +186,6 @@ useEffect(() => {
               </Form.Group>
             </Card.Body>
 
-            {/* ===== Content (Subject + Intro + Terms) ===== */}
             <Card.Body>
               <h6 className="mb-2">Content</h6>
               <Form.Group className="mb-2">
@@ -184,28 +198,22 @@ useEffect(() => {
               </Form.Group>
 
               <Form.Label>Intro (HTML / tokens OK)</Form.Label>
-               <ReactQuill
-        ref={quillRef}
-        theme="snow"
-        value={template.content.intro}
-        onChange={handleIntroChange}
-        className="mb-3"
-        modules={{
-          toolbar: [
-            ["bold", "italic", "underline"],
-            [{ list: "ordered" }, { list: "bullet" }],
-            ["clean"],
-          ],
-        }}
-        formats={[
-          "bold",
-          "italic",
-          "underline",
-          "list",
-          "bullet",
-          "token",
-        ]}
-      />
+              <ReactQuill
+                ref={quillRef}
+                theme="snow"
+                value={template.content.intro}
+                onChange={handleIntroChange}
+                className="mb-3"
+                modules={{
+                  toolbar: [
+                    ["bold", "italic", "underline"],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["clean"],
+                  ],
+                }}
+                formats={["bold", "italic", "underline", "list", "bullet", "token"]}
+              />
+
               <Form.Label>Terms (HTML)</Form.Label>
               <ReactQuill
                 theme="snow"
@@ -217,23 +225,11 @@ useEffect(() => {
           </div>
         </Col>
 
-        {/* ===== Right column: live preview ===== */}
+        {/* Right column: live preview */}
         <Col md={8}>
           <LivePreview />
         </Col>
       </Row>
-      <style>{`
-        .quill-token {
-          background: #f5f5f5;
-          color: #d35400;
-          border-radius: 3px;
-          padding: 0 2px;
-          margin: 0 1px;
-          font-weight: 600;
-          cursor: not-allowed;
-          user-select: all;
-        }
-      `}</style>
     </>
   );
 }

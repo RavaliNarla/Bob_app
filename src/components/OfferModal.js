@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import OfferLetter from './OfferLetter';
 
+// const TEMPLATES_API = `http://localhost:5000/api/offer-templates`;
 const TEMPLATES_API = `${process.env.REACT_APP_NODE_API_URL}/offer-templates`;
 
 // Helper: local YYYY-MM-DD (avoid timezone off-by-one)
@@ -24,7 +25,10 @@ const OfferModal = ({
   handleOffer,              // expect (offerLetterUrl, joiningDate)
   offerLetterPath,          // (unused)
   setOfferLetterPath,       // (unused)
-  setApiLoading
+  setApiLoading,
+  // OPTIONAL: pass these if you want to override defaults
+  companyName,              // e.g., org?.name
+  hrName,                   // e.g., org?.hr_contact
 }) => {
   const [showPreview, setShowPreview] = useState(false);
   const [generatingOffer, setGeneratingOffer] = useState(false);
@@ -137,7 +141,7 @@ const OfferModal = ({
             {/* Template dropdown */}
             <Form.Group className="mb-3 form45">
               <Form.Label>Offer Template</Form.Label>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ display: 'flex,', gap: 8, alignItems: 'center' }}>
                 <Form.Select
                   value={selectedTemplateId}
                   onChange={(e) => setSelectedTemplateId(e.target.value)}
@@ -221,11 +225,13 @@ const OfferModal = ({
             candidate={candidate}
             jobPosition={position_title}
             salary={salary}
-            joiningDate={joiningDate}                 // pass to generator
+            joiningDate={joiningDate}
             reqId={reqId}
             templateUrl={selectedTemplateContentUrl}
             autoDownload={true}
             onDownloadComplete={handleDownloadComplete}
+            companyName={companyName}
+            hrName={hrName}
           />
         </div>
       )}
@@ -240,11 +246,13 @@ const OfferModal = ({
             candidate={candidate}
             jobPosition={position_title}
             salary={salary}
-            joiningDate={joiningDate}                 // pass to preview
+            joiningDate={joiningDate}
             reqId={reqId}
             templateUrl={selectedTemplateContentUrl}
             autoDownload={false}
-            onDownloadComplete={() => {}}
+            onDownloadComplete={() => { }}
+            companyName={companyName}
+            hrName={hrName}
           />
         </Modal.Body>
         <Modal.Footer>

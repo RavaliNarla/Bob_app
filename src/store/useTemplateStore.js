@@ -28,4 +28,6 @@ export const useTemplateStore = create((set, get) => ({
     set((s) => ({ template: { ...s.template, fields: { ...s.template.fields, [key]: value }}})),
   setContent: (key, value) =>
     set((s) => ({ template: { ...s.template, content: { ...s.template.content, [key]: value }}})),
+setTemplate: (templateData) => set({ template: templateData }),
+
 }));
