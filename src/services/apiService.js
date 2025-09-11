@@ -19,23 +19,22 @@ function decodeJWT(token) {
 
 function getToken() {
   const state = store.getState();
-  const token = state.user?.authUser?.token || null;
-  console.log("Current token:", token);
+  const token = state.user?.authUser?.access_token || null;
 
-  // if (token) {
-  //   const decoded = decodeJWT(token);
-  //   if (decoded?.exp) {
-  //     const expiry = new Date(decoded.exp * 1000);
-  //     console.log("🔑 Token will expire at:", expiry.toLocaleString());
+  if (token) {
+    const decoded = decodeJWT(token);
+    if (decoded?.exp) {
+      const expiry = new Date(decoded.exp * 1000);
+      console.log("🔑 Token will expire at:", expiry.toLocaleString());
 
-  //     const timeLeft = expiry.getTime() - Date.now();
-  //     console.log("⏳ Time left (ms):", timeLeft, "≈", Math.round(timeLeft / 60000), "minutes");
+      const timeLeft = expiry.getTime() - Date.now();
+      console.log("⏳ Time left (ms):", timeLeft, "≈", Math.round(timeLeft / 60000), "minutes");
 
-  //     if (timeLeft < 3 * 60 * 1000) {
-  //       console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
-  //     }
-  //   }
-  // }
+      if (timeLeft < 3 * 60 * 1000) {
+        console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
+      }
+    }
+  }
 
   return token;
 }
