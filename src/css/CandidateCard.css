@@ -396,7 +396,7 @@ color: #000 !important;
   font-size:14px !important;
   font-weight:400 !important
 }
-.modal.show .modal-dialog{
+.foncandidate .modal.show .modal-dialog{
     max-width:1000px !important
 }
 .filename{
@@ -462,9 +462,8 @@ display: block;
   background-color: transparent;
   border: 0;
   border-radius: var(--bs-dropdown-item-border-radius,0);
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
+  white-space: break-spaces;
+  word-break: break-word;
 }
 .select-drop span{
      width: 380px !important;

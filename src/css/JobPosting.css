@@ -304,6 +304,10 @@ font-family: 'Poppins', sans-serif !important;
 .job-postings-page .dropdowntext{
   text-overflow: ellipsis;
 }
+.job-postings-page .posting-search {
+	width: 60% !important;
+	float: right !important;
+}
 .fontcard{
   font-size: 12px;
 }

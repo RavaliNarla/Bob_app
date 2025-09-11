@@ -129,7 +129,7 @@ const Location = () => {
     try {
       await apiService.deleteLocation(idToDelete);
       setLocs(locs.filter((loc) => loc.location_id !== idToDelete));
-      toast.error("Location deleted");
+      toast.success("Location deleted");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");

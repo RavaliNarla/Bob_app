@@ -99,20 +99,38 @@ const JobGrade = () => {
     newErrors.max_salary = "Maximum salary cannot be less than minimum salary";
   }
 
-  // Duplicate check (case-insensitive, trims spaces) for ANY matching field
-  const isDuplicate = grads.some((grad, index) =>
-    (
-      grad.job_grade_code?.trim().toLowerCase() === trimmedCode?.toLowerCase() ||
-      grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase() ||
-      grad.job_scale?.trim().toLowerCase() === trimmedScale?.toLowerCase()
-    ) &&
-    index !== editIndex // Ignore same record in edit mode
-  );
+  // ✅ Duplicate checks (independent, so only the matching field is flagged)
+  if (trimmedCode) {
+    const isDuplicateCode = grads.some(
+      (grad, index) =>
+        grad.job_grade_code?.trim().toLowerCase() === trimmedCode.toLowerCase() &&
+        index !== editIndex
+    );
+    if (isDuplicateCode) {
+      newErrors.job_grade_code = "Job grade code already exists";
+    }
+  }
 
-  if (isDuplicate) {
-    newErrors.job_grade_code = "Job grade code already exists";
-    newErrors.job_grade_desc = "Job description already exists";
-    newErrors.job_scale = "Job scale already exists";
+  if (trimmedDesc) {
+    const isDuplicateDesc = grads.some(
+      (grad, index) =>
+        grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase() &&
+        index !== editIndex
+    );
+    if (isDuplicateDesc) {
+      newErrors.job_grade_desc = "Job description already exists";
+    }
+  }
+
+  if (trimmedScale) {
+    const isDuplicateScale = grads.some(
+      (grad, index) =>
+        grad.job_scale?.trim().toLowerCase() === trimmedScale.toLowerCase() &&
+        index !== editIndex
+    );
+    if (isDuplicateScale) {
+      newErrors.job_scale = "Job scale already exists";
+    }
   }
 
   setErrr(newErrors);
@@ -121,6 +139,7 @@ const JobGrade = () => {
     handleSaveCallback();
   }
 };
+
 
 
 
@@ -135,7 +154,7 @@ const JobGrade = () => {
         await apiService.updateJobGrade(updatedGrad.job_grade_id, updatedGrad);
         
 
-        toast.info("Grade updated successfully");
+        toast.success("Grade updated successfully");
 
         const updatedGrads = [...grads];
         updatedGrads[editIndex] = updatedGrad;
@@ -162,7 +181,7 @@ const JobGrade = () => {
     try {
       await apiService.deleteJobGrade(idToDelete);
       setGrads(grads.filter((grad) => grad.job_grade_id !== idToDelete));
-      toast.error("Grade deleted");
+      toast.success("Grade deleted");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");

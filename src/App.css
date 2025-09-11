@@ -280,3 +280,12 @@ body {
 .modal-body{
   padding:10px 25px;
 }
+.sidescroll{
+  overflow-y: auto;
+  height: 100vh;
+  display: block;
+  overflow-x: hidden;
+}
+.sidescroll a{
+  padding: 25px 0px;
+}
