@@ -57,6 +57,7 @@ const Sidebar = () => {
     { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
     { icon: faFile, text: 'Template', path: '/template' },
+    { icon: faBriefcase, text: 'Position', path: '/position' },
   ];
 
   return (

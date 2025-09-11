@@ -405,6 +405,10 @@ parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
   getTemplateContent: (id) => templateApi.get(`/offer-templates/${encodeURIComponent(id)}/content`, {
     responseType: 'text',
   }),
+  getAllPositions: () => apis.get("/master-positions/all"),
+  addPosition: (data) => apis.post("/master-positions/add", data),
+  updatePosition: (id, data) => apis.put(`/master-positions/update/${id}`, data),
+  deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`)
    
 };
 

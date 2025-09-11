@@ -20,6 +20,7 @@ import Location from './pages/Location';
 import Payments from './pages/Payments';
 import PrivateRoute from './components/PrivateRoute';
 import TemplateMainCompo from './components/OfferTemplate/TemplateMainCompo';
+import Position from './pages/Position';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -97,6 +98,7 @@ function App() {
                       <Route path="/payments" element={<Payments />} />
                       <Route path="/interviews" element={<Calendar />} />
                       <Route path="/template" element={<TemplateMainCompo />} />
+                      <Route path="/position" element={<Position />} />
                     </Route>
                   </Route>
                 </Route>
