@@ -99,7 +99,7 @@ const Header = () => {
                   : user?.role}</p>
                   <hr className="my-2" />
  
-    <p onClick={() => navigate('/login')} style={{cursor: 'pointer', margin: 0}}>Logout</p>
+                <p onClick={() => {dispatch(clearUser()); navigate('/login');}} style={{cursor: 'pointer', margin: 0}}>Logout</p>
               </div>
             )}
           </div>

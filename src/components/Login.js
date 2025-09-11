@@ -43,7 +43,7 @@ const Login = () => {
         navigate("/verify-otp");
       } else {
         // ✅ just dispatch directly
-        // dispatch(setAuthUser(res));
+        dispatch(setAuthUser(res));
         dispatch(setUser(dbRes));
 
         // console.log("User logged in:", res);
