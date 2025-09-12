@@ -9,7 +9,7 @@ const wrapHtmlDoc = (body, title = "Offer Template", metaJSON = "{}") => `<!DOCT
   <style>
     :root { color-scheme: light; }
     body { font-family: Arial, sans-serif; line-height: 1.45; margin: 0; padding: 0; color: #111; }
-    .offer-page { position: relative; background:#fff; margin: 24px; padding: 24px; min-height: 1123px; }
+    .offer-page { position: relative; background:#fff; margin: 24px; padding: 24px; min-height: 820px; }
     .offer-content { position: relative; z-index: 2; }
     .offer-bg { position: absolute; inset: 0; display:flex; justify-content: center; align-items: center; z-index: 1; pointer-events: none; }
     .text-right { text-align: right; }
@@ -19,6 +19,7 @@ const wrapHtmlDoc = (body, title = "Offer Template", metaJSON = "{}") => `<!DOCT
     ul { padding-left: 18px; }
     img.logo { height: 80px; object-fit: contain; }
     .header { display:flex; align-items:center; justify-content:center; margin-bottom: 8px; }
+    #salutation{color:#162b75;}
   </style>
 </head>
 <body>
@@ -54,7 +55,7 @@ export function buildHtmlForExport(tpl, layout) {
       <div>{{candidate.address}}</div>
       <p class="mt-2">Dear <b>{{candidate.full_name}}</b>,</p>
     </div>` : "";
-  const subject = c.subject ? `<p id="subject" class="subject" style="text-align:center"><strong>${c.subject}</strong></p>` : "";
+  const subject = c.subject ? `<p id="subject" class="subject" style="text-align:center; "><strong>${c.subject}</strong></p>` : "";
   const intro = `<div id="intro" class="intro">${c.intro || ""}</div>`;
   const terms = s.terms ? `<div id="terms" class="terms">${c.termsHtml || ""}</div>` : "";
   const signature = s.signature ? `

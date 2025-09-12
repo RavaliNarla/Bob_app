@@ -113,9 +113,10 @@ export default function TemplateEditor() {
       <Toolbar />
       <Row className="mt-3 g-3">
         {/* Left column: editor */}
-        <Col md={4}>
-          <div className="ts-scope ts-left shadow" style={{ background: "#fff", padding: "2rem", height: "calc(128vh - 80px)", overflowY: "auto", }}>
+        <Col md={6}>
+          <div className="ts-scope ts-left shadow offer" style={{ background: "#fff", padding: "2rem", height: "calc(128vh - 80px)", overflowY: "auto", }}>
             <Card.Body>
+              
               <Form.Label>Template Name</Form.Label>
               <InputGroup>
                 <Form.Control
@@ -124,33 +125,39 @@ export default function TemplateEditor() {
                   placeholder="Enter template name"
                 />
               </InputGroup>
-
+              
               <hr />
               <LogoUploader />
+              <hr />
               <BackgroundLogoPicker />
 
               <hr />
               <SectionToggles />
+              <hr />
             </Card.Body>
-
+             <hr />
             <Card.Body>
-              <h6 className="mb-3">Fields</h6>
-
+              <div className="fields_data">
+           
+              <h6 className="mb-3" style={{fontWeight:'500'}}>Fields</h6>
+              <Form.Label>Signature</Form.Label>
               <Form.Group className="mb-2">
-                <Form.Label>Signature</Form.Label>
+                
                 <Form.Control
-                  className="mb-2"
+                  className="mb-2 w-48"
                   value={template.fields.hrName}
                   onChange={(e) => setField("hrName", e.target.value)}
                   placeholder="e.g. HR Department"
                 />
                 <Form.Control
+                 className="mb-2 w-48"
                   value={template.fields.companyName}
                   onChange={(e) => setField("companyName", e.target.value)}
                   placeholder="e.g. Company Name"
                 />
               </Form.Group>
-
+              </div>
+              
               {/* <Form.Group className="mb-2">
                 <Form.Label>Position Title (token OK)</Form.Label>
                 <Form.Control
@@ -175,12 +182,13 @@ export default function TemplateEditor() {
                 </div>
               </Form.Group> */}
             </Card.Body>
-
+            <hr />
             <Card.Body>
-              <h6 className="mb-2">Content</h6>
+              <div class="content_data">
+              <h6 className="mb-2" style={{fontWeight:'500'}}>Content</h6>
 
               {/* Subject */}
-              <Form.Group className="mb-2">
+              <Form.Group className="mb-2" style={{marginBottom:'15px !important'}}>
                 <Form.Label>Subject</Form.Label>
                 <Form.Control
                   value={template.content.subject}
@@ -190,25 +198,26 @@ export default function TemplateEditor() {
               </Form.Group>
 
               {/* Intro (chips, non-editable) */}
-              <Form.Label>Intro (tokens are orange chips, non-editable)</Form.Label>
-              <CEIntro
+              <Form.Label>Body Text</Form.Label>
+              <CEIntro style={{fontSize: '14px !important'}}
                 value={template.content.intro}
                 onChange={(v) => setContent("intro", v)}
               />
 
               {/* Terms (restored to ReactQuill so no raw <p> shows) */}
               <Form.Label>Terms</Form.Label>
-              <ReactQuill
+              <ReactQuill 
                 theme="snow"
                 value={template.content.termsHtml}
                 onChange={(v) => setContent("termsHtml", v)}
               />
+              </div>
             </Card.Body>
           </div>
         </Col>
 
         {/* Right column: live preview */}
-        <Col md={8}>
+        <Col md={6}>
           <LivePreview />
         </Col>
       </Row>

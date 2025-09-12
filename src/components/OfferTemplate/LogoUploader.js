@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from 'react-bootstrap';
 import { useTemplateStore } from '../../store/useTemplateStore';
+import { Form } from 'react-bootstrap';
+import '../../css/Editor.css';
 
 export default function LogoUploader() {
   const branding = useTemplateStore(s => s.template.branding);
@@ -24,10 +26,10 @@ export default function LogoUploader() {
       <input {...getInputProps()} />
       <div className="d-flex align-items-center justify-content-between">
         <div>
-          <strong>Logo</strong>
+          <Form.Label>Logo</Form.Label>
           <div className="small text-muted">{branding.logoUrl ? 'Selected' : 'None'}</div>
         </div>
-        <Button size="sm" onClick={open}>Change</Button>
+        <Button size="sm change_btn" onClick={open}>Change</Button>
       </div>
     </div>
   );

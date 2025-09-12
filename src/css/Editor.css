@@ -119,3 +119,59 @@
   cursor:default;
 }
 
+.w-48{
+  width: 46%;
+  float: left;
+  margin-right: 20px;
+}
+.section_toggle{
+  float: left;
+  width: 100%;
+  border-top: 1px solid #cacaca;
+}
+.section_toggle h6{
+  margin-top:15px;
+  color:#162b75;
+  font-size:14px;
+   font-weight: 500;
+}
+.section_toggle label{
+  color:#000 !important;
+  font-size:14px !important;
+  font-weight:400 !important;
+}
+.section_toggle .check{
+  width: 100px;
+  float: left;
+  margin-right: 10%;
+  display: flex;
+}
+.form-check-input:checked {
+  background-color: rgb(255, 112, 67) !important;
+  border-color: rgb(255, 112, 67) !important;
+}
+.fields_data{
+  width: 100%;
+  float: left;
+}
+.offer .card-body label{
+  color:#162b75;
+  font-size:14px;
+   font-weight: 500;
+}
+.offer .card-body input{
+  color:#000;
+  font-size:14px;
+   font-weight: 400;
+   margin-right: 10px;
+}
+.change_btn{
+  background: #162b75;
+  color: #fff;
+  font-size: 13px;
+  border: 1px solid #162b75;
+}
+.change_btn:hover{
+border-color: #FF7043;
+background:#FF7043;
+color:#fff;}

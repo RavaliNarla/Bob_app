@@ -42,7 +42,7 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
 
       {/* Subject */}
       {c.subject ? (
-        <div style={{ textAlign: "center", margin: "6px 0 10px 0" }}>
+        <div style={{ textAlign: "center", margin: "6px 0 10px 0", color: '#162b75', fontWeight : '500'}}>
           <strong style={{ fontSize: 16 }}>{c.subject}</strong>
         </div>
       ) : null}
@@ -50,45 +50,45 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
       {/* Salutation */}
       {s.salutation !== false && (
         <div style={{ marginTop: 8 }}>
-          <div>To,</div>
-          <div>{candidate.full_name || "Candidate Name"}</div>
-          <div>{candidate.address || "Address Line"}</div>
+          <div style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>To,</div>
+          <div style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>{candidate.full_name || "Candidate Name"}</div>
+          <div style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>{candidate.address || "Address Line"}</div>
           <p style={{ marginTop: 8 }}>
-            Dear <b>{candidate.full_name || "Candidate Name"}</b>,
+            Dear <b style={{color: '#162b75', fontWeight : '500', fontSize:'14px'}}>{candidate.full_name || "Candidate Name"}</b>,
           </p>
         </div>
       )}
 
       {/* Intro */}
-      <div dangerouslySetInnerHTML={{ __html: introWithTokens(c.intro) }} />
+      <div style={{color: '#414141',fontWeight : '400', fontSize:'14px'}} dangerouslySetInnerHTML={{ __html: introWithTokens(c.intro) }} />
 
       {/* Job details */}
       {s.jobDetails !== false && (
         variant === 2 ? (
-          <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", rowGap: 6, columnGap: 12, marginTop: 8 }}>
-            <div><b>Job Title:</b></div><div>{"{{job.position}}"}</div>
-            <div><b>Location:</b></div><div>{"{{job.location_name}}"}</div>
-            <div><b>Gross Salary:</b></div><div>{"{{job.salary}}"}</div>
+          <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", rowGap: 6, columnGap: 12,  marginTop:'15px'}}>
+            <div><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Job Title:</b></div><div style={{color: '#162b75',fontWeight : '500', fontSize:'14px'}}>{"{{job.position}}"}</div>
+            <div><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Location:</b></div><div style={{color: '#162b75',fontWeight : '500', fontSize:'14px'}}>{"{{job.location_name}}"}</div>
+            <div><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Gross Salary:</b></div ><div style={{color: '#162b75',fontWeight : '500', fontSize:'14px'}}>{"{{job.salary}}"}</div>
           </div>
         ) : (
-          <div style={{ marginTop: 8 }}>
-            <p style={{ margin: 0 }}><b>Job Title:</b> {"{{job.position}}"}</p>
-            <p style={{ margin: 0 }}><b>Location:</b> {"{{job.location_name}}"}</p>
-            <p style={{ margin: 0 }}><b>Gross Salary:</b> {"{{job.salary}}"}</p>
+          <div style={{ marginTop:'15px' }}>
+            <p style={{ margin: 0, color: '#162b75',fontWeight : '500', fontSize:'14px'}}><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Job Title:</b> {"{{job.position}}"}</p>
+            <p style={{ margin: 0 , color: '#162b75',fontWeight : '500', fontSize:'14px'}}><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Location:</b> {"{{job.location_name}}"}</p>
+            <p style={{ margin: 0 , color: '#162b75',fontWeight : '500', fontSize:'14px'}}><b style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>Gross Salary:</b> {"{{job.salary}}"}</p>
           </div>
         )
       )}
 
       {/* Terms */}
       {s.terms !== false && (
-        <div style={{ marginTop: 8 }} dangerouslySetInnerHTML={{ __html: c.termsHtml || "" }} />
+        <div style={{ marginTop:'15px', color: '#414141',fontWeight : '400', fontSize:'14px'}} dangerouslySetInnerHTML={{ __html: c.termsHtml || "" }} />
       )}
 
       {/* Signature */}
       {s.signature !== false && (
         <div style={{ marginTop: 16, textAlign: variant === 2 ? "right" : variant === 3 ? "center" : "left" }}>
-          <div>{template.fields?.hrName || "HR Department"}</div>
-          <div>{template.fields?.companyName || "Company Name"}</div>
+          <div style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>{template.fields?.hrName || "HR Department"}</div>
+          <div style={{color: '#000',fontWeight : '400', fontSize:'14px'}}>{template.fields?.companyName || "Company Name"}</div>
         </div>
       )}
     </>
@@ -113,8 +113,7 @@ export default function LivePreview() {
       style={{
         position: "relative",
         background: "#fff",
-        minHeight: 1123,
-        margin: 24,
+        minHeight: 820,
         padding: 24,
         overflow: "hidden",
         boxShadow: "0 0 0 1px rgba(0,0,0,0.06)",
