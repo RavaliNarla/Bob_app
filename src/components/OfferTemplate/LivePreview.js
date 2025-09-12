@@ -20,14 +20,24 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
   return (
     <>
       {/* Header */}
-      {s.header && b.logoUrl ? (
-        <div style={{ display: "flex", justifyContent: variant === 2 ? "space-between" : "center", alignItems: "center", marginBottom: 8 }}>
-          <img src={b.logoUrl} alt="logo" style={{ height: variant === 3 ? 50 : 64, objectFit: "contain" }} />
-          <div style={{ minHeight: 22 }}><span>Date:</span></div>
-        </div>
-      ) : (
-        <div style={{ textAlign: "right", minHeight: 22 }}><span>Date:</span></div>
-      )}
+  {/* Header */}
+<div style={{ position: "relative", marginBottom: 8 }}>
+  {b.logoUrl && (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src={b.logoUrl}
+        alt="logo"
+        style={{
+          height: variant === 3 ? 50 : 64,
+          objectFit: "contain"
+        }}
+      />
+    </div>
+  )}
+  <div style={{ textAlign: "right", marginTop: 4 }}>
+    <span>Date:</span>
+  </div>
+</div>
 
 
       {/* Subject */}

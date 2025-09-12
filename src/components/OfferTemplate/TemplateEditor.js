@@ -114,7 +114,7 @@ export default function TemplateEditor() {
       <Row className="mt-3 g-3">
         {/* Left column: editor */}
         <Col md={4}>
-          <div className="ts-scope ts-left shadow" style={{ background: "#fff", padding: "2rem" }}>
+          <div className="ts-scope ts-left shadow" style={{ background: "#fff", padding: "2rem", height: "calc(128vh - 80px)", overflowY: "auto", }}>
             <Card.Body>
               <Form.Label>Template Name</Form.Label>
               <InputGroup>
@@ -151,7 +151,7 @@ export default function TemplateEditor() {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-2">
+              {/* <Form.Group className="mb-2">
                 <Form.Label>Position Title (token OK)</Form.Label>
                 <Form.Control
                   value={template.fields.positionTitle}
@@ -173,7 +173,7 @@ export default function TemplateEditor() {
                 <div className="small text-muted">
                   Use token <code>{"{{job.salary}}"}</code> for dynamic.
                 </div>
-              </Form.Group>
+              </Form.Group> */}
             </Card.Body>
 
             <Card.Body>

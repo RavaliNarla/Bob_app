@@ -56,7 +56,7 @@ const Sidebar = () => {
     { icon: faLightbulb, text: 'Skills', path: '/skill' },
     { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
-    { icon: faFile, text: 'Template', path: '/template' },
+    { icon: faFile, text: 'Offer Letter', path: '/template' },
     { icon: faBriefcase, text: 'Position', path: '/position' },
   ];
 

@@ -205,59 +205,63 @@ export default function Toolbar() {
   }
 
   return (
-    <div className="d-flex gap-2 flex-wrap mb-3">
-      <Button onClick={handleSave} disabled={saving}>
-        {saving ? "Saving…" : "Save Template"}
-      </Button>
+    <div>
+      {/* Heading */}
+            <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '20px' }}>Offer Letter Templates</h5>
+      <div className="d-flex gap-2 flex-wrap mb-3">
+        <Button onClick={handleSave} disabled={saving}>
+          {saving ? "Saving…" : "Save Template"}
+        </Button>
 
-      <Dropdown>
-        <Dropdown.Toggle variant="secondary" id="template-dropdown">
-          {layout === "template1" ? "Template 1" : layout === "template2" ? "Template 2" : "Template 3"}
-        </Dropdown.Toggle>
-        <Dropdown.Menu>
-          <Dropdown.Item
-            onClick={() => {
-              setLayout("template1");
-              setTemplateName("Template 1"); // ✅ update store
-            }}
-          >
-            Template 1
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              setLayout("template2");
-              setTemplateName("Template 2"); // ✅ update store
-            }}
-          >
-            Template 2
-          </Dropdown.Item>
-          <Dropdown.Item
-            onClick={() => {
-              setLayout("template3");
-              setTemplateName("Template 3"); // ✅ update store
-            }}
-          >
-            Template 3
-          </Dropdown.Item>
-        </Dropdown.Menu>
+        <Dropdown>
+          <Dropdown.Toggle variant="secondary" id="template-dropdown">
+            {layout === "template1" ? "Template 1" : layout === "template2" ? "Template 2" : "Template 3"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item
+              onClick={() => {
+                setLayout("template1");
+                setTemplateName("Template 1"); // ✅ update store
+              }}
+            >
+              Template 1
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                setLayout("template2");
+                setTemplateName("Template 2"); // ✅ update store
+              }}
+            >
+              Template 2
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => {
+                setLayout("template3");
+                setTemplateName("Template 3"); // ✅ update store
+              }}
+            >
+              Template 3
+            </Dropdown.Item>
+          </Dropdown.Menu>
 
-      </Dropdown>
+        </Dropdown>
 
-      {/* Dropdown: select saved template and load it into the editor */}
-      <select
-        value={selectedId}
-        onChange={(e) => {
-          const id = e.target.value;
-          setSelectedId(id);
-          const tpl = templates.find(t => t.id === id);
-          if (tpl) handleSelect(tpl);
-        }}
-      >
-        <option value="">Select template</option>
-        {templates.map((tpl) => (
-          <option key={tpl.id} value={tpl.id}>{tpl.name}</option>
-        ))}
-      </select>
+        {/* Dropdown: select saved template and load it into the editor */}
+        <select
+          value={selectedId}
+          onChange={(e) => {
+            const id = e.target.value;
+            setSelectedId(id);
+            const tpl = templates.find(t => t.id === id);
+            if (tpl) handleSelect(tpl);
+          }}
+        >
+          <option value="">Select template</option>
+          {templates.map((tpl) => (
+            <option key={tpl.id} value={tpl.id}>{tpl.name}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
