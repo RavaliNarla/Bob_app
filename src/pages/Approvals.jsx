@@ -11,6 +11,8 @@ import {
   Table,
   Modal,
   InputGroup,
+  OverlayTrigger,
+  Tooltip,
 } from "react-bootstrap";
 import "../css/Approvals.css";
 import { apiService } from "../services/apiService";
@@ -40,7 +42,19 @@ const Approvals = () => {
   const [workflowApprovals, setWorkflowApprovals] = useState([]);
     const [readOnly, setReadOnly] = useState(false);
     const [selectedStatus, setSelectedStatus] = useState("");
-
+  const [editIndex, setEditIndex] = useState(null);
+  const [viewMode, setViewMode] = useState(false);
+  const [showReqModal, setReqShowModal] = useState(false);
+  const [errr, setErrr] = useState({});
+   const [currentReq, setCurrentReq] = useState({
+      title: "",
+      description: "",
+      positions: "",
+      startDate: "",
+      endDate: "",
+      comments: "",
+    });
+  
   // Toggle accordion and fetch requisition details
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
@@ -65,6 +79,19 @@ const Approvals = () => {
       setApiData([]);
       setTableLoading(false);
     }
+  };
+  const resetReqForm = () => {
+    setReqShowModal(false);
+    setCurrentReq({
+      requisition_title: "",
+      requisition_description: "",
+      no_of_positions: "",
+      registration_start_date: "",
+      registration_end_date: "",
+      requisition_comments: "",
+    });
+    setEditIndex(null);
+    setErrr({});
   };
 
   // Fetch requisitions and positions based on user's role
@@ -98,7 +125,28 @@ const Approvals = () => {
       setLoading(false);
     }
   };
+const addRequisitionModal = (req = null, index = null, mode = "edit") => {
+    if (req) {
+      // console.log("Editing/View Requisition:", req);
+      setCurrentReq({ ...req });   // ✅ keeps requisition_id
 
+      setEditIndex(index);
+      // console.log("index:", index);
+    } else {
+      setCurrentReq({
+        requisition_id: "",
+        requisition_title: "",
+        requisition_description: "",
+        no_of_positions: "",
+        registration_start_date: "",
+        registration_end_date: "",
+        requisition_comments: "",
+      });
+      setEditIndex(null);
+    }
+    setReqShowModal(true);
+    setViewMode(mode === "view");
+  };
   useEffect(() => {
     if (user?.userid) {
       fetchJobPostings();
@@ -376,8 +424,21 @@ const Approvals = () => {
                     ? "Expired"
                     : "Open"} */}
                 </div>
+             
               </div>
             </Col>
+            <Col xs={12} md={1} className="d-flex gap-2 px-2">
+                  <OverlayTrigger placement="top" overlay={<Tooltip>View Requisition</Tooltip>}>
+                      <FontAwesomeIcon
+                        icon={faEye}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                            addRequisitionModal(job, index, "view");
+                        }}
+                        style={{ color: '#FF7043', cursor: 'pointer', textAlign: 'right', right:'92px', position: 'absolute', top:'35px' }}
+                      />
+                    </OverlayTrigger>
+          </Col>
 
           </Row>
         </Accordion.Header>
@@ -540,6 +601,145 @@ const Approvals = () => {
           />
         </Modal.Body>
       </Modal>
+       {/* Add Requistion Modal */}
+            <Modal
+              show={showReqModal}
+              onHide={resetReqForm}
+              centered
+              dialogClassName="wide-modal"
+            >
+              <Modal.Header closeButton>
+              <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
+                {viewMode 
+                  ? "View Requisition" 
+                  : editIndex !== null 
+                    ? "Edit Requisition" 
+                    : "Add Requisition"}
+              </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form className="requisition-form">
+                  <Row className="g-4">
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-label">
+                          Requisition Title <span className="required-asterisk">*</span>
+                        </Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={currentReq.requisition_title}
+                          isInvalid={!!errr.requisition_title}
+                          disabled={viewMode}
+                          onChange={(e) => {
+                            setCurrentReq({
+                              ...currentReq,
+                              requisition_id: currentReq.requisition_id, // ✅ explicitly keep ID
+                              requisition_title: e.target.value,
+                            });
+                            if (errr.requisition_title) {
+                              setErrr({ ...errr, requisition_title: "" });
+                            }
+                          }}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errr.requisition_title}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+      
+                    <Col md={12}>
+                      <Form.Group>
+                        <Form.Label className="form-label">
+                          Description <span className="required-asterisk">*</span>
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          value={currentReq.requisition_description}
+                          isInvalid={!!errr.requisition_description}
+                          disabled={viewMode}
+                          onChange={(e) => {
+                            setCurrentReq({ ...currentReq, requisition_description: e.target.value });
+                            if (errr.requisition_description) {
+                              setErrr({ ...errr, requisition_description: "" });
+                            }
+                          }}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errr.requisition_description}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+      
+                    <div className="d-flex gap-1">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="form-label">
+                            Start Date <span className="required-asterisk">*</span>
+                          </Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={currentReq.registration_start_date}
+                            isInvalid={!!errr.registration_start_date}
+                            disabled={viewMode}
+                            onChange={(e) => {
+                              setCurrentReq({ ...currentReq, registration_start_date: e.target.value });
+                              if (errr.registration_start_date) {
+                                setErrr({ ...errr, registration_start_date: "" });
+                              }
+                            }}
+                            min={new Date().toISOString().split("T")[0]}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errr.registration_start_date}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label className="form-label">
+                            End Date <span className="required-asterisk">*</span>
+                          </Form.Label>
+                          <Form.Control
+                            type="date"
+                            value={currentReq.registration_end_date}
+                            isInvalid={!!errr.registration_end_date}
+                            disabled={viewMode}
+                            onChange={(e) => {
+                              setCurrentReq({ ...currentReq, registration_end_date: e.target.value });
+                              if (errr.registration_end_date) {
+                                setErrr({ ...errr, registration_end_date: "" });
+                              }
+                            }}
+                            min={currentReq.registration_start_date || new Date().toISOString().split("T")[0]}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {errr.registration_end_date}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </div>
+      
+                   
+                  </Row>
+                </Form>
+              </Modal.Body>
+      
+              <Modal.Footer className="justify-content-end gap-2">
+                <Button variant="outline-secondary" onClick={resetReqForm}>
+                  {viewMode ? "Close" : "Cancel"}
+                </Button>
+                {!viewMode && (
+                  <Button
+                    className="text-white"
+                   
+                    style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
+                  >
+                    {editIndex !== null ? "Update Requisition" : "Save"}
+                  </Button>
+                )}
+              </Modal.Footer>
+            </Modal>
     </Container>
   );
 };
