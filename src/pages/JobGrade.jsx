@@ -73,7 +73,7 @@ const JobGrade = () => {
   const maxSalary = String(currentGrade.max_salary)?.trim();
 
   // Required validations
-  if (!trimmedCode) newErrors.job_grade_code = "Code is required";
+  //if (!trimmedCode) newErrors.job_grade_code = "Code is required";
   if (!trimmedDesc) newErrors.job_grade_desc = "Description is required";
   if (!trimmedScale) newErrors.job_scale = "Scale is required";
   if (!minSalary) newErrors.min_salary = "Minimum salary is required";
@@ -99,38 +99,20 @@ const JobGrade = () => {
     newErrors.max_salary = "Maximum salary cannot be less than minimum salary";
   }
 
-  // ✅ Duplicate checks (independent, so only the matching field is flagged)
-  if (trimmedCode) {
-    const isDuplicateCode = grads.some(
-      (grad, index) =>
-        grad.job_grade_code?.trim().toLowerCase() === trimmedCode.toLowerCase() &&
-        index !== editIndex
-    );
-    if (isDuplicateCode) {
-      newErrors.job_grade_code = "Job grade code already exists";
-    }
-  }
+  // Duplicate check (case-insensitive, trims spaces) for ANY matching field
+  const isDuplicate = grads.some((grad, index) =>
+    (
+      grad.job_grade_code?.trim().toLowerCase() === trimmedCode?.toLowerCase() ||
+      grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase() ||
+      grad.job_scale?.trim().toLowerCase() === trimmedScale?.toLowerCase()
+    ) &&
+    index !== editIndex // Ignore same record in edit mode
+  );
 
-  if (trimmedDesc) {
-    const isDuplicateDesc = grads.some(
-      (grad, index) =>
-        grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase() &&
-        index !== editIndex
-    );
-    if (isDuplicateDesc) {
-      newErrors.job_grade_desc = "Job description already exists";
-    }
-  }
-
-  if (trimmedScale) {
-    const isDuplicateScale = grads.some(
-      (grad, index) =>
-        grad.job_scale?.trim().toLowerCase() === trimmedScale.toLowerCase() &&
-        index !== editIndex
-    );
-    if (isDuplicateScale) {
-      newErrors.job_scale = "Job scale already exists";
-    }
+  if (isDuplicate) {
+   //newErrors.job_grade_code = "Job grade code already exists";
+    newErrors.job_grade_desc = "Job description already exists";
+    newErrors.job_scale = "Job scale already exists";
   }
 
   setErrr(newErrors);
@@ -139,7 +121,6 @@ const JobGrade = () => {
     handleSaveCallback();
   }
 };
-
 
 
 
@@ -181,7 +162,7 @@ const JobGrade = () => {
     try {
       await apiService.deleteJobGrade(idToDelete);
       setGrads(grads.filter((grad) => grad.job_grade_id !== idToDelete));
-      toast.success("Grade deleted");
+      toast.success("Grade deleted successfully");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");
@@ -271,12 +252,10 @@ const JobGrade = () => {
         <Table responsive hover className="jobgrade_table">
           <thead className="table-header-orange">
             <tr>
-              <th onClick={() => handleSort("job_grade_code")} style={{ cursor: "pointer", width: "20%" }}>
+              {/* <th onClick={() => handleSort("job_grade_code")} style={{ cursor: "pointer", width: "20%" }}>
                 Code{getSortIndicator("job_grade_code")}
-              </th>
-              <th onClick={() => handleSort("job_grade_desc")} style={{ cursor: "pointer" ,width: "40%"}}>
-                Description{getSortIndicator("job_grade_desc")}
-              </th>
+              </th> */}
+              
               <th onClick={() => handleSort("job_scale")} style={{ cursor: "pointer", width: "10%"}}>
                 Scale{getSortIndicator("job_scale")}
               </th>
@@ -285,6 +264,9 @@ const JobGrade = () => {
               </th>
               <th onClick={() => handleSort("max_salary")} style={{ cursor: "pointer", width: "15%" }}>
                 Maximum Salary{getSortIndicator("max_salary")}
+              </th>
+              <th onClick={() => handleSort("job_grade_desc")} style={{ cursor: "pointer" ,width: "40%"}}>
+                Description{getSortIndicator("job_grade_desc")}
               </th>
               
               <th>Actions</th>
@@ -301,11 +283,12 @@ const JobGrade = () => {
   }
 >
 
-                <td>{job.job_grade_code}</td>
-                <td>{job.job_grade_desc}</td>
+                {/* <td>{job.job_grade_code}</td> */}
+             
                 <td>{job.job_scale}</td>
                 <td>{job.min_salary}</td>
                 <td>{job.max_salary}</td>
+                   <td>{job.job_grade_desc}</td>
                 <td>
                   <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(job, index)} />
                   <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
@@ -329,20 +312,20 @@ const JobGrade = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Grade Code <span className="text-danger">*</span>
+                    Scale <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter grade code"
-                    value={currentGrade.job_grade_code}
-                    isInvalid={!!errr.job_grade_code}
+                    placeholder="Enter scale"
+                    value={currentGrade.job_scale}
+                    isInvalid={!!errr.job_scale}
                     onChange={(e) =>
-                      setCurrentGrade({ ...currentGrade, job_grade_code: e.target.value })
+                      setCurrentGrade({ ...currentGrade, job_scale: e.target.value })
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.job_grade_code}
+                    {errr.job_scale}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -366,23 +349,24 @@ const JobGrade = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
+              
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Scale <span className="text-danger">*</span>
+                    Grade Code 
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter scale"
-                    value={currentGrade.job_scale}
-                    isInvalid={!!errr.job_scale}
+                    placeholder="Enter grade code"
+                    value={currentGrade.job_grade_code}
+                    isInvalid={!!errr.job_grade_code}
                     onChange={(e) =>
-                      setCurrentGrade({ ...currentGrade, job_scale: e.target.value })
+                      setCurrentGrade({ ...currentGrade, job_grade_code: e.target.value })
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.job_scale}
+                    {errr.job_grade_code}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>

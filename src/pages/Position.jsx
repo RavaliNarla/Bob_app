@@ -8,7 +8,7 @@ import {
   Row,
   Col
 } from "react-bootstrap";
- import "../css/Position.css";
+import "../css/Position.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import apiService from "../services/apiService";
@@ -20,11 +20,13 @@ const Position = () => {
   const [positions, setPositions] = useState([]);
   const [jobGrades, setJobGrades] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
+  const [departments, setDepartments] = useState([]);
   const [currentPosition, setCurrentPosition] = useState({
   masterPositionId: null,
   positionName: "",
   positionDescription: "",
   jobGradeId: "",
+  deptId: ""
 });
 
   const [errr, setErrr] = useState({});
@@ -36,13 +38,15 @@ const Position = () => {
     setLoading(true);
     setDataError(null);
     try {
-      const [posRes, gradeRes] = await Promise.all([
+      const [posRes, gradeRes,deptRes] = await Promise.all([
         apiService.getAllPositions(),
         apiService.getallJobGrade(),
+        apiService.getallDepartment()
       ]);
-console.log("Position Response:", posRes);
+console.log("Position Response:", deptRes);
       setPositions(posRes.data.data || posRes.data || []);
       setJobGrades(gradeRes.data.data || gradeRes.data || []);
+      setDepartments(deptRes.data.data || deptRes.data || []);
     } catch (err) {
       console.error(err);
       setDataError("Failed to load data. Please try again.");
@@ -50,13 +54,13 @@ console.log("Position Response:", posRes);
       setLoading(false);
     }
   };
-
+console.log("Position grades:", jobGrades);
   useEffect(() => {
     fetchData();
   }, []);
 
   const openModal = (
-    pos = { id: null, positionName: "", positionDescription: "", jobGradeId: "" },
+    pos = { id: null, positionName: "", positionDescription: "", jobGradeId: "", deptId: "" },
     index = null
   ) => {
     setCurrentPosition(pos);
@@ -65,7 +69,7 @@ console.log("Position Response:", posRes);
   };
 
   const resetForm = () => {
-    setCurrentPosition({ id: null, positionName: "", positionDescription: "", jobGradeId: "" });
+    setCurrentPosition({ id: null, positionName: "", positionDescription: "", jobGradeId: "", deptId: "" });
     setEditIndex(null);
     setErrr({});
     setShowModal(false);
@@ -75,7 +79,7 @@ console.log("Position Response:", posRes);
     const newErrors = {};
     if (!currentPosition.positionName?.trim()) newErrors.positionName = "Position name is required";
     if (!currentPosition.jobGradeId) newErrors.jobGradeId = "Job Grade is required";
-
+    if (!currentPosition.deptId) newErrors.deptId = "Department is required";
     // Check duplicate name
     const isDuplicate = positions.some((pos, index) =>
       pos.positionName.trim().toLowerCase() === currentPosition.positionName.trim().toLowerCase() &&
@@ -92,6 +96,7 @@ console.log("Position Response:", posRes);
   toast.success("Position updated successfully");
 }
 else {
+  console.log("Adding Position:", currentPosition);
         await apiService.addPosition(currentPosition);
         toast.success("Position added successfully");
       }
@@ -142,6 +147,7 @@ else {
           <thead className="table-header-orange">
             <tr>
               <th>Title</th>
+              <th>Department</th>
               <th>Job Grade</th>
               <th>Description</th>
               <th>Actions</th>
@@ -152,7 +158,8 @@ else {
             <tr key={pos.masterPositionId}>
 
                 <td>{pos.positionName}</td>
-                <td>{pos.jobGradeId}</td>
+                <td>{  departments.find(g => g.department_id === pos.deptId)?.department_name || "-"}</td>
+                <td>{  jobGrades.find(g => g.job_grade_id === pos.jobGradeId)?.job_grade_code || "-"}</td>
                 <td>{pos.positionDescription}</td>
                 <td>
                   <FontAwesomeIcon
@@ -193,6 +200,24 @@ else {
                     onChange={(e) => setCurrentPosition({ ...currentPosition, positionName: e.target.value })}
                   />
                   <Form.Control.Feedback type="invalid">{errr.positionName}</Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <Form.Group>
+                  <Form.Label>Department<span className="text-danger">*</span></Form.Label>
+                  <Form.Select
+                    value={currentPosition.deptId}
+                    isInvalid={!!errr.deptId}
+                    onChange={(e) => setCurrentPosition({ ...currentPosition, deptId: e.target.value })}
+                  >
+                    <option value="">Select Department</option>
+                    {departments.map((jg) => (
+                      <option key={jg.department_id} value={jg.department_id}>
+                        {jg.department_name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">{errr.deptId}</Form.Control.Feedback>
                 </Form.Group>
               </Col>
 

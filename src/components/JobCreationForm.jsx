@@ -149,6 +149,9 @@ console.log("Position List:", positionList);
         handleInputChange({
           target: { name: "position_code", value: selectedPosition.position_code || "" },
         });
+        handleInputChange({
+          target: { name: "dept_id", value: selectedPosition.deptId || "" },
+        });
       }
     }}
     disabled={readOnly}

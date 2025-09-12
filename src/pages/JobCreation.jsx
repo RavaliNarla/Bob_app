@@ -283,8 +283,9 @@ useEffect(() => {
           res.masterPositionsList.map(pos => ({
             position_title: pos.positionName,   // form expects this
             position_code: pos.positionCode,
-            dept_id: pos.jobGradeId,
+            gradeIdOptions: pos.jobGradeId,
             description: pos.positionDescription,
+            dept_id: pos.departmentId,
             ...pos, // keep all original fields too
           }))
         );
