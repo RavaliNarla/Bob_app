@@ -10,10 +10,8 @@
     "header": true,
     "salutation": true,
     "jobDetails": true,
-    "compensation": true,
     "terms": true,
-    "signature": true,
-    "footer": true
+    "signature": true
   },
   "fields": {
     "companyName": "",

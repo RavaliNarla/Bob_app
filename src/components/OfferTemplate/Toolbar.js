@@ -5,7 +5,7 @@ import { useTemplateStore } from '../../store/useTemplateStore';
 import { buildHtmlForExport } from "./utils/exportHtml";
 import apiService from "../../services/apiService";
 import defaultTemplate from "./defaultTemplate.json";
- 
+
 // Only wrap tokens if not already wrapped by Quill (prevents double)
 function ensureQuillTokens(html = "") {
   if (!html) return "";
@@ -14,67 +14,66 @@ function ensureQuillTokens(html = "") {
     `<span class="quill-token" data-token="${m}" contenteditable="false">${m}</span>`
   );
 }
- 
+
 export default function Toolbar() {
   const template = useTemplateStore((s) => s.template);
   const setLayout = useTemplateStore((s) => s.setLayout);
-    const setTemplateName = useTemplateStore((s) => s.setTemplateName); // ⬅ add this
+  const setTemplateName = useTemplateStore((s) => s.setTemplateName); // ⬅ add this
   const layout = useTemplateStore((s) => s.layout);
- 
+
   const [saving, setSaving] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedId, setSelectedId] = useState("");
- 
-const handleSave = async () => {
-  let name = (template?.templateName || "").trim();
-  if (!name) {
-    alert("Please enter a Template Name");
-    return;
-  }
- 
-  try {
-    setSaving(true);
-    const html = buildHtmlForExport(template, layout);
- 
-    // remove trailing "_<digits>" if backend appended timestamp earlier
-    name = name.replace(/_\d+$/, "");
- 
-    const fd = new FormData();
-    fd.append("name", name);
-    fd.append("templateFile", new Blob([html], { type: "text/html" }));
- 
-    if (selectedId) {
-      fd.append("id", selectedId);
+
+  const handleSave = async () => {
+    let name = (template?.templateName || "").trim();
+    if (!name) {
+      alert("Please enter a Template Name");
+      return;
     }
- 
-    const { data } = await apiService.uploadTemplate(fd);
- 
-    // ✅ Update dropdown list (add or replace)
-    setTemplates(prev => {
-      const exists = prev.some(t => t.id === data.id);
-      if (exists) {
-        return prev.map(t => (t.id === data.id ? data : t));
+
+    try {
+      setSaving(true);
+      const html = buildHtmlForExport(template, layout);
+
+      // remove trailing "_<digits>" if backend appended timestamp earlier
+      name = name.replace(/_\d+$/, "");
+
+      const fd = new FormData();
+      fd.append("name", name);
+      fd.append("templateFile", new Blob([html], { type: "text/html" }));
+
+      if (selectedId) {
+        fd.append("id", selectedId);
       }
-      return [...prev, data];
-    });
- 
-    // ✅ Reset dropdown to "Select template"
-    setSelectedId("");
- 
-    // ✅ Reset LivePreview to initial state
-    const { setTemplate, setLayout } = useTemplateStore.getState();
-    setTemplate(defaultTemplate); // reset template fields/content
-    setLayout("template1");       // reset layout if needed
- 
-    alert(`✅ Saved: ${data?.name || name}\nFile: ${data?.id}`);
-  } catch (err) {
-    console.error("Save failed", err);
-    alert("Failed to save template.");
-  } finally {
-    setSaving(false);
-  }
-};
- 
+
+      const { data } = await apiService.uploadTemplate(fd);
+
+      // ✅ Update dropdown list (add or replace)
+      setTemplates(prev => {
+        const filtered = prev.filter(t => t.id !== selectedId); // remove old template being edited
+        return [...filtered, data]; // add the newly saved template
+      });
+      setSelectedId(""); // reset selection
+
+
+      // ✅ Reset dropdown to "Select template"
+      setSelectedId("");
+
+      // ✅ Reset LivePreview to initial state
+      const { setTemplate, setLayout } = useTemplateStore.getState();
+      setTemplate(defaultTemplate); // reset template fields/content
+      setLayout("template1");       // reset layout if needed
+
+      alert(`✅ Saved: ${data?.name || name}\nFile: ${data?.id}`);
+    } catch (err) {
+      console.error("Save failed", err);
+      alert("Failed to save template.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -89,28 +88,28 @@ const handleSave = async () => {
       }
     })();
   }, []);
- 
+
   const handleSelect = async (tpl) => {
     try {
       const contentUrl = tpl?.id
         ? `${process.env.REACT_APP_NODE_API_URL}/offer-templates/${encodeURIComponent(tpl.id)}/content`
-                // ? `http://localhost:5000/api/offer-templates/${encodeURIComponent(tpl.id)}/content`
- 
+        // ? `http://localhost:5000/api/offer-templates/${encodeURIComponent(tpl.id)}/content`
+
         : tpl?.path;
       if (!contentUrl) throw new Error("No template content URL");
- 
+
       const res = await fetch(contentUrl, { headers: { Accept: "text/html" } });
       if (!res.ok) throw new Error(`Failed to load template: ${res.status}`);
       const htmlContent = await res.text();
- 
+
       const parsed = parseTemplateHTML(htmlContent);
- 
+
       const normalized = {
         templateName: parsed.templateName || tpl.name || "",
         branding: parsed.branding || {},
         // Default ON if sections missing, so users immediately see everything
         sections: parsed.sections || {
-          header: true, salutation: true, jobDetails: true, compensation: true, terms: true, signature: true, footer: true,
+          header: true, salutation: true, jobDetails: true, terms: true, signature: true,
         },
         fields: {
           hrName: "", companyName: "", positionTitle: "", grossAnnual: "",
@@ -123,7 +122,7 @@ const handleSave = async () => {
           signature: parsed.content?.signature || "",
         },
       };
- 
+
       useTemplateStore.getState().setTemplate(normalized);
       if (parsed.layout) setLayout(parsed.layout);
     } catch (err) {
@@ -131,11 +130,11 @@ const handleSave = async () => {
       alert("Failed to load the selected template.");
     }
   };
- 
+
   function parseTemplateHTML(htmlString) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlString, "text/html");
- 
+
     // 1) Prefer embedded metadata (exact state that was saved)
     const metaEl = doc.querySelector('script#tpl-meta[type="application/json"]');
     if (metaEl && metaEl.textContent) {
@@ -148,10 +147,10 @@ const handleSave = async () => {
             header: !!meta.sections?.header,
             salutation: !!meta.sections?.salutation,
             jobDetails: !!meta.sections?.jobDetails,
-            compensation: !!meta.sections?.compensation,
+            // compensation: !!meta.sections?.compensation,
             terms: !!meta.sections?.terms,
             signature: !!meta.sections?.signature,
-            footer: !!meta.sections?.footer,
+            // footer: !!meta.sections?.footer,
           },
           fields: meta.fields || {},
           content: {
@@ -166,17 +165,17 @@ const handleSave = async () => {
         console.warn("tpl-meta parse failed, falling back:", e);
       }
     }
- 
+
     // 2) Fallback (legacy): extract strict by IDs first; no dumping
     const root = doc.querySelector(".offer-content") || doc.body;
- 
-    const subjectEl   = root.querySelector("#subject")   || root.querySelector(".subject") || root.querySelector("h1,h2,h3,h4");
-    const introEl     = root.querySelector("#intro")     || root.querySelector(".intro");
-    const termsEl     = root.querySelector("#terms")     || root.querySelector(".terms");
+
+    const subjectEl = root.querySelector("#subject") || root.querySelector(".subject") || root.querySelector("h1,h2,h3,h4");
+    const introEl = root.querySelector("#intro") || root.querySelector(".intro");
+    const termsEl = root.querySelector("#terms") || root.querySelector(".terms");
     const signatureEl = root.querySelector("#signature") || root.querySelector(".signature");
- 
+
     const logoEl = doc.querySelector("img.logo") || root.querySelector("img.logo");
- 
+
     return {
       templateName: "",
       branding: {
@@ -190,10 +189,10 @@ const handleSave = async () => {
         header: true,
         salutation: !!root.querySelector("#salutation, .salutation"),
         jobDetails: !!root.querySelector("#job-details, .job-details"),
-        compensation: true,
+        // compensation: true,
         terms: !!termsEl,
         signature: !!signatureEl,
-        footer: false,
+        // footer: false,
       },
       fields: { hrName: "", companyName: "", positionTitle: "", grossAnnual: "" },
       content: {
@@ -204,13 +203,13 @@ const handleSave = async () => {
       },
     };
   }
- 
+
   return (
     <div className="d-flex gap-2 flex-wrap mb-3">
       <Button onClick={handleSave} disabled={saving}>
         {saving ? "Saving…" : "Save Template"}
       </Button>
- 
+
       <Dropdown>
         <Dropdown.Toggle variant="secondary" id="template-dropdown">
           {layout === "template1" ? "Template 1" : layout === "template2" ? "Template 2" : "Template 3"}
@@ -219,7 +218,7 @@ const handleSave = async () => {
           <Dropdown.Item
             onClick={() => {
               setLayout("template1");
-              setTemplateName("Template 1"); // ⬅ update name too
+              setTemplateName("Template 1"); // ✅ update store
             }}
           >
             Template 1
@@ -227,7 +226,7 @@ const handleSave = async () => {
           <Dropdown.Item
             onClick={() => {
               setLayout("template2");
-              setTemplateName("Template 2"); // ⬅ update name too
+              setTemplateName("Template 2"); // ✅ update store
             }}
           >
             Template 2
@@ -235,14 +234,15 @@ const handleSave = async () => {
           <Dropdown.Item
             onClick={() => {
               setLayout("template3");
-              setTemplateName("Template 3"); // ⬅ update name too
+              setTemplateName("Template 3"); // ✅ update store
             }}
           >
             Template 3
           </Dropdown.Item>
         </Dropdown.Menu>
+
       </Dropdown>
- 
+
       {/* Dropdown: select saved template and load it into the editor */}
       <select
         value={selectedId}

@@ -131,10 +131,10 @@ export function buildHtmlForExport(tpl, layout) {
       header: !!s.header,
       salutation: !!s.salutation,
       jobDetails: !!s.jobDetails,
-      compensation: !!s.compensation,
+      // compensation: !!s.compensation,
       terms: !!s.terms,
       signature: !!s.signature,
-      footer: !!s.footer,
+      // footer: !!s.footer,
     },
     fields: t.fields || {},
     content: {

@@ -119,7 +119,7 @@ export default function TemplateEditor() {
               <Form.Label>Template Name</Form.Label>
               <InputGroup>
                 <Form.Control
-                  value={template.templateName}
+                  value={template.templateName}  // ✅ will now default to "Template 1"
                   onChange={(e) => setTemplateName(e.target.value)}
                   placeholder="Enter template name"
                 />
