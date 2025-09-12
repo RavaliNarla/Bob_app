@@ -11,6 +11,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { apiService } from '../services/apiService';
 import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 
 // const staticPositions = [
 //   {
@@ -248,7 +250,28 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
     // reservation_cat_id:'0',
     // position_status:'submitted'
   };
-
+  const headers = [
+    "Requisition ID",
+    "Position Title",
+    "Department",
+    "Country",
+    "State",
+    "City",
+    "Location",
+    "Description",
+    "Roles & Responsibilities",
+    "Grade ID",
+    "Employment Type",
+    "Eligibility Age min",
+    "Eligibility Age Max",
+    "Mandatory Qualification",
+    "Preferred Qualification",
+    "Mandatory Experience",
+    "Preferred Experience",
+    "Probation Period",
+    "Documents Required",
+    "Min Credit Score",
+  ];
   const [formData, setFormData] = useState(initialState);
   const [masterData, setMasterData] = useState({
     requisitionIdOptions: [],
@@ -283,9 +306,69 @@ useEffect(() => {
           res.masterPositionsList.map(pos => ({
             position_title: pos.positionName,   // form expects this
             position_code: pos.positionCode,
-            gradeIdOptions: pos.jobGradeId,
+            dept_id: pos.jobGradeId,
             description: pos.positionDescription,
-            dept_id: pos.departmentId,
+            ...pos, // keep all original fields too
+          }))
+        );
+      }
+      console.log("Fetched master positions:", res.masterPositionsList);
+    } catch (error) {
+      console.error("Error fetching master positions:", error);
+    }
+  };
+
+  fetchMasterData();
+}, []);
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length === 0) {
+      try {
+        let response;
+        if (!showModal) {
+          response = await apiService.jobCreation(formData);
+          navigate("/job-postings");
+        } else {
+          console.log('Updating job with form data:', formData);
+          response = await apiService.updateJob(formData);
+          onClose();
+          if (onUpdateSuccess) onUpdateSuccess(); // 🔥 notify parent
+        }
+        console.log('✅ Valid form data:', formData);
+        console.log('✅ API response:', response);
+        setFormData(initialState);
+        setErrors({});
+
+        toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
+        setFormData(initialState);
+        navigate('/job-postings');
+      } catch (error) {
+        console.error('❌ API error:', error);
+        toast.error(showModal ? 'Failed to update job.' : 'Failed to create job.');
+      }
+    } else {
+      setErrors(validationErrors);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData(initialState);
+    setErrors({});
+  };
+useEffect(() => {
+  const fetchMasterData = async () => {
+    try {
+      const res = await apiService.getMasterData();
+      if (res?.masterPositionsList) {
+        // Map API data to the structure your form expects
+        setMasterPositions(
+          res.masterPositionsList.map(pos => ({
+            position_title: pos.positionName,   // form expects this
+            position_code: pos.positionCode,
+            dept_id: pos.jobGradeId,
+            description: pos.positionDescription,
             ...pos, // keep all original fields too
           }))
         );
@@ -547,42 +630,7 @@ const handleInputChange = (e) => {
     }));
   }
 };
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateForm();
-    if (Object.keys(validationErrors).length === 0) {
-      try {
-        let response;
-        if (!showModal) {
-          response = await apiService.jobCreation(formData);
-          navigate("/job-postings");
-        } else {
-          console.log('Updating job with form data:', formData);
-          response = await apiService.updateJob(formData);
-          onClose();
-          if (onUpdateSuccess) onUpdateSuccess(); // 🔥 notify parent
-        }
-        console.log('✅ Valid form data:', formData);
-        console.log('✅ API response:', response);
-        setFormData(initialState);
-        setErrors({});
-
-        toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
-        setFormData(initialState);
-        navigate('/job-postings');
-      } catch (error) {
-        console.error('❌ API error:', error);
-        toast.error(showModal ? 'Failed to update job.' : 'Failed to create job.');
-      }
-    } else {
-      setErrors(validationErrors);
-    }
-  };
-
-  const handleCancel = () => {
-    setFormData(initialState);
-    setErrors({});
-  };
+  
 
   const validateForm = () => {
     const newErrors = {};
@@ -691,18 +739,38 @@ const handleInputChange = (e) => {
     setFiles(newFiles);
   };
 
-  const convertKeysToSnakeCase = (dataArray = []) => {
-  return dataArray.map((raw) => {
-    const item = { ...raw };
+const convertKeysToSnakeCase = (rows, masterData) => {
+  console.log("Converting rows:", rows);
+  console.log("Using masterData:",  masterData?.allGrades);
+  const asNumberOrZero = (v) =>
+    v === "" || v == null ? 0 : Number(v);
 
-    // Normalize/parse Grade ID safely
-    const gradeIdNum = Number(
-      (item["Grade ID"] ?? item.grade_id ?? "").toString().trim()
-    );
+    const findId = (list, nameKey, idKey, value) => {
+      if (!Array.isArray(list) || !value) return null;
 
-    // Helpers to coerce numeric fields
-    const asNumberOrZero = (v) =>
-      v === "" || v == null ? 0 : Number(v);
+      const normalize = (v) =>
+        String(v || "").toLowerCase().trim().replace(/\s+/g, " "); // remove extra spaces/newlines
+
+      const item = list.find(
+        (obj) => obj && normalize(obj[nameKey]) === normalize(value)
+      );
+    console.log("Item found for",value,item)
+      return item ? item[idKey] : null;
+    };
+
+  return rows.map((item) => {
+
+   // console.log("GradeId",item["Grade ID"])
+    // 🟢 Grade ID lookup
+    const gradeIdNum =
+      Number(
+        findId(
+          masterData?.allGrades,
+          "job_scale",       // display column in hidden sheet
+          "job_grade_id",    // actual id
+          item["Grade ID"]   // value from Excel
+        )
+      ) || 0;
 
     const minSalary =
       gradeIdNum === 0 ? asNumberOrZero(item["Min Salary"]) : null;
@@ -713,26 +781,26 @@ const handleInputChange = (e) => {
     return {
       requisition_id: item["Requisition ID"] ?? null,
       position_title: item["Position Title"] ?? null,
-      dept_id: item["Department"] ?? null,
-      country_id: item["Country"] ?? null,
-      state_id: item["State"] ?? null,
-      city_id: item["City"] ?? null,
-      location_id: item["Location"] ?? null,
+      dept_id: findId(masterData.departmentOptions, "department_name", "department_id", item["Department"]),
+      country_id: findId(masterData.allCountries, "country_name", "country_id", item["Country"]),
+      state_id: findId(masterData.allStates, "state_name", "state_id", item["State"]),
+      city_id: findId(masterData.allCities, "city_name", "city_id", item["City"]),
+      location_id: findId(masterData.allLocations, "location_name", "location_id", item["Location"]),
       description: item["Description"] ?? null,
       roles_responsibilities: item["Roles & Responsibilities"] ?? null,
-      grade_id: isNaN(gradeIdNum) ? null : gradeIdNum, // store as number
+      grade_id: gradeIdNum || null,   // ✅ fixed
       employment_type: item["Employment Type"] ?? null,
       eligibility_age_min: item["Eligibility Age Min"] ?? null,
       eligibility_age_max: item["Eligibility Age Max"] ?? null,
-      mandatory_qualification: item["Mandatory Qualification"] ?? null,
-      preferred_qualification: item["Preferred Qualification"] ?? null,
+      mandatory_qualification: item["Mandatory Qualification"]?.trim() || null,
+      preferred_qualification: item["Preferred Qualification"]?.trim() || null,
       mandatory_experience: item["Mandatory Experience"] ?? null,
       preferred_experience: item["Preferred Experience"] ?? null,
       probation_period: item["Probation Period"] ?? null,
       documents_required: item["Documents Required"] ?? null,
+      min_credit_score: item["Min Credit Score"] ?? null,
       no_of_vacancies: item["Number of Vacancies"] ?? null,
       selection_procedure: item["Selection Procedure"] ?? null,
-      min_credit_score: item["Min Credit Score"] ?? null,
       min_salary: minSalary,
       max_salary: maxSalary,
     };
@@ -740,74 +808,214 @@ const handleInputChange = (e) => {
 };
 
 
+const readExcel = async (file) => {
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    const arrayBuffer = event.target.result;
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
-  const readExcel = async (file) => {
-    const reader = new FileReader();
-    reader.onload = async (event) => {
-      const arrayBuffer = event.target.result;
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
-      const validRows = [];
-      const errorList = [];
-      for (let i = 0; i < rows.length; i++) {
-        try {
-          const validated = await jobSchema.validate(rows[i], { abortEarly: false });
-          validRows.push(validated);
-        } catch (err) {
-          errorList.push({ row: i + 2, messages: err.errors });
-        }
+    const validRows = [];
+    const errorList = [];
+
+    for (let i = 0; i < rows.length; i++) {
+      try {
+        // Validate each row with your Yup schema
+        const validated = await jobSchema.validate(rows[i], { abortEarly: false });
+        validRows.push(validated);
+      } catch (err) {
+        errorList.push({ row: i + 2, messages: err.errors });
       }
-      setErrors(errorList);
-      console.log("Valid rows from Excel:", validRows);
-      const formattedData = convertKeysToSnakeCase(validRows);
+    }
+
+    setErrors(errorList);
+
+    if (validRows.length > 0) {
+      // Convert human-readable Excel values to IDs
+      console.log("masterdata111",masterData)
+      const formattedData = convertKeysToSnakeCase(validRows, masterData);
       setJsonData(formattedData);
-    };
-    reader.readAsArrayBuffer(file);
+      console.log("Formatted Excel Data:", formattedData);
+    }
   };
 
-  const handleUploadSubmit = async () => {
-    if (files.length === 0) {
-      setErrors(prev => ({ ...prev, file: "Please upload at least one Excel file." }));
-      return;
-    }
-    if (errors && Array.isArray(errors) && errors.length > 0) {
-      toast.error("Please fix validation errors before submitting.");
-      return;
-    }
-    if (!jsonData || jsonData.length === 0) {
-      toast.error("No valid data to submit.");
-      return;
-    }
-    try {
-      let dataToUpload = jsonData;
-      console.log('Selected Requisition Index:', dataToUpload);
-      if (selectedReqIndex !== null && selectedReqIndex !== "" && reqs[selectedReqIndex]) {
-        const selectedReqId = reqs[selectedReqIndex].requisition_id;
-        dataToUpload = jsonData.map(obj => ({ ...obj, requisition_id: selectedReqId }));
-      }
-      dataToUpload = dataToUpload.map(obj => {
-        const matchedPosition = masterPositions.find(
-          pos => pos.position_title === obj.position_title
-        );
+  reader.readAsArrayBuffer(file);
+};
 
-        return {
-          ...obj,
-          position_code: matchedPosition ? matchedPosition.position_code : null, // fallback if not found
-        };
+const handleUploadSubmit = async () => {
+  if (files.length === 0) {
+    setErrors(prev => ({ ...prev, file: "Please upload at least one Excel file." }));
+    return;
+  }
+
+  if (errors && Array.isArray(errors) && errors.length > 0) {
+    toast.error("Please fix validation errors before submitting.");
+    return;
+  }
+
+  if (!jsonData || jsonData.length === 0) {
+    toast.error("No valid data to submit.");
+    return;
+  }
+
+  try {
+    let dataToUpload = [...jsonData];
+
+    // Attach selected requisition ID if a requisition is selected
+    if (selectedReqIndex !== null && reqs[selectedReqIndex]) {
+      const selectedReqId = reqs[selectedReqIndex].requisition_id;
+      dataToUpload = dataToUpload.map(obj => ({ ...obj, requisition_id: selectedReqId }));
+    }
+
+    // Map position codes from your static positions list
+    dataToUpload = dataToUpload.map(obj => {
+      const matchedPosition = masterPositions.find(pos => pos.position_title === obj.position_title);
+      return {
+        ...obj,
+        position_code: matchedPosition ? matchedPosition.position_code : null, // fallback if not found
+      };
+    });
+
+    console.log("Uploading Excel Data:", dataToUpload);
+
+    await apiService.uploadJobExcel(dataToUpload);
+    setShowUploadModal(false);
+    toast.success("Excel data posted successfully!");
+    setFiles([]);
+    setJsonData([]);
+    navigate('/job-postings');
+  } catch (error) {
+    console.error("Failed to upload Excel data:", error);
+    toast.error("Failed to post Excel data.");
+  }
+};
+
+const handleDownloadTemplate = async () => {
+  try {
+    // Fetch master data
+    const masterData = await apiService.getMasterData();
+console.log("Master Data for Template:", masterData);
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Template");
+    const hiddenSheet = workbook.addWorksheet("MasterData");
+    hiddenSheet.state = "hidden";
+
+    // ----------------------------
+    // Headers for Template (Requisition ID removed)
+    // ----------------------------
+    const headers = [
+      "Position Title",
+      "Department",
+      "Country",
+      "State",
+      "City",
+      "Location",
+      "Description",
+      "Roles & Responsibilities",
+      "Grade ID",
+      "Employment Type",
+      "Eligibility Age Min",
+      "Eligibility Age Max",
+      "Mandatory Qualification",
+      "Preferred Qualification",
+      "Mandatory Experience",
+      "Preferred Experience",
+      "Probation Period",
+      "Documents Required",
+      "Number of Vacancies",
+      "Selection Procedure",
+      "Min Credit Score",
+      "Min Salary",
+      "Max Salary",
+    ];
+    sheet.addRow(headers);
+
+    // ----------------------------
+    // Hidden sheet dropdown data
+    // ----------------------------
+    let col = 1;
+const addMapping = (list, nameKey, idKey) => {
+  if (!Array.isArray(list) || list.length === 0) return;
+  list.forEach((item, i) => {
+    if (item && item[nameKey] && item[idKey] != null) {
+      hiddenSheet.getCell(i + 2, col).value = String(item[nameKey]).trim();
+      hiddenSheet.getCell(i + 2, col + 1).value = item[idKey];
+    }
+  });
+  col += 2;
+};
+
+
+    addMapping(masterData.departments, "department_name", "department_id");
+    addMapping(masterData.countries, "country_name", "country_id");
+    addMapping(masterData.states, "state_name", "state_id");
+    addMapping(masterData.cities, "city_name", "city_id");
+    addMapping(masterData.locations, "location_name", "location_id");
+    addMapping(
+  masterData.job_grade_data.map((g) => ({
+    job_scale: g.job_scale?.trim(),   // clean up spaces/newlines
+    job_grade_id: g.job_grade_id,
+  })),
+  "job_scale",
+  "job_grade_id"
+);
+
+
+    // ----------------------------
+    // Static Employment Type dropdown
+    // ----------------------------
+    const employmentTypeOptions = ["Full-Time", "Part-Time", "Contract"];
+  const employmentHiddenCol = col;
+employmentTypeOptions.forEach((item, i) => {
+  hiddenSheet.getCell(i + 2, employmentHiddenCol).value = item; // write in current col
+});
+col++; 
+
+    // ----------------------------
+    // Add dropdown validations
+    // ----------------------------
+    const lastRow = 500;
+
+    const addDropdown = (colIndex, hiddenColLetter, itemCount) => {
+      const colLetter = String.fromCharCode(65 + colIndex);
+      sheet.dataValidations.add(`${colLetter}2:${colLetter}${lastRow}`, {
+        type: "list",
+        allowBlank: true,
+        formulae: [`MasterData!$${hiddenColLetter}$2:$${hiddenColLetter}$${itemCount + 1}`],
       });
-      console.log('Posting Excel data:', dataToUpload);
-      await apiService.uploadJobExcel(dataToUpload);
-      setShowUploadModal(false);
-      toast.success("Excel data posted successfully!");
-      setFiles([]);
-      setJsonData([]);
-      navigate('/job-postings');
-    } catch (error) {
-      toast.error("Failed to post Excel data.");
-      console.error("Error posting Excel data:", error);
-    }
-  };
+    };
+
+    // Since Requisition ID is removed, all dropdown column indexes shift left by 1
+    if (masterData.departments?.length) addDropdown(1, "A", masterData.departments.length); // Department
+    if (masterData.countries?.length) addDropdown(2, "C", masterData.countries.length);     // Country
+    if (masterData.states?.length) addDropdown(3, "E", masterData.states.length);           // State
+    if (masterData.cities?.length) addDropdown(4, "G", masterData.cities.length);           // City
+    if (masterData.locations?.length) addDropdown(5, "I", masterData.locations.length);     // Location
+    if (masterData.job_grade_data?.length) {
+      addDropdown(
+        8,   // Grade ID column in visible sheet
+        "K", // Hidden sheet col for job_scale
+        masterData.job_grade_data.filter(x => x.job_scale && x.job_grade_id).length
+      );
+    }// Grade ID
+
+    // Employment Type dropdown
+    addDropdown(9, String.fromCharCode(64 + employmentHiddenCol), employmentTypeOptions.length);
+
+    // ----------------------------
+    // Download the workbook
+    // ----------------------------
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    saveAs(blob, "Job_Requisition_Template.xlsx");
+
+  } catch (error) {
+    console.error("Error downloading template:", error);
+  }
+};
+
+
 
   return (
     <Container fluid className="py-3">
@@ -832,7 +1040,12 @@ const handleInputChange = (e) => {
               </div>
               <div className='d-flex gap-3'>
                 <a className='downlaodfile'
-                  href="/JobCreationTemplate.xlsx"
+                  
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDownloadTemplate();
+                  }}
                   style={{
                     border: "1px solid #FF7043",
                     backgroundColor: "transparent",
@@ -1092,4 +1305,4 @@ const handleInputChange = (e) => {
   );
 };
 
-export default JobCreation;
+export default JobCreation; 

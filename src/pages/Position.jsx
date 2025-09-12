@@ -159,7 +159,7 @@ else {
 
                 <td>{pos.positionName}</td>
                 <td>{  departments.find(g => g.department_id === pos.deptId)?.department_name || "-"}</td>
-                <td>{  jobGrades.find(g => g.job_grade_id === pos.jobGradeId)?.job_grade_code || "-"}</td>
+                <td>{  jobGrades.find(g => g.job_grade_id === pos.jobGradeId)?.job_scale || "-"}</td>
                 <td>{pos.positionDescription}</td>
                 <td>
                   <FontAwesomeIcon

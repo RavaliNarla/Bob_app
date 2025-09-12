@@ -173,7 +173,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
             if (selectedRequisitionId && selectedPositionId) {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
-                const fetchedCandidates = fetchedCandidatesResponse?.data || [];//
+                console.log("Fetched candidates response:", fetchedCandidatesResponse);
+                const fetchedCandidates = fetchedCandidatesResponse || fetchedCandidatesResponse?.data || [];//
                 //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
                 // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
