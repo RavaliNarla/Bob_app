@@ -49,6 +49,10 @@ const OfferModal = ({
     return `${TEMPLATES_API}/${encodeURIComponent(selectedTemplateId)}/content`;
   }, [selectedTemplateId]);
 
+   useEffect(() => {
+   if (show) setSelectedTemplateId('');
+ }, [show]);
+
   // Load templates whenever modal opens
   useEffect(() => {
     if (!show) return;
@@ -63,13 +67,13 @@ const OfferModal = ({
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json(); // [{id,name,type,path}, ...]
 
-        setTemplates(data || []);
-        if (data?.length) {
-          const stillValid = data.some(t => t.id === selectedTemplateId);
-          setSelectedTemplateId(stillValid ? selectedTemplateId : data[0].id);
-        } else {
-          setSelectedTemplateId('');
-        }
+         setTemplates(data || []);
+ if (data?.length) {
+   const stillValid = data.some(t => t.id === selectedTemplateId);
+   setSelectedTemplateId(stillValid ? selectedTemplateId : '');
+ } else {
+   setSelectedTemplateId('');
+ }
       } catch (e) {
         console.error(e);
         setTplError('Failed to load templates. Please try again.');
@@ -147,11 +151,12 @@ const OfferModal = ({
                   onChange={(e) => setSelectedTemplateId(e.target.value)}
                   disabled={tplLoading}
                 >
-                  {tplLoading && <option>Loading templates…</option>}
-                  {!tplLoading && templates.length === 0 && <option>No templates found</option>}
-                  {!tplLoading && templates.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
+                  <option value="" disabled>
+    {tplLoading ? 'Loading templates…' : (templates.length ? 'Select a template…' : 'No templates found')}
+  </option>
+  {!tplLoading && templates.map(t => (
+    <option key={t.id} value={t.id}>{t.name}</option>
+  ))}
                 </Form.Select>
                 {tplLoading && <Spinner animation="border" size="sm" />}
               </div>

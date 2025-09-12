@@ -1,17 +1,21 @@
 // src/components/OfferTemplate/LivePreview.js
 import React from "react";
 import { useTemplateStore } from '../../store/useTemplateStore';
-
+ 
 // Only wrap tokens if not already wrapped by Quill (prevents double)
-const introWithTokens = (html = "") => {
+function introWithTokens(html = "") {
   if (!html) return "";
-  return html.includes('class="quill-token"')
-    ? html
-    : html.replace(/\{\{fields\.(positionTitle|companyName|joiningDate)\}\}/g,
-        (match) => `<span class="quill-token">${match}</span>`
-      );
-};
-
+ 
+  return html
+    .replace(/(<span class="quill-token"[^>]*>.*?<\/span>|{{[^}]+}})/g, (match) => {
+      if (match.startsWith("<span")) {
+        return match; // already wrapped
+      }
+      return `<span class="quill-token" contenteditable="false" data-token="${match}">${match}</span>`;
+    })
+    .replace(/&nbsp;/g, " ");
+}
+ 
 function TemplateBase({ template, candidate, s, c, b, variant }) {
   return (
     <>
@@ -24,14 +28,14 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
       ) : (
         <div style={{ textAlign: "right", minHeight: 22 }}><span>Date:</span></div>
       )}
-
+ 
       {/* Subject */}
       {c.subject ? (
         <div style={{ textAlign: "center", margin: "6px 0 10px 0" }}>
           <strong style={{ fontSize: 16 }}>{c.subject}</strong>
         </div>
       ) : null}
-
+ 
       {/* Salutation */}
       {s.salutation !== false && (
         <div style={{ marginTop: 8 }}>
@@ -43,10 +47,10 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
           </p>
         </div>
       )}
-
+ 
       {/* Intro */}
       <div dangerouslySetInnerHTML={{ __html: introWithTokens(c.intro) }} />
-
+ 
       {/* Job details */}
       {s.jobDetails !== false && (
         variant === 2 ? (
@@ -63,12 +67,12 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
           </div>
         )
       )}
-
+ 
       {/* Terms */}
       {s.terms !== false && (
         <div style={{ marginTop: 8 }} dangerouslySetInnerHTML={{ __html: c.termsHtml || "" }} />
       )}
-
+ 
       {/* Signature */}
       {s.signature !== false && (
         <div style={{ marginTop: 16, textAlign: variant === 2 ? "right" : variant === 3 ? "center" : "left" }}>
@@ -79,19 +83,19 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
     </>
   );
 }
-
+ 
 export default function LivePreview() {
   const template = useTemplateStore((s) => s.template);
   const candidate = useTemplateStore((s) => s.candidate);
   const layout = useTemplateStore((s) => s.layout);
-
+ 
   const s = template.sections || {};
   const c = template.content || {};
   const b = template.branding || {};
-
+ 
   const wmSize = Number(b.backgroundLogoSizePx) || 160;
   const wmOpacity = b.backgroundLogoOpacity != null ? Number(b.backgroundLogoOpacity) : 0.12;
-
+ 
   return (
     <div
       id="offer-preview"
@@ -126,7 +130,7 @@ export default function LivePreview() {
           />
         </div>
       ) : null}
-
+ 
       <div style={{ position: "relative", zIndex: 2 }}>
         {layout === "template1" && <TemplateBase template={template} candidate={candidate} s={s} c={c} b={b} variant={1} />}
         {layout === "template2" && <TemplateBase template={template} candidate={candidate} s={s} c={c} b={b} variant={2} />}
@@ -135,3 +139,4 @@ export default function LivePreview() {
     </div>
   );
 }
+ 

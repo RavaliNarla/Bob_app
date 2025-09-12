@@ -1,122 +1,112 @@
 // src/template-studio/components/TemplateEditor.js
+import React, { useEffect, useRef } from "react";
 import { Row, Col, Card, Form, InputGroup } from "react-bootstrap";
-import { useTemplateStore } from '../../store/useTemplateStore';
+import { useTemplateStore } from "../../store/useTemplateStore";
 import SectionToggles from "./SectionToggles";
 import LogoUploader from "./LogoUploader";
 import BackgroundLogoPicker from "./BackgroundLogoPicker";
 import LivePreview from "./LivePreview";
 import Toolbar from "./Toolbar";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { useEffect, useRef } from "react";
 import defaultTemplate from "./defaultTemplate.json";
-import '../../css/Editor.css';
+import "../../css/Editor.css";
 
-// --- Custom Quill Blot for tokens ---
-const TOKEN_REGEX = /(\{\{fields\.(positionTitle|companyName|joiningDate)\}\})/g;
-const Inline = Quill.import("blots/inline");
+/* Restore ReactQuill ONLY for Terms so it doesn’t show raw <p> tags */
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
-class TokenBlot extends Inline {
-  static create(value) {
-    let node = super.create();
-    node.setAttribute("contenteditable", "false");
-    node.setAttribute("data-token", value);
-    node.className = "quill-token";
-    node.innerText = value;
-    return node;
-  }
-  static formats(node) {
-    return node.getAttribute("data-token");
-  }
-}
+/* ------- token helpers (chips only) ------- */
+const TOKEN_CLASS = "quill-token";
+const TOKEN_RE = /\{\{\s*fields\.(positionTitle|companyName|joiningDate)\s*\}\}/g;
 
-TokenBlot.blotName = "token";
-TokenBlot.tagName = "span";
-TokenBlot.className = "quill-token";
-Quill.register(TokenBlot);
-
-// --- Utility to convert tokens in HTML to Quill tokens ---
-export function htmlToDeltaWithTokens(html) {
+// wrap plain tokens once; keep existing spans if already wrapped
+function wrapTokensOnce(html = "") {
   if (!html) return "";
-  return html.replace(TOKEN_REGEX, (match) => {
-    return `<span class="quill-token" data-token="${match}" contenteditable="false">${match}</span>`;
-  });
+  if (html.includes(`class="${TOKEN_CLASS}"`)) return html;
+  return html.replace(
+    TOKEN_RE,
+    (m) => `<span class="${TOKEN_CLASS}" data-token="${m}" contenteditable="false">${m}</span>`
+  );
 }
 
-// --- Initialize template with processed intro content ---
-const initialTemplate = {
-  ...defaultTemplate,
-  content: {
-    ...defaultTemplate.content,
-    intro: htmlToDeltaWithTokens(defaultTemplate.content.intro)
-  }
-};
+// block deletion when caret touches a token chip
+function selectionTouchesToken(root) {
+  const sel = window.getSelection?.();
+  if (!sel || sel.rangeCount === 0) return false;
+  const r = sel.getRangeAt(0);
+  const near = (n) =>
+    n &&
+    (n.parentElement?.closest?.(`.${TOKEN_CLASS}`) ||
+      (n.nodeType === 1 && n.closest?.(`.${TOKEN_CLASS}`)));
+  return !!(near(r.startContainer) || near(r.endContainer) || near(r.commonAncestorContainer));
+}
+
+/* very small contentEditable editor JUST for the Intro */
+function CEIntro({ value, onChange }) {
+  const ref = useRef(null);
+
+  // paint HTML (idempotent) without caret jumps
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const safe = wrapTokensOnce(value || "");
+    if (el.innerHTML !== safe) el.innerHTML = safe;
+  }, [value]);
+
+  const onPaste = (e) => {
+    // paste as plain text; tokens will wrap on re-render
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData("text/plain") || "";
+    document.execCommand("insertHTML", false, text.replace(/\n/g, "<br>"));
+  };
+
+  const onBeforeInput = (e) => {
+    if (
+      (e.inputType || "").startsWith("delete") &&
+      selectionTouchesToken(ref.current)
+    ) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  const onKeyDown = (e) => {
+    if ((e.key === "Backspace" || e.key === "Delete") && selectionTouchesToken(ref.current)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  const onInput = () => onChange?.(ref.current.innerHTML);
+
+  return (
+    <div
+      ref={ref}
+      className="form-control mb-3"
+      contentEditable
+      suppressContentEditableWarning
+      style={{ minHeight: 140, whiteSpace: "pre-wrap" }}
+      onPaste={onPaste}
+      onBeforeInput={onBeforeInput}
+      onKeyDown={onKeyDown}
+      onInput={onInput}
+    />
+  );
+}
 
 export default function TemplateEditor() {
   const template = useTemplateStore((s) => s.template);
   const setTemplateName = useTemplateStore((s) => s.setTemplateName);
   const setField = useTemplateStore((s) => s.setField);
   const setContent = useTemplateStore((s) => s.setContent);
-  const quillRef = useRef();
 
+  // ensure chips exist once on first mount
   useEffect(() => {
-    // Reset state on unmount
-    return () => {
-      useTemplateStore.setState({
-        template: initialTemplate, // show styled tokens on fresh open
-        candidate: {
-          full_name: "",
-          address: "",
-          address1: "",
-          address2: "",
-          location: ""
-        },
-        job: {
-          position: "",
-          salary: ""
-        },
-        layout: "template1"
-      });
-    };
-  }, []);
-
-  const handleIntroChange = (value) => {
-    setContent("intro", value);
-  };
-
-  // Prevent deleting tokens via keyboard
-  useEffect(() => {
-    const quill = quillRef.current && quillRef.current.getEditor && quillRef.current.getEditor();
-    if (!quill) return;
-
-    function preventTokenDelete() {
-      const tokens = quill.container.querySelectorAll(".quill-token");
-      if (!tokens.length) return false;
-      const selection = quill.getSelection();
-      if (!selection) return false;
-
-      for (let token of tokens) {
-        const blot = Quill.find(token);
-        if (!blot) continue;
-        const index = blot.offset(quill.scroll);
-        const length = blot.length();
-        if (selection.index < index + length && selection.index + selection.length > index) {
-          return true;
-        }
-      }
-      return false;
+    const intro = template?.content?.intro ?? defaultTemplate.content.intro ?? "";
+    if (!intro.includes(`class="${TOKEN_CLASS}"`)) {
+      setContent("intro", wrapTokensOnce(intro));
     }
-
-    const handleKeyDown = (e) => {
-      if ((e.key === "Backspace" || e.key === "Delete") && preventTokenDelete()) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
-
-    quill.root.addEventListener("keydown", handleKeyDown);
-    return () => quill.root.removeEventListener("keydown", handleKeyDown);
-  }, [template.content.intro]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -188,6 +178,8 @@ export default function TemplateEditor() {
 
             <Card.Body>
               <h6 className="mb-2">Content</h6>
+
+              {/* Subject */}
               <Form.Group className="mb-2">
                 <Form.Label>Subject</Form.Label>
                 <Form.Control
@@ -197,29 +189,19 @@ export default function TemplateEditor() {
                 />
               </Form.Group>
 
-              <Form.Label>Intro (HTML / tokens OK)</Form.Label>
-              <ReactQuill
-                ref={quillRef}
-                theme="snow"
+              {/* Intro (chips, non-editable) */}
+              <Form.Label>Intro (tokens are orange chips, non-editable)</Form.Label>
+              <CEIntro
                 value={template.content.intro}
-                onChange={handleIntroChange}
-                className="mb-3"
-                modules={{
-                  toolbar: [
-                    ["bold", "italic", "underline"],
-                    [{ list: "ordered" }, { list: "bullet" }],
-                    ["clean"],
-                  ],
-                }}
-                formats={["bold", "italic", "underline", "list", "bullet", "token"]}
+                onChange={(v) => setContent("intro", v)}
               />
 
-              <Form.Label>Terms (HTML)</Form.Label>
+              {/* Terms (restored to ReactQuill so no raw <p> shows) */}
+              <Form.Label>Terms</Form.Label>
               <ReactQuill
                 theme="snow"
                 value={template.content.termsHtml}
                 onChange={(v) => setContent("termsHtml", v)}
-                className="mb-2"
               />
             </Card.Body>
           </div>

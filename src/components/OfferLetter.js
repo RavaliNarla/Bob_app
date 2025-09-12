@@ -13,8 +13,8 @@ const OfferLetter = ({
   onDownloadComplete,
   templateUrl,    // e.g. /api/offer-templates/:id/content
   joiningDate,    // YYYY-MM-DD from OfferModal
-  companyName,    // optional override (used only if template lacks it)
-  hrName,         // optional override (used only if template lacks it)
+  companyName,    // optional override (used if template/props lack it)
+  hrName,         // optional override (used if template/props lack it)
 }) => {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -36,6 +36,9 @@ const OfferLetter = ({
     backgroundLogoSizePx: 120,
     backgroundLogoOpacity: 0.06,
   });
+
+  // 🔹 NEW: keep fields that were filled & saved in the Template Editor (from tpl-meta)
+  const [templateFields, setTemplateFields] = useState({});
 
   const [templateHtml, setTemplateHtml] = useState('');
   const [assetsReady, setAssetsReady] = useState(false);
@@ -86,12 +89,20 @@ const OfferLetter = ({
         const html = await res.text();
         if (abort) return;
 
-        // parse meta branding (if present)
+        // parse meta (branding + fields) if present
         const parsed = new DOMParser().parseFromString(html, 'text/html');
         const metaEl = parsed.querySelector('script#tpl-meta[type="application/json"]');
+
+        let tplFields = {};
         if (metaEl?.textContent) {
           try {
             const meta = JSON.parse(metaEl.textContent);
+
+            // 🔹 capture fields the user filled in Template Editor
+            tplFields = meta?.fields || {};
+            setTemplateFields(tplFields);
+
+            // branding
             const b = meta?.branding || {};
             setBranding({
               logoUrl: b.logoUrl || '',
@@ -99,11 +110,13 @@ const OfferLetter = ({
               backgroundLogoSizePx: Number(b.backgroundLogoSizePx ?? 120),
               backgroundLogoOpacity: Number(b.backgroundLogoOpacity ?? 0.06),
             });
-          } catch { /* ignore bad meta */ }
+          } catch {
+            // ignore bad meta
+          }
         }
 
-        // merge tokens
-        const merged = mergeTemplateSmart(html, buildValueMap({ formData }));
+        // merge tokens (prefer template fields → then props → then static)
+        const merged = mergeTemplateSmart(html, buildValueMap({ formData, templateFields: tplFields }));
 
         // ensure branding (header logo + watermark) is in the DOM
         const withBranding = applyBrandingToHtml(merged, branding);
@@ -122,7 +135,14 @@ const OfferLetter = ({
 
     return () => { abort = true; };
     // include branding so updates re-apply
-  }, [templateUrl, formData, branding.logoUrl, branding.backgroundLogoUrl, branding.backgroundLogoOpacity, branding.backgroundLogoSizePx]);
+  }, [
+    templateUrl,
+    formData,
+    branding.logoUrl,
+    branding.backgroundLogoUrl,
+    branding.backgroundLogoOpacity,
+    branding.backgroundLogoSizePx,
+  ]);
 
   // ---------- auto download when ready ----------
   useEffect(() => {
@@ -184,12 +204,24 @@ const OfferLetter = ({
     .toLowerCase()
     .replace(/[\s._-]+/g, '');
 
-  function buildValueMap({ formData }) {
+  // 🔧 FIXED: Build a map that prefers fields from the saved template (tpl-meta),
+  //           then falls back to values coming from OfferModal (props),
+  //           then to static defaults.
+  function buildValueMap({ formData, templateFields = {} }) {
+    // read both camelCase and snake_case from template fields
+    const hrFromTpl = (templateFields.hrName ?? templateFields.hr_name ?? '').toString().trim();
+    const companyFromTpl = (templateFields.companyName ?? templateFields.company_name ?? '').toString().trim();
+
+    const hrFinal = hrFromTpl || (formData.hrName ?? '').toString().trim() || 'HR Department';
+    const companyFinal = companyFromTpl || (formData.companyName ?? '').toString().trim() || 'Company Name';
+
     const composedAddress = [formData.address1, formData.address2]
       .filter(Boolean)
       .map(s => String(s).trim())
       .filter(Boolean)
       .join(', ');
+
+    const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
 
     const base = {
       full_name: safe(formData.full_name),
@@ -198,18 +230,20 @@ const OfferLetter = ({
       address: composedAddress,
 
       position_title: safe(formData.position_title),
-      company_name: safe(formData.companyName),
+      company_name: companyFinal,         // snake_case
+      companyName: companyFinal,          // camelCase
       joining_date: safe(formData.joiningDate),
       location: safe(formData.location),
       reporting_manager: safe(formData.reportingManager),
       gross_annual: formatINR(formData.grossAnnual),
+      hr_name: hrFinal,                   // snake_case
+      hrName: hrFinal,                    // camelCase
       req_id: safe(formData.reqId),
 
-      today: todayLong,
-      hr_name: safe(formData.hrName),
+      today: todayStr,
     };
 
-    // job.* aliases used by templates
+    // aliases used by templates
     const jobMap = {
       'job.position': base.position_title,
       'job.salary': base.gross_annual,
@@ -217,22 +251,29 @@ const OfferLetter = ({
     };
 
     const finalMap = {};
+
+    // add base keys + normalized variants + fields.* / candidate.* helpers
     for (const [k, v] of Object.entries(base)) {
-      finalMap[normalizeKey(k)] = v;
-      finalMap[k] = v; // preserve original key form
-      // auto namespace expansions
-      finalMap['fields' + normalizeKey(k)] = v;
-      finalMap['candidate' + normalizeKey(k)] = v;
-    }
-    for (const [k, v] of Object.entries(jobMap)) {
-      finalMap[normalizeKey(k)] = v;
-      finalMap[k] = v;
-      finalMap['job' + normalizeKey(k)] = v;
+      const norm = normalizeKey(k);         // e.g. hr_name -> hrname
+      finalMap[norm] = v;                   // hrname
+      finalMap[k] = v;                      // hr_name / hrName
+      finalMap['fields' + norm] = v;        // fieldshrname (legacy helper)
+      finalMap['candidate' + norm] = v;     // candidatefull_name etc.
+
+      // also add dotted form for fields: fields.hrName / fields.hr_name
+      finalMap['fields.' + k] = v;
     }
 
-    // date aliases
-    finalMap['fieldsletterdate'] = base.today;
-    finalMap['letterdate'] = base.today;
+    for (const [k, v] of Object.entries(jobMap)) {
+      const norm = normalizeKey(k);         // job.position -> jobposition
+      finalMap[norm] = v;                   // jobposition
+      finalMap[k] = v;                      // job.position
+      finalMap['job' + norm] = v;           // legacy helper
+    }
+
+    // letter date aliases used by exportHtml.js
+    finalMap['fieldsletterdate'] = todayStr;
+    finalMap['letterdate'] = todayStr;
 
     return finalMap;
   }
@@ -246,6 +287,7 @@ const OfferLetter = ({
       const core = extractCoreKey(raw);
       const norm = normalizeKey(core);
       if (norm in valuesMap) return valuesMap[norm];
+      if (core in valuesMap) return valuesMap[core]; // exact match (e.g., fields.hrName)
       unmatched.add(raw.trim());
       return m; // leave unrecognized tokens as-is
     });
@@ -389,7 +431,7 @@ const OfferLetter = ({
           <p><strong>Subject: Offer of Employment</strong></p>
           <p>Dear <b>{formData.full_name}</b>,</p>
           <p>
-            We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>{formData.companyName}</b>.
+            We are pleased to offer you the position of <b>{formData.position_title}</b> at <b>{formData.companyName || 'Company Name'}</b>.
             Your expected date of joining will be <b>{formData.joiningDate}</b>.
           </p>
 
@@ -403,7 +445,7 @@ const OfferLetter = ({
 
           <p>Sincerely,</p>
           <p>
-            {formData.hrName || 'HR Repartment'}<br />
+            {formData.hrName || 'HR Department'}<br />
             {formData.companyName || 'Company Name'}
           </p>
         </div>
