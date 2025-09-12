@@ -18,7 +18,7 @@ export const jobSchema = Yup.object().shape({
   'Mandatory Experience': Yup.string().required('Mandatory Experience is required'),
   'Preferred Experience': Yup.string().required('Preffered Experience is required'),
   'Probation Period': Yup.string().required('Probation Period is required'),
-  'Documents Required': Yup.string().required('Documants Required is required'),
+  'Documents Required': Yup.string().required('Documents Required is required'),
   'Min Credit Score': Yup.number().required('Min Credit Score is required'),
 
   // ✅ Conditional salary validation

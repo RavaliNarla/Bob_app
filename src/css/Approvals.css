@@ -299,9 +299,34 @@ font-family: 'Poppins', sans-serif !important;
   background-color: rgba(247,225,215, 0.4) !important;
 }
 .approvals_tab .searchinput {
-	width: 30% !important;
+	width: 50% !important;
 	float: right;
 }
 .approvals_tab .title{
   font-size:12px;
+}
+.approvals_tab .fontcard .text-dark {
+    font-weight: 600;
+    color: rgb(255, 112, 67) !important;
+}
+.approvals_tab  .header {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    margin-bottom: 0.25rem;
+    color: #414141;
+}
+.approvals_tab .fontcard, .text-dark, .boldnes, .boldnes b {
+    font-size: 14px !important;
+    color: #162b75 !important;
+}
+.approvals_tab .boldnes b {
+    font-weight: 500;
+    color: #414141;
+}
+.approvals_tab .dropdowntext,
+.approvals_tab .dropdowntext option {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 14px;
+  color:#414141;
 }

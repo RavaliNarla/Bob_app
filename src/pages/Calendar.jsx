@@ -196,7 +196,7 @@ export default function Calendar() {
   }, [events, selectedDate, search]);
 
   return (
-    <Container fluid className="py-3 px-5 fonreg">
+    <Container fluid className="py-3 px-5 fonreg calendarContainer">
       {/* Controls */}
       <Row className="align-items-center g-2 mb-3">
         <Col md="auto"><h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{headerTitle}</h5></Col>

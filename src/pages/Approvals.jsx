@@ -38,6 +38,9 @@ const Approvals = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectDescription, setRejectDescription] = useState("");
   const [workflowApprovals, setWorkflowApprovals] = useState([]);
+    const [readOnly, setReadOnly] = useState(false);
+    const [selectedStatus, setSelectedStatus] = useState("");
+
   // Toggle accordion and fetch requisition details
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
@@ -77,6 +80,7 @@ const Approvals = () => {
     try {
       // ✅ get job postings
       const responseData = await apiService.getApprovalstatus(user.userid);
+      console.log("Job Postings Response:", responseData);
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
@@ -130,12 +134,27 @@ const Approvals = () => {
   };
 
   // Search
-  const filteredJobPostings = jobPostings.filter((job) => {
-    const search = searchTerm.toLowerCase();
-    return (
-      job.requisition_title.toLowerCase().includes(search) ||
-      job.requisition_code.toLowerCase().includes(search)
+  // const filteredJobPostings = jobPostings.filter((job) => {
+  //   const search = searchTerm.toLowerCase();
+  //   return (
+  //     job.requisition_title.toLowerCase().includes(search) ||
+  //     job.requisition_code.toLowerCase().includes(search)
+  //   );
+  // });
+
+ const filteredJobPostings = jobPostings.filter((job) => {
+    const matchesSearch = job.requisition_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         job.requisition_code.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Find the approval for the current job
+    const jobApproval = workflowApprovals.find(approval => 
+      approval.entityId === job.requisition_id
     );
+    
+    const matchesStatus = !selectedStatus || 
+                         (jobApproval ? jobApproval.action : job.requisition_status)?.toLowerCase() === selectedStatus.toLowerCase();
+    
+    return matchesSearch && matchesStatus;
   });
 
   const handleApprove = async () => {
@@ -222,15 +241,34 @@ const Approvals = () => {
 
   return (
     <Container fluid className="p-4 approvals_tab">
-        <div className="d-flex align-items-center justify-content-between mb-3 flex-wrap">
-              {/* <div className="d-flex align-items-center mb-2 mb-md-0">
-                <h5 className="fonall me-3" style={{ marginBottom: "0.25rem" }}>
-                  My Approvals
-                </h5>
-                
-              </div> */}
+            {/* <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>
+        Approvals
+      </h5> */}
+      
+      <div className="d-flex flex-row align-items-end justify-content-between mb-3">
+        <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
+          <div className="d-flex flex-row align-items-center">
+            <h5 className="header me-2" style={{ marginBottom: "0.25rem" }}>
+              Select Status
+            </h5>
+            <Form.Select
+              value={selectedStatus}
+              onChange={(e) => {
+                setSelectedStatus(e.target.value);
+                setActiveKey(null); // Close all accordions when filter changes
+              }}
+              style={{ width: "200px" }}
+              className="fonreg dropdowntext"
+            >
+              <option value="">All</option>
+              <option value="Pending">Pending for Approval</option>
+              <option value="Approved">Approved</option>
+            </Form.Select>
+          </div>
+        </div>
+        
 
-        <div className="col-md-12 search-container fonreg">
+        <div className="col-md-6 search-container fonreg">
           <InputGroup className="searchinput">
             <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>
               <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
@@ -245,6 +283,8 @@ const Approvals = () => {
           </InputGroup>
         </div>
       </div>
+        
+        
 
     {loading ? (
              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
@@ -258,134 +298,179 @@ const Approvals = () => {
              </div>
              )  : (
         <Accordion activeKey={activeKey}>
-          {filteredJobPostings.map((job, index) => {
-            const approval = workflowApprovals.find(
-                (a) => a.entityId === job.requisition_id
-              );
-           return  (
-            <Accordion.Item
-              eventKey={index.toString()}
-              key={index}
-              className="mb-2 border rounded"
+  {filteredJobPostings.map((job, index) => {
+    const approval = workflowApprovals.find(
+      (a) => a.entityId === job.requisition_id
+    );
+
+    return (
+      <Accordion.Item
+        eventKey={index.toString()}
+        key={index}
+        className="mb-2 border rounded list"
+      >
+        <Accordion.Header
+          onClick={() => toggleAccordion(index.toString(), job.requisition_id)}
+        >
+          <Row className="w-100 align-items-center fontreg">
+            {/* Left side: Checkbox + Title + Requisition */}
+            <Col
+              xs={12}
+              md={6}
+              className="d-flex align-items-start mb-2 mb-md-0"
             >
-              <Accordion.Header
-                onClick={() =>
-                  toggleAccordion(index.toString(), job.requisition_id)
+              <Form.Check
+                type="checkbox"
+                className="form-check-orange me-2 mt-1"
+                checked={selectedJobIds.includes(job.requisition_id)}
+                onChange={(e) => handleJobSelection(e, job.requisition_id)}
+                onClick={(e) => e.stopPropagation()}
+                disabled={
+                  (approval ? approval.action : job.requisition_status)?.toLowerCase() ===
+                  "approved"
                 }
-              >
-                <Row className="w-100 align-items-center fontreg ">
-                  <Col xs={12} md={4} className="d-flex align-items-center ">
-                    <Form.Check
-                      type="checkbox"
-                      className="form-check-orange me-2"
-                      checked={selectedJobIds.includes(job.requisition_id)}
-                      onChange={(e) => handleJobSelection(e, job.requisition_id)}
-                      onClick={(e) => e.stopPropagation()}
-                      disabled={(approval ? approval.action : job.requisition_status)?.toLowerCase() === "approved"}
-                    />
-                    <span className="job-title fw-semibold text-dark">
-                      {job.requisition_code}
-                    </span>
-                  </Col>
-                  <Col xs={6} md={3} className="job-detail">
-                    Title: {job.requisition_title}
-                  </Col>
-                  <Col xs={6} md={2} className="job-detail">
-                    Positions: {job.no_of_positions}
-                  </Col>
-                  <Col xs={6} md={3} className="job-detail">
-             
-                    <span>
-                        Status: {approval ? approval.action : job.requisition_status}
-                      </span>
-                  </Col>
-                </Row>
-              </Accordion.Header>
-              <Accordion.Body>
-                <Row>
-                  <Col xs={12} className="text-muted">
-                    <Table className="req_table" responsive hover>
-                      <thead className="table-header-orange">
-                        <tr>
-                          <th
-                            onClick={() => handleSort("title")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Title{getSortIndicator("title")}
-                          </th>
-                          <th
-                            onClick={() => handleSort("description")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Description{getSortIndicator("description")}
-                          </th>
-                          <th
-                            onClick={() => handleSort("positions")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Position Code{getSortIndicator("positions")}
-                          </th>
-                          <th
-                            onClick={() => handleSort("startDate")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Experience{getSortIndicator("startDate")}
-                          </th>
-                          <th
-                            onClick={() => handleSort("endDate")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Status{getSortIndicator("endDate")}
-                          </th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody className="table-body-orange">
-                        {tableLoading ? (
-                          <tr>
-                            <td colSpan="6" className="text-center py-3">
-                              <Spinner animation="border" size="sm" />{" "}
-                              Loading positions...
-                            </td>
-                          </tr>
-                        ) : !apiData || apiData.length === 0 ? (
-                          <tr>
-                            <td colSpan="6" className="text-center text-muted py-3">
-                              No positions added yet
-                            </td>
-                          </tr>
-                        ) : (
-                          apiData.map((job, index) => (
-                            <tr key={job.position_id || index}>
-                              <td>{job.position_title}</td>
-                              <td>{job.description}</td>
-                              <td>{job.position_code}</td>
-                              <td>{job.preferred_experience}</td>
-                              <td>{job.position_status}</td>
-                              <td>
-                                <FontAwesomeIcon
-                                  icon={faEye}
-                                  className="text-info me-3 cursor-pointer"
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    setEditRequisitionId(job.requisition_id);
-                                    setEditPositionId(job.position_id);
-                                    setShowModal(true);
-                                  }}
-                                />
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </Table>
-                  </Col>
-                </Row>
-              </Accordion.Body>
-            </Accordion.Item>
-          )
-          })}
-        </Accordion>
+              />
+              <div className="fontcard">
+                <div className="text-dark mb-1">
+                  Title: {job.requisition_title}
+                </div>
+               <div className="text-muted mb-1 boldnes">
+                  <b>Requisition:</b> {job.requisition_code} (
+                  {approval
+                    ? approval.action === "Pending"
+                      ? "Pending for Approval"
+                      : approval.action
+                    : job.requisition_status}
+                  )
+              </div>
+              </div>
+            </Col>
+
+            {/* Right side: Postings, Dates, Vacancies, Status */}
+            <Col xs={12} md={5} className="d-flex flex-column fontcard">
+              <div className="d-flex">
+                <div className="boldnes">
+                  <b>Postings:</b>{" "}
+                  {job.job_postings
+                    ? job.job_postings
+                        .split(",")
+                        .map(
+                          (item) =>
+                            item.charAt(0).toUpperCase() + item.slice(1)
+                        )
+                        .join(", ")
+                    : "Not Posted"}
+                </div>
+              </div>
+
+              <div className="d-flex mb-1 mt-1">
+                <div className="me-4 boldnes">
+                  <b>Start Date:</b> {job?.registration_start_date}&nbsp;&nbsp;|
+                  &nbsp;&nbsp;
+                  <b>End Date:</b> {job?.registration_end_date}&nbsp;&nbsp;
+                  {/* &nbsp;&nbsp;
+                  <b>Vacancies:</b> {job.count ? job.count : "0"} */}
+                  <br />
+                  {/* <b>Status:</b>{" "}
+                  {new Date() > new Date(job?.registration_end_date)
+                    ? "Expired"
+                    : "Open"} */}
+                </div>
+              </div>
+            </Col>
+
+          </Row>
+        </Accordion.Header>
+
+        <Accordion.Body>
+          <Row>
+            <Col xs={12} className="text-muted">
+              <Table className="req_table" responsive hover>
+                <thead className="table-header-orange">
+                  <tr>
+                    <th
+                      onClick={() => handleSort("title")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Position {getSortIndicator("title")}
+                    </th>
+                    <th
+                      onClick={() => handleSort("positions")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Position Code {getSortIndicator("positions")}
+                    </th>
+                    <th
+                      onClick={() => handleSort("description")}
+                      style={{ cursor: "pointer" }}
+                    >
+                      Grade {getSortIndicator("description")}
+                    </th>
+                    <th>Vacancies</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="table-body-orange">
+                  {tableLoading ? (
+                    <tr>
+                      <td colSpan="6" className="text-center py-3">
+                        <Spinner animation="border" size="sm" /> Loading
+                        positions...
+                      </td>
+                    </tr>
+                  ) : !apiData || apiData.length === 0 ? (
+                    <tr>
+                      <td colSpan="6" className="text-center text-muted py-3">
+                        No positions added yet
+                      </td>
+                    </tr>
+                  ) : (
+                    apiData.map((row, i) => (
+                      <tr key={row.position_id || i}>
+                        <td>{row.position_title}</td>
+                        <td>{row.position_code}</td>
+                        <td>{row.grade_id}</td>
+                        <td>{row.no_of_vacancies ?? "-"}</td>
+                        <td>
+                          {job.requisition_status === "New" ? (
+                            <FontAwesomeIcon
+                              icon={faPencil}
+                              className="text-info me-3 cursor-pointer"
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                setEditRequisitionId(row.requisition_id);
+                                setEditPositionId(row.position_id);
+                                setShowModal(true);
+                                setReadOnly(false);
+                              }}
+                            />
+                          ) : (
+                            <FontAwesomeIcon
+                              icon={faEye}
+                              className="text-info me-3 cursor-pointer"
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                setEditRequisitionId(row.requisition_id);
+                                setEditPositionId(row.position_id);
+                                setShowModal(true);
+                                setReadOnly(true);
+                              }}
+                            />
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </Col>
+          </Row>
+        </Accordion.Body>
+      </Accordion.Item>
+    );
+  })}
+</Accordion>
+
       )}
 
       {/* Approve / Reject buttons */}
