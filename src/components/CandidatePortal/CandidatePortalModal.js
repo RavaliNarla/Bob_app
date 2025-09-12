@@ -5,7 +5,7 @@ import CandidatePortal from './CandidatePortal';
 
 const CandidatePortalModal = ({ show, handleClose, selectedPositionId, onSubmitSuccess  }) => {
     return (
-        <Modal show={show} onHide={handleClose} size="lg">
+        <Modal show={show} onHide={handleClose} size="lg" className='candidate-modal-form'>
             <Modal.Header closeButton>
                 <Modal.Title>Candidate Portal</Modal.Title>
             </Modal.Header>

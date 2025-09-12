@@ -396,7 +396,7 @@ color: #000 !important;
   font-size:14px !important;
   font-weight:400 !important
 }
-.foncandidate .modal.show .modal-dialog{
+ .candidate-modal-form.modal.show .modal-dialog{
     max-width:1000px !important
 }
 .filename{

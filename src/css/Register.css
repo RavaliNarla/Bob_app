@@ -1,6 +1,7 @@
-.user-register-modal .modal-content{
-    width: auto;
+.user-register-modal .modal-dialog {
+    max-width: 680px !important;
 }
+
 .register_container .searchinput{
     width: 25% !important;
   

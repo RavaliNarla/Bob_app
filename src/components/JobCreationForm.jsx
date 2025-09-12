@@ -33,7 +33,7 @@ const gradeInfoRef = useRef(null);
 useEffect(() => {
   setShowGradeInfo(false);
 }, [formData.grade_id]);
-
+console.log("Position List:", positionList);
   // Find the selected requisition's details (handle both string and number id)
   const selectedRequisition = requisitionData.find(
     (req) => String(req.requisition_id) === String(formData.requisition_id)
@@ -116,70 +116,53 @@ useEffect(() => {
         
         {/* Position Title */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-          <label htmlFor="position_title" className="form-label">
-            Position Title <span className="required-asterisk">*</span>
-          </label>
-          <select
-            id="position_title"
-            name="position_title"
-            className="form-select"
-            value={formData.position_title || ""}
-            onChange={(e) => {
-              const selectedTitle = e.target.value;
-              handleInputChange({ target: { name: "position_title", value: selectedTitle } });
+  <label htmlFor="position_title" className="form-label">
+    Position Title <span className="required-asterisk">*</span>
+  </label>
+  <select
+    id="position_title"
+    name="position_title"
+    className="form-select"
+    value={formData.position_title || ""}
+    onChange={(e) => {
+      const selectedTitle = e.target.value;
 
-              // Auto populate from staticPositions
-              const selectedPosition = (positionList || []).find(
-                (pos) => pos.position_title === selectedTitle
-              );
+      // Save selected position title
+      handleInputChange({ target: { name: "position_title", value: selectedTitle } });
 
-              if (selectedPosition) {
-                const fieldsToUpdate = [
-                  "dept_id",
-                  "country_id",
-                  "state_id",
-                  "city_id",
-                  "location_id",
-                  "description",
-                  "roles_responsibilities",
-                  "grade_id",
-                  "employment_type",
-                  "eligibility_age_min",
-                  "eligibility_age_max",
-                  "mandatory_qualification",
-                  "preferred_qualification",
-                  "mandatory_experience",
-                  "preferred_experience",
-                  "probation_period",
-                  "documents_required",
-                  "min_credit_score",
-                  "no_of_vacancies",
-                  "selection_procedure",
-                  "max_salary",
-                  "min_salary",
-                  "position_code"
-                ];
+      // Find the full object from positionList
+      const selectedPosition = (positionList || []).find(
+        (pos) => pos.position_title === selectedTitle
+      );
 
-                fieldsToUpdate.forEach((field) => {
-                  if (selectedPosition[field] !== undefined) {
-                    handleInputChange({
-                      target: { name: field, value: selectedPosition[field] },
-                    });
-                  }
-                });
-              }
-            }}
-            disabled={readOnly}
-          >
-            <option value="">Select Position Title</option>
-            {(positionList || []).map((pos, idx) => (
-              <option key={idx} value={pos.position_title}>
-                {pos.position_title}
-              </option>
-            ))}
-          </select>
-          {errors.position_title && <small className="error">{errors.position_title}</small>}
-        </div>
+      if (selectedPosition) {
+        // Auto populate Description and Job Grade
+        handleInputChange({
+          target: { name: "description", value: selectedPosition.description || "" },
+        });
+
+        handleInputChange({
+          target: { name: "grade_id", value: selectedPosition.jobGradeId || "" },
+        });
+
+        // Optional: also keep position_code for backend
+        handleInputChange({
+          target: { name: "position_code", value: selectedPosition.position_code || "" },
+        });
+      }
+    }}
+    disabled={readOnly}
+  >
+    <option value="">Select Position Title</option>
+    {(positionList || []).map((pos, idx) => (
+      <option key={idx} value={pos.position_title}>
+        {pos.position_title}
+      </option>
+    ))}
+  </select>
+  {errors.position_title && <small className="error">{errors.position_title}</small>}
+</div>
+
 
         {/* Department */}
         <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
