@@ -10,10 +10,13 @@ import { faEye, faEyeSlash, faSearch } from "@fortawesome/free-solid-svg-icons";
 // import logoImage from "../assets/bob-logo.png";
 import CryptoJS from "crypto-js";
 import '../css/Register.css';
+import { useSelector } from "react-redux";
 
 const Register = () => {
   const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const navigate = useNavigate();
+  const authUser = useSelector((state) => state.user.authUser.user);
+  console.log(authUser);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -79,6 +82,7 @@ const Register = () => {
       phone,
       password: encryptedPassword,
       role,
+      created_by: authUser?.sub,
     });
 
     // 2. Immediately try to log in (to trigger MFA)
