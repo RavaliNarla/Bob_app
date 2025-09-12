@@ -207,6 +207,54 @@ apis.interceptors.response.use(
   }
 );
 
+// Request interceptor to add auth token for the secondary API
+candidateApi.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// apis.interceptors.response.use(
+//   (response) => response.data,
+//   (error) => {
+//     if (error.response?.status === 401) {
+//       store.dispatch(clearUser());
+//       window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
+candidateApi.interceptors.response.use(
+  (response) => response.data,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      console.warn("⚠️ Java API session expired (apis). Trying refresh...");
+      originalRequest._retry = true;
+
+      try {
+        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+
+        console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
+        return apis(originalRequest); // retry original request on apis
+      } catch (err) {
+        console.error("⛔ Refresh failed (apis). Redirecting to login");
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 nodeApi.interceptors.request.use(
   (config) => {
     const token = getToken();
