@@ -416,3 +416,71 @@ color: #000;
 .form-select{
   font-size:14px;
 }
+
+/* ===== Approval Trail modal (scoped) ===== */
+.approval-trail-modal .modal-dialog {
+  width: min(96vw, 1100px);
+  max-width: none; /* override bootstrap max */
+}
+
+.approval-trail-modal .modal-body {
+  max-height: 70vh;
+  overflow: auto;  /* scroll body */
+}
+
+.approval-trail-modal .modal-content {
+  background-color: #fff; /* solid surface */
+}
+
+/* Title style moved from inline */
+.approval-trail-modal .modal-title {
+  color: #FF7043;
+  font-weight: 700;
+}
+
+/* Orange eye icon (used next to requisition code/status) */
+.approval-eye {
+  color: #FF7043;
+  transition: opacity .15s ease;
+}
+.approval-eye:hover {
+  opacity: .85;
+}
+
+/* Table layout and crisp edges inside the modal */
+.approval-trail-modal .approval-trail-table {
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.approval-trail-modal .approval-trail-table th {
+  color: #FF7043;
+  font-weight: 600;
+}
+
+/* Wrap long email/user nicely */
+.approval-trail-modal .approval-trail-table th,
+.approval-trail-modal .approval-trail-table td {
+  border-color: #dee2e6 !important;
+  background-clip: padding-box;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Put a clean outer border radius on the responsive wrapper and clip children */
+.approval-trail-modal .table-responsive {
+  border: 1px solid var(--bs-border-color, #dee2e6);
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;   /* clips the table to rounded corners */
+  overflow-x: auto;
+  margin: 0;
+}
+
+/* (Optional) extra rounding on the table’s outer cells
+.approval-trail-modal .approval-trail-table thead th:first-child { border-top-left-radius: 10px; }
+.approval-trail-modal .approval-trail-table thead th:last-child  { border-top-right-radius: 10px; }
+.approval-trail-modal .approval-trail-table tbody tr:last-child td:first-child { border-bottom-left-radius: 10px; }
+.approval-trail-modal .approval-trail-table tbody tr:last-child td:last-child  { border-bottom-right-radius: 10px; } */

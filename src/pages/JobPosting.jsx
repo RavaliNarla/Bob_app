@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import DownloadReqPdfButton from "../components/DownloadReqPdfButton";
 import { faDownload } from "@fortawesome/free-solid-svg-icons"; // ensure this import exists
 import { useDispatch, useSelector } from 'react-redux';
+import axios from "axios";
 const EllipsisIcon = () => (
   <svg
     width="16"
@@ -71,6 +72,12 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [jobBoardError, setJobBoardError] = useState("");
   const [readOnly, setReadOnly] = useState(false);
   const [jobCreation, setJobCreation] = useState(null);
+
+  const [showTrailModal, setShowTrailModal] = useState(false);
+const [trailLoading, setTrailLoading] = useState(false);
+const [trailData, setTrailData] = useState([]); // [{ username, useremail, status }]
+const [trailError, setTrailError] = useState("");
+
   
   // --------- JOB REQUISITION STATES ---------------
   
@@ -80,6 +87,62 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [errr, setErrr] = useState({});
   const [selectedReq, setSelectedReq] = useState(null);
   const user = useSelector((state) => state?.user?.user);
+
+  const formatDateTime = (value) => {
+  if (!value) return "-";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value; // fallback if it's not a valid ISO
+  // Use user’s locale/timezone; tweak as you like
+  return d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+};
+
+
+
+
+const handleViewApprovalTrail = async (requisitionId, e) => {
+  e?.stopPropagation?.();
+  setShowTrailModal(true);
+  setTrailLoading(true);
+  setTrailError("");
+
+  // try {
+  //   // ⬇️ hardcoded token for local testing only
+  //   const token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Inc4elhNR1VPek5zMUFiWnBtcW5XNiJ9.eyJpc3MiOiJodHRwczovL2Rldi0wcmI2aDJvem5id2tvbmh6LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2ODlkYjU1MTBiOTA1OTY1NjdiZWY2M2MiLCJhdWQiOlsiaHR0cHM6Ly9kZXYtMHJiNmgyb3puYndrb25oei51cy5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vZGV2LTByYjZoMm96bmJ3a29uaHoudXMuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTc1NzkxNzgzMCwiZXhwIjoxNzU4MDA0MjMwLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIHJlYWQ6Y3VycmVudF91c2VyIHVwZGF0ZTpjdXJyZW50X3VzZXJfbWV0YWRhdGEgZGVsZXRlOmN1cnJlbnRfdXNlcl9tZXRhZGF0YSBjcmVhdGU6Y3VycmVudF91c2VyX21ldGFkYXRhIGNyZWF0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIGRlbGV0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIHVwZGF0ZTpjdXJyZW50X3VzZXJfaWRlbnRpdGllcyBvZmZsaW5lX2FjY2VzcyIsImd0eSI6InBhc3N3b3JkIiwiYXpwIjoiYWlpQzZvWmRwSEs1QmV5TEJVTmsxWThQa3h5WEJZNE0ifQ.l0PtjAXmMF2VlmhPA2Whs93y3wgeqSYcQX7dDnf70IP6KkIm3gF_5SoHbjKlh9pXScp02qwTcoRlM-zC6Ngqct7agzM4VW_frpE6WpqvEdUtSbjbi7fRM2fs-PeH8HvsGtxYbuEIUQHQ275PxUX_XN6OXBuU269St5STFeiiTD-0b9j4PFipxE-4--QGRuWvRsrjJV0xgi_yN0CkWrJCCj-xWONobVUSrj5BWqHz7Qj5ocJxQTJ16Iq93tQgC0AcSp69szOUOSNxdIe8EyUAkqrcqOYnSKGCSmvmZ741-owllBKDPyQ280ae4Dn0GfORp1KyZ6y8tFvfT7wtU8DX_A";
+
+  //   const resp = await axios.get(
+  //     `http://192.168.20.111:8081/api/v1/job-requisitions/workflow-approvals-details/${requisitionId}`,
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         Accept: "application/json",
+  //       },
+  //     }
+  //   );
+  try {
+    const resp = await apiService.getApprovalTrail(requisitionId);
+    const raw = resp?.data?.data ?? resp?.data ?? resp ?? [];
+    const arr = Array.isArray(raw) ? raw : [raw];
+
+    // normalize keys to what the table expects
+    const normalized = arr.map((r) => ({
+      username: r?.username ?? r?.userName ?? r?.user_name ?? "-",
+      useremail: r?.useremail ?? r?.mail ?? r?.email ?? "-",
+      status: r?.status ?? r?.approvalStatus ?? r?.state ?? "-",
+      dateTime: r?.dateTime ?? r?.datetime ?? r?.Datetime ?? "-",
+    }));
+
+    setTrailData(normalized);
+  } catch (err) {
+    console.error("Approval trail fetch error:", err);
+    setTrailError("Failed to load approval details. Please try again.");
+    setTrailData([]);
+  } finally {
+    setTrailLoading(false);
+  }
+};
+
+
+
   
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
@@ -522,8 +585,23 @@ const fetchRequisitions = async () => {
                       <div className=" text-dark mb-1">
                         Title: {job.requisition_title}
                       </div>
-                      <div className="text-muted mb-1 boldnes">
-                        <b>Requisition:</b> {job.requisition_code} ({job.requisition_status})
+                      <div className="text-muted mb-1 boldnes d-flex align-items-center gap-2">
+                        <b>Requisition:</b>
+                        <span>{job.requisition_code}</span>
+                        <span>({job.requisition_status})</span>
+                        {(job.requisition_status!="New")?
+                        (
+                        <OverlayTrigger placement="top" overlay={<Tooltip>View approval trail</Tooltip>}>
+                        <span
+                          onClick={(e) => { e.stopPropagation(); handleViewApprovalTrail(job.requisition_id, e); }}
+                          style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+                          title="View approval trail"
+                        >
+                          <FontAwesomeIcon icon={faEye} className="approval-eye" />
+                        </span>
+                      </OverlayTrigger>
+                      ):""
+                    }
                       </div>
                     </div>
                   </Col>
@@ -858,6 +936,71 @@ const fetchRequisitions = async () => {
           />
         </Modal.Body>
       </Modal>
+
+
+<Modal
+  show={showTrailModal}
+  onHide={() => setShowTrailModal(false)}
+  centered
+  size="xl"
+  scrollable
+  dialogClassName="approval-trail-modal"
+>
+  <Modal.Header closeButton>
+    <Modal.Title className="fonall" style={{ color: '#FF7043', fontWeight: 700 }}>
+      Approval History
+    </Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    {trailLoading && (
+      <div className="d-flex justify-content-center py-3">
+        <Spinner animation="border" size="sm" />
+      </div>
+    )}
+
+    {!trailLoading && trailError && (
+      <Alert variant="danger" className="mb-0">{trailError}</Alert>
+    )}
+
+    {!trailLoading && !trailError && (!trailData || trailData.length === 0) && (
+      <div className="text-muted text-center py-2">Direct Approval</div>
+    )}
+
+    {!trailLoading && !trailError && trailData?.length > 0 && (
+      <div className="table-responsive">
+        <Table bordered hover size="sm" className="mb-0 approval-trail-table">
+          <colgroup>
+            <col style={{ width: '30%' }} />
+            <col style={{ width: '38%' }} />
+            <col style={{ width: '16%' }} />
+            <col style={{ width: '16%' }} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Date / Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trailData.map((row, idx) => (
+              <tr key={idx}>
+                <td style={{ overflowWrap: 'anywhere' }}>{row?.username ?? '-'}</td>
+                <td style={{ overflowWrap: 'anywhere' }}>{row?.useremail ?? '-'}</td>
+                <td>{row?.status ?? '-'}</td>
+                <td>{formatDateTime(row?.dateTime)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </div>
+    )}
+  </Modal.Body>
+</Modal>
+
+
 
       {/* Add Requistion Modal */}
       <Modal
