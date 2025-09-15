@@ -309,76 +309,90 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
     const handleOnDragEnd = (result) => {
         const { source, destination } = result;
-
-        if (!destination) {
-            return;
-        }
-
-        // This part handles reordering within the same list
+      
+        if (!destination) return;
+      
+        // Handle reordering within the same list
         if (source.droppableId === destination.droppableId) {
-            const listMap = {
-                candidates: [candidates, setCandidates],
-                interviewed: [interviewed, setInterviewed],
-                offered: [offered, setOffered],
-            };
-            const [list, setList] = listMap[source.droppableId];
-            const updatedList = Array.from(list);
-            const [movedItem] = updatedList.splice(source.index, 1);
-            updatedList.splice(destination.index, 0, movedItem);
-            setList(updatedList);
-            return;
-        }
-
-        // Disallowed moves
-        const disallowedMoves = [
-            ['offered', 'interviewed'],
-            ['offered', 'candidates'],
-            ['interviewed', 'candidates'],
-            ['candidates', 'offered'] // Prevent direct drag from candidates to offered
-        ];
-        if (disallowedMoves.some(([src, dest]) => src === source.droppableId && dest === destination.droppableId)) {
-            return;
-        }
-
-        const listMap = {
+          const listMap = {
             candidates: [candidates, setCandidates],
             interviewed: [interviewed, setInterviewed],
             offered: [offered, setOffered],
+          };
+          const [list, setList] = listMap[source.droppableId];
+          const updatedList = Array.from(list);
+          const [movedItem] = updatedList.splice(source.index, 1);
+          updatedList.splice(destination.index, 0, movedItem);
+          setList(updatedList);
+          return;
+        }
+      
+        // Find moved item
+        const sourceList = {
+          candidates,
+          interviewed,
+          offered,
+        }[source.droppableId];
+        const movedItem = sourceList[source.index];
+      console.log("movedItem", movedItem);
+        // 🚫 Prevent scheduled/rescheduled → offered
+        const status = (movedItem.application_status || "").toLowerCase();
+        if (
+          destination.droppableId === "offered" &&
+          (status === "scheduled" || status === "rescheduled")
+        ) {
+          return;
+        }
+      
+        // Column-level disallowed moves
+        const disallowedMoves = [
+          ["offered", "interviewed"],
+          ["offered", "candidates"],
+          ["interviewed", "candidates"],
+          ["candidates", "offered"], // Prevent direct drag from candidates → offered
+        ];
+        if (
+          disallowedMoves.some(
+            ([src, dest]) =>
+              src === source.droppableId && dest === destination.droppableId
+          )
+        ) {
+          return;
+        }
+      
+        const listMap = {
+          candidates: [candidates, setCandidates],
+          interviewed: [interviewed, setInterviewed],
+          offered: [offered, setOffered],
         };
-
-        const [sourceList, setSourceList] = listMap[source.droppableId];
+      
+        const [sourceListState, setSourceList] = listMap[source.droppableId];
         const [destList, setDestList] = listMap[destination.droppableId];
-
-        const newSourceList = Array.from(sourceList);
+      
+        const newSourceList = Array.from(sourceListState);
         const newDestList = Array.from(destList);
-
-        const [movedItem] = newSourceList.splice(source.index, 1);
-
-        // Only move the item to the destination list if it's not the 'offered' list
-        if (destination.droppableId !== 'offered') {
-            newDestList.splice(destination.index, 0, movedItem);
-        }
-
+      
+        newSourceList.splice(source.index, 1);
+        newDestList.splice(destination.index, 0, movedItem);
+      
         setSourceList(newSourceList);
-
-        // We only set the destination list if it's not the 'offered' list.
-        // The 'offered' list state will be set by the handleOffer function.
-        if (destination.droppableId !== 'offered') {
-            setDestList(newDestList);
+      
+        // Offered list handled by modal, not direct state
+        if (destination.droppableId !== "offered") {
+          setDestList(newDestList);
         }
-
+      
         if (destination.droppableId === "interviewed") {
-            setInterviewCandidate(movedItem);
-            setShowInterviewModal(true);
+          setInterviewCandidate(movedItem);
+          setShowInterviewModal(true);
         } else if (destination.droppableId === "offered") {
-            setOfferCandidate(movedItem);
-            setJobPositionTitle(movedItem.jobTitles);
-            setReqId(selectedRequisitionCode);
-            setPositionId(selectedPositionId);
-            setShowOfferModal(true);
+          setOfferCandidate(movedItem);
+          setJobPositionTitle(movedItem.jobTitles);
+          setReqId(selectedRequisitionCode);
+          setPositionId(selectedPositionId);
+          setShowOfferModal(true);
         }
-    };
-
+      };
     const handleScheduleInterview = async (interviewData) => {
         // this.setState({ isLoading: true });
         console.log("Scheduling interview with data:", interviewData);
@@ -648,11 +662,12 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     candidate_id: c.candidate_id,
                     position_id: selectedPositionId,
                 });
-                if (res?.status === 200) {
-                    setSelectedInterview(res.data);
+                if (res && res.interview_id) {
+                    setSelectedInterview(res);
                     const feedbackRes = await apiService.getfeedback(c.candidate_id, selectedPositionId);
-                    if (feedbackRes?.status === 200) {
-                        setInterviewFeedBack(feedbackRes.data);
+                    console.log("feedbackRes",feedbackRes);
+                    if (feedbackRes) {
+                        setInterviewFeedBack(feedbackRes);
                         // setIsOpen(true);
                     }
                     else {
@@ -686,8 +701,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 position_id: selectedPositionId,
             };
             const response = await apiService.createInterview(payload);
-            if (response.status === 200) {
-                const interviewDetails = response.data;
+            console.log("response", response);
+        
+            const interviewDetails = response.data || response;
+            if (interviewDetails && interviewDetails.scheduled_at) {
+                const interviewDetails = response || response.data;
                 const scheduleAt = interviewDetails.scheduled_at
                     ? new Date(interviewDetails.scheduled_at)
                     : null;

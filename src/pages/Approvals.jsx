@@ -205,19 +205,26 @@ const Approvals = () => {
       return;
     }
     
+    // const payload = {
+    //   role: user.role,
+    //   requisitionId: selectedJobIds,
+    //   status: "rejected",
+    //   description: rejectDescription,
+    //   userid: user.userid,
+    // };
     const payload = {
-      role: user.role,
-      requisitionId: selectedJobIds,
-      status: "REJECTED",
+    
+      requisitionIdList: selectedJobIds,
+      status: "rejected",
       description: rejectDescription,
-      userid: user.userid,
+      userId: user.userid,
     };
     
 
     try {
       await apiService.updateApproval(payload);
       toast.success(
-        `Rejected ${selectedJobIds.length} requisitions with reason: ${rejectDescription}`
+        `Rejected the requisition(s) successfully.`
       );
 
       setJobPostings((prev) =>

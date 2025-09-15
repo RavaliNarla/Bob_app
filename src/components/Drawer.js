@@ -72,7 +72,7 @@ function Drawer({
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false); // edit latest only
   // console.log(candidate)
-  //  console.log(interviewer);
+   console.log("interviewer",interviewer);
   //  console.log("interviewFeedBacks",interviewFeedBacks);
   //  console.log("feedbacks",feedbacks);
    

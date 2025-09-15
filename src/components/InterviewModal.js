@@ -153,6 +153,7 @@ const InterviewModal = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInterviewData((prev) => ({ ...prev, [name]: value }));
+    console.log("interviewData111",  interviewData);
     if (name === "interview_date") {
       setInterviewData((prev) => ({ ...prev, interview_time: "" }));
       setSelectedSlot(null);
@@ -261,10 +262,22 @@ const InterviewModal = ({
     // ensure HH:mm
     const hhmm = String(timeIST).slice(0, 5);
     setInterviewData({ interview_date: dateIST, interview_time: hhmm });
+    console.log("interviewData222",  interviewData);
   };
 
   const minDateIST = ymdInIST(new Date());
-
+  const formatTimeRange = (time) => {
+    if (!time) return '';
+  
+    const [hours, minutes] = time.split(':');
+    const startHour = parseInt(hours, 10);
+    const endHour = (startHour + 1) % 24; // wrap around if 23 → 00
+  
+    const start = `${String(startHour).padStart(2, '0')}:${minutes}`;
+    const end = `${String(endHour).padStart(2, '0')}:${minutes}`;
+  
+    return `${start} - ${end}`;
+  };
   return (
     <Modal show={show} onHide={handleClose} centered className="fontinter">
       <Modal.Header closeButton>
@@ -330,7 +343,7 @@ const InterviewModal = ({
             />
             {!!interviewData.interview_time && (
               <div className="mt-2">
-                <Badge bg="secondary">Selected: {interviewData.interview_time}</Badge>
+                <Badge bg="secondary">Selected: {formatTimeRange(interviewData.interview_time)}</Badge>
               </div>
             )}
           </Form.Group>
