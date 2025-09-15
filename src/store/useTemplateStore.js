@@ -3,10 +3,7 @@ import defaultTemplate from "../components/OfferTemplate/defaultTemplate";
 
 export const useTemplateStore = create((set, get) => ({
   // template: defaultTemplate,
-  template: {
-    ...defaultTemplate,
-    templateName: "Template 1", // ✅ default template name
-  },
+  template: { ...defaultTemplate, templateName: "" },
   candidate: {
     full_name: "",
     address: "",
@@ -14,8 +11,8 @@ export const useTemplateStore = create((set, get) => ({
     address2: "",
     location: ""
   },
-  layout: "template1", // 🔹 default layout
-  templateName: "Template 1", // 🔹 top-level template name for syncing
+  layout: "",   // ✅ dropdown initially shows "Select Template"
+  templateName: "",
 
   job: {
     position: "",

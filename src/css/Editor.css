@@ -175,3 +175,12 @@
 border-color: #FF7043;
 background:#FF7043;
 color:#fff;}
+
+.save-template-btn {
+  background-color: rgb(255, 112, 67) !important;
+  color: #fff !important;
+}
+.save-template-btn:hover {
+  background-color: rgb(255, 112, 67) !important;
+  color: #fff !important;
+}

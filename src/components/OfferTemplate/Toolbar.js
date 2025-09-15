@@ -15,79 +15,12 @@ function ensureQuillTokens(html = "") {
   );
 }
 
-export default function Toolbar() {
+export default function Toolbar({ templates, selectedId, setSelectedId }) {
   const template = useTemplateStore((s) => s.template);
   const setLayout = useTemplateStore((s) => s.setLayout);
   const setTemplateName = useTemplateStore((s) => s.setTemplateName); // ⬅ add this
   const layout = useTemplateStore((s) => s.layout);
-
   const [saving, setSaving] = useState(false);
-  const [templates, setTemplates] = useState([]);
-  const [selectedId, setSelectedId] = useState("");
-
-  const handleSave = async () => {
-    let name = (template?.templateName || "").trim();
-    if (!name) {
-      alert("Please enter a Template Name");
-      return;
-    }
-
-    try {
-      setSaving(true);
-      const html = buildHtmlForExport(template, layout);
-
-      // remove trailing "_<digits>" if backend appended timestamp earlier
-      name = name.replace(/_\d+$/, "");
-
-      const fd = new FormData();
-      fd.append("name", name);
-      fd.append("templateFile", new Blob([html], { type: "text/html" }));
-
-      if (selectedId) {
-        fd.append("id", selectedId);
-      }
-
-      const { data } = await apiService.uploadTemplate(fd);
-
-      // ✅ Update dropdown list (add or replace)
-      setTemplates(prev => {
-        const filtered = prev.filter(t => t.id !== selectedId); // remove old template being edited
-        return [...filtered, data]; // add the newly saved template
-      });
-      setSelectedId(""); // reset selection
-
-
-      // ✅ Reset dropdown to "Select template"
-      setSelectedId("");
-
-      // ✅ Reset LivePreview to initial state
-      const { setTemplate, setLayout } = useTemplateStore.getState();
-      setTemplate(defaultTemplate); // reset template fields/content
-      setLayout("template1");       // reset layout if needed
-
-      alert(`✅ Saved: ${data?.name || name}\nFile: ${data?.id}`);
-    } catch (err) {
-      console.error("Save failed", err);
-      alert("Failed to save template.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data } = await apiService.getTemplates(); // GET /api/offer-templates
-        setTemplates(data || []);
-        if (data?.length) {
-          // setSelectedId(prev => (data.some(t => t.id === prev) ? prev : data[0].id));
-          setSelectedId(prev => (data.some(t => t.id === prev) ? prev : ""));
-        }
-      } catch (e) {
-        console.error(e);
-      }
-    })();
-  }, []);
 
   const handleSelect = async (tpl) => {
     try {
@@ -207,21 +140,26 @@ export default function Toolbar() {
   return (
     <div>
       {/* Heading */}
-            <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '20px' }}>Offer Letter Templates</h5>
+      <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '20px' }}>Offer Letter Templates</h5>
       <div className="d-flex gap-2 flex-wrap mb-3">
-        <Button onClick={handleSave} disabled={saving}>
-          {saving ? "Saving…" : "Save Template"}
-        </Button>
+
 
         <Dropdown>
           <Dropdown.Toggle variant="secondary" id="template-dropdown">
-            {layout === "template1" ? "Template 1" : layout === "template2" ? "Template 2" : "Template 3"}
+            {layout
+              ? layout === "template1"
+                ? "Template 1"
+                : layout === "template2"
+                  ? "Template 2"
+                  : "Template 3"
+              : "Master Template"}
           </Dropdown.Toggle>
+
           <Dropdown.Menu>
             <Dropdown.Item
               onClick={() => {
                 setLayout("template1");
-                setTemplateName("Template 1"); // ✅ update store
+                setTemplateName("Template 1");
               }}
             >
               Template 1
@@ -229,7 +167,7 @@ export default function Toolbar() {
             <Dropdown.Item
               onClick={() => {
                 setLayout("template2");
-                setTemplateName("Template 2"); // ✅ update store
+                setTemplateName("Template 2");
               }}
             >
               Template 2
@@ -237,30 +175,43 @@ export default function Toolbar() {
             <Dropdown.Item
               onClick={() => {
                 setLayout("template3");
-                setTemplateName("Template 3"); // ✅ update store
+                setTemplateName("Template 3");
               }}
             >
               Template 3
             </Dropdown.Item>
           </Dropdown.Menu>
-
         </Dropdown>
 
+
         {/* Dropdown: select saved template and load it into the editor */}
-        <select
-          value={selectedId}
-          onChange={(e) => {
-            const id = e.target.value;
-            setSelectedId(id);
-            const tpl = templates.find(t => t.id === id);
-            if (tpl) handleSelect(tpl);
-          }}
-        >
-          <option value="">Select template</option>
-          {templates.map((tpl) => (
-            <option key={tpl.id} value={tpl.id}>{tpl.name}</option>
-          ))}
-        </select>
+        <Dropdown>
+          <Dropdown.Toggle variant="secondary" id="saved-template-dropdown">
+            {selectedId
+              ? templates.find((t) => t.id === selectedId)?.name.replace(/_\d+$/, "")
+              : "Saved Template"}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {templates.length === 0 ? (
+              <Dropdown.Item disabled>No saved templates</Dropdown.Item>
+            ) : (
+              templates.map((tpl) => {
+                const displayName = tpl.name.replace(/_\d+$/, "");
+                return (
+                  <Dropdown.Item
+                    key={tpl.id}
+                    onClick={() => {
+                      setSelectedId(tpl.id);
+                      handleSelect(tpl);
+                    }}
+                  >
+                    {displayName}
+                  </Dropdown.Item>
+                );
+              })
+            )}
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </div>
   );
