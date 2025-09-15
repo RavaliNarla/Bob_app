@@ -334,16 +334,15 @@ const CandidateCard = ({ setTriggerDownload }) => {
           offered,
         }[source.droppableId];
         const movedItem = sourceList[source.index];
-      console.log("movedItem", movedItem);
         // 🚫 Prevent scheduled/rescheduled → offered
         const status = (movedItem.application_status || "").toLowerCase();
         if (
           destination.droppableId === "offered" &&
-          (status === "scheduled" || status === "rescheduled")
+          (status === "scheduled" || status === "rescheduled" || status ==="cancelled" || status === "selected for next round" || status === "rejected")
         ) {
           return;
         }
-      
+        
         // Column-level disallowed moves
         const disallowedMoves = [
           ["offered", "interviewed"],

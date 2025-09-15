@@ -16,7 +16,7 @@ import {
 } from "react-bootstrap";
 import "../css/JobPosting.css";
 import { apiService } from "../services/apiService";
-import { faE, faEye, faPencil, faPlus, faSearch, faTrash, } from "@fortawesome/free-solid-svg-icons";
+import { faE, faEye, faPencil, faPlus, faSearch, faTrash,faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
@@ -594,13 +594,14 @@ const fetchRequisitions = async () => {
                         <span>({job.requisition_status})</span>
                         {(job.requisition_status!="New")?
                         (
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Approval History</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>View Approval Status</Tooltip>}>
                         <span
                           onClick={(e) => { e.stopPropagation(); handleViewApprovalTrail(job.requisition_id, e); }}
                           style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
-                          title="View approval trail"
+                         
                         >
-                          <FontAwesomeIcon icon={faEye} className="approval-eye" />
+                          {/* <FontAwesomeIcon icon={faEye} className="approval-eye" /> */}
+                          <FontAwesomeIcon icon={faClockRotateLeft} className="approval-eye" />
                         </span>
                       </OverlayTrigger>
                       ):""

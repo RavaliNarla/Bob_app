@@ -442,6 +442,8 @@ color: #000;
 .approval-eye {
   color: #FF7043;
   transition: opacity .15s ease;
+  height:18px;
+  width:18px;
 }
 .approval-eye:hover {
   opacity: .85;
