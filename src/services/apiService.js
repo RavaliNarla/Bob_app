@@ -337,7 +337,7 @@ export const apiService = {
   deleteData: (id) => api.delete(`/data/${id}`),
 
   // --- Approval trail for a requisition (username, useremail, status) ---
- getApprovalTrail: (requisition_id) => api.get(`/workflow-approvals-details/${requisition_id}`),
+ getApprovalTrail: (requisition_id) => api.get(`job-requisitions/workflow-approvals-details/${requisition_id}`),
 
 
   getReqData: () => api.get('/job-requisitions/all'),

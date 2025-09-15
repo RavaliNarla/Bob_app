@@ -56,7 +56,7 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [error, setError] = useState(null);
   const [selectedApproval, setSelectedApproval] = useState("");
   const [approvalStatus, setApprovalStatus] = useState("");
-  const [noOfApprovals, setNoOfApprovals] = useState(1); // New state for number of approvals
+  //const [noOfApprovals, setNoOfApprovals] = useState(""); // New state for number of approvals
   const [activeKey, setActiveKey] = useState(null);
   const [reqs, setReqs] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -87,7 +87,10 @@ const [trailError, setTrailError] = useState("");
   const [errr, setErrr] = useState({});
   const [selectedReq, setSelectedReq] = useState(null);
   const user = useSelector((state) => state?.user?.user);
-
+  console.log("user",user)
+  //setNoOfApprovals(user?.manager_depth);
+  const manager_dept=user?.manager_depth;
+  const [noOfApprovals, setNoOfApprovals] = useState(manager_dept);
   const formatDateTime = (value) => {
   if (!value) return "-";
   const d = new Date(value);
@@ -258,7 +261,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
     // 🔥 Reset filters and selections
     setSelectedJobIds([]);
     setApprovalStatus("");
-    setNoOfApprovals(1); // Reset to default value
+    setNoOfApprovals(manager_dept); // Reset to default value
     setSelectedApproval("");
     setJobBoards({
       linkedin: false,
@@ -310,7 +313,7 @@ console.log("noOfApprovals",noOfApprovals);
     // ✅ Reset all filters, selections, and checkboxes
     setSelectedJobIds([]);
     setApprovalStatus("");
-    setNoOfApprovals(1); // Reset to default value
+    setNoOfApprovals(manager_dept); // Reset to default value
     setSelectedApproval("");
     setJobBoards({
       linkedin: false,
@@ -591,7 +594,7 @@ const fetchRequisitions = async () => {
                         <span>({job.requisition_status})</span>
                         {(job.requisition_status!="New")?
                         (
-                        <OverlayTrigger placement="top" overlay={<Tooltip>View approval trail</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Approval History</Tooltip>}>
                         <span
                           onClick={(e) => { e.stopPropagation(); handleViewApprovalTrail(job.requisition_id, e); }}
                           style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
@@ -858,17 +861,21 @@ const fetchRequisitions = async () => {
             onChange={(e) => {
               setApprovalStatus(e.target.value);
               if (e.target.value !== "Workflow") {
-                setNoOfApprovals(1);
+                setNoOfApprovals(manager_dept);
               }
             }}
           >
             <option value="">Select Status</option>
             <option value="Direct Approval">Direct Approval</option>
-            <option value="Workflow">Workflow</option>
+            
+              {/* Show Workflow option only if user is not Admin */}
+              {user.role !== "Admin" && (
+                <option value="Workflow">Workflow</option>
+              )}
           </Form.Select>
 
           {/* Number of Approvals (only if Workflow is selected) */}
-          {approvalStatus === "Workflow" && (
+          {/* {approvalStatus === "Workflow" && (
             <>
               <span className="postingfont me-3">Number of Approvals</span>
               <Form.Select
@@ -879,6 +886,28 @@ const fetchRequisitions = async () => {
                 <option value={1}>1</option>
                 <option value={2}>2</option>
                 <option value={3}>3</option>
+              </Form.Select>
+            </>
+          )} */}
+
+
+          {approvalStatus === "Workflow" && (
+            <>
+              <span className="postingfont me-3">Number of Approvals</span>
+              <Form.Select
+                style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
+                value={noOfApprovals}
+                onChange={(e) => setNoOfApprovals(parseInt(e.target.value))}
+              >
+                {/* Default option */}
+                <option value={manager_dept}>Default</option>
+
+                {/* Dynamic options from 1 to manager_dept */}
+                {Array.from({ length: manager_dept }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
               </Form.Select>
             </>
           )}
