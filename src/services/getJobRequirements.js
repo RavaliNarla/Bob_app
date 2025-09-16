@@ -20,12 +20,8 @@ export const getJobRequirements = async () => {
 
 export const getJobPositions = async (requisition_id) => {
   try {
-    const data = await apiService.getPosData(); // ✅ use apiService instead of fetch
-    // Assuming the API returns a list of positions, filter by requisition_id
-    const filteredData = (data || []).filter(
-      (pos) => pos.requisition_id === requisition_id
-    );
-    return filteredData;
+     const data = await apiService.getByRequisitionId(requisition_id);
+     return  data?.data || [];
   } catch (error) {
     console.error("Failed to fetch job positions:", error);
     return [];

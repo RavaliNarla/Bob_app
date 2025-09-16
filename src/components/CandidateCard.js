@@ -174,9 +174,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
                 console.log("Fetched candidates response:", fetchedCandidatesResponse);
-                const fetchedCandidates = fetchedCandidatesResponse || fetchedCandidatesResponse?.data || [];//
+              //  const fetchedCandidates = fetchedCandidatesResponse || fetchedCandidatesResponse?.data || [];//
                 //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
-                // const fetchedCandidates = fetchedCandidatesResponse?.data.data|| [];
+                 const fetchedCandidates = fetchedCandidatesResponse?.data|| [];
                 console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
@@ -656,26 +656,34 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
         if (c) {
             try {
-                setApiLoading(true); setError(null);
                 const res = await apiService.createInterview({
                     candidate_id: c.candidate_id,
                     position_id: selectedPositionId,
                 });
-                if (res && res.interview_id) {
-                    setSelectedInterview(res);
-                    const feedbackRes = await apiService.getfeedback(c.candidate_id, selectedPositionId);
-                    console.log("feedbackRes",feedbackRes);
+            
+                console.log("res111", res);
+            
+                if (res && res.data) {
+                    setSelectedInterview(res.data);
+                   // console.log("SelectedInterview", res.data); // ✅ use res.data directly
+            
+                    const feedbackRes = await apiService.getfeedback(
+                        c.candidate_id,
+                        selectedPositionId
+                    );
+                    console.log("feedbackRes", feedbackRes);
+            
                     if (feedbackRes) {
-                        setInterviewFeedBack(feedbackRes);
+                        setInterviewFeedBack(feedbackRes?.data);
                         // setIsOpen(true);
-                    }
-                    else {
+                    } else {
                         setInterviewFeedBack([]);
                     }
+                } else {
+                    setSelectedInterview(null);
                 }
-                else setSelectedInterview(null);
                 setIsOpen(true);
-            } catch (e) {
+            }catch (e) {
                 setError("Failed to fetch interview details");
                 setSelectedInterview(null);
                 setInterviewFeedBack([]);
@@ -703,8 +711,8 @@ const CandidateCard = ({ setTriggerDownload }) => {
             console.log("response", response);
         
             const interviewDetails = response.data || response;
+            console.log("interviewDetails", interviewDetails);
             if (interviewDetails && interviewDetails.scheduled_at) {
-                const interviewDetails = response || response.data;
                 const scheduleAt = interviewDetails.scheduled_at
                     ? new Date(interviewDetails.scheduled_at)
                     : null;

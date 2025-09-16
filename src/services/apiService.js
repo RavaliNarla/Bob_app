@@ -231,7 +231,7 @@ candidateApi.interceptors.request.use(
 // );
 
 candidateApi.interceptors.response.use(
-  (response) => response.data,
+  (response) => response,
   async (error) => {
     const originalRequest = error.config;
 

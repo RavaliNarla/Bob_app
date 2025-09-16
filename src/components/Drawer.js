@@ -74,7 +74,7 @@ function Drawer({
   // console.log(candidate)
    console.log("interviewer",interviewer);
   //  console.log("interviewFeedBacks",interviewFeedBacks);
-  //  console.log("feedbacks",feedbacks);
+    console.log("feedbacks",feedbacks);
    
   // interviewer info (read-only — from candidate)
   const interviewerName = interviewer?.interviewer;
@@ -82,7 +82,7 @@ function Drawer({
   const interviewerId = interviewer?.interviewer_id;
 
   useEffect(() => {
-    setFeedbacks(interviewFeedBacks ?? []);
+    setFeedbacks(Array.isArray(interviewFeedBacks) ? interviewFeedBacks : []);
   }, [interviewFeedBacks]);
 
   // Load/save feedbacks per candidate via localStorage
@@ -140,6 +140,7 @@ function Drawer({
       };
 
       const res = await apiService.postFeedback(payload);
+      console.log("res",res);
       if(res.status===200)
       {
          const feedbackRes = await apiService.getfeedback(candidate.candidate_id,positionId || candidate.position_id);
