@@ -21,6 +21,9 @@ import Payments from './pages/Payments';
 import PrivateRoute from './components/PrivateRoute';
 import TemplateMainCompo from './components/OfferTemplate/TemplateMainCompo';
 import Position from './pages/Position';
+import SpecialCategory from './pages/SpecialCategory';
+import Category from './pages/Category';
+import RelaxationType from './pages/RelaxationType';
 
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
@@ -99,6 +102,10 @@ function App() {
                       <Route path="/interviews" element={<Calendar />} />
                       <Route path="/template" element={<TemplateMainCompo />} />
                       <Route path="/position" element={<Position />} />
+                       <Route path="/category" element={<Category />} />
+                      <Route path="/special-category" element={<SpecialCategory />} />
+                      <Route path="/relaxation-type" element={<RelaxationType />} />'
+                     
                     </Route>
                   </Route>
                 </Route>

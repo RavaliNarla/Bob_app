@@ -60,52 +60,35 @@ const Department = () => {
     setShowModal(true);
   };
 
- const handleSave = () => {
-  const newErrors = {};
+  const handleSave = () => {
+    const newErrors = {};
 
-  const trimmedName = currentDept.department_name?.trim();
-  const trimmedDesc = currentDept.department_desc?.trim();
+    const trimmedName = currentDept.department_name?.trim();
+    const trimmedDesc = currentDept.department_desc?.trim();
 
-  // Step 1: Required validation
-  if (!trimmedName) {
-    newErrors.department_name = "Name is required";
-  }
-  if (!trimmedDesc) {
-    newErrors.department_desc = "Description is required";
-  }
+    if (!trimmedName) {
+      newErrors.department_name = "Name is required";
+    }
+   
 
-  // Step 2: Only check duplicates if both fields are non-empty
-  if (trimmedName && trimmedDesc) {
+    // Check if either name or description already exists
     const isDuplicate = depts.some((dept, index) =>
-      (
-        dept.department_name?.trim().toLowerCase() === trimmedName.toLowerCase() ||
-        dept.department_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase()
-      ) && index !== editIndex
+      (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
+        dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
+      index !== editIndex
     );
 
     if (isDuplicate) {
-      // More specific error: decide based on what matches
-      if (depts.some((dept, index) =>
-        dept.department_name?.trim().toLowerCase() === trimmedName.toLowerCase() &&
-        index !== editIndex
-      )) {
-        newErrors.department_name = "Department name already exists";
-      }
-      if (depts.some((dept, index) =>
-        dept.department_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase() &&
-        index !== editIndex
-      )) {
-        newErrors.department_desc = "Department description already exists";
-      }
+      newErrors.department_name = "Department name already exists";
+      newErrors.department_desc = "Department description already exists";
     }
-  }
 
-  setErrr(newErrors);
+    setErrr(newErrors);
 
-  if (Object.keys(newErrors).length === 0) {
-    handleSaveCallback();
-  }
-};
+    if (Object.keys(newErrors).length === 0) {
+      handleSaveCallback();
+    }
+  };
 
 
 
@@ -145,7 +128,7 @@ const Department = () => {
     try {
       await apiService.deleteDepartment(idToDelete);
       setDepts(depts.filter((dept) => dept.department_id !== idToDelete));
-      toast.success("Department deleted");
+      toast.error("Department deleted");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");
@@ -290,7 +273,7 @@ const Department = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description <span className="text-danger">*</span>
+                    Description
                   </Form.Label>
                   <Form.Control
                     as="textarea"

@@ -57,13 +57,13 @@ const JobGrade = () => {
     }
   };
 
-  const openModal = (req = { job_grade_code: "", job_grade_desc: "", job_scale: "",min_salary: "", max_salary: "" }, index = null) => {
+  const openModal = (req = { job_grade_code: "", job_grade_desc: "", job_scale: "", min_salary: "", max_salary: "" }, index = null) => {
     setCurrentGrade(req);
     setEditIndex(index);
     setShowModal(true);
   };
 
- const handleSave = () => {
+  const handleSave = () => {
   const newErrors = {};
 
   const trimmedCode = currentGrade.job_grade_code?.trim();
@@ -72,12 +72,13 @@ const JobGrade = () => {
   const minSalary = String(currentGrade.min_salary)?.trim();
   const maxSalary = String(currentGrade.max_salary)?.trim();
 
+  // ---------------------------
   // Required validations
-  //if (!trimmedCode) newErrors.job_grade_code = "Code is required";
-  if (!trimmedDesc) newErrors.job_grade_desc = "Description is required";
+  // ---------------------------
   if (!trimmedScale) newErrors.job_scale = "Scale is required";
   if (!minSalary) newErrors.min_salary = "Minimum salary is required";
   if (!maxSalary) newErrors.max_salary = "Maximum salary is required";
+  // Description is now optional, so no required check
 
   // Numeric validation
   if (minSalary && isNaN(Number(minSalary))) {
@@ -99,28 +100,44 @@ const JobGrade = () => {
     newErrors.max_salary = "Maximum salary cannot be less than minimum salary";
   }
 
-  // Duplicate check (case-insensitive, trims spaces) for ANY matching field
-  const isDuplicate = grads.some((grad, index) =>
-    (
-      grad.job_grade_code?.trim().toLowerCase() === trimmedCode?.toLowerCase() ||
-      grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase() ||
-      grad.job_scale?.trim().toLowerCase() === trimmedScale?.toLowerCase()
-    ) &&
-    index !== editIndex // Ignore same record in edit mode
-  );
-
-  if (isDuplicate) {
-   //newErrors.job_grade_code = "Job grade code already exists";
-    newErrors.job_grade_desc = "Job description already exists";
-    newErrors.job_scale = "Job scale already exists";
+  // ---------------------------
+  // Duplicate check (only if field has value)
+  // ---------------------------
+  if (trimmedScale) {
+    const duplicateScale = grads.some(
+      (grad, index) =>
+        grad.job_scale?.trim().toLowerCase() === trimmedScale.toLowerCase() &&
+        index !== editIndex
+    );
+    if (duplicateScale) newErrors.job_scale = "Job scale already exists";
   }
 
+  if (trimmedDesc) {
+    const duplicateDesc = grads.some(
+      (grad, index) =>
+        grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase() &&
+        index !== editIndex
+    );
+    if (duplicateDesc) newErrors.job_grade_desc = "Job description already exists";
+  }
+
+  if (trimmedCode) {
+    const duplicateCode = grads.some(
+      (grad, index) =>
+        grad.job_grade_code?.trim().toLowerCase() === trimmedCode.toLowerCase() &&
+        index !== editIndex
+    );
+    if (duplicateCode) newErrors.job_grade_code = "Job grade code already exists";
+  }
+
+  // ---------------------------
   setErrr(newErrors);
 
   if (Object.keys(newErrors).length === 0) {
     handleSaveCallback();
   }
 };
+
 
 
 
@@ -133,7 +150,7 @@ const JobGrade = () => {
         };
 
         await apiService.updateJobGrade(updatedGrad.job_grade_id, updatedGrad);
-        
+
 
         toast.success("Grade updated successfully");
 
@@ -229,8 +246,8 @@ const JobGrade = () => {
 
   return (
     <div className="register_container px-5 gradefont py-3">
-    <div className="d-flex justify-content-between align-items-center pb-4">
-      {/* <InputGroup className="w-50">
+      <div className="d-flex justify-content-between align-items-center pb-4">
+        {/* <InputGroup className="w-50">
          <InputGroup.Text style={{ backgroundColor: '#FF7043' }}>
                   <FontAwesomeIcon icon={faSearch} style={{ color: '#fff' }}/>
         </InputGroup.Text>
@@ -241,9 +258,9 @@ const JobGrade = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup> */}
-      <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Job Grades</h5>
-      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
-    </div>
+        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Job Grades</h5>
+        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+      </div>
       {/* <hr /> */}
 
       {jobsToDisplay.length === 0 ? (
@@ -255,20 +272,20 @@ const JobGrade = () => {
               {/* <th onClick={() => handleSort("job_grade_code")} style={{ cursor: "pointer", width: "20%" }}>
                 Code{getSortIndicator("job_grade_code")}
               </th> */}
-              
-              <th onClick={() => handleSort("job_scale")} style={{ cursor: "pointer", width: "10%"}}>
+
+              <th onClick={() => handleSort("job_scale")} style={{ cursor: "pointer", width: "10%" }}>
                 Scale{getSortIndicator("job_scale")}
               </th>
-              <th onClick={() => handleSort("min_salary")} style={{ cursor: "pointer", width: "15%"}}>
+              <th onClick={() => handleSort("min_salary")} style={{ cursor: "pointer", width: "15%" }}>
                 Minimum Salary{getSortIndicator("min_salary")}
               </th>
               <th onClick={() => handleSort("max_salary")} style={{ cursor: "pointer", width: "15%" }}>
                 Maximum Salary{getSortIndicator("max_salary")}
               </th>
-              <th onClick={() => handleSort("job_grade_desc")} style={{ cursor: "pointer" ,width: "40%"}}>
+              <th onClick={() => handleSort("job_grade_desc")} style={{ cursor: "pointer", width: "50%" }}>
                 Description{getSortIndicator("job_grade_desc")}
               </th>
-              
+
               <th>Actions</th>
             </tr>
           </thead>
@@ -277,18 +294,18 @@ const JobGrade = () => {
             {jobsToDisplay.map((job, index) => (
               //<tr key={job.job_grade_id || index}>
               <tr
-  key={
-    job.job_grade_id ??
-    `${String(job.job_grade_code)}__${String(job.job_grade_desc)}__${String(job.job_scale)}`
-  }
->
+                key={
+                  job.job_grade_id ??
+                  `${String(job.job_grade_code)}__${String(job.job_grade_desc)}__${String(job.job_scale)}`
+                }
+              >
 
                 {/* <td>{job.job_grade_code}</td> */}
-             
+
                 <td>{job.job_scale}</td>
                 <td>{job.min_salary}</td>
                 <td>{job.max_salary}</td>
-                   <td>{job.job_grade_desc}</td>
+                <td>{job.job_grade_desc}</td>
                 <td>
                   <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(job, index)} />
                   <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
@@ -332,7 +349,7 @@ const JobGrade = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description <span className="text-danger">*</span>
+                    Description
                   </Form.Label>
                   <Form.Control
                     as="textarea"
@@ -349,11 +366,11 @@ const JobGrade = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              
+
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Grade Code 
+                    Grade Code
                   </Form.Label>
                   <Form.Control
                     as="textarea"
@@ -410,7 +427,7 @@ const JobGrade = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
-              
+
             </Row>
           </Form>
         </Modal.Body>

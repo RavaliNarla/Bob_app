@@ -15,7 +15,10 @@ import {
   faChartLine,
   faPerson,
   faCalendar,
-  faFile,   
+  faFile,
+  faStar,
+  faTags,
+  faSlidersH    
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -36,6 +39,7 @@ const Sidebar = () => {
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },
+  
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
@@ -58,6 +62,10 @@ const Sidebar = () => {
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
     { icon: faFile, text: 'Offer Letter', path: '/template' },
     { icon: faBriefcase, text: 'Position', path: '/position' },
+       { icon: faTags, text: 'Category', path: '/category' }, 
+    { icon: faStar , text: 'Special Category', path: '/special-category' },
+    {icon: faSlidersH  , text: 'Relaxation Type', path: '/relaxation-type' },
+
   ];
 
   return (
@@ -94,7 +102,7 @@ const Sidebar = () => {
               className="d-flex flex-column align-items-center justify-content-center py-3"
               style={{
                 color: '#6c757d',
-                fontSize: '12px',
+                fontSize: '13px',
                 cursor: 'pointer',
                 height: '60px',
                 width: '97px',
@@ -122,7 +130,7 @@ const Sidebar = () => {
                     color: isActive(item.path) ? '#FF4D00' : '#6c757d',
                     backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
                     fontWeight: isActive(item.path) ? '600' : '400',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     textDecoration: 'none',
                   }}
                 >

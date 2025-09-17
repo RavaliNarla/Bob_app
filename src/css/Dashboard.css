@@ -124,3 +124,20 @@
   border-bottom: 20px solid transparent;
   margin-left: -5px;
 }
+.dashtabs .nav-link{
+    color: #414141 !important;
+}
+.dashtabs .nav-link.active{
+    color: #162b75 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 400 !important;
+   
+}
+.interview_list span{
+    color: #162b75 !important;
+    font-size: 14px;
+     font-weight: 400 !important;
+}
+.interview_list{
+     font-size: 14px;
+}

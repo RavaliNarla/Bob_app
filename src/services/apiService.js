@@ -459,7 +459,23 @@ parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
   getAllPositions: () => apis.get("/master-positions/all"),
   addPosition: (data) => apis.post("/master-positions/add", data),
   updatePosition: (id, data) => apis.put(`/master-positions/update/${id}`, data),
-  deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`)
+  deletePosition: (id) => apis.delete(`/master-positions/delete/${id}`),
+
+  getAllSpecialCategories: () => apis.get('/special-categories/all'),
+  addSpecialCategory: (data) => apis.post('/special-categories/add', data),
+  updateSpecialCategory: (id, data) => apis.put(`/special-categories/update/${id}`, data),
+  deleteSpecialCategory: (id) => apis.delete(`/special-categories/delete/${id}`),
+
+  getAllCategories: () => apis.get('/categories/all'),
+  addCategory: (data) => apis.post('/categories/add', data),
+  updateCategory: (id, data) => apis.put(`/categories/update/${id}`, data),
+  deleteCategory: (id) => apis.delete(`/categories/delete/${id}`),
+
+  getAllRelaxationType: () => apis.get('/relaxation-type/all'),
+  addRelaxationType: (data) => apis.post('/relaxation-type/add', data),
+  updateRelaxationType: (id, data) => apis.put(`/relaxation-type/update/${id}`, data),
+  deleteRelaxationType: (id) => apis.delete(`/relaxation-type/delete/${id}`),
+
    
 };
 

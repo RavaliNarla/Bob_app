@@ -70,9 +70,9 @@ const Skill = () => {
   if (!trimmedName) {
     newErrors.skill_name = "Name is required";
   }
-  if (!trimmedDesc) {
-    newErrors.skill_desc = "Description is required";
-  }
+  // if (!trimmedDesc) {
+  //   newErrors.skill_desc = "Description is required";
+  // }
 
   // Step 2: Only check duplicate name (description can repeat)
   if (trimmedName) {
@@ -281,7 +281,7 @@ const Skill = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description <span className="text-danger">*</span>
+                    Description
                   </Form.Label>
                   <Form.Control
                     as="textarea"
