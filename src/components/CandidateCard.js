@@ -164,6 +164,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     }, [selectedRequisitionId]);
 
     useEffect(() => {
+        console.log("ravali")
         const fetchCandidates = async () => {
             setCandidates([]);
             setInterviewed([]);
@@ -491,49 +492,52 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 salary: Number(salary),
                 offer_letter_path: offerLetterPath,
                  designation:
-        selectedPositionTitle ||
-        jobPositionTitle ||
-        jobPositions.find(p => p.position_id === positionId)?.position_title ||
-        "",
-        joining_date:joiningDate,
-            };
-
-            console.log("Sending offer payload:", payload);
-
+                    selectedPositionTitle ||
+                    jobPositionTitle ||
+                    jobPositions.find(p => p.position_id === positionId)?.position_title ||
+                    "",
+                    joining_date:joiningDate,
+                };
             const response = await apiService.sendOffer(payload);
-            console.log("Offer response:", response);
+            console.log("Offer response:", response?.status);
+                
+        if (response?.status === 200) {
+                const updatedCandidate = {
+                    ...offerCandidate,
+                    application_status: 'Offered', 
+                    profileStatus: "Selected",
+                    rating: offerCandidate.rating || 0,
+                    offer_letter_path: offerLetterPath,
+                    designation: payload.designation,
+                    joining_date: joiningDate,
+                    // 👈 make sure Drawer can use this
+                };
 
-            const updatedCandidate = {
-                ...offerCandidate,
-                profileStatus: "Selected",
-                rating: offerCandidate.rating || 0,
-                offer_letter_path: offerLetterPath,
-                designation: payload.designation,
-                joining_date: joiningDate,
-                 // 👈 make sure Drawer can use this
-            };
+                // Update local state
+                const updatedInterviewed = interviewed.filter(
+                    (c) => c.candidate_id !== offerCandidate.candidate_id
+                );
+                setInterviewed(updatedInterviewed);
 
-            // Update local state
-            const updatedInterviewed = interviewed.filter(
-                (c) => c.candidate_id !== offerCandidate.candidate_id
-            );
-            setInterviewed(updatedInterviewed);
+                const updatedOffered = [...offered, updatedCandidate];
+                setOffered(updatedOffered);
 
-            const updatedOffered = [...offered, updatedCandidate];
-            setOffered(updatedOffered);
+                if (selectedCandidate?.candidate_id === offerCandidate.candidate_id) {
+                    setSelectedCandidate(updatedCandidate);
+                }
 
-            if (selectedCandidate?.candidate_id === offerCandidate.candidate_id) {
-                setSelectedCandidate(updatedCandidate);
-            }
+                setShowOfferModal(false);
+                setOfferCandidate(null);
+                setSalary("");
+                setReqId("");
+                setPositionId("");
+                setJobPositionTitle("");
 
-            setShowOfferModal(false);
-            setOfferCandidate(null);
-            setSalary("");
-            setReqId("");
-            setPositionId("");
-            setJobPositionTitle("");
-
-            toast.success("Offer sent successfully!");
+                toast.success("Offer sent successfully!");
+         }
+         else{
+            toast.error("Failed to send offer");
+         }
         } catch (err) {
             console.error("Failed to send offer:", err);
             setError(err.message || "Failed to send offer");

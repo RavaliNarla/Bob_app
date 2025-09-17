@@ -132,25 +132,30 @@ console.log("Position List:", positionList);
 
       // Find the full object from positionList
       const selectedPosition = (positionList || []).find(
+        
         (pos) => pos.position_title === selectedTitle
       );
 
       if (selectedPosition) {
-        // Auto populate Description and Job Grade
         handleInputChange({
-          target: { name: "description", value: selectedPosition.description || "" },
+          target: { name: "description", value: selectedPosition.description ?? "" },
         });
-
+      
         handleInputChange({
-          target: { name: "grade_id", value: selectedPosition.jobGradeId || "" },
+          target: { name: "grade_id", value: String(selectedPosition.jobGradeId ?? "") },
         });
-
-        // Optional: also keep position_code for backend
+      
         handleInputChange({
-          target: { name: "position_code", value: selectedPosition.position_code || "" },
+          target: { name: "position_code", value: selectedPosition.position_code ?? "" },
         });
+      
+        // ✅ If grade_id is not 0 → reset salary
+        if (selectedPosition.jobGradeId && selectedPosition.jobGradeId !== 0) {
+          handleInputChange({ target: { name: "min_salary", value: "" } });
+          handleInputChange({ target: { name: "max_salary", value: "" } });
+        }
         handleInputChange({
-          target: { name: "dept_id", value: selectedPosition.deptId || "" },
+          target: { name: "dept_id", value: selectedPosition.deptId ?? "" },
         });
       }
     }}

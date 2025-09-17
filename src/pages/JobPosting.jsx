@@ -875,22 +875,7 @@ const fetchRequisitions = async () => {
               )}
           </Form.Select>
 
-          {/* Number of Approvals (only if Workflow is selected) */}
-          {/* {approvalStatus === "Workflow" && (
-            <>
-              <span className="postingfont me-3">Number of Approvals</span>
-              <Form.Select
-                style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
-                value={noOfApprovals}
-                onChange={(e) => setNoOfApprovals(parseInt(e.target.value))}
-              >
-                <option value={1}>1</option>
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-              </Form.Select>
-            </>
-          )} */}
-
+         
 
           {approvalStatus === "Workflow" && (
             <>
@@ -898,17 +883,27 @@ const fetchRequisitions = async () => {
               <Form.Select
                 style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
                 value={noOfApprovals}
-                onChange={(e) => setNoOfApprovals(parseInt(e.target.value))}
+                onChange={(e) => {
+                  const val = e.target.value === "default" ? manager_dept : parseInt(e.target.value);
+                  setNoOfApprovals(val);
+                }}
               >
                 {/* Default option */}
-                <option value={manager_dept}>Default</option>
-
+                {/* <option value="default">Default</option> */}
+                {/* <option value={manager_dept}> {manager_dept}</option> */}
                 {/* Dynamic options from 1 to manager_dept */}
                 {Array.from({ length: manager_dept }, (_, i) => (
                   <option key={i + 1} value={i + 1}>
                     {i + 1}
                   </option>
                 ))}
+                {/* {Array.from({ length: manager_dept }, (_, i) => i + 1)
+                  .filter((num) => num !== manager_dept) // 👈 skip duplicate
+                  .map((num) => (
+                    <option key={num} value={num}>
+                      {num}
+                    </option>
+                  ))} */}
               </Form.Select>
             </>
           )}
