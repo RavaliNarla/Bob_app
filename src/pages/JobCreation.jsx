@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Modal,Nav   } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faFileAlt, faCheck, faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
@@ -13,7 +13,7 @@ import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-
+import Relaxation from '../components/Relaxation';
 
 const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, onUpdateSuccess, readOnly: readOnlyProp }) => {
   const navigate = useNavigate();
@@ -30,6 +30,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
   const [filteredLocations, setFilteredLocations] = useState([]);
+  const [activeTab, setActiveTab] = useState('jobCreation');
   const initialState = {
     requisition_id: '',
     position_title: '',
@@ -104,7 +105,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [dataError, setDataError] = useState(null);
   const [readOnly, setReadOnly] = useState(readOnlyProp ?? false);
   const [masterPositions, setMasterPositions] = useState([]);
-
+  const [relaxationData, setRelaxationData] = useState(null);
 useEffect(() => {
   const fetchMasterData = async () => {
     try {
@@ -444,7 +445,14 @@ const handleInputChange = (e) => {
   }
 };
   
-
+const handleRelaxationSave = (data) => {
+  if (data) {
+    setRelaxationData(data);
+    // You can add additional save logic here
+    toast.success('Relaxation policy saved successfully!');
+  }
+  // If data is null, it means cancel was clicked
+};
   const validateForm = () => {
     const newErrors = {};
     if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
@@ -924,30 +932,82 @@ console.log("positionslist222",masterData.masterPositionsList)
             </div>
             )}
             {selectedOption === 'direct' && (
-              <JobCreationForm
-                formData={formData}
-                errors={errors}
-                handleInputChange={handleInputChange}
-                handleSubmit={handleSubmit}
-                handleCancel={handleCancel}
-                requisitionIdOptions={masterData.requisitionIdOptions}
-                departmentOptions={masterData.departmentOptions}
-                countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
-                stateOptions={filteredStates.map(s => ({ id: s.state_id, name: s.state_name }))}
-                cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
-                locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
-                gradeIdOptions={masterData.gradeIdOptions}
-                positionTitleOptions={masterData.positionTitleOptions}
-                employmentTypeOptions={masterData.employmentTypeOptions}
-                mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
-                preferredQualificationOptions={masterData.preferredQualificationOptions}
-                requisitionData={reqs}
-                gradeMeta={masterData.allGrades}
-                readOnly={readOnly}
-               positionList={masterPositions}
-              />
-            )}
-          
+            <>
+              <Nav variant="tabs" defaultActiveKey="jobCreation" className="mb-3">
+                <Nav.Item>
+                  <Nav.Link 
+                    eventKey="jobCreation" 
+                    onClick={() => setActiveTab('jobCreation')}
+                    active={activeTab === 'jobCreation'}
+                  >
+                    Job Creation
+                  </Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link 
+                    eventKey="relaxationPolicy" 
+                    onClick={() => setActiveTab('relaxationPolicy')}
+                    active={activeTab === 'relaxationPolicy'}
+                  >
+                    Relaxation Policy
+                  </Nav.Link>
+                </Nav.Item>
+              </Nav>
+
+                    {activeTab === 'jobCreation' && (
+                      <div className="tab-content">
+                        <JobCreationForm
+                          formData={formData}
+                          errors={errors}
+                          handleInputChange={handleInputChange}
+                          //handleSubmit={handleSubmit}
+                          handleSubmit={(e) => {
+                            e.preventDefault();
+                            setActiveTab('relaxationPolicy');
+                          }}
+                          handleCancel={handleCancel}
+                          requisitionIdOptions={masterData.requisitionIdOptions}
+                          departmentOptions={masterData.departmentOptions}
+                          countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
+                          stateOptions={filteredStates.map(s => ({ id: s.state_id, name: s.state_name }))}
+                          cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
+                          locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
+                          gradeIdOptions={masterData.gradeIdOptions}
+                          positionTitleOptions={masterData.positionTitleOptions}
+                          employmentTypeOptions={masterData.employmentTypeOptions}
+                          mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
+                          preferredQualificationOptions={masterData.preferredQualificationOptions}
+                          requisitionData={reqs}
+                          gradeMeta={masterData.allGrades}
+                          readOnly={readOnly}
+                          positionList={masterPositions}
+                          showNextButton={true}
+                        />
+                      </div>
+                    )}
+
+                    {activeTab === 'relaxationPolicy' && (
+                      <div className="tab-content">
+                        <div className="card">
+                          <div className="card-body">
+                          <Relaxation 
+                            onSave={handleRelaxationSave} 
+                            initialData={relaxationData}
+                          />
+                            <div className="d-flex justify-content-between mt-4">
+                              <Button variant="secondary" onClick={() => setActiveTab('jobCreation')}>
+                                Back
+                              </Button>
+                              <Button variant="primary" onClick={handleSubmit}>
+                                Save
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
         </Col>
       </Row>
       <Modal className='fontss' show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>

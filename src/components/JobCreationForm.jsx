@@ -22,7 +22,8 @@ const JobCreationForm = ({
   // New prop to receive full requisition data
   requisitionData = [],
   readOnly = false,
-  positionList = []
+  positionList = [],
+  showNextButton = false
 }) => {
   // Remove modal state, use popover instead
 
@@ -42,7 +43,7 @@ console.log("Position List:", positionList);
   // console.log('Selected Requisition:', selectedRequisition);
 
   return (
-    <div className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
+    <div onSubmit={handleSubmit} className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
       {/* <h4 className="text-center mb-4 fonall">
         Job Posting
       </h4> */}
@@ -550,12 +551,44 @@ console.log("Position List:", positionList);
           {errors.preferred_qualification && <small className="error">{errors.preferred_qualification}</small>}
         </div>
 
+        {!readOnly 
+          // <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
+          //   {/* <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button> */}
+          //   <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
+          // { formData.position_id ? 'Update' : 'Save' }
+          //   </Button>
+          // </div>
+        }
+
         {!readOnly && (
-          <div className="d-flex justify-content-end mt-1 gap-2 col-12" style={{ fontSize: '0.9rem' }}>
-            {/* <Button variant="outline-secondary" onClick={handleCancel}>Clear</Button> */}
-            <Button type="submit" className="text-white" style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}>
-          { formData.position_id ? 'Update' : 'Save' }
+          <div className="d-flex justify-content-between mt-4">
+            <Button 
+              variant="secondary" 
+              onClick={handleCancel}
+              className="px-4"
+            >
+              Cancel
             </Button>
+            
+            <div>
+              {showNextButton ? (
+                <Button 
+                  type="submit" 
+                  className="text-white" 
+                  style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button 
+                  type="submit" 
+                  className="text-white" 
+                  style={{ backgroundColor: '#FF7043', borderColor: '#FF7043' }}
+                >
+                  {formData.position_id ? 'Update' : 'Save'}
+                </Button>
+              )}
+            </div>
           </div>
         )}
       </form>

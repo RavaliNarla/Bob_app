@@ -1,0 +1,180 @@
+/* Bank of Baroda Color Scheme */
+:root {
+  --bob-red: #D42127;
+  --bob-gold: #FFD700;
+  --bob-dark-red: #A51E22;
+  --bob-light-gold: #FFE87C;
+  --bob-light-gray: #F5F5F5;
+  --bob-dark-gray: #333333;
+  --bob-white: #FFFFFF;
+}
+
+/* Main Container */
+.relaxation-container {
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+/* Tab Buttons */
+.tab-button {
+  background-color: var(--bob-white);
+  color: var(--bob-dark-gray);
+  border: 1px solid #ddd;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.tab-button:hover {
+  background-color: #f0f0f0;
+  color: var(--bob-red);
+  border-color: #ccc;
+}
+
+.tab-button.active {
+  background-color: var(--bob-red);
+  color: white;
+  border-color: var(--bob-dark-red);
+}
+
+/* Card Styling */
+.relaxation-card {
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: var(--bob-red);
+  color: white;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-bottom: 2px solid var(--bob-dark-red);
+}
+
+/* Table Styling */
+.relaxation-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.relaxation-table th,
+.relaxation-table td {
+  border: 1px solid #e0e0e0;
+  padding: 10px 15px;
+  text-align: left;
+}
+
+.table-header {
+  background-color: var(--bob-red);
+  color: white;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.relaxation-table tbody tr:nth-child(even) {
+  background-color: var(--bob-light-gray);
+}
+
+.relaxation-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Form Elements */
+.form-control, .form-select {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--bob-gold);
+  box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+  outline: none;
+}
+
+/* Buttons */
+.primary-button, .save-button {
+  background-color: var(--bob-red);
+  border: 1px solid var(--bob-dark-red);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.primary-button:hover, .save-button:hover {
+  background-color: var(--bob-dark-red);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.primary-button:disabled {
+  background-color: #cccccc;
+  border-color: #bbbbbb;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.danger-button {
+  background-color: #dc3545;
+  border: 1px solid #c82333;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.danger-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Titles */
+.section-title {
+  color: var(--bob-red);
+  font-weight: 600;
+  margin: 25px 0 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--bob-gold);
+  display: inline-block;
+}
+
+/* Form Inputs */
+.form-input {
+  width: 100%;
+  max-width: 100px;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .tab-button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+  
+  .form-select {
+    max-width: 100%;
+  }
+}
