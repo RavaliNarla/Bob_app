@@ -128,7 +128,7 @@ const Department = () => {
     try {
       await apiService.deleteDepartment(idToDelete);
       setDepts(depts.filter((dept) => dept.department_id !== idToDelete));
-      toast.error("Department deleted");
+      toast.success("Department deleted Successfully");
     } catch (err) {
       console.error("Delete Error:", err);
       toast.error("Delete failed");

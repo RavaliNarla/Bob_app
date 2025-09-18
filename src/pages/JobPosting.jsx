@@ -752,7 +752,7 @@ const fetchRequisitions = async () => {
                               {console.log(row)}
                               <td>{row.position_title}</td>
                               <td>{row.position_code}</td>
-                              <td>{row.grade_id}</td>
+                              <td>{row.grade_name}</td>
                               <td>{row.no_of_vacancies ?? '-'}</td>
                               {/* <td>{row.mandatory_experience}</td> */}
                               {/* <td>{row.position_status}</td> */}
