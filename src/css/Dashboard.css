@@ -141,3 +141,6 @@
 .interview_list{
      font-size: 14px;
 }
+.shadowbg{
+box-shadow: rgba(22, 43, 117, 0.2) 0px 5px 15px !important;
+ }

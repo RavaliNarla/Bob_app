@@ -335,7 +335,7 @@ export default function Dashboard() {
           <Row>
             {dashboardJson.position_fulfillment_tracker.map((p, idx) => (
               <Col md={3} key={idx} className="mb-4 d-flex">
-                <Card className="shadow-sm flex-fill text-center p-3">
+                <Card className="shadow-sm flex-fill text-center p-3 shadowbg">
                   <h6 className="fw-bold">{p.position_title}</h6>
                   <p className="text-muted small">{p.department_name}</p>
 
@@ -375,7 +375,7 @@ export default function Dashboard() {
           <Row>
             {dashboardJson.openpositions_status?.map((pos, idx) => (
               <Col md={4} key={idx} className="mb-3">
-                <Card className="h-100 shadow p-2">
+                <Card className="h-100 shadow p-2 shadowbg">
                   <Card.Body>
                     <h6 className="fw-bold">{pos.position_title}</h6>
                     <p className="mb-1">
