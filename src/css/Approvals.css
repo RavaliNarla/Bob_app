@@ -330,3 +330,9 @@ font-family: 'Poppins', sans-serif !important;
   font-size: 14px;
   color:#414141;
 }
+.modal_container .modal-dialog .modal-content {
+    width: 95vw !important;
+}
+.modal_container .modal-dialog {
+    margin: var(--bs-modal-margin) !important;
+}
