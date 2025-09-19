@@ -42,10 +42,11 @@ function TemplateBase({ template, candidate, s, c, b, variant }) {
 
       {/* Subject */}
       {c.subject ? (
-        <div style={{ textAlign: "center", margin: "6px 0 10px 0", color: '#162b75', fontWeight : '500'}}>
-          <strong style={{ fontSize: 16 }}>{c.subject}</strong>
-        </div>
-      ) : null}
+  <div
+    style={{ textAlign: "center", margin: "6px 0 10px 0", color: '#162b75', fontWeight: '500' }}
+    dangerouslySetInnerHTML={{ __html: c.subject }}
+  />
+) : null}
 
       {/* Salutation */}
       {s.salutation !== false && (

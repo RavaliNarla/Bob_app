@@ -42,54 +42,56 @@ function selectionTouchesToken(root) {
 }
 
 /* very small contentEditable editor JUST for the Intro */
-function CEIntro({ value, onChange }) {
-  const ref = useRef(null);
+function QuillWithTokens({ value, onChange, modules, formats }) {
+  const quillRef = useRef(null);
+  const lastValueRef = useRef(value);
 
-  // paint HTML (idempotent) without caret jumps
+  // Wrap tokens only once when value changes externally
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const safe = wrapTokensOnce(value || "");
-    if (el.innerHTML !== safe) el.innerHTML = safe;
-  }, [value]);
+    if (!value) return;
+    const wrapped = wrapTokensOnce(value);
+    if (wrapped !== value) {
+      onChange(wrapped);
+    }
+    lastValueRef.current = wrapped;
+  }, [value, onChange]);
 
-  const onPaste = (e) => {
-    // paste as plain text; tokens will wrap on re-render
-    e.preventDefault();
-    const text = (e.clipboardData || window.clipboardData).getData("text/plain") || "";
-    document.execCommand("insertHTML", false, text.replace(/\n/g, "<br>"));
-  };
+  // Prevent deleting tokens directly
+  useEffect(() => {
+    const editor = quillRef.current?.getEditor?.();
+    if (!editor) return;
 
-  const onBeforeInput = (e) => {
-    if (
-      (e.inputType || "").startsWith("delete") &&
-      selectionTouchesToken(ref.current)
-    ) {
-      e.preventDefault();
-      e.stopPropagation();
+    const handleKeyDown = (e) => {
+      if (
+        (e.key === "Backspace" || e.key === "Delete") &&
+        selectionTouchesToken(editor.root)
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    editor.root.addEventListener("keydown", handleKeyDown);
+    return () => editor.root.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  const handleChange = (val) => {
+    const wrapped = wrapTokensOnce(val);
+    if (wrapped !== lastValueRef.current) {
+      lastValueRef.current = wrapped;
+      onChange(wrapped);
     }
   };
-
-  const onKeyDown = (e) => {
-    if ((e.key === "Backspace" || e.key === "Delete") && selectionTouchesToken(ref.current)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-
-  const onInput = () => onChange?.(ref.current.innerHTML);
 
   return (
-    <div
-      ref={ref}
-      className="form-control mb-3"
-      contentEditable
-      suppressContentEditableWarning
-      style={{ minHeight: 140, whiteSpace: "pre-wrap" }}
-      onPaste={onPaste}
-      onBeforeInput={onBeforeInput}
-      onKeyDown={onKeyDown}
-      onInput={onInput}
+    <ReactQuill
+      ref={quillRef}
+      theme="snow"
+      value={value}
+      onChange={handleChange}
+      style={{ minHeight: 120 }}
+      modules={modules}
+      formats={formats}
     />
   );
 }
@@ -104,6 +106,22 @@ export default function TemplateEditor() {
   const [saving, setSaving] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedId, setSelectedId] = useState("");
+
+  const quillModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],        // basic
+      [{ 'color': [] }, { 'background': [] }],         // text & background color
+      [{ 'align': [] }],                               // alignment
+      ['clean']                                        // remove formatting
+    ]
+  };
+
+  const quillFormats = [
+    'bold', 'italic', 'underline', 'strike',
+    'color', 'background',
+    'align'
+  ];
+
   // ensure chips exist once on first mount
   useEffect(() => {
     const intro = template?.content?.intro ?? defaultTemplate.content.intro ?? "";
@@ -246,26 +264,33 @@ export default function TemplateEditor() {
                   {/* Subject */}
                   <Form.Group className="mb-2" style={{ marginBottom: '15px !important' }}>
                     <Form.Label>Subject</Form.Label>
-                    <Form.Control
+
+                    <ReactQuill
+                      theme="snow"
                       value={template.content.subject}
-                      onChange={(e) => setContent("subject", e.target.value)}
-                      placeholder="e.g. Offer of Employment"
+                      onChange={(v) => setContent("subject", v)}
+                      style={{ minHeight: 50 }}
+                      modules={quillModules}
+                      formats={quillFormats}
                     />
                   </Form.Group>
 
-                  {/* Intro (chips, non-editable) */}
-                  <Form.Label>Body Text</Form.Label>
-                  <CEIntro style={{ fontSize: '14px !important' }}
-                    value={template.content.intro}
-                    onChange={(v) => setContent("intro", v)}
-                  />
-
+                 {/* Intro (ReactQuill with formatting, tokens preserved) */}
+<Form.Label>Body Text</Form.Label>
+<QuillWithTokens
+  value={template.content.intro}
+  onChange={(v) => setContent("intro", v)}
+  modules={quillModules}
+  formats={quillFormats}
+/>
                   {/* Terms (restored to ReactQuill so no raw <p> shows) */}
                   <Form.Label>Terms</Form.Label>
                   <ReactQuill
                     theme="snow"
                     value={template.content.termsHtml}
                     onChange={(v) => setContent("termsHtml", v)}
+                    modules={quillModules}
+                    formats={quillFormats}
                   />
                 </div>
 
