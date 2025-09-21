@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Container, Button } from "react-bootstrap";
+import Relaxation from "../components/Relaxation";
 import "../css/Relaxation.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiService } from "../services/apiService";
-import Relaxation from "../components/Relaxation";
+
 const RelaxationPage = () => {
-  console.log("ravali")
   const [relaxationPolicies, setRelaxationPolicies] = useState([]);
   const [selectedPolicyId, setSelectedPolicyId] = useState("");
   const [selectedPolicy, setSelectedPolicy] = useState(null);
   const [isCreateNew, setIsCreateNew] = useState(false); // 🔹 Track "create new mode"
   const [formData, setFormData] = useState(null); // 🔹 Data from Relaxation child
+  const [isLoading, setIsLoading] = useState(false);
 
   // Fetch policies on load
   useEffect(() => {
     const fetchRelaxations = async () => {
+      setIsLoading(true);
       try {
         const res = await apiService.getRelaxations();
         if (Array.isArray(res)) {
@@ -29,6 +31,8 @@ const RelaxationPage = () => {
         console.error("Error fetching relaxations:", error);
         toast.error("Failed to load relaxation policies.");
         setRelaxationPolicies([]);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchRelaxations();
@@ -81,11 +85,16 @@ const RelaxationPage = () => {
         }
       } else {
         // 🔹 Update existing policy
-        const response = await apiService.updateRelaxation(
-          selectedPolicyId,
-          data
-        );
-
+       
+        const payload = {
+          job_relaxation_policy_id: selectedPolicyId,
+          relaxation_policy_number: selectedPolicy?.relaxation_policy_number ,
+          ...data,   // this should contain relaxation, relaxation_policy_number, etc.
+        };
+     
+        const response = await apiService.updateRelaxation(payload);
+  
+        console.log(response);
         if (response?.success) {
           toast.success("Policy updated successfully!");
           // update local list
@@ -120,42 +129,61 @@ const RelaxationPage = () => {
     <Container fluid className="py-4">
       <div className="card">
         <div className="card-body">
-          {/* Dropdown */}
-          <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-            <label htmlFor="job_relaxation_policy_id" className="form-label">
-              Relaxation Policy <span className="required-asterisk">*</span>
-            </label>
-            <select
-              id="job_relaxation_policy_id"
-              name="job_relaxation_policy_id"
-              className="form-select"
-              value={selectedPolicyId}
-              onChange={handlePolicyChange}
-              disabled={isCreateNew} // disable dropdown in create new mode
-            >
-              <option value="">-- Select Relaxation --</option>
-              {relaxationPolicies.map((policy) => (
-                <option
-                  key={policy.job_relaxation_policy_id}
-                  value={policy.job_relaxation_policy_id}
-                >
-                  {policy.relaxation_policy_number}
-                </option>
-              ))}
-            </select>
+          {/* <h2 className="mb-4">Relaxation Policy Management</h2> */}
+          <div>
+              <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Relaxation Policy</h5>
+          </div>
+          <div className="row mb-4">
+            <div className="col-12 col-md-6 col-lg-4">
+              <div className="form-group">
+                {/* <label htmlFor="job_relaxation_policy_id" className="form-label">
+                  <strong>Relaxation Policy</strong> 
+                </label> */}
+                <div className="input-group">
+                  <select
+                    id="job_relaxation_policy_id"
+                    name="job_relaxation_policy_id"
+                    className="form-control form-select"
+                    value={selectedPolicyId}
+                    onChange={handlePolicyChange}
+                    disabled={isCreateNew || isLoading}
+                  >
+                    <option value="">Select Relaxation Policy</option>
+                    {relaxationPolicies.map((policy) => (
+                      <option
+                        key={policy.job_relaxation_policy_id}
+                        value={policy.job_relaxation_policy_id}
+                      >
+                        {policy.relaxation_policy_number || `Policy ${policy.job_relaxation_policy_id}`}
+                      </option>
+                    ))}
+                  </select>
+                  <Button 
+                    variant="outline-primary" 
+                    onClick={handleCreateNew}
+                    disabled={isLoading}
+                    className="ms-2"
+                  >
+                    {isCreateNew ? 'Creating New...' : 'Create New'}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Create New Button */}
-          <Button variant="secondary" onClick={handleCreateNew} className="mb-3">
-            Create New
-          </Button>
-
-          {/* Relaxation Form */}
           <Relaxation
-            key={isCreateNew ? "new" : selectedPolicyId} // 🔹 re-render form
+            key={isCreateNew ? 'new' : selectedPolicyId}
             selectedPolicy={selectedPolicy}
             onRelaxationSave={handleRelaxationSave}
           />
+
+          {isLoading && (
+            <div className="text-center my-3">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Container>

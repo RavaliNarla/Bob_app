@@ -478,7 +478,7 @@ parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
   //Relaxation
   saveRelaxation: (data) => api.post('/job-relaxation-policy/add', data),
   getRelaxations: () => api.get('/job-relaxation-policy/all'),
-   
+  updateRelaxation: (id, data) => api.put(`/job-relaxation-policy/update/${id}`, data),
 };
 
 export default apiService;

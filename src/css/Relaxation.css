@@ -1,14 +1,4 @@
-/* Bank of Baroda Color Scheme */
-:root {
-    --bob-red: #D42127;
-    --bob-gold: #FFD700;
-    --bob-dark-red: #A51E22;
-    --bob-light-gold: #FFE87C;
-    --bob-light-gray: #F5F5F5;
-    --bob-dark-gray: #333333;
-    --bob-white: #FFFFFF;
-  }
-  
+
   /* Main Container */
   .relaxation-container {
     background-color: #f9f9f9;
@@ -17,7 +7,7 @@
   
   /* Tab Buttons */
   .tab-button {
-    background-color: var(--bob-white);
+    background-color: #fff;
     color: var(--bob-dark-gray);
     border: 1px solid #ddd;
     padding: 8px 20px;
@@ -33,9 +23,9 @@
   }
   
   .tab-button.active {
-    background-color: var(--bob-red);
+    background-color: #d42127;
     color: white;
-    border-color: var(--bob-dark-red);
+    border-color: #a51e22;
   }
   
   /* Card Styling */
@@ -47,11 +37,11 @@
   }
   
   .card-header {
-    background-color: var(--bob-red);
+    background-color: #d42127;
     color: white;
     font-weight: 600;
     padding: 12px 20px;
-    border-bottom: 2px solid var(--bob-dark-red);
+    border-bottom: 2px solid #a51e22;
   }
   
   /* Table Styling */
@@ -71,7 +61,7 @@
   }
   
   .table-header {
-    background-color: var(--bob-red);
+    background-color: #d42127;
     color: white;
     font-weight: 500;
     text-transform: uppercase;
@@ -80,7 +70,7 @@
   }
   
   .relaxation-table tbody tr:nth-child(even) {
-    background-color: var(--bob-light-gray);
+    background-color: #f5f5f5;
   }
   
   .relaxation-table tbody tr:hover {
@@ -96,15 +86,15 @@
   }
   
   .form-control:focus, .form-select:focus {
-    border-color: var(--bob-gold);
+    border-color: #ffd700;
     box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
     outline: none;
   }
   
   /* Buttons */
-  .primary-button, .save-button {
-    background-color: var(--bob-red);
-    border: 1px solid var(--bob-dark-red);
+ .save-button {
+    background-color: #d42127 !important;
+    border: 1px solid #a51e22 !important;
     color: white;
     padding: 8px 20px;
     border-radius: 4px;
@@ -113,20 +103,12 @@
   }
   
   .primary-button:hover, .save-button:hover {
-    background-color: var(--bob-dark-red);
+    background-color: #a51e22;
     color: white;
     transform: translateY(-1px);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-  
-  .primary-button:disabled {
-    background-color: #cccccc;
-    border-color: #bbbbbb;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-  }
-  
+ 
   .danger-button {
     background-color: #dc3545;
     border: 1px solid #c82333;
@@ -145,11 +127,11 @@
   
   /* Section Titles */
   .section-title {
-    color: var(--bob-red);
+    color: #d42127;
     font-weight: 600;
     margin: 25px 0 15px;
     padding-bottom: 8px;
-    border-bottom: 2px solid var(--bob-gold);
+    border-bottom: 2px solid #ffd700;
     display: inline-block;
   }
   
@@ -159,23 +141,5 @@
     max-width: 100px;
     margin: 0 auto;
     display: block;
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-    }
-    
-    .tab-button {
-      padding: 6px 12px;
-      font-size: 0.85rem;
-    }
-    
-    .form-select {
-      max-width: 100%;
-    }
   }
   

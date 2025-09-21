@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button, Form, Table, Card } from "react-bootstrap";
 import { CATEGORY_LIST, TYPES } from "../utils/relaxationUtils";
-import "./Relaxation.css";
-
-
-// Special categories data
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+// import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
 const SPECIAL_CATEGORIES = [
   { special_category_id: 1, special_category_code: "PWD", special_category_name: "Persons with Disability", special_category_desc: "Reserved for PWD" },
   { special_category_id: 2, special_category_code: "EXS", special_category_name: "Ex-Servicemen", special_category_desc: "Reserved for Ex-Servicemen" },
@@ -33,16 +32,11 @@ function createInitialSpecials() {
   return TYPES.reduce((acc, t) => ({ ...acc, [t]: [] }), {});
 }
 
-// 🔹 Central calculation (Vacancy only, just sum)
 const calculateAllocated = (main, specialsByType) => {
   let total = 0;
-
-  // Main vacancies
   for (let cat of CATEGORY_LIST) {
     total += Number(main["Vacancy"][cat] || 0);
   }
-
-  // Special vacancies
   for (let sp of specialsByType["Vacancy"]) {
     if (sp.mode === "flat") {
       total += Number(sp.flat || 0);
@@ -52,60 +46,51 @@ const calculateAllocated = (main, specialsByType) => {
       }
     }
   }
-
   return total;
 };
 
-const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
+const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
   const [active, setActive] = useState(TYPES[0]);
   const [main, setMain] = useState(createInitialMain());
   const [specialsByType, setSpecialsByType] = useState(createInitialSpecials());
   const [selectedCategory, setSelectedCategory] = useState("");
   const [allocatedVacancies, setAllocatedVacancies] = useState(0);
-  const [isNewPolicy, setIsNewPolicy] = useState(false);
-  const [policyName, setPolicyName] = useState("");
-  
+  const [isDirty, setIsDirty] = useState(false);
+
   const availableCategories = SPECIAL_CATEGORIES.filter(
-    (cat) =>
-      !specialsByType[active].some((s) => s.name === cat.special_category_name)
+    (cat) => !specialsByType[active].some((s) => s.name === cat.special_category_name)
   );
+
+  // Load or reset form when policy changes
   useEffect(() => {
     if (selectedPolicy?.relaxation) {
       const { main: policyMain, specialsByType: policySpecials, allocatedVacancies } =
         selectedPolicy.relaxation;
 
-      // Merge `main` with defaults (avoid missing categories)
-      const mergedMain = {
-        ...createInitialMain(),
-        ...policyMain,
-      };
-
-      // Merge `specialsByType` with defaults
-      const mergedSpecials = {
-        ...createInitialSpecials(),
-        ...policySpecials,
-      };
+      const mergedMain = { ...createInitialMain(), ...policyMain };
+      const mergedSpecials = { ...createInitialSpecials(), ...policySpecials };
 
       setMain(mergedMain);
       setSpecialsByType(mergedSpecials);
       setAllocatedVacancies(allocatedVacancies || calculateAllocated(mergedMain, mergedSpecials));
+      setIsDirty(false); // reset dirty flag when switching
     } else {
-      // Reset if no policy selected
       setMain(createInitialMain());
       setSpecialsByType(createInitialSpecials());
       setAllocatedVacancies(0);
+      setIsDirty(false);
     }
   }, [selectedPolicy]);
 
-  // 🔹 Handle main input change
+  // Handlers
   const handleMainChange = (type, cat, val) => {
     setMain((prev) => ({
       ...prev,
       [type]: { ...prev[type], [cat]: val },
     }));
+    setIsDirty(true);
   };
 
-  // 🔹 Update special
   const updateSpecial = (type, idx, field, value, cat = null) => {
     const arr = [...specialsByType[type]];
     const sp = { ...arr[idx] };
@@ -116,11 +101,13 @@ const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
 
     arr[idx] = sp;
 
-    setSpecialsByType({ ...specialsByType, [type]: arr });
+    const updatedSpecials = { ...specialsByType, [type]: arr };
+    setSpecialsByType(updatedSpecials);
 
     if (type === "Vacancy") {
-      setAllocatedVacancies(calculateAllocated(main, { ...specialsByType, [type]: arr }));
+      setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
     }
+    setIsDirty(true);
   };
 
   const removeSpecial = (type, idx) => {
@@ -128,46 +115,35 @@ const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
       ...specialsByType,
       [type]: specialsByType[type].filter((_, i) => i !== idx),
     };
-
     setSpecialsByType(newSpecials);
 
     if (type === "Vacancy") {
       setAllocatedVacancies(calculateAllocated(main, newSpecials));
     }
+    setIsDirty(true);
   };
 
-  const handleSave = async () => {
-    const payload = {"relaxation":{ 
-      main, 
-      specialsByType, 
-      allocatedVacancies  // 🔹 include total vacancies count
-    }};
-   // console.log("RELAXATION PAYLOAD:", payload);
-    //alert("Saved!");
+  const handleSave = () => {
+    const payload = {
+      relaxation: {
+        main,
+        specialsByType,
+        allocatedVacancies,
+      },
+    };
     if (onRelaxationSave) onRelaxationSave(payload);
+    setIsDirty(false);
   };
+
   return (
     <div className="relaxation-container p-4">
-
-      
       {/* Vacancies Info */}
-      <div className="vacancies-info mb-4 p-3 bg-light rounded">
+      {/* <div className="vacancies-info mb-4 p-3 bg-light rounded">
         <p className="mb-0">
-        Total Vacancies: <strong>{allocatedVacancies}</strong>
+          Total Vacancies: <strong>{allocatedVacancies}</strong>
         </p>
-      </div>
-      <Button
-        className="mb-3"
-        onClick={() => {
-          setIsNewPolicy(true);
-          setMain(createInitialMain());
-          setSpecialsByType(createInitialSpecials());
-          setAllocatedVacancies(0);
-          setPolicyName(""); // clear policy name
-        }}
-      >
-        Create New Relaxation Policy
-      </Button>
+      </div> */}
+
       {/* Tabs */}
       <div className="tabs mb-4">
         {TYPES.map((t) => (
@@ -237,6 +213,7 @@ const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
                       setAllocatedVacancies(calculateAllocated(main, newSpecials));
                     }
                     setSelectedCategory("");
+                    setIsDirty(true);
                   }
                 }
               }}
@@ -313,13 +290,24 @@ const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
                         )}
                       </td>
                       <td>
-                        <Button
-                          className="danger-button"
+                      <Button
+                          variant="outline-danger"
                           size="sm"
                           onClick={() => removeSpecial(active, i)}
+                          title="Remove"
                         >
-                          Remove
+                          <FontAwesomeIcon icon={faTrash} />
                         </Button>
+                        {/* <OverlayTrigger placement="top" overlay={<Tooltip>Delete Requisition</Tooltip>}>
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            style={{ cursor: 'pointer' }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeSpecial(active, i);
+                            }}
+                          />
+                        </OverlayTrigger> */}
                       </td>
                     </tr>
                   ))}
@@ -331,7 +319,7 @@ const Relaxation = ({ onRelaxationSave,selectedPolicy}) => {
       </Card>
 
       <div className="d-flex justify-content-end">
-        <Button className="save-button" onClick={handleSave}>
+        <Button className="save-button" onClick={handleSave} disabled={!isDirty}>
           Save All Changes
         </Button>
       </div>
