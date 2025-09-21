@@ -24,7 +24,7 @@ import Position from './pages/Position';
 import SpecialCategory from './pages/SpecialCategory';
 import Category from './pages/Category';
 import RelaxationType from './pages/RelaxationType';
-
+import RelaxationPage from './pages/RelaxationPage';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -100,6 +100,7 @@ function App() {
                       <Route path="/myapproval" element={<Approval />} />
                       <Route path="/payments" element={<Payments />} />
                       <Route path="/interviews" element={<Calendar />} />
+                      <Route path="/relaxation" element={<RelaxationPage />} />
                       <Route path="/template" element={<TemplateMainCompo />} />
                       <Route path="/position" element={<Position />} />
                        <Route path="/category" element={<Category />} />

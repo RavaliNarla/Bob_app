@@ -18,7 +18,8 @@ import {
   faFile,
   faStar,
   faTags,
-  faSlidersH    
+  faSlidersH,
+  faCogs   
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -39,7 +40,7 @@ const Sidebar = () => {
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },
-  
+    { icon: faCogs, text: 'Relaxation', path: '/relaxation' },
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },

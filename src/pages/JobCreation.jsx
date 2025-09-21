@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Row, Col, Form, Button, Modal,Nav   } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUpload, faFileAlt, faCheck, faDownload, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
@@ -13,7 +13,7 @@ import { jobSchema } from './../components/validationSchema';
 import '../css/JobCreation.css';
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
-import Relaxation from '../components/Relaxation';
+
 
 const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, onUpdateSuccess, readOnly: readOnlyProp }) => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [filteredStates, setFilteredStates] = useState([]);
   const [filteredCities, setFilteredCities] = useState([]);
   const [filteredLocations, setFilteredLocations] = useState([]);
-  const [activeTab, setActiveTab] = useState('jobCreation');
+  const [relaxationPolicies, setRelaxationPolicies] = useState([]);
   const initialState = {
     requisition_id: '',
     position_title: '',
@@ -59,6 +59,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
     // special_cat_id: '0',
     // reservation_cat_id:'0',
     // position_status:'submitted'
+    job_relaxation_policy_id: ''
   };
   const headers = [
     "Requisition ID",
@@ -105,7 +106,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [dataError, setDataError] = useState(null);
   const [readOnly, setReadOnly] = useState(readOnlyProp ?? false);
   const [masterPositions, setMasterPositions] = useState([]);
-  const [relaxationData, setRelaxationData] = useState(null);
+
 useEffect(() => {
   const fetchMasterData = async () => {
     try {
@@ -127,8 +128,19 @@ useEffect(() => {
       console.error("Error fetching master positions:", error);
     }
   };
-
+  const fetchRelaxations = async () => {
+    try {
+     const res = await apiService.getRelaxations();
+      if (res.success) {
+        setRelaxationPolicies(res.data);
+      }
+      console.log("Fetched relaxations:", res.data);
+    } catch (error) {
+      console.error("Error fetching relaxations:", error);
+    }
+  }
   fetchMasterData();
+  fetchRelaxations();
 }, []);
 
 const handleSubmit = async (e) => {
@@ -361,7 +373,7 @@ useEffect(() => {
   }, [ editPositionId, masterData]);
 const handleInputChange = (e) => {
   const { name, value } = e.target;
- // console.log('Input change:', name, value);
+ console.log('Input change:', name, value);
   setFormData((prev) => ({ ...prev, [name]: value }));
  // ✅ Clear error for this field when it's valid
   setErrors((prev) => ({
@@ -375,6 +387,60 @@ const handleInputChange = (e) => {
         max_salary: ""
       }));
   }
+  if (name === "job_relaxation_policy_id") {
+    console.log('All policies:', relaxationPolicies);
+    const selectedPolicy = relaxationPolicies.find(p => p.job_relaxation_policy_id === value);
+    
+    if (!selectedPolicy) {
+      // Clear errors if no policy is found (shouldn't normally happen, but good to handle)
+      setErrors(prev => ({
+        ...prev,
+        job_relaxation_policy_id: "",
+        no_of_vacancies: ""
+      }));
+      return;
+    }
+  
+    const allocated = selectedPolicy?.relaxation?.allocatedVacancies || 0;
+    const vacancies = Number(formData.no_of_vacancies) || 0;
+    console.log('Allocated:', allocated, 'Vacancies:', vacancies);
+  
+    if (allocated > 0 && allocated !== vacancies) {
+      setErrors(prev => ({
+        ...prev,
+        job_relaxation_policy_id: `Selected relaxation requires ${allocated} vacancies, but you entered ${vacancies} vacancies.`,
+        no_of_vacancies: `For selected relaxation, vacancies must be ${allocated}.`
+      }));
+    } else {
+      // Clear both errors when they match
+      setErrors(prev => ({
+        ...prev,
+        job_relaxation_policy_id: "",
+        no_of_vacancies: "",
+      }));
+    }
+  }
+//   if (name === "no_of_vacancies") {
+//     if (formData.job_relaxation_policy_id) {  
+//     const selectedPolicy = relaxationPolicies.find(
+//       (p) => p.job_relaxation_policy_id === formData.job_relaxation_policy_id
+//     );
+
+//     if (selectedPolicy) {
+//       const allocated = selectedPolicy.relaxation?.allocatedVacancies || 0;
+//       const vacancies = Number(value) || 0;
+
+//       if (allocated !== vacancies) {
+//         setErrors((prev) => ({
+//           ...prev,
+//           no_of_vacancies: `For selected relaxation, vacancies must be ${allocated}.`,
+//         }));
+//       } else {
+//         setErrors((prev) => ({ ...prev, no_of_vacancies: "" }));
+//       }
+//     }
+//   }
+// }
   if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 
@@ -390,7 +456,6 @@ const handleInputChange = (e) => {
       // If no country is selected, clear the dependent dropdowns
       setFilteredStates([]);
     }
-
     // Reset subsequent form fields and dropdowns
     setFormData((prev) => ({
       ...prev,
@@ -445,14 +510,7 @@ const handleInputChange = (e) => {
   }
 };
   
-const handleRelaxationSave = (data) => {
-  if (data) {
-    setRelaxationData(data);
-    // You can add additional save logic here
-    toast.success('Relaxation policy saved successfully!');
-  }
-  // If data is null, it means cancel was clicked
-};
+
   const validateForm = () => {
     const newErrors = {};
     if (!formData.requisition_id) newErrors.requisition_id = 'Requisition ID is required';
@@ -468,7 +526,7 @@ const handleRelaxationSave = (data) => {
     if (!formData.employment_type) newErrors.employment_type = 'Employment Type is required';
     if (!formData.eligibility_age_min || isNaN(formData.eligibility_age_min) || Number(formData.eligibility_age_min) <= 0) newErrors.eligibility_age_min = 'Min Age is required and must be a positive number';
     if (!formData.eligibility_age_max || isNaN(formData.eligibility_age_max) || Number(formData.eligibility_age_max) <= 0) newErrors.eligibility_age_max = 'Max Age is required and must be a positive number';
-
+    if (!formData.job_relaxation_policy_id) newErrors.job_relaxation_policy_id = 'Relaxation Policy is required';
     //  if (!formData.min_salary || isNaN(formData.min_salary) || Number(formData.min_salary) <= 0) newErrors.min_salary = 'Min Age is required and must be a positive number';
     // if (!formData.max_salary || isNaN(formData.max_salary) || Number(formData.max_salary) <= 0) newErrors.max_salary = 'Max Age is required and must be a positive number';
 
@@ -932,82 +990,31 @@ console.log("positionslist222",masterData.masterPositionsList)
             </div>
             )}
             {selectedOption === 'direct' && (
-            <>
-              <Nav variant="tabs" defaultActiveKey="jobCreation" className="mb-3">
-                <Nav.Item>
-                  <Nav.Link 
-                    eventKey="jobCreation" 
-                    onClick={() => setActiveTab('jobCreation')}
-                    active={activeTab === 'jobCreation'}
-                  >
-                    Job Creation
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link 
-                    eventKey="relaxationPolicy" 
-                    onClick={() => setActiveTab('relaxationPolicy')}
-                    active={activeTab === 'relaxationPolicy'}
-                  >
-                    Relaxation Policy
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
-
-                    {activeTab === 'jobCreation' && (
-                      <div className="tab-content">
-                        <JobCreationForm
-                          formData={formData}
-                          errors={errors}
-                          handleInputChange={handleInputChange}
-                          //handleSubmit={handleSubmit}
-                          handleSubmit={(e) => {
-                            e.preventDefault();
-                            setActiveTab('relaxationPolicy');
-                          }}
-                          handleCancel={handleCancel}
-                          requisitionIdOptions={masterData.requisitionIdOptions}
-                          departmentOptions={masterData.departmentOptions}
-                          countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
-                          stateOptions={filteredStates.map(s => ({ id: s.state_id, name: s.state_name }))}
-                          cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
-                          locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
-                          gradeIdOptions={masterData.gradeIdOptions}
-                          positionTitleOptions={masterData.positionTitleOptions}
-                          employmentTypeOptions={masterData.employmentTypeOptions}
-                          mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
-                          preferredQualificationOptions={masterData.preferredQualificationOptions}
-                          requisitionData={reqs}
-                          gradeMeta={masterData.allGrades}
-                          readOnly={readOnly}
-                          positionList={masterPositions}
-                          showNextButton={true}
-                        />
-                      </div>
-                    )}
-
-                    {activeTab === 'relaxationPolicy' && (
-                      <div className="tab-content">
-                        <div className="card">
-                          <div className="card-body">
-                          <Relaxation 
-                            onSave={handleRelaxationSave} 
-                            initialData={relaxationData}
-                          />
-                            <div className="d-flex justify-content-between mt-4">
-                              <Button variant="secondary" onClick={() => setActiveTab('jobCreation')}>
-                                Back
-                              </Button>
-                              <Button variant="primary" onClick={handleSubmit}>
-                                Save
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
+              <JobCreationForm
+                formData={formData}
+                errors={errors}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                handleCancel={handleCancel}
+                requisitionIdOptions={masterData.requisitionIdOptions}
+                departmentOptions={masterData.departmentOptions}
+                countryOptions={masterData.allCountries.map(c => ({ id: c.country_id, name: c.country_name }))}
+                stateOptions={filteredStates.map(s => ({ id: s.state_id, name: s.state_name }))}
+                cityOptions={filteredCities.map(c => ({ id: c.city_id, name: c.city_name }))}
+                locationOptions={filteredLocations.map(l => ({ id: l.location_id, name: l.location_name }))}
+                gradeIdOptions={masterData.gradeIdOptions}
+                positionTitleOptions={masterData.positionTitleOptions}
+                employmentTypeOptions={masterData.employmentTypeOptions}
+                mandatoryQualificationOptions={masterData.mandatoryQualificationOptions}
+                preferredQualificationOptions={masterData.preferredQualificationOptions}
+                requisitionData={reqs}
+                gradeMeta={masterData.allGrades}
+                readOnly={readOnly}
+               positionList={masterPositions}
+               relaxationPolicies={relaxationPolicies}
+              />
+            )}
+          
         </Col>
       </Row>
       <Modal className='fontss' show={showUploadModal} onHide={() => setShowUploadModal(false)} size="lg" centered>

@@ -475,7 +475,9 @@ parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
   addRelaxationType: (data) => apis.post('/relaxation-type/add', data),
   updateRelaxationType: (id, data) => apis.put(`/relaxation-type/update/${id}`, data),
   deleteRelaxationType: (id) => apis.delete(`/relaxation-type/delete/${id}`),
-
+  //Relaxation
+  saveRelaxation: (data) => api.post('/job-relaxation-policy/add', data),
+  getRelaxations: () => api.get('/job-relaxation-policy/all'),
    
 };
 

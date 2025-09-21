@@ -23,7 +23,8 @@ const JobCreationForm = ({
   requisitionData = [],
   readOnly = false,
   positionList = [],
-  showNextButton = false
+  showNextButton = false,
+  relaxationPolicies = []
 }) => {
   // Remove modal state, use popover instead
 
@@ -474,6 +475,33 @@ console.log("Position List:", positionList);
           <input type="text" className="form-control" disabled={readOnly} id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}
         </div>
+        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+        <label htmlFor="job_relaxation_policy_id" className="form-label">
+          Relaxation Policy <span className="required-asterisk">*</span>
+        </label>
+        <select
+          id="job_relaxation_policy_id"
+          name="job_relaxation_policy_id"
+          className="form-select"
+          value={formData.job_relaxation_policy_id || ""}
+          onChange={handleInputChange}
+          disabled={readOnly}
+        >
+          <option value="">Select Relaxation Policy</option>
+          {relaxationPolicies.map((policy) => (
+            <option
+              key={policy.job_relaxation_policy_id}
+              value={policy.job_relaxation_policy_id}
+            >
+              {policy.relaxation_policy_number}
+            </option>
+          ))}
+        </select>
+        {errors.job_relaxation_policy_id && (
+          <small className="error">{errors.job_relaxation_policy_id}</small>
+        )}
+      </div>
+
 
         <div className='row p-0'>
           {/* Description */}
@@ -520,7 +548,7 @@ console.log("Position List:", positionList);
           />
           {errors.selection_procedure && <small className="error">{errors.selection_procedure}</small>}
         </div>
-
+       
         {/* Mandatory Qualification */}
         <div className="col-12 col-md-6 col-lg-6 mb-4 formSpace">
           <label htmlFor="mandatory_qualification" className="form-label">Mandatory Qualification <span className="required-asterisk">*</span></label>
