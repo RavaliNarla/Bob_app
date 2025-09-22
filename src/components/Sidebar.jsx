@@ -66,6 +66,7 @@ const Sidebar = () => {
        { icon: faTags, text: 'Category', path: '/category' }, 
     { icon: faStar , text: 'Special Category', path: '/special-category' },
     {icon: faSlidersH  , text: 'Relaxation Type', path: '/relaxation-type' },
+    { icon: faFileAlt, text: 'Document', path: '/document' },
 
   ];
 
