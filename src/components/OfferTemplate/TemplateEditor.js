@@ -42,46 +42,43 @@ function selectionTouchesToken(root) {
 }
 
 /* very small contentEditable editor JUST for the Intro */
-function QuillWithTokens({ value, onChange, modules, formats }) {
+function IntroEditor({ value, onChange }) {
   const quillRef = useRef(null);
-  const lastValueRef = useRef(value);
 
-  // Wrap tokens only once when value changes externally
   useEffect(() => {
-    if (!value) return;
-    const wrapped = wrapTokensOnce(value);
-    if (wrapped !== value) {
-      onChange(wrapped);
-    }
-    lastValueRef.current = wrapped;
-  }, [value, onChange]);
+    const quill = quillRef.current?.getEditor();
+    if (!quill) return;
 
-  // Prevent deleting tokens directly
-  useEffect(() => {
-    const editor = quillRef.current?.getEditor?.();
-    if (!editor) return;
+    const safe = wrapTokensOnce(value || "");
 
-    const handleKeyDown = (e) => {
-      if (
-        (e.key === "Backspace" || e.key === "Delete") &&
-        selectionTouchesToken(editor.root)
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    };
+    // Save current scroll
+    const scrollY = window.scrollY;
 
-    editor.root.addEventListener("keydown", handleKeyDown);
-    return () => editor.root.removeEventListener("keydown", handleKeyDown);
+    // Insert content WITHOUT focusing
+    quill.root.innerHTML = safe;
+
+    // Restore scroll
+    window.scrollTo(0, scrollY);
   }, []);
 
-  const handleChange = (val) => {
-    const wrapped = wrapTokensOnce(val);
-    if (wrapped !== lastValueRef.current) {
-      lastValueRef.current = wrapped;
-      onChange(wrapped);
-    }
+  const handleChange = (html) => {
+    onChange?.(html);
   };
+
+  const quillModules = {
+    toolbar: [
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ align: [] }],
+      ["clean"],
+    ],
+  };
+
+  const quillFormats = [
+    "bold", "italic", "underline", "strike",
+    "color", "background",
+    "align",
+  ];
 
   return (
     <ReactQuill
@@ -89,9 +86,10 @@ function QuillWithTokens({ value, onChange, modules, formats }) {
       theme="snow"
       value={value}
       onChange={handleChange}
-      style={{ minHeight: 120 }}
-      modules={modules}
-      formats={formats}
+      modules={quillModules}
+      formats={quillFormats}
+      style={{ minHeight: 140 }}
+      className="intro-editor"
     />
   );
 }
@@ -106,6 +104,14 @@ export default function TemplateEditor() {
   const [saving, setSaving] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedId, setSelectedId] = useState("");
+  // ensure chips exist once on first mount
+  useEffect(() => {
+    const intro = template?.content?.intro ?? defaultTemplate.content.intro ?? "";
+    if (!intro.includes(`class="${TOKEN_CLASS}"`)) {
+      setContent("intro", wrapTokensOnce(intro));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const quillModules = {
     toolbar: [
@@ -121,15 +127,6 @@ export default function TemplateEditor() {
     'color', 'background',
     'align'
   ];
-
-  // ensure chips exist once on first mount
-  useEffect(() => {
-    const intro = template?.content?.intro ?? defaultTemplate.content.intro ?? "";
-    if (!intro.includes(`class="${TOKEN_CLASS}"`)) {
-      setContent("intro", wrapTokensOnce(intro));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const handleSave = async () => {
     let name = (template?.templateName || "").trim();
@@ -264,7 +261,6 @@ export default function TemplateEditor() {
                   {/* Subject */}
                   <Form.Group className="mb-2" style={{ marginBottom: '15px !important' }}>
                     <Form.Label>Subject</Form.Label>
-
                     <ReactQuill
                       theme="snow"
                       value={template.content.subject}
@@ -275,14 +271,13 @@ export default function TemplateEditor() {
                     />
                   </Form.Group>
 
-                 {/* Intro (ReactQuill with formatting, tokens preserved) */}
-<Form.Label>Body Text</Form.Label>
-<QuillWithTokens
-  value={template.content.intro}
-  onChange={(v) => setContent("intro", v)}
-  modules={quillModules}
-  formats={quillFormats}
-/>
+                  {/* Intro (chips, non-editable) */}
+                  <Form.Label>Body Text</Form.Label>
+                  <IntroEditor
+                    value={template.content.intro}
+                    onChange={(v) => setContent("intro", v)}
+                  />
+
                   {/* Terms (restored to ReactQuill so no raw <p> shows) */}
                   <Form.Label>Terms</Form.Label>
                   <ReactQuill

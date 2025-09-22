@@ -107,17 +107,6 @@
 } */
 /* token chip: orange + non-editable */
 /* token chip: orange + non-editable */
-.quill-token{
-  color:#FF7043;
-  background:rgba(255,112,67,.12);
-  font-weight:600;
-  padding:0 4px;
-  margin:0 2px;
-  border-radius:3px;
-  pointer-events:none;  /* not clickable */
-  user-select:text;     /* copy is OK */
-  cursor:default;
-}
 
 .w-48{
   width: 46%;
@@ -183,4 +172,15 @@ color:#fff;}
 .save-template-btn:hover {
   background-color: rgb(255, 112, 67) !important;
   color: #fff !important;
+}
+
+.intro-editor .ql-editor strong {
+ color:#FF7043;
+  background:rgba(255,112,67,.12);
+  font-weight:600;
+  padding:0 4px;
+  margin:0 2px;
+  border-radius:3px;
+  cursor:not-allowed;
+  outline: none;
 }
