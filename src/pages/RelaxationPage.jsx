@@ -82,13 +82,13 @@ const RelaxationPage = () => {
         // 🔹 Save as NEW policy
         const response = await apiService.saveRelaxation(data);
         if (response?.success) {
-          toast.success("New Relaxation Policy created!");
+          toast.success(response?.message|| "Relaxation Policy created successfully!");
           setRelaxationPolicies((prev) => [...prev, response.data]);
           setSelectedPolicy(response.data);
           setSelectedPolicyId(response.data.job_relaxation_policy_id);
           setIsCreateNew(false);
         } else {
-          toast.error(response?.message || "Failed to create new policy.");
+          toast.error("Failed to create new policy.");
         }
       } else {
         // 🔹 Update existing policy
@@ -100,7 +100,7 @@ const RelaxationPage = () => {
         console.log("Update response:", response);
   
         if (response?.success === true) {
-          toast.success("Policy updated successfully!");
+          toast.success(response?.message || "Relaxation Policy updated successfully!");
           setRelaxationPolicies((prev) =>
             prev.map((p) =>
               p.job_relaxation_policy_id === selectedPolicyId
@@ -121,7 +121,7 @@ const RelaxationPage = () => {
             if (result.isConfirmed) {
               const newResponse = await apiService.saveRelaxation(data);
               if (newResponse?.success) {
-                toast.success("New Relaxation Policy created!");
+                toast.success(newResponse?.message || "Relaxation Policy created Successfully!");
                 setRelaxationPolicies((prev) => [...prev, newResponse.data]);
                 setSelectedPolicy(newResponse.data);
                 setSelectedPolicyId(newResponse.data.job_relaxation_policy_id);
@@ -179,7 +179,7 @@ const RelaxationPage = () => {
                     disabled={isLoading}
                     className="ms-2"
                   >
-                    {isCreateNew ? 'Creating New...' : 'Create New'}
+                    {isCreateNew ? 'Create New' : 'Create New'}
                   </Button>
                 </div>
               </div>

@@ -1,10 +1,11 @@
-// src/utils/relaxationUtils.js
-export const CATEGORY_LIST = ["SC", "ST", "OBC", "EWS", "GEN"];
-export const TYPES = ["Age", "Vacancy", "Education", "Experience", "Marks","Marks111"];
+/**
+ * Utilities for relaxation policies
+ */
 
-export function createInitialRelaxations() {
-  return TYPES.reduce((acc, type) => {
-    acc[type] = CATEGORY_LIST.reduce((catAcc, cat) => {
+// Create initial main relaxation object
+export function createInitialRelaxations(typesArr, categoriesArr) {
+  return typesArr.reduce((acc, type) => {
+    acc[type] = categoriesArr.reduce((catAcc, cat) => {
       catAcc[cat] = 0;
       return catAcc;
     }, {});
@@ -12,75 +13,69 @@ export function createInitialRelaxations() {
   }, {});
 }
 
-/**
- * Create an empty special object for a given name.
- * perType contains entries for each type with mode/flat/values.
- */
-export function createEmptySpecial(name = "") {
-  const perType = TYPES.reduce((acc, t) => {
+// Create empty special relaxation
+export function createEmptySpecial(name = "", typesArr = [], categoriesArr = []) {
+  const perType = typesArr.reduce((acc, t) => {
     acc[t] = {
-      mode: "flat", // "flat" or "category"
+      mode: "flat",
       flat: 0,
-      values: CATEGORY_LIST.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {}),
+      values: categoriesArr.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {}),
     };
     return acc;
   }, {});
   return { name, perType };
 }
 
-/**
- * loadFromPayload
- * Accepts payload saved in DB (the shape you posted) and returns:
- * { main, specialsByType } suitable to set into React state.
- *
- * main => { Age: {SC:0,...}, ... }
- * specialsByType => { Age: [ {name, mode, flat, values}, ... ], ... }
- */
-export function loadFromPayload(payload) {
-  const mainDefaults = createInitialRelaxations();
+// Load saved relaxation payload and map to current master data
+export function loadFromPayload(payload, typesArr, categoriesArr) {
+  const mainDefaults = createInitialRelaxations(typesArr, categoriesArr);
   const main = { ...mainDefaults };
 
-  if (payload && payload.main && typeof payload.main === "object") {
-    for (const t of TYPES) {
-      if (payload.main[t] && typeof payload.main[t] === "object") {
-        for (const c of CATEGORY_LIST) {
-          const v = payload.main[t][c];
-          main[t][c] = typeof v === "number" ? v : Number(v ?? 0);
-        }
+  if (payload?.main) {
+    for (const t of Object.keys(payload.main)) {
+      if (!typesArr.includes(t)) continue;
+      for (const c of Object.keys(payload.main[t])) {
+        if (!categoriesArr.includes(c)) continue;
+        main[t][c] = Number(payload.main[t][c] ?? 0);
       }
     }
   }
 
-  const specialsByType = TYPES.reduce((acc, t) => ({ ...acc, [t]: [] }), {});
-  if (payload && payload.specialsByType && typeof payload.specialsByType === "object") {
-    for (const t of TYPES) {
-      const arr = Array.isArray(payload.specialsByType[t]) ? payload.specialsByType[t] : [];
-      specialsByType[t] = arr.map((sRaw) => {
-        // sRaw might be { name, mode, flat, values } OR might have perType object
+  const specialsByType = typesArr.reduce((acc, t) => ({ ...acc, [t]: [] }), {});
+  if (payload?.specialsByType) {
+    for (const t of Object.keys(payload.specialsByType)) {
+      if (!typesArr.includes(t)) continue;
+      const arr = payload.specialsByType[t] ?? [];
+      specialsByType[t] = arr.map(sRaw => {
         const name = sRaw.name ?? "";
         const mode = sRaw.mode === "category" ? "category" : "flat";
         const flat = Number(sRaw.flat ?? 0);
-        const values = CATEGORY_LIST.reduce((acc, c) => {
-          acc[c] = Number((sRaw.values && sRaw.values[c]) ?? 0);
-          return acc;
-        }, {});
-        // If sRaw has perType and perType[t], prefer that (backwards compat)
-        if (sRaw.perType && sRaw.perType[t]) {
-          const per = sRaw.perType[t];
-          return {
-            name,
-            mode: per.mode === "category" ? "category" : mode,
-            flat: Number(per.flat ?? flat),
-            values: CATEGORY_LIST.reduce((acc, c) => {
-              acc[c] = Number((per.values && per.values[c]) ?? values[c]);
-              return acc;
-            }, {}),
-          };
-        }
-        return { name, mode, flat, values };
+        const filteredValues = {};
+        categoriesArr.forEach(c => {
+          filteredValues[c] = Number(sRaw.values?.[c] ?? 0);
+        });
+        return { name, mode, flat, values: filteredValues };
       });
     }
   }
 
   return { main, specialsByType };
+}
+
+// Calculate total allocated vacancies
+export function calculateAllocated(mainObj, specialsObj) {
+  let total = 0;
+  Object.keys(mainObj).forEach(type => {
+    Object.values(mainObj[type]).forEach(v => total += Number(v || 0));
+  });
+
+  Object.keys(specialsObj).forEach(type => {
+    specialsObj[type].forEach(sp => {
+      if (sp.mode === "flat") total += Number(sp.flat || 0);
+      else if (sp.mode === "category")
+        Object.values(sp.values).forEach(v => total += Number(v || 0));
+    });
+  });
+
+  return total;
 }
