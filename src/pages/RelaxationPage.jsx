@@ -149,43 +149,43 @@ const RelaxationPage = () => {
           <div>
               <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Relaxation Policy</h5>
           </div>
-          <div className="row mb-4">
-            <div className="col-12 col-md-6 col-lg-4">
-              <div className="form-group">
-                {/* <label htmlFor="job_relaxation_policy_id" className="form-label">
-                  <strong>Relaxation Policy</strong> 
-                </label> */}
-                <div className="input-group">
-                  <select
-                    id="job_relaxation_policy_id"
-                    name="job_relaxation_policy_id"
-                    className="form-control form-select"
-                    value={selectedPolicyId}
-                    onChange={handlePolicyChange}
-                    disabled={isCreateNew || isLoading}
-                  >
-                    <option value="">Select Relaxation Policy</option>
-                    {relaxationPolicies.map((policy) => (
-                      <option
-                        key={policy.job_relaxation_policy_id}
-                        value={policy.job_relaxation_policy_id}
-                      >
-                        {policy.relaxation_policy_number || `Policy ${policy.job_relaxation_policy_id}`}
-                      </option>
-                    ))}
-                  </select>
-                  <Button 
-                    variant="outline-primary" 
-                    onClick={handleCreateNew}
-                    disabled={isLoading}
-                    className="ms-2"
-                  >
-                    {isCreateNew ? 'Create New' : 'Create New'}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div className="row mb-4 align-items-center">
+  {/* Dropdown stays in the left column */}
+  <div className="col-12 col-md-6 col-lg-4">
+    <div className="form-group">
+      <select
+        id="job_relaxation_policy_id"
+        name="job_relaxation_policy_id"
+        className="form-control form-select"
+        value={selectedPolicyId}
+        onChange={handlePolicyChange}
+        disabled={isCreateNew || isLoading}
+      >
+        <option value="">Select Relaxation Policy</option>
+        {relaxationPolicies.map((policy) => (
+          <option
+            key={policy.job_relaxation_policy_id}
+            value={policy.job_relaxation_policy_id}
+          >
+            {policy.relaxation_policy_number || `Policy ${policy.job_relaxation_policy_id}`}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+
+  {/* Button on the right side of the row */}
+  <div className="col d-flex justify-content-end">
+    <Button 
+      variant="outline-primary" 
+      onClick={handleCreateNew}
+      disabled={isLoading}
+    >
+      {isCreateNew ? 'Create New' : 'Create New'}
+    </Button>
+  </div>
+</div>
+
 
           <Relaxation
             key={isCreateNew ? 'new' : selectedPolicyId}
