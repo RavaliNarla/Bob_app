@@ -15,15 +15,12 @@ export function createInitialRelaxations(typesArr, categoriesArr) {
 
 // Create empty special relaxation
 export function createEmptySpecial(name = "", typesArr = [], categoriesArr = []) {
-  const perType = typesArr.reduce((acc, t) => {
-    acc[t] = {
-      mode: "flat",
-      flat: 0,
-      values: categoriesArr.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {}),
-    };
-    return acc;
-  }, {});
-  return { name, perType };
+  return {
+    name,
+    mode: "flat", // default mode
+    flat: 0,
+    values: categoriesArr.reduce((acc, c) => ({ ...acc, [c]: 0 }), {}),
+  };
 }
 
 // Load saved relaxation payload and map to current master data

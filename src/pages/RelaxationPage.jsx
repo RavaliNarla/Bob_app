@@ -62,11 +62,11 @@ const RelaxationPage = () => {
   };
 
   // Handle Save All Changes
-  const handleRelaxationSave = async (eOrData) => {
+  const handleRelaxationSave = async (e) => {
     // 🛑 Handle both form submit event and direct data call
-    let data = eOrData;
-    if (eOrData?.preventDefault) {
-      eOrData.preventDefault();
+    let data = e;
+    if (e?.preventDefault) {
+      e.preventDefault();
       data = formData; // fallback to current state if from submit
     }
   
@@ -76,11 +76,12 @@ const RelaxationPage = () => {
     }
   
     setFormData(data);
-  
+  console.log("data", data);
     try {
       if (isCreateNew) {
         // 🔹 Save as NEW policy
         const response = await apiService.saveRelaxation(data);
+        console.log("response", response);
         if (response?.success) {
           toast.success(response?.message|| "Relaxation Policy created successfully!");
           setRelaxationPolicies((prev) => [...prev, response.data]);

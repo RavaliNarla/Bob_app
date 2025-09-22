@@ -30,8 +30,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
 
         const typeNames = typesResp.data.map(t => t.relaxation_type_name);
         const categoryCodes = categoriesResp.data.map(c => c.category_code);
-console.log("typeNames", typeNames);
-console.log("categoryCodes", categoryCodes);
+
         setTypes(typeNames);
         setCategories(categoryCodes);
         setMain(createInitialRelaxations(typeNames, categoryCodes));
@@ -55,7 +54,7 @@ console.log("categoryCodes", categoryCodes);
       setLoading(true);
       try {
         const response = await apiService.getAllCategories();
-        const formatted = Array.isArray(response.data) 
+        const formatted = Array.isArray(response.data)
           ? response.data.map(cat => ({
               special_category_id: cat.reservation_categories_id,
               special_category_name: cat.category_name || "",
@@ -91,8 +90,8 @@ console.log("categoryCodes", categoryCodes);
     types.forEach(t => {
       filteredSpecials[t] = (policySpecials?.[t] || []).map(s => ({
         name: s.name,
-        mode: s.mode,
-        flat: s.flat,
+        mode: s.mode ?? "flat", // fallback to flat if mode missing
+        flat: s.flat ?? 0,
         values: categories.reduce((acc, c) => ({ ...acc, [c]: s.values?.[c] ?? 0 }), {}),
       }));
     });
@@ -117,9 +116,12 @@ console.log("categoryCodes", categoryCodes);
     const arr = [...specialsByType[type]];
     const sp = { ...arr[idx] };
 
+    // Ensure values object exists
+    if (!sp.values) sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {});
+
     if (field === "mode") sp.mode = value;
     if (field === "flat") sp.flat = value;
-    if (field === "values" && cat) sp.values = { ...sp.values, [cat]: value };
+    if (field === "values" && cat) sp.values[cat] = value;
 
     arr[idx] = sp;
     const updatedSpecials = { ...specialsByType, [type]: arr };
@@ -234,7 +236,7 @@ console.log("categoryCodes", categoryCodes);
                         {s.mode === "category" ? (
                           <Form.Control
                             type="number"
-                            value={s.values[c]}
+                            value={s.values?.[c] ?? 0}
                             onChange={(e) => updateSpecial(active, i, "values", e.target.value, c)}
                           />
                         ) : (
@@ -246,7 +248,7 @@ console.log("categoryCodes", categoryCodes);
                       {s.mode === "flat" ? (
                         <Form.Control
                           type="number"
-                          value={s.flat}
+                          value={s.flat ?? 0}
                           onChange={(e) => updateSpecial(active, i, "flat", e.target.value)}
                         />
                       ) : (
