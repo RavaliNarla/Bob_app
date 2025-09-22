@@ -5,7 +5,7 @@ import "../css/Relaxation.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiService } from "../services/apiService";
-
+import Swal from "sweetalert2";
 const RelaxationPage = () => {
   const [relaxationPolicies, setRelaxationPolicies] = useState([]);
   const [selectedPolicyId, setSelectedPolicyId] = useState("");
@@ -62,14 +62,21 @@ const RelaxationPage = () => {
   };
 
   // Handle Save All Changes
-  const handleRelaxationSave = async (data) => {
+  const handleRelaxationSave = async (eOrData) => {
+    // 🛑 Handle both form submit event and direct data call
+    let data = eOrData;
+    if (eOrData?.preventDefault) {
+      eOrData.preventDefault();
+      data = formData; // fallback to current state if from submit
+    }
+  
     if (!data) {
       toast.info("Save cancelled.");
       return;
     }
-
+  
     setFormData(data);
-
+  
     try {
       if (isCreateNew) {
         // 🔹 Save as NEW policy
@@ -81,23 +88,19 @@ const RelaxationPage = () => {
           setSelectedPolicyId(response.data.job_relaxation_policy_id);
           setIsCreateNew(false);
         } else {
-          toast.error("Failed to create new policy.");
+          toast.error(response?.message || "Failed to create new policy.");
         }
       } else {
         // 🔹 Update existing policy
-       
-        const payload = {
-          job_relaxation_policy_id: selectedPolicyId,
-          relaxation_policy_number: selectedPolicy?.relaxation_policy_number ,
-          ...data,   // this should contain relaxation, relaxation_policy_number, etc.
-        };
-     
-        const response = await apiService.updateRelaxation(payload);
+        console.log("Updating existing policy...");
   
-        console.log(response);
-        if (response?.success) {
+        const payload = { ...data };
+  
+        const response = await apiService.updateRelaxation(selectedPolicyId, payload);
+        console.log("Update response:", response);
+  
+        if (response?.success === true) {
           toast.success("Policy updated successfully!");
-          // update local list
           setRelaxationPolicies((prev) =>
             prev.map((p) =>
               p.job_relaxation_policy_id === selectedPolicyId
@@ -105,18 +108,29 @@ const RelaxationPage = () => {
                 : p
             )
           );
-        } else if (response?.status === "REJECTED") {
-          // Backend rejected update
-          if (
-            window.confirm(
-              "This policy cannot be updated. Do you want to save as a new policy instead?"
-            )
-          ) {
-            setIsCreateNew(true);
-            await handleRelaxationSave(data); // retry as create new
-          }
-        } else {
-          toast.error("Failed to update policy.");
+        } else if (response?.success === false) {
+          // 🚨 Use SweetAlert2 instead of window.confirm
+          Swal.fire({
+            title: "Cannot Update Policy",
+            text: "This policy cannot be updated. Do you want to save as a new policy instead?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Save as New",
+            cancelButtonText: "Cancel",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              const newResponse = await apiService.saveRelaxation(data);
+              if (newResponse?.success) {
+                toast.success("New Relaxation Policy created!");
+                setRelaxationPolicies((prev) => [...prev, newResponse.data]);
+                setSelectedPolicy(newResponse.data);
+                setSelectedPolicyId(newResponse.data.job_relaxation_policy_id);
+                setIsCreateNew(false);
+              } else {
+                toast.error(newResponse?.message || "Failed to create new policy.");
+              }
+            }
+          });
         }
       }
     } catch (error) {
@@ -124,6 +138,7 @@ const RelaxationPage = () => {
       toast.error("Something went wrong while saving.");
     }
   };
+  
 
   return (
     <Container fluid className="py-4">

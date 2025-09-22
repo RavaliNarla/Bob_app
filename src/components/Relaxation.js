@@ -3,14 +3,15 @@ import { Button, Form, Table, Card } from "react-bootstrap";
 import { CATEGORY_LIST, TYPES } from "../utils/relaxationUtils";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-// import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
-const SPECIAL_CATEGORIES = [
-  { special_category_id: 1, special_category_code: "PWD", special_category_name: "Persons with Disability", special_category_desc: "Reserved for PWD" },
-  { special_category_id: 2, special_category_code: "EXS", special_category_name: "Ex-Servicemen", special_category_desc: "Reserved for Ex-Servicemen" },
-  { special_category_id: 7, special_category_code: "SPORTS", special_category_name: "Sports Quota", special_category_desc: "Reserved for Outstanding Sportspersons" },
-  { special_category_id: 8, special_category_code: "MARTYRS", special_category_name: "Children/Family of Martyrs", special_category_desc: "Reserved for Children/Family of Martyrs" },
-  { special_category_id: 10, special_category_code: "DEF", special_category_name: "Defense Personnel Quota", special_category_desc: "Reserved for Defense Personnel Quota" },
-];
+import { apiService } from "../services/apiService";
+ import { OverlayTrigger, Popover, Tooltip } from 'react-bootstrap';
+// const SPECIAL_CATEGORIES = [
+//   { special_category_id: 1, special_category_code: "PWD", special_category_name: "Persons with Disability", special_category_desc: "Reserved for PWD" },
+//   { special_category_id: 2, special_category_code: "EXS", special_category_name: "Ex-Servicemen", special_category_desc: "Reserved for Ex-Servicemen" },
+//   { special_category_id: 7, special_category_code: "SPORTS", special_category_name: "Sports Quota", special_category_desc: "Reserved for Outstanding Sportspersons" },
+//   { special_category_id: 8, special_category_code: "MARTYRS", special_category_name: "Children/Family of Martyrs", special_category_desc: "Reserved for Children/Family of Martyrs" },
+//   { special_category_id: 10, special_category_code: "DEF", special_category_name: "Defense Personnel Quota", special_category_desc: "Reserved for Defense Personnel Quota" },
+// ];
 
 function createEmptySpecial(name = "", mode = "flat") {
   return {
@@ -56,8 +57,72 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [allocatedVacancies, setAllocatedVacancies] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
+  const [specialCategories, setSpecialCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // Fetch special categories on component mount
+  useEffect(() => {
+    const fetchSpecialCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getAllCategories();
+        // Transform the response to match the expected format
+        const formattedCategories = Array.isArray(response.data) 
+          ? response.data.map(cat => ({
+             special_category_id: cat.reservation_categories_id, 
+             special_category_code: cat.category_code || '',
+              special_category_name: cat.category_name || '', 
+              special_category_desc: cat.category_desc || ''
+            }))
+          : [];
+        setSpecialCategories(formattedCategories);
+      } catch (err) {
+        console.error("Error fetching special categories:", err);
+        setError("Failed to load special categories");
+        setSpecialCategories([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const availableCategories = SPECIAL_CATEGORIES.filter(
+    fetchSpecialCategories();
+  }, []);
+
+  useEffect(() => {
+    const fetchRelaxationTypes = async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getAllRelaxationType();
+        console.log("Relaxation Types:", response.data);
+       // setRelaxationTypes(response.data);
+      } catch (err) {
+        console.error("Error fetching special categories:", err);
+       
+      } finally {
+        setLoading(false);
+      }
+    };
+    const fetchCategories= async () => {
+      try {
+        setLoading(true);
+        const response = await apiService.getAllCategories();
+        console.log("Categories:", response.data);
+       // setRelaxationTypes(response.data);
+      } catch (err) {
+        console.error("Error fetching special categories:", err);
+       
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    
+    fetchRelaxationTypes();
+    fetchCategories();
+  }, []);
+
+  const availableCategories = specialCategories.filter(
     (cat) => !specialsByType[active].some((s) => s.name === cat.special_category_name)
   );
 
@@ -198,7 +263,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
                 setSelectedCategory(categoryName);
 
                 if (categoryName) {
-                  const category = SPECIAL_CATEGORIES.find(
+                  const category = specialCategories.find(
                     (cat) => cat.special_category_name === categoryName
                   );
                   if (category) {

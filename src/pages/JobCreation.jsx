@@ -388,59 +388,48 @@ const handleInputChange = (e) => {
       }));
   }
   if (name === "job_relaxation_policy_id") {
-    console.log('All policies:', relaxationPolicies);
     const selectedPolicy = relaxationPolicies.find(p => p.job_relaxation_policy_id === value);
     
-    if (!selectedPolicy) {
-      // Clear errors if no policy is found (shouldn't normally happen, but good to handle)
-      setErrors(prev => ({
-        ...prev,
-        job_relaxation_policy_id: "",
-        no_of_vacancies: ""
-      }));
-      return;
+    // Clear errors first
+    const newErrors = {
+      ...errors,
+      job_relaxation_policy_id: "",
+      no_of_vacancies: ""
+    };
+
+    if (selectedPolicy) {
+      const allocated = selectedPolicy.relaxation?.allocatedVacancies || 0;
+      const vacancies = Number(formData.no_of_vacancies) || 0;
+      console.log('Allocated:', allocated, 'Vacancies:', vacancies);
+      if (allocated > 0 && vacancies <= allocated) {
+        newErrors.no_of_vacancies = `Selected relaxation allows maximum ${allocated} vacancies.`;
+      }
     }
-  
-    const allocated = selectedPolicy?.relaxation?.allocatedVacancies || 0;
-    const vacancies = Number(formData.no_of_vacancies) || 0;
-    console.log('Allocated:', allocated, 'Vacancies:', vacancies);
-  
-    if (allocated > 0 && allocated !== vacancies) {
-      setErrors(prev => ({
-        ...prev,
-        job_relaxation_policy_id: `Selected relaxation requires ${allocated} vacancies, but you entered ${vacancies} vacancies.`,
-        no_of_vacancies: `For selected relaxation, vacancies must be ${allocated}.`
-      }));
-    } else {
-      // Clear both errors when they match
-      setErrors(prev => ({
-        ...prev,
-        job_relaxation_policy_id: "",
-        no_of_vacancies: "",
-      }));
-    }
+
+    setErrors(newErrors);
   }
-//   if (name === "no_of_vacancies") {
-//     if (formData.job_relaxation_policy_id) {  
-//     const selectedPolicy = relaxationPolicies.find(
-//       (p) => p.job_relaxation_policy_id === formData.job_relaxation_policy_id
-//     );
 
-//     if (selectedPolicy) {
-//       const allocated = selectedPolicy.relaxation?.allocatedVacancies || 0;
-//       const vacancies = Number(value) || 0;
+  if (name === "no_of_vacancies") {
+    const vacancies = Number(value) || 0;
+    const newErrors = { ...errors, no_of_vacancies: "" };
 
-//       if (allocated !== vacancies) {
-//         setErrors((prev) => ({
-//           ...prev,
-//           no_of_vacancies: `For selected relaxation, vacancies must be ${allocated}.`,
-//         }));
-//       } else {
-//         setErrors((prev) => ({ ...prev, no_of_vacancies: "" }));
-//       }
-//     }
-//   }
-// }
+    if (formData.job_relaxation_policy_id) {
+      const selectedPolicy = relaxationPolicies.find(
+        p => p.job_relaxation_policy_id === formData.job_relaxation_policy_id
+      );
+
+      if (selectedPolicy) {
+        const allocated = selectedPolicy.relaxation?.allocatedVacancies || 0;
+        
+        if (allocated > 0 && vacancies < allocated) {
+          newErrors.no_of_vacancies = `Selected relaxation allows maximum ${allocated} vacancies.`;
+        }
+      }
+    }
+
+    setErrors(newErrors);
+  }
+  
   if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 

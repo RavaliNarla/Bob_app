@@ -138,6 +138,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // 🔄 Handle expired session
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.warn("⚠️ Java API session expired (api). Trying refresh...");
       originalRequest._retry = true;
@@ -154,6 +155,12 @@ api.interceptors.response.use(
       }
     }
 
+    // ✅ Handle 400–499 gracefully (don’t throw, return backend JSON)
+    if (error.response && error.response.status >= 400 && error.response.status < 500) {
+      return error.response.data;
+    }
+
+    // ❌ fallback for network errors / 500+
     return Promise.reject(error);
   }
 );
