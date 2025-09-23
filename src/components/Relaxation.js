@@ -3,6 +3,7 @@ import { Button, Form, Table, Card } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { apiService } from "../services/apiService";
+import { faCheckCircle  } from "@fortawesome/free-solid-svg-icons";
 import { createInitialRelaxations, createEmptySpecial, calculateAllocated } from "../utils/relaxationUtils";
 
 const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
@@ -199,15 +200,15 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     <div className="relaxation-container p-4">
       <div className="tabs mb-4">
         {types.map(t => (
-          <Button key={t.name} className={`me-2 ${active === t.name ? "active" : ""}`} onClick={() => setActive(t.name)}>
+          <Button key={t.name} className={`me-2 relax_change_btn ${active === t.name ? "active" : ""}`} onClick={() => setActive(t.name)}>
             {t.name}
           </Button>
         ))}
       </div>
-
-      <Card className="mb-4">
-        <Card.Header>{active}</Card.Header>
-        <Card.Body>
+       
+      <Card className="mb-2">
+        {/* <Card.Header>{active}</Card.Header> */}
+        <Card.Body className="relaxation_table">
           {/* Main Table */}
           <Table bordered className="mb-4">
             <thead>
@@ -230,7 +231,8 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
           </Table>
 
           {/* Special Categories */}
-          <h5>Special Categories</h5>
+          <h5 class="special_category_title">Special Categories</h5>
+          <div class="col-md-3" style={{ paddingLeft: '0px' }}>
           <Form.Select
             value={selectedCategory}
             onChange={(e) => {
@@ -249,22 +251,22 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
               setIsDirty(true);
             }}
           >
-            <option value="">Select Special Category</option>
+            <option value="">Select Category</option>
             {availableCategories.map(c => (
               <option key={c.special_category_id} value={c.special_category_name}>
                 {c.special_category_name}
               </option>
             ))}
           </Form.Select>
-
+            </div>
           {specialsByType[active]?.length ? (
             <Table bordered className="mt-3">
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Mode</th>
-                  {categories.map(c => <th key={c}>{c}</th>)}
-                  <th>Flat</th>
+                  <th class="name">Name</th>
+                  <th class="mode">Mode</th>
+                  {categories.map(c => <th class="caste_category" key={c}>{c}</th>)}
+                  <th class="flatnumber">Flat</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -282,7 +284,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                       </Form.Select>
                     </td>
                     {categories.map(c => (
-                      <td key={c}>
+                      <td class="caste_category" key={c}>
                         {s.mode === "category" ? (
                           <Form.Control
                             type="number"
@@ -296,7 +298,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                     ))}
                     <td>
                       {s.mode === "flat" ? (
-                        <Form.Control
+                        <Form.Control 
                           type="number"
                           value={s.flat ?? 0}
                           onChange={(e) => updateSpecial(active, i, "flat", e.target.value)}
@@ -306,7 +308,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                       )}
                     </td>
                     <td>
-                      <Button variant="outline-danger" size="sm" onClick={() => removeSpecial(active, i)}>
+                      <Button variant="outline-danger delete_btn" size="sm" onClick={() => removeSpecial(active, i)}>
                         <FontAwesomeIcon icon={faTrash} />
                       </Button>
                     </td>
@@ -315,13 +317,13 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
               </tbody>
             </Table>
           ) : (
-            <p className="text-muted mt-3">No special categories added yet</p>
+            <p className="text-muted mt-3 blinking-text">*** No special categories added yet ***</p>
           )}
         </Card.Body>
       </Card>
       {!readOnly && (
-      <div className="d-flex justify-content-end">
-        <Button onClick={handleSave} disabled={!isDirty}>Save All Changes</Button>
+      <div className="d-flex justify-content-end ">
+        <Button className="save_btn" onClick={handleSave} disabled={!isDirty}> <FontAwesomeIcon icon={faCheckCircle } />&nbsp;Save</Button>
       </div>
       )}
     </div>

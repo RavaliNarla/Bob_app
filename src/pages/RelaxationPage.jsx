@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { apiService } from "../services/apiService";
 import Swal from "sweetalert2";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
+import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 const RelaxationPage = () => {
   const [relaxationPolicies, setRelaxationPolicies] = useState([]);
   const [selectedPolicyId, setSelectedPolicyId] = useState("");
@@ -147,11 +149,11 @@ const RelaxationPage = () => {
         <div className="card-body">
           {/* <h2 className="mb-4">Relaxation Policy Management</h2> */}
           <div>
-              <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Relaxation Policy</h5>
+              <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '15px' }}>Relaxation Policy</h5>
           </div>
           <div className="row mb-4 align-items-center">
   {/* Dropdown stays in the left column */}
-  <div className="col-12 col-md-6 col-lg-4">
+  <div className="col-md-3" style={{ paddingLeft: '0px' }}>
     <div className="form-group">
       <select
         id="job_relaxation_policy_id"
@@ -175,12 +177,13 @@ const RelaxationPage = () => {
   </div>
 
   {/* Button on the right side of the row */}
-  <div className="col d-flex justify-content-end">
+  <div className="col d-flex justify-content-end" style={{ paddingRight: '0px' }}>
     <Button 
-      variant="outline-primary" 
+      variant="outline-primary create_new_btn" 
       onClick={handleCreateNew}
       disabled={isLoading}
     >
+       <FontAwesomeIcon icon={faPlusCircle} /> &nbsp;
       {isCreateNew ? 'Create New' : 'Create New'}
     </Button>
   </div>

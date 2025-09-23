@@ -83,6 +83,7 @@
     border-radius: 4px;
     padding: 8px 12px;
     transition: border-color 0.2s ease;
+    font-size: 14px;
   }
   
   .form-control:focus, .form-select:focus {
@@ -143,3 +144,88 @@
     display: block;
   }
   
+/* styelkes added by veeresh */
+.create_new_btn{
+  background: #FF7043 !important;
+  color: #fff;
+  font-size: 13px;
+  border: 1px solid #FF7043;
+}
+.create_new_btn:hover{
+  background:#FF7043 !important;
+  border: 1px solid #FF7043;
+  color:#fff;
+}
+.relax_change_btn{
+  background: #fff !important;
+  color: #757575;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  font-weight:normal;
+}
+.relax_change_btn:hover{
+  background:#162b75 !important;
+  border: 1px solid #162b75;
+  color:#fff;
+}
+.relaxation-container .active{
+  background: #162b75 !important;
+  color: #fff;
+  font-size: 14px;
+  border: 1px solid #162b75;
+  
+}
+.relaxation_table{
+  padding:0px;
+}
+.relaxation-container .table th, .relaxation-container .table td{
+  font-size:14px;
+}
+.relaxation-container .table th.caste_category, .relaxation-container .table td.caste_category{
+  text-align:center;
+}
+.special_category_title{
+  font-size:14px;
+  color:#162b75
+}
+.table th.name, .table th.mode, .table th.flatnumber{
+  width: 15%;
+}
+.delete_btn{
+  color: #444;
+  border: none;
+}
+.save_btn{
+  background:#FF7043 !important;
+  border: 1px solid #FF7043 !important;
+  color:#fff;
+  
+  font-size:14px;
+  cursor:pointer;
+}
+.save_btn:hover{
+  color:#fff;
+}
+.blinking-text {
+  animation: blinker 2s linear infinite; /* Apply the animation */
+  font-size:14px;
+  color:#FF7043 !important;
+}
+
+@keyframes blinker {
+  0% {
+    opacity: 0; /* Start with text invisible */
+  }
+  50% {
+    opacity: 1; /* Make text visible at 50% of the animation */
+    
+  }
+    75% {
+    opacity: 1; /* Make text visible at 50% of the animation */
+    
+  }
+  100% {
+    opacity: 0; /* Make text invisible again at 100% */
+    
+  }
+}
