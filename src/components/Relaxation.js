@@ -120,21 +120,26 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
 
   // Handlers
   const handleMainChange = (type, cat, val) => {
-    // If the active type is a number input, ensure the value is not negative
     const activeType = types.find(t => t.name === type);
     if (activeType?.input === 'number') {
-      // Convert to number and ensure it's not negative
       const numVal = typeof val === 'string' ? parseFloat(val) || 0 : val;
       val = Math.max(0, numVal);
     }
-    
-    setMain(prev => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        [cat]: val
+  
+    setMain(prev => {
+      const updated = {
+        ...prev,
+        [type]: {
+          ...prev[type],
+          [cat]: val
+        }
+      };
+      if (type === "Vacancies") {
+        setAllocatedVacancies(calculateAllocated(updated, specialsByType));
       }
-    }));
+      return updated;
+    });
+  
     setIsDirty(true);
   };
 
@@ -161,7 +166,6 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     const arr = [...specialsByType[type]];
     const sp = { ...arr[idx] };
   
-    // Ensure values object exists
     if (!sp.values) sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {});
   
     if (field === "mode") sp.mode = value;
@@ -172,15 +176,19 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     const updatedSpecials = { ...specialsByType, [type]: arr };
     setSpecialsByType(updatedSpecials);
   
-    if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
+    if (type === "Vacancies") {
+      setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
+    }
+  
     setIsDirty(true);
   };
+  
   
 
   const removeSpecial = (type, idx) => {
     const newSpecials = { ...specialsByType, [type]: specialsByType[type].filter((_, i) => i !== idx) };
     setSpecialsByType(newSpecials);
-    if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, newSpecials));
+    if (type === "Vacancies") setAllocatedVacancies(calculateAllocated(main, newSpecials));
     setIsDirty(true);
   };
 
