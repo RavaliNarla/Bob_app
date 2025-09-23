@@ -43,8 +43,8 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
         setCategories(categoryCodes);
 
         // create main object with type names
-        setMain(createInitialRelaxations(typeObjs.map(t => t.name), categoryCodes));
-
+        //setMain(createInitialRelaxations(typeObjs.map(t => t.name), categoryCodes));
+        setMain(createInitialRelaxations(typeObjs.map(t => t.name), categoryCodes,typeObjs));
         // initialize specials
         setSpecialsByType(typeObjs.reduce((acc, t) => ({ ...acc, [t.name]: [] }), {}));
 

@@ -21,6 +21,8 @@ const RelaxationType = () => {
   const [currentCategory, setCurrentCategory] = useState({
     relaxation_type_name: "",
     description: "",
+    input: "number",   // default
+    operator: "<="     // default
   });
   const [editIndex, setEditIndex] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -49,7 +51,7 @@ const RelaxationType = () => {
     }
   };
 
-  const openModal = (req = { relaxation_type_name: "", description: "" }, index = null) => {
+  const openModal = (req = { relaxation_type_name: "", description: "",input: "number", operator: "<=" }, index = null) => {
     setCurrentCategory(req);
     setEditIndex(index);
     setShowModal(true);
@@ -105,6 +107,7 @@ const RelaxationType = () => {
         updatedCategories[editIndex] = updatedCategory;
         setCategories(updatedCategories);
       } else {
+        //console.log(currentCategory);return false;
         const response = await apiService.addRelaxationType(currentCategory);
         const newCategory = response.data?.data || currentCategory;
 
@@ -194,6 +197,12 @@ const RelaxationType = () => {
               <th onClick={() => handleSort("relaxation_type_name")} style={{ cursor: "pointer", width: "35%" }}>
                 Name{getSortIndicator("relaxation_type_name")}
               </th>
+              <th onClick={() => handleSort("input")} style={{ cursor: "pointer", width: "15%" }}>
+                Input{getSortIndicator("input")}
+              </th>
+              <th onClick={() => handleSort("operator")} style={{ cursor: "pointer", width: "15%" }}>
+                Operator{getSortIndicator("operator")}
+              </th>
               <th onClick={() => handleSort("description")} style={{ cursor: "pointer", width: "45%" }}>
                 Description{getSortIndicator("description")}
               </th>
@@ -205,6 +214,8 @@ const RelaxationType = () => {
             {categoriesToDisplay.map((cat, index) => (
               <tr key={cat.relaxation_type_id || index}>
                 <td>{cat.relaxation_type_name}</td>
+                <td>{cat.input}</td>
+                <td>{cat.operator}</td>
                 <td>{cat.description}</td>
                 <td>
                   <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(cat, index)} />
@@ -246,6 +257,37 @@ const RelaxationType = () => {
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Field Type</Form.Label>
+                  <Form.Select
+                    value={currentCategory.input}
+                    onChange={(e) =>
+                      setCurrentCategory({ ...currentCategory, input: e.target.value })
+                    }
+                  >
+                    <option value="number">Number</option>
+                    <option value="text">Text</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label>Operator</Form.Label>
+                  <Form.Select
+                    value={currentCategory.operator}
+                    onChange={(e) =>
+                      setCurrentCategory({ ...currentCategory, operator: e.target.value })
+                    }
+                  >
+                    <option value="<=">&lt;=</option>
+                    <option value=">=">&gt;=</option>
+                    <option value="==">==</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+
               <Col md={12}>
                 <Form.Group>
                   <Form.Label>

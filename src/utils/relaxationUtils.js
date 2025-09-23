@@ -3,10 +3,13 @@
  */
 
 // Create initial main relaxation object
-export function createInitialRelaxations(typesArr, categoriesArr) {
+export function createInitialRelaxations(typesArr, categoriesArr, types = []) {
   return typesArr.reduce((acc, type) => {
+    const typeInfo = types.find(t => t.name === type);
+    const defaultValue = typeInfo?.input === 'text' ? '' : 0;
+    
     acc[type] = categoriesArr.reduce((catAcc, cat) => {
-      catAcc[cat] = 0;
+      catAcc[cat] = defaultValue;
       return catAcc;
     }, {});
     return acc;
