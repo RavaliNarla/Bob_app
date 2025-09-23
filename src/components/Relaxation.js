@@ -5,8 +5,8 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { apiService } from "../services/apiService";
 import { createInitialRelaxations, createEmptySpecial, calculateAllocated } from "../utils/relaxationUtils";
 
-const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
-  const [types, setTypes] = useState([]);
+const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
+  const [types, setTypes] = useState([]); // now stores objects { name, input }
   const [categories, setCategories] = useState([]);
   const [specialCategories, setSpecialCategories] = useState([]);
   const [main, setMain] = useState({});
@@ -27,16 +27,27 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
           apiService.getAllRelaxationType(),
           apiService.getAllCategories(),
         ]);
+        console.log("typesResp", typesResp);
+        console.log("categoriesResp", categoriesResp);
 
-        const typeNames = typesResp.data.map(t => t.relaxation_type_name);
+        // 🔹 Map types to objects with name + input
+        const typeObjs = typesResp.data.map(t => ({
+          name: t.relaxation_type_name,
+          input: t.input?.toLowerCase() || "number", // default to number if missing
+        }));
+
         const categoryCodes = categoriesResp.data.map(c => c.category_code);
 
-        setTypes(typeNames);
+        setTypes(typeObjs);
         setCategories(categoryCodes);
-        setMain(createInitialRelaxations(typeNames, categoryCodes));
-        setSpecialsByType(typeNames.reduce((acc, t) => ({ ...acc, [t]: [] }), {}));
 
-        if (typeNames.length > 0) setActive(typeNames[0]);
+        // create main object with type names
+        setMain(createInitialRelaxations(typeObjs.map(t => t.name), categoryCodes));
+
+        // initialize specials
+        setSpecialsByType(typeObjs.reduce((acc, t) => ({ ...acc, [t.name]: [] }), {}));
+
+        if (typeObjs.length > 0) setActive(typeObjs[0].name);
       } catch (err) {
         console.error(err);
         setError("Failed to load relaxation types or categories");
@@ -54,6 +65,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
       setLoading(true);
       try {
         const response = await apiService.getAllCategories();
+        console.log("response", response);
         const formatted = Array.isArray(response.data)
           ? response.data.map(cat => ({
               special_category_id: cat.reservation_categories_id,
@@ -82,13 +94,13 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
 
     const filteredMain = {};
     types.forEach(t => {
-      filteredMain[t] = {};
-      categories.forEach(c => filteredMain[t][c] = policyMain?.[t]?.[c] ?? 0);
+      filteredMain[t.name] = {};
+      categories.forEach(c => filteredMain[t.name][c] = policyMain?.[t.name]?.[c] ?? 0);
     });
 
     const filteredSpecials = {};
     types.forEach(t => {
-      filteredSpecials[t] = (policySpecials?.[t] || []).map(s => ({
+      filteredSpecials[t.name] = (policySpecials?.[t.name] || []).map(s => ({
         name: s.name,
         mode: s.mode ?? "flat", // fallback to flat if mode missing
         flat: s.flat ?? 0,
@@ -108,28 +120,62 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
 
   // Handlers
   const handleMainChange = (type, cat, val) => {
-    setMain(prev => ({ ...prev, [type]: { ...prev[type], [cat]: val } }));
+    // If the active type is a number input, ensure the value is not negative
+    const activeType = types.find(t => t.name === type);
+    if (activeType?.input === 'number') {
+      // Convert to number and ensure it's not negative
+      const numVal = typeof val === 'string' ? parseFloat(val) || 0 : val;
+      val = Math.max(0, numVal);
+    }
+    
+    setMain(prev => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [cat]: val
+      }
+    }));
     setIsDirty(true);
   };
+
+  // const updateSpecial = (type, idx, field, value, cat = null) => {
+  //   const arr = [...specialsByType[type]];
+  //   const sp = { ...arr[idx] };
+
+  //   // Ensure values object exists
+  //   if (!sp.values) sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {});
+
+  //   if (field === "mode") sp.mode = value;
+  //   if (field === "flat") sp.flat = value;
+  //   if (field === "values" && cat) sp.values[cat] = value;
+
+  //   arr[idx] = sp;
+  //   const updatedSpecials = { ...specialsByType, [type]: arr };
+  //   setSpecialsByType(updatedSpecials);
+
+  //   if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
+  //   setIsDirty(true);
+  // };
 
   const updateSpecial = (type, idx, field, value, cat = null) => {
     const arr = [...specialsByType[type]];
     const sp = { ...arr[idx] };
-
+  
     // Ensure values object exists
     if (!sp.values) sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {});
-
+  
     if (field === "mode") sp.mode = value;
-    if (field === "flat") sp.flat = value;
-    if (field === "values" && cat) sp.values[cat] = value;
-
+    if (field === "flat") sp.flat = Number(value) || 0;
+    if (field === "values" && cat) sp.values[cat] = Number(value) || 0;
+  
     arr[idx] = sp;
     const updatedSpecials = { ...specialsByType, [type]: arr };
     setSpecialsByType(updatedSpecials);
-
+  
     if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
     setIsDirty(true);
   };
+  
 
   const removeSpecial = (type, idx) => {
     const newSpecials = { ...specialsByType, [type]: specialsByType[type].filter((_, i) => i !== idx) };
@@ -146,12 +192,15 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-danger">{error}</p>;
 
+  // 🔹 Get active type object
+  const activeTypeObj = types.find(t => t.name === active);
+
   return (
     <div className="relaxation-container p-4">
       <div className="tabs mb-4">
         {types.map(t => (
-          <Button key={t} className={`me-2 ${active === t ? "active" : ""}`} onClick={() => setActive(t)}>
-            {t}
+          <Button key={t.name} className={`me-2 ${active === t.name ? "active" : ""}`} onClick={() => setActive(t.name)}>
+            {t.name}
           </Button>
         ))}
       </div>
@@ -169,9 +218,10 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
                 {categories.map(c => (
                   <td key={c}>
                     <Form.Control
-                      type={active === "Education" ? "text" : "number"}
+                      type={activeTypeObj?.input === "text" ? "text" : "number"}
+                      min={activeTypeObj?.input === "number" ? "0" : undefined}
                       value={main[active][c]}
-                      onChange={(e) => handleMainChange(active, c, e.target.value)}
+                      onChange={(e) => handleMainChange(active, c, activeTypeObj?.input === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
                     />
                   </td>
                 ))}
@@ -191,7 +241,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
               const cat = specialCategories.find(sc => sc.special_category_name === catName);
               if (!cat) return;
 
-              const sp = createEmptySpecial(cat.special_category_name, types, categories);
+              const sp = createEmptySpecial(cat.special_category_name, types.map(t => t.name), categories);
               const updated = { ...specialsByType, [active]: [...specialsByType[active], sp] };
               setSpecialsByType(updated);
 
@@ -269,10 +319,11 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy }) => {
           )}
         </Card.Body>
       </Card>
-
+      {!readOnly && (
       <div className="d-flex justify-content-end">
         <Button onClick={handleSave} disabled={!isDirty}>Save All Changes</Button>
       </div>
+      )}
     </div>
   );
 };

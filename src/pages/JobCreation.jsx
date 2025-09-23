@@ -164,7 +164,7 @@ const handleSubmit = async (e) => {
         setErrors({});
 
         toast.success(showModal ? 'Job updated successfully!' : 'Job created successfully!');
-        setFormData(initialState);
+        //setFormData(initialState);
         navigate('/job-postings');
       } catch (error) {
         console.error('❌ API error:', error);
@@ -340,6 +340,7 @@ useEffect(() => {
             selection_procedure: selectedPosition.selection_procedure || '',
             min_salary: selectedPosition.min_salary || '',
             max_salary: selectedPosition.max_salary || '',
+            job_relaxation_policy_id: selectedPosition.job_relaxation_policy_id || '',
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
 
           });

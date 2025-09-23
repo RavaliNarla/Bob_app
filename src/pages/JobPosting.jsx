@@ -25,7 +25,6 @@ import { useNavigate } from "react-router-dom";
 import DownloadReqPdfButton from "../components/DownloadReqPdfButton";
 import { faDownload } from "@fortawesome/free-solid-svg-icons"; // ensure this import exists
 import { useDispatch, useSelector } from 'react-redux';
-import axios from "axios";
 const EllipsisIcon = () => (
   <svg
     width="16"

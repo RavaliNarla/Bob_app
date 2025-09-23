@@ -2,6 +2,7 @@ import React, { useState,useRef,useEffect } from 'react';
 import { Button, OverlayTrigger, Popover,Overlay} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import Relaxation from './Relaxation';
 
 const JobCreationForm = ({
   formData,
@@ -30,7 +31,8 @@ const JobCreationForm = ({
 
   const [showGradeInfo, setShowGradeInfo] = useState(false);
 const gradeInfoRef = useRef(null);
-
+const [showRelaxationInfo, setShowRelaxationInfo] = useState(false);
+const relaxationRef = useRef(null);
 // Close popover whenever the selected grade changes or gets cleared
 useEffect(() => {
   setShowGradeInfo(false);
@@ -44,7 +46,7 @@ console.log("Position List:", positionList);
   // console.log('Selected Requisition:', selectedRequisition);
 
   return (
-    <div onSubmit={handleSubmit} className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
+    <div className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
       {/* <h4 className="text-center mb-4 fonall">
         Job Posting
       </h4> */}
@@ -475,7 +477,7 @@ console.log("Position List:", positionList);
           <input type="text" className="form-control" disabled={readOnly} id="min_credit_score" name="min_credit_score" value={formData.min_credit_score} onChange={handleInputChange} />
           {errors.min_credit_score && <small className="error">{errors.min_credit_score}</small>}
         </div>
-        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+        {/* <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
         <label htmlFor="job_relaxation_policy_id" className="form-label">
           Relaxation Policy <span className="required-asterisk">*</span>
         </label>
@@ -500,7 +502,86 @@ console.log("Position List:", positionList);
         {errors.job_relaxation_policy_id && (
           <small className="error">{errors.job_relaxation_policy_id}</small>
         )}
-      </div>
+      </div> */}
+    {/* Relaxation Policy */}
+<div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+  <label htmlFor="job_relaxation_policy_id" className="form-label d-flex align-items-center">
+    Relaxation Policy <span className="required-asterisk">*</span>
+
+    {formData.job_relaxation_policy_id && (
+      <>
+        {/* Info icon button */}
+        <button
+          type="button"
+          ref={relaxationRef}
+          className="btn btn-link p-0 ms-2 d-inline-flex align-items-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowRelaxationInfo((prev) => !prev);
+          }}
+          aria-label="Show Relaxation Policy details"
+        >
+          <FontAwesomeIcon icon={faInfoCircle} className="text-info" style={{ fontSize: '1.2rem' }} />
+        </button>
+
+        {/* Popover */}
+        <Overlay
+          target={relaxationRef.current}
+          show={showRelaxationInfo}
+          placement="right"
+          rootClose
+          onHide={() => setShowRelaxationInfo(false)}
+          transition={false}
+          container={typeof document !== "undefined" ? document.body : undefined}
+        >
+          <Popover id="relaxation-popover" style={{ minWidth: 250, maxWidth: 600 }}>
+            <Popover.Header as="h6" className="fw-bold">Relaxation Policy Details</Popover.Header>
+            <Popover.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
+              {(() => {
+                const selectedPolicy = relaxationPolicies.find(
+                  (p) => String(p.job_relaxation_policy_id) === String(formData.job_relaxation_policy_id)
+                );
+
+                if (!selectedPolicy) return <div className="text-muted">No details available</div>;
+
+                return (
+                  <Relaxation
+                    selectedPolicy={selectedPolicy}
+                    onRelaxationSave={() => {}} // read-only
+                    readOnly={true} // This will hide the save button
+                  />
+                );
+              })()}
+            </Popover.Body>
+          </Popover>
+        </Overlay>
+      </>
+    )}
+  </label>
+
+  <select
+    id="job_relaxation_policy_id"
+    name="job_relaxation_policy_id"
+    className={`form-select ${errors.job_relaxation_policy_id ? "is-invalid" : ""}`}
+    value={formData.job_relaxation_policy_id || ""}
+    onChange={handleInputChange}
+    disabled={readOnly}
+  >
+    <option value="">Select Relaxation Policy</option>
+    {relaxationPolicies.map((policy) => (
+      <option key={policy.job_relaxation_policy_id} value={policy.job_relaxation_policy_id}>
+        {policy.relaxation_policy_number}
+      </option>
+    ))}
+  </select>
+
+  {errors.job_relaxation_policy_id && (
+    <div className="invalid-feedback">{errors.job_relaxation_policy_id}</div>
+  )}
+</div>
+
+
+
 
 
         <div className='row p-0'>
