@@ -79,6 +79,12 @@ const RelaxationPage = () => {
   
     setFormData(data);
   console.log("data", data);
+  console.log("isCreateNew", isCreateNew);
+  console.log("selectedPolicyId", selectedPolicyId);
+  if (!isCreateNew && !selectedPolicyId) {
+    toast.error("No policy selected to update. Please create or select a policy first.");
+    return;
+  }
     try {
       if (isCreateNew) {
         // 🔹 Save as NEW policy

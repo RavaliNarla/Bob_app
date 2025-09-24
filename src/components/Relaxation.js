@@ -65,14 +65,14 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     const fetchSpecialCategories = async () => {
       setLoading(true);
       try {
-        const response = await apiService.getAllCategories();
+        const response = await apiService.getAllSpecialCategories();
         console.log("response", response);
         const formatted = Array.isArray(response.data)
           ? response.data.map(cat => ({
-              special_category_id: cat.reservation_categories_id,
-              special_category_name: cat.category_name || "",
-              special_category_code: cat.category_code || "",
-              special_category_desc: cat.category_desc || ""
+              special_category_id: cat.special_category_id,
+              special_category_name: cat.special_category_name || "",
+              special_category_code: cat.special_category_code || "",
+              special_category_desc: cat.special_category_desc || ""
             }))
           : [];
         setSpecialCategories(formatted);

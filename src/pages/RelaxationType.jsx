@@ -266,8 +266,8 @@ const RelaxationType = () => {
                       setCurrentCategory({ ...currentCategory, input: e.target.value })
                     }
                   >
-                    <option value="number">Number</option>
-                    <option value="text">Text</option>
+                    <option value="Number">Number</option>
+                    <option value="Text">Text</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
