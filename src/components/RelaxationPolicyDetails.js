@@ -1,58 +1,113 @@
-// src/components/RelaxationPolicyDetails.jsx
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlusCircle, faMinusCircle  } from "@fortawesome/free-solid-svg-icons";
 
-const RelaxationPolicyDetails = ({ policy }) => {
-  if (!policy) {
-    return (
-      <div className="text-center py-4">
-        <i className="bi bi-info-circle fs-1 text-muted mb-3"></i>
-        <p className="text-muted">No policy details available</p>
-      </div>
-    );
-  }
 
+const RelaxationTable = () => {
+  // ✅ Default open row is 1
+  const [openRow, setOpenRow] = useState(0);
+
+  const toggleRow = (rowId) => {
+    setOpenRow(openRow === rowId ? null : rowId);
+  };
+
+  const rows = [
+    { id: 1, label: "Age Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
+    { id: 2, label: "Fee Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
+    { id: 3, label: "Qualification", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
+    { id: 4, label: "Vacancies", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
+    { id: 5, label: "Experience Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
+  ];
+
+  const specialCategories = [
+    { category: "Person with Disability", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
+    { category: "Ex-Servicemen", mode: "Category-Wise", sc: "-NA-", st: "-NA-", ews: "-NA-", obc: "-NA-", gen: "-NA-", flat: "05" },
+    { category: "Children/Family of Martyrs", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
+    { category: "Hearing Impaired", mode: "Category-Wise", sc: "-NA-", st: "-NA-", ews: "-NA-", obc: "-NA-", gen: "-NA-", flat: "05" },
+    { category: "Mentally Retarted", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
+  ];
+  
   return (
-    <div className="relaxation-policy-details">
-      <div className="mb-3">
-        <h6 className="fw-bold mb-2">Policy Number</h6>
-        <p>{policy.relaxation_policy_number || 'N/A'}</p>
-      </div>
-      
-      <div className="mb-3">
-        <h6 className="fw-bold mb-2">Description</h6>
-        <p>{policy.description || 'No description available'}</p>
-      </div>
-      
-      <div className="mb-3">
-        <h6 className="fw-bold mb-2">Effective Date</h6>
-        <p>{policy.effective_date || 'N/A'}</p>
-      </div>
-      
-      <div className="mb-3">
-        <h6 className="fw-bold mb-2">Expiry Date</h6>
-        <p>{policy.expiry_date || 'N/A'}</p>
-      </div>
-      
-      {policy.relaxation_rules?.length > 0 && (
-        <div className="mb-3">
-          <h6 className="fw-bold mb-2">Relaxation Rules</h6>
-          <ul className="list-group">
-            {policy.relaxation_rules.map((rule, index) => (
-              <li key={index} className="list-group-item">
-                <div className="d-flex justify-content-between">
-                  <span className="fw-medium">{rule.rule_name || `Rule ${index + 1}`}</span>
-                  <span className="badge bg-primary">{rule.rule_value || 'N/A'}</span>
-                </div>
-                {rule.description && (
-                  <small className="text-muted d-block mt-1">{rule.description}</small>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+    
+    <div className="table-responsive">
+      <div class="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+        <label for="probation_period" class="form-label">Relaxation Policy No</label>
+        <input type="text" class="form-control" value="RP-0003" disabled />
+    </div>
+      <table className="req_table table table-hover relaxation_table">
+        <thead className="table-header-orange">
+          <tr>
+            <th></th>
+            <th>Relaxation Details</th>
+            <th>SC</th>
+            <th>ST</th>
+            <th>EWS</th>
+            <th>OBC</th>
+            <th>GEN</th>
+          </tr>
+        </thead>
+        <tbody className="table-body-orange">
+          {rows.map((row) => (
+            <React.Fragment key={row.id}>
+              <tr onClick={() => toggleRow(row.id)} style={{ cursor: "pointer" }}>
+                <td>
+                  {openRow === row.id ? (
+                    <FontAwesomeIcon icon={faMinusCircle} className="text-danger toggle-icon" />
+                  ) : (
+                    <FontAwesomeIcon icon={faPlusCircle} className="text-primary toggle-icon" />
+                  )}
+                </td>
+                <td className="relaxationName">{row.label}</td>
+                <td>{row.sc}</td>
+                <td>{row.st}</td>
+                <td>{row.ews}</td>
+                <td>{row.obc}</td>
+                <td>{row.gen}</td>
+              </tr>
+
+              {openRow === row.id && (
+                <tr>
+                  <td colSpan="7">
+                    <div className="table-responsive">
+                      <table className="req_table table table-sm table-bordered specialCat_table">
+                        <thead className="table-header-orange">
+                          <tr>
+                            <th>Special Categories</th>
+                            <th>Mode</th>
+                            <th>SC</th>
+                            <th>ST</th>
+                            <th>EWS</th>
+                            <th>OBC</th>
+                            <th>GEN</th>
+                            <th>Flat</th>
+                          </tr>
+                        </thead>
+                        <tbody className="table-body-orange">
+                          {specialCategories.map((cat, idx) => (
+                            <tr key={idx}>
+                              <td>{cat.category}</td>
+                              <td>{cat.mode}</td>
+                              <td>{cat.sc}</td>
+                              <td>{cat.st}</td>
+                              <td>{cat.ews}</td>
+                              <td>{cat.obc}</td>
+                              <td>{cat.gen}</td>
+                              <td>{cat.flat}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default RelaxationPolicyDetails;
+export default RelaxationTable;
+

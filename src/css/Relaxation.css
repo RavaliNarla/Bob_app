@@ -229,3 +229,27 @@
     
   }
 }
+.relaxation_table th, .relaxation_table td{
+  font-size:14px;
+  padding:8px;
+}
+.specialCat_table{
+  width:90%;
+  margin-left:8%;
+}
+.specialCat_table th, .specialCat_table td{
+  font-size:13px;
+  padding:8px;
+}
+.fa-circle-plus{
+  color:#162b75 !important;
+  font-size:16px;
+}
+.fa-circle-minus{
+  color:#FF7043 !important;
+  font-size:16px;
+}
+.relaxationName{
+   color:#162b75 !important;
+   font-weight:500 !important
+}
