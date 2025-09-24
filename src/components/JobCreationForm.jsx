@@ -1,9 +1,8 @@
-import React, { useState,useRef,useEffect } from 'react';
-import { Button, OverlayTrigger, Popover,Overlay} from 'react-bootstrap';
+import React, { useState, useRef, useEffect } from 'react';
+import { Button, OverlayTrigger, Popover, Overlay, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import Relaxation from './Relaxation';
-
+import RelaxationPolicyDetails from './RelaxationPolicyDetails';
 const JobCreationForm = ({
   formData,
   errors,
@@ -31,8 +30,7 @@ const JobCreationForm = ({
 
   const [showGradeInfo, setShowGradeInfo] = useState(false);
 const gradeInfoRef = useRef(null);
-const [showRelaxationInfo, setShowRelaxationInfo] = useState(false);
-const relaxationRef = useRef(null);
+const [showRelaxationModal, setShowRelaxationModal] = useState(false);
 // Close popover whenever the selected grade changes or gets cleared
 useEffect(() => {
   setShowGradeInfo(false);
@@ -44,6 +42,11 @@ console.log("Position List:", positionList);
   );
   // Debug: log the selected requisition to help diagnose issues
   // console.log('Selected Requisition:', selectedRequisition);
+
+  // Find the selected relaxation policy
+  const selectedRelaxationPolicy = relaxationPolicies.find(
+    (p) => String(p.job_relaxation_policy_id) === String(formData.job_relaxation_policy_id)
+  );
 
   return (
     <div className="form-section p-4 mx-2 rounded-3" style={{ backgroundColor: '#fff', boxShadow: '0 10px 30px #1a2c7133' }}>
@@ -97,9 +100,9 @@ console.log("Position List:", positionList);
             id="requisition_id"
             name="requisition_id"
             className="form-select custom-placeholder"
-            value={formData.requisition_id || ""}   // ✅ bind to formData
+            value={formData.requisition_id || ""}   // bind to formData
             onChange={handleInputChange}
-            disabled={!!formData.requisition_id}    // ✅ lock if preselected
+            disabled={!!formData.requisition_id}    // lock if preselected
           >
             <option value="">Select Requisition ID</option>
             {requisitionIdOptions.map((option) => {
@@ -153,7 +156,7 @@ console.log("Position List:", positionList);
           target: { name: "position_code", value: selectedPosition.position_code ?? "" },
         });
       
-        // ✅ If grade_id is not 0 → reset salary
+        // If grade_id is not 0 → reset salary
         if (selectedPosition.jobGradeId && selectedPosition.jobGradeId !== 0) {
           handleInputChange({ target: { name: "min_salary", value: "" } });
           handleInputChange({ target: { name: "max_salary", value: "" } });
@@ -370,7 +373,7 @@ console.log("Position List:", positionList);
         className="form-control"
         value={
           formData.min_salary
-            ? Number(formData.min_salary).toLocaleString("en-IN") // 👈 Indian format commas
+            ? Number(formData.min_salary).toLocaleString("en-IN") // Indian format commas
             : ""
         }
         onChange={(e) => {
@@ -398,7 +401,7 @@ console.log("Position List:", positionList);
         className="form-control"
         value={
           formData.max_salary
-            ? Number(formData.max_salary).toLocaleString("en-IN") // 👈 comma formatting
+            ? Number(formData.max_salary).toLocaleString("en-IN") // comma formatting
             : ""
         }
         onChange={(e) => {
@@ -509,53 +512,14 @@ console.log("Position List:", positionList);
     Relaxation Policy <span className="required-asterisk">*</span>
 
     {formData.job_relaxation_policy_id && (
-      <>
-        {/* Info icon button */}
-        <button
-          type="button"
-          ref={relaxationRef}
-          className="btn btn-link p-0 ms-2 d-inline-flex align-items-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowRelaxationInfo((prev) => !prev);
-          }}
-          aria-label="Show Relaxation Policy details"
-        >
-          <FontAwesomeIcon icon={faInfoCircle} className="text-info" style={{ fontSize: '1.2rem' }} />
-        </button>
-
-        {/* Popover */}
-        <Overlay
-          target={relaxationRef.current}
-          show={showRelaxationInfo}
-          placement="right"
-          rootClose
-          onHide={() => setShowRelaxationInfo(false)}
-          transition={false}
-          container={typeof document !== "undefined" ? document.body : undefined}
-        >
-          <Popover id="relaxation-popover" style={{ minWidth: 250, maxWidth: 600 }}>
-            <Popover.Header as="h6" className="fw-bold">Relaxation Policy Details</Popover.Header>
-            <Popover.Body style={{ maxHeight: "400px", overflowY: "auto" }}>
-              {(() => {
-                const selectedPolicy = relaxationPolicies.find(
-                  (p) => String(p.job_relaxation_policy_id) === String(formData.job_relaxation_policy_id)
-                );
-
-                if (!selectedPolicy) return <div className="text-muted">No details available</div>;
-
-                return (
-                  <Relaxation
-                    selectedPolicy={selectedPolicy}
-                    onRelaxationSave={() => {}} // read-only
-                    readOnly={true} // This will hide the save button
-                  />
-                );
-              })()}
-            </Popover.Body>
-          </Popover>
-        </Overlay>
-      </>
+      <button
+        type="button"
+        className="btn btn-link p-0 ms-2 d-inline-flex align-items-center"
+        onClick={() => setShowRelaxationModal(true)}
+        aria-label="Show Relaxation Policy details"
+      >
+        <FontAwesomeIcon icon={faInfoCircle} className="text-info" style={{ fontSize: '1.2rem' }} />
+      </button>
     )}
   </label>
 
@@ -580,9 +544,29 @@ console.log("Position List:", positionList);
   )}
 </div>
 
-
-
-
+      {/* Relaxation Policy Modal */}
+      <Modal 
+        show={showRelaxationModal} 
+        onHide={() => setShowRelaxationModal(false)}
+        size="lg"
+        aria-labelledby="relaxation-policy-modal"
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="relaxation-policy-modal">
+            Relaxation Policy Details
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            <RelaxationPolicyDetails policy={selectedRelaxationPolicy} />
+        
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowRelaxationModal(false)}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
         <div className='row p-0'>
           {/* Description */}
