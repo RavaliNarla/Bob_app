@@ -26,6 +26,9 @@ import Category from './pages/Category';
 import RelaxationType from './pages/RelaxationType';
 import Document from './pages/Document';
 import RelaxationPage from './pages/RelaxationPage';
+import BulkUploadBatch from './pages/BulkUploadBatch';
+import BulkCandidateAssign from './pages/Bulkcandidateassign';
+// import BulkUploadLayout from './pages/BulkUploadLayout';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -109,12 +112,18 @@ function App() {
                       <Route path="/relaxation-type" element={<RelaxationType />} />'
                       <Route path="/document" element={<Document />} />
                      
+                      <Route path="/relaxation-type" element={<RelaxationType />} />
+
+  <Route path="/bulk-upload" element={<BulkUploadBatch />} />
+  <Route path="/candidate-assign" element={<BulkCandidateAssign />} />
                     </Route>
                   </Route>
                 </Route>
                 {/* Redirect unknown routes */}
                 <Route path="/" element={<Navigate to="/login" />} />
               </Routes>
+              <div style={{ position: 'fixed', right: 16, bottom: 16, zIndex: 1050 }}>
+              </div>
               {/* </Tokenexp> */}
             <ToastContainer position="top-right" autoClose={5000} />
           </Suspense>

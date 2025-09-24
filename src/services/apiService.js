@@ -492,6 +492,28 @@ deleteDocument: (id) => apis.delete(`/document-types/delete/${id}`),
   saveRelaxation: (data) => api.post('/job-relaxation-policy/add', data),
   getRelaxations: () => api.get('/job-relaxation-policy/all'),
   updateRelaxation: (id, data) => api.put(`/job-relaxation-policy/update/${id}`, data),
+
+processResumesJC:()=>api.post("/resume/start-batch-process",{}),
+
+getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
+
+deleteResumeJC: (resumeId) =>
+  api.post(`/resume/delete/${encodeURIComponent(resumeId)}`),
+
+
+uploadResumeJC: (file) => {
+  const form = new FormData();
+  form.append("file", file, file?.name || "resume");
+
+  return api.post("/resume/upload", form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+},
+
+getAllResumesJC: (params) => {
+  return api.get("/resume/all", { params });
+},
 };
+
 
 export default apiService;

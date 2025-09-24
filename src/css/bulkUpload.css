@@ -1,0 +1,135 @@
+.bulkupload_btn, .progress-bar{
+   background-color: #162b75;
+    border-color: #162b75;
+    color: #fff;
+    font-size:13px;
+}
+.bulkupload_btn:hover{
+    background-color: #162b75 !important;
+    border-color: #162b75 !important;
+    color: #fff;
+    font-size:13px;
+}
+.active>.page-link, .page-link.active {
+    z-index: 3;
+    color: #fff;
+    background-color: #162b75 !important;
+    border-color: #162b75 !important;
+}
+.table_heading{
+    color: #162b75;
+    font-size:14px;
+}
+/* src/css/bulkUpload.css */
+.btn.btn-secondary.active {
+  filter: brightness(0.95);
+}
+/* compact selects + labels */
+.compact-label {
+  font-size: 12px;
+  margin-bottom: 2px;       /* tighter spacing above the select */
+  color: #6c757d;
+}
+
+.slim-select.form-select {
+  font-size: 12px;          /* smaller text */
+  height: 32px;             /* shorter control */
+  padding: 4px 28px 4px 8px;/* tighter vertical padding; keep right for caret */
+}
+/* in src/css/bulkUpload.css */
+.compact-label { font-size: 12px; margin-bottom: 2px; color: #6c757d; }
+.slim-select.form-select { font-size: 12px; height: 32px; padding: 4px 28px 4px 8px; }
+
+
+/* --- Compact dropdown toggle (like CandidateCard) --- */
+.select-drop {
+  background: #fff !important;
+  border: 1px solid #162b75 !important;
+  color: #162b75 !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;          /* compact */
+  height: 34px !important;               /* small height */
+  font-size: 13px !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+}
+.select-drop:hover,
+.select-drop:focus,
+.select-drop:active,
+.show > .select-drop.dropdown-toggle {
+  background: #f5f7ff !important;
+  color: #162b75 !important;
+  border-color: #162b75 !important;
+}
+
+/* tiny utility to ellipsize long labels */
+.truncate-1 {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* spacing helper used in CandidateCard */
+.spaceform { gap: 8px; }
+
+/* Dropdown menu container */
+.menuopen {
+  border: 1px solid #e6e8f0 !important;
+  border-radius: 8px !important;
+  max-height: 320px;
+  overflow: hidden;
+}
+
+/* Search input inside menu */
+.search_req {
+  font-size: 13px !important;
+  height: 32px !important;
+  padding: 4px 8px !important;
+}
+
+/* Scroll area for items */
+.req_dropdown {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Menu item style */
+.req_item {
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+}
+.req_item:hover,
+.req_item:focus {
+  background: #f0f3ff !important; /* soft brandy hover */
+  color: #162b75 !important;
+}
+
+/* Keep brand style alignment with your other buttons/heading */
+.table_heading{ color:#162b75; font-size:14px; }
+
+
+/* Tile buttons: default = outlined orange, hover/active = solid orange */
+.tile-btn {
+  background: transparent;
+  color: #FF7043;
+  border-color: #FF7043;
+}
+
+.tile-btn:hover,
+.tile-btn:focus {
+  background: #FF7043;
+  color: #fff;
+  border-color: #FF7043;
+}
+
+/* Selected (active) should look the same as hover */
+.tile-btn.active,
+.tile-btn:active,
+.show > .tile-btn.dropdown-toggle {
+  background: #FF7043 !important;
+  color: #fff !important;
+  border-color: #FF7043 !important;
+  box-shadow: none !important;
+}
