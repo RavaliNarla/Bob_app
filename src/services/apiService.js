@@ -498,7 +498,7 @@ processResumesJC:()=>api.post("/resume/start-batch-process",{}),
 getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
 
 deleteResumeJC: (resumeId) =>
-  api.post(`/resume/delete/${encodeURIComponent(resumeId)}`),
+  api.delete(`/resume/delete-resume/${encodeURIComponent(resumeId)}`),
 
 
 uploadResumeJC: (file) => {
