@@ -1,51 +1,78 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle, faMinusCircle  } from "@fortawesome/free-solid-svg-icons";
+import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
 
-
-const RelaxationTable = () => {
-  // ✅ Default open row is 1
-  const [openRow, setOpenRow] = useState(0);
+const RelaxationTable = ({ policy }) => {
+  const [openRow, setOpenRow] = useState(null);
 
   const toggleRow = (rowId) => {
     setOpenRow(openRow === rowId ? null : rowId);
   };
 
-  const rows = [
-    { id: 1, label: "Age Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
-    { id: 2, label: "Fee Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
-    { id: 3, label: "Qualification", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
-    { id: 4, label: "Vacancies", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
-    { id: 5, label: "Experience Relaxation", sc: "05", st: "05", ews: "15", obc: "05", gen: "05" },
-  ];
+  // ✅ Build rows dynamically from policy.relaxation.main
+  const rows = useMemo(() => {
+    if (!policy?.relaxation?.main) return [];
+    return Object.entries(policy.relaxation.main).map(([label, values], idx) => ({
+      id: idx + 1,
+      label,
+      sc: values.SC ?? "-",
+      st: values.ST ?? "-",
+      ews: values.EWS ?? "-",
+      obc: values.OBC ?? "-",
+      gen: values.GEN ?? "-",
+    }));
+  }, [policy]);
 
-  const specialCategories = [
-    { category: "Person with Disability", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
-    { category: "Ex-Servicemen", mode: "Category-Wise", sc: "-NA-", st: "-NA-", ews: "-NA-", obc: "-NA-", gen: "-NA-", flat: "05" },
-    { category: "Children/Family of Martyrs", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
-    { category: "Hearing Impaired", mode: "Category-Wise", sc: "-NA-", st: "-NA-", ews: "-NA-", obc: "-NA-", gen: "-NA-", flat: "05" },
-    { category: "Mentally Retarted", mode: "Flat", sc: "05", st: "05", ews: "15", obc: "05", gen: "05", flat: "-NA-" },
-  ];
-  
+  // ✅ Build specials mapping by type
+  const specialsByType = useMemo(() => {
+    if (!policy?.relaxation?.specialsByType) return {};
+    const specials = {};
+    Object.entries(policy.relaxation.specialsByType).forEach(([type, list]) => {
+      specials[type] = list.map((cat, idx) => ({
+        id: idx + 1,
+        category: cat.name,
+        mode: cat.mode === "flat" ? "Flat" : "Category-Wise",
+        sc: cat.values.SC ?? "-NA-",
+        st: cat.values.ST ?? "-NA-",
+        ews: cat.values.EWS ?? "-NA-",
+        obc: cat.values.OBC ?? "-NA-",
+        gen: cat.values.GEN ?? "-NA-",
+        flat: cat.flat ?? "-NA-",
+      }));
+    });
+    return specials;
+  }, [policy]);
+
+  // Extract category keys dynamically
+const categoryKeys = useMemo(() => {
+  const main = policy?.relaxation?.main;
+  if (!main) return [];
+  const firstValues = Object.values(main)[0] || {};
+  return Object.keys(firstValues); // ["SC","ST","EWS","GEN","OBC"]
+}, [policy]);
+
   return (
-    
     <div className="table-responsive">
-      <div class="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-        <label for="probation_period" class="form-label">Relaxation Policy No</label>
-        <input type="text" class="form-control" value="RP-0003" disabled />
-    </div>
+      <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+        <label htmlFor="probation_period" className="form-label">Relaxation Policy No</label>
+        <input
+          type="text"
+          className="form-control"
+          value={policy?.relaxation_policy_number || ""}
+          disabled
+        />
+      </div>
+
       <table className="req_table table table-hover relaxation_table">
-        <thead className="table-header-orange">
-          <tr>
-            <th></th>
-            <th>Relaxation Details</th>
-            <th>SC</th>
-            <th>ST</th>
-            <th>EWS</th>
-            <th>OBC</th>
-            <th>GEN</th>
-          </tr>
-        </thead>
+      <thead className="table-header-orange">
+        <tr>
+          <th></th>
+          <th>Relaxation Details</th>
+          {categoryKeys.map((key) => (
+            <th key={key}>{key}</th>
+          ))}
+        </tr>
+      </thead>
         <tbody className="table-body-orange">
           {rows.map((row) => (
             <React.Fragment key={row.id}>
@@ -65,26 +92,25 @@ const RelaxationTable = () => {
                 <td>{row.gen}</td>
               </tr>
 
-              {openRow === row.id && (
+              {/* Expanded row → show special categories if available */}
+              {openRow === row.id && specialsByType[row.label] && (
                 <tr>
                   <td colSpan="7">
                     <div className="table-responsive">
                       <table className="req_table table table-sm table-bordered specialCat_table">
-                        <thead className="table-header-orange">
+                      <thead className="table-header-orange">
                           <tr>
                             <th>Special Categories</th>
                             <th>Mode</th>
-                            <th>SC</th>
-                            <th>ST</th>
-                            <th>EWS</th>
-                            <th>OBC</th>
-                            <th>GEN</th>
+                            {categoryKeys.map((key) => (
+                              <th key={key}>{key}</th>
+                            ))}
                             <th>Flat</th>
                           </tr>
                         </thead>
                         <tbody className="table-body-orange">
-                          {specialCategories.map((cat, idx) => (
-                            <tr key={idx}>
+                          {specialsByType[row.label].map((cat) => (
+                            <tr key={cat.id}>
                               <td>{cat.category}</td>
                               <td>{cat.mode}</td>
                               <td>{cat.sc}</td>
@@ -110,4 +136,3 @@ const RelaxationTable = () => {
 };
 
 export default RelaxationTable;
-
