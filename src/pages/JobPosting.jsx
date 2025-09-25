@@ -131,6 +131,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
       useremail: r?.useremail ?? r?.mail ?? r?.email ?? "-",
       status: r?.status ?? r?.approvalStatus ?? r?.state ?? "-",
       dateTime: r?.dateTime ?? r?.datetime ?? r?.Datetime ?? "-",
+      comments: r?.comments ?? r?.comments ?? r?.remark ?? "-",
     }));
 
     setTrailData(normalized);
@@ -995,10 +996,11 @@ const fetchRequisitions = async () => {
       <div className="table-responsive">
         <Table bordered hover size="sm" className="mb-0 approval-trail-table">
           <colgroup>
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '20%' }} />
+            <col style={{ width: '15%' }} />
+            <col style={{ width: '15%' }} />
             <col style={{ width: '30%' }} />
-            <col style={{ width: '38%' }} />
-            <col style={{ width: '16%' }} />
-            <col style={{ width: '16%' }} />
           </colgroup>
           <thead>
             <tr>
@@ -1006,6 +1008,7 @@ const fetchRequisitions = async () => {
               <th>Email</th>
               <th>Status</th>
               <th>Date / Time</th>
+              <th>Comments</th>
             </tr>
           </thead>
           <tbody>
@@ -1015,6 +1018,7 @@ const fetchRequisitions = async () => {
                 <td style={{ overflowWrap: 'anywhere' }}>{row?.useremail ?? '-'}</td>
                 <td>{row?.status ?? '-'}</td>
                 <td>{formatDateTime(row?.dateTime)}</td>
+                <td>{row?.comments ?? '-'}</td>
               </tr>
             ))}
           </tbody>
