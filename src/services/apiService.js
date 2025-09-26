@@ -500,6 +500,18 @@ getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
 deleteResumeJC: (resumeId) =>
   api.delete(`/resume/delete-resume/${encodeURIComponent(resumeId)}`),
 
+// Fetch bulk-uploaded candidates who have NOT applied for the selected position
+getNotAppliedBulkUploadCandidates: (position_id) =>
+  candidateApi.get(`/candidates/not-applied-bulk-upload/${position_id}`),
+
+
+// Assign (bulk shortlist) selected candidates to a position
+bulkShortlistCandidates: (positionId, candidateIds) =>
+  candidateApi.post("/candidates/bulk-shortlist", {
+    positionId,
+    candidateIds,
+  }),
+
 
 uploadResumeJC: (file) => {
   const form = new FormData();

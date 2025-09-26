@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../css/bulkUpload.css";
+import "../css/JobPosting.css";
 import apiService from "../services/apiService";
 import BulkTiles from "./BulkTiles";
 import { useLocation } from "react-router-dom";
@@ -28,8 +29,11 @@ import {
   InputGroup,
   OverlayTrigger,
   Tooltip,
+  Spinner, // <-- added
 } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
 
 const styles = {
   cardTitle: {
@@ -72,12 +76,12 @@ const IconDb = ({ color = "currentColor" }) => (
 );
 
 const IconFilePlus = () => (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
-      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="12" y1="12" x2="12" y2="18" />
-      <line x1="9" y1="15" x2="15" y2="15" />
-    </svg>
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+    <polyline points="14 2 14 8 20 8" />
+    <line x1="12" y1="12" x2="12" y2="18" />
+    <line x1="9" y1="15" x2="15" y2="15" />
+  </svg>
 );
 
 export default function BulkUploadBatch() {
@@ -103,6 +107,10 @@ export default function BulkUploadBatch() {
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
+  // NEW: track auto refresh spinner state + lock
+  const [autoRefreshing, setAutoRefreshing] = useState(false);
+  const isRefreshingRef = useRef(false);
+
   /* fetch on enter + on navigation change */
   useEffect(() => { dispatch(fetchAllResumes()); }, [dispatch, location.key]);
 
@@ -123,6 +131,25 @@ export default function BulkUploadBatch() {
     const onFocus = () => dispatch(fetchAllResumes());
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
+  }, [dispatch]);
+
+  /* NEW: auto-refresh every 1 minute with a small spinner indicator */
+  useEffect(() => {
+    const tick = async () => {
+      if (isRefreshingRef.current) return; // prevent overlap
+      isRefreshingRef.current = true;
+      setAutoRefreshing(true);
+      try {
+        await dispatch(fetchAllResumes()).unwrap();
+      } catch {
+        // ignore errors; next tick will try again
+      } finally {
+        isRefreshingRef.current = false;
+        setAutoRefreshing(false);
+      }
+    };
+    const id = setInterval(tick, 360_000); // 1 minute
+    return () => clearInterval(id);
   }, [dispatch]);
 
   const isHttpUrl = (u) => typeof u === "string" && /^https?:\/\//i.test(u);
@@ -339,7 +366,7 @@ export default function BulkUploadBatch() {
   };
 
   return (
-    <Container fluid className="py-4 px-3" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <Container fluid className="py-4 px-3 bulk-container" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <BulkTiles />
 
       {/* Header */}
@@ -351,6 +378,14 @@ export default function BulkUploadBatch() {
             {processError && <span className="text-danger">Process failed</span>}
             {processMessage && !processing && <span className="text-success">{processMessage}</span>}
             {allLastLoadedAt ? `Last loaded: ${new Date(allLastLoadedAt).toLocaleString()}` : ""}
+
+            {/* NEW: tiny loader during auto-refresh */}
+            {autoRefreshing && (
+              <span className="d-inline-flex align-items-center gap-1 text-primary" title="Refreshing…">
+                <Spinner animation="border" size="sm" />
+                Refreshing…
+              </span>
+            )}
           </div>
         </Col>
       </Row>
@@ -367,32 +402,49 @@ export default function BulkUploadBatch() {
                   {/* Step 1 */}
                   <div className="bulkstepper-step">
                     <div className={`bulkstepper-dot ${step1}`} aria-current={step1 === "active" ? "step" : undefined}>
-                      <IconDoc color={step1 === "waiting" ? "var(--text-muted)" : "#fff"} />
-                    </div>
+<IconDoc
+      color={
+        step1 === "waiting"
+          ? "black"       // waiting → black
+          : "#fff"        // active/completed → white
+      }
+    />                    </div>
                     <div className="fw-semibold mt-2">Load Resumes</div>
-                    <div className={`bulkstepper-badge ${step1}`}>{step1 === "completed" ? "Done" : "Active"}</div>
+                    {/* <div className={`bulkstepper-badge ${step1}`}>{step1 === "completed" ? "Done" : "Active"}</div> */}
                     <div className="text-muted small mt-2">Loading resumes from the Localstorage</div>
                   </div>
 
                   {/* Step 2 */}
                   <div className="bulkstepper-step">
                     <div className={`bulkstepper-dot ${step2}`}>
-                      <IconUpload color={step2 === "waiting" ? "var(--text-muted)" : "#fff"} />
+                      <IconUpload
+      color={
+        step2 === "waiting"
+          ? "black"       // waiting → black
+          : "#fff"        // active/completed → white
+      }
+    />
                     </div>
                     <div className="fw-semibold mt-2">Upload</div>
-                    <div className={`bulkstepper-badge ${step2}`}>{step2 === "completed" ? "Done" : "Waiting"}</div>
+                    {/* <div className={`bulkstepper-badge ${step2}`}>{step2 === "completed" ? "Done" : "Waiting"}</div> */}
                     <div className="text-muted small mt-2">Uploading Loaded resumes to the Cloud</div>
                   </div>
 
                   {/* Step 3 */}
                   <div className="bulkstepper-step">
                     <div className={`bulkstepper-dot ${step3}`}>
-                      <IconDb color={step3 === "waiting" ? "var(--text-muted)" : "#fff"} />
+                      <IconDb
+      color={
+        step3 === "waiting"
+          ? "black"       // waiting → black
+          : "#fff"        // active/completed → white
+      }
+    />
                     </div>
                     <div className="fw-semibold mt-2">Sync Data</div>
-                    <div className={`bulkstepper-badge ${step3}`}>
+                    {/* <div className={`bulkstepper-badge ${step3}`}>
                       {step3 === "completed" ? "Done" : step3 === "active" ? "Active" : "Waiting"}
-                    </div>
+                    </div> */}
                     <div className="text-muted small mt-2">Starting the Batch Process and Syncing the Table</div>
                   </div>
                 </div>
@@ -431,7 +483,7 @@ export default function BulkUploadBatch() {
                 </div>
 
                 {/* Batch summary (unchanged) */}
-                {batch && (
+                {/* {batch && (
                   <div className="mt-3">
                     <div className="d-flex align-items-center gap-2 mb-2">
                       <Badge bg={batch.status === "uploaded" ? "info" : "secondary"}>
@@ -461,7 +513,7 @@ export default function BulkUploadBatch() {
 
                     <ProgressBar now={summary?.pct || 0} label={`${summary?.pct || 0}%`} />
                   </div>
-                )}
+                )} */}
               </div>
             </Card.Body>
           </Card>
@@ -473,13 +525,25 @@ export default function BulkUploadBatch() {
                 <div className="fw-semibold table_heading">All Resumes</div>
                 <div className="text-muted small">({allResumes?.length ?? 0} total)</div>
 
-
                 <div className="ms-auto d-flex align-items-center gap-2">
-                  <div>
-                    <button onClick={onSync}>
-                      Sync
-                    </button>
-                  </div>
+            <div>
+  <button
+    className={`sync-btn ${autoRefreshing ? "sync-btn--loading" : ""}`}
+    onClick={onSync}
+    disabled={autoRefreshing}
+    aria-busy={autoRefreshing}
+    aria-label={autoRefreshing ? "Refreshing" : "Sync"}
+  >
+    <FontAwesomeIcon
+      icon={faArrowsRotate}
+      spin={autoRefreshing}
+      className="sync-btn__icon"
+    />
+    <span className="sync-btn__text">
+      {autoRefreshing ? "Refreshing…" : "Sync"}
+    </span>
+  </button>
+</div>
                   <Form.Select
                     size="sm"
                     value={statusFilter}
@@ -496,9 +560,9 @@ export default function BulkUploadBatch() {
                   <InputGroup size="sm" style={{ width: 260 }}>
                     <InputGroup.Text id="search-fn">Search</InputGroup.Text>
                     <Form.Control
-                      aria-label="Search by filename or resume id"
+                      aria-label="Search by filename"
                       aria-describedby="search-fn"
-                      placeholder="filename or resume id…"
+                      placeholder="filename"
                       value={q}
                       onChange={(e) => setQ(e.target.value)}
                     />
@@ -524,9 +588,9 @@ export default function BulkUploadBatch() {
             </Card.Header>
 
             <Card.Body className="p-0 d-flex flex-column row" style={{ margin: "20px" }}>
-              <div style={{ flex: 1, overflow: "auto" }}>
-                <Table bordered responsive hover className="mb-0" style={{ tableLayout: "fixed" }}>
-                  <thead className="table-light" style={styles.stickyHeader}>
+              <div className="accordion-body" style={{ flex: 1, overflow: "auto" }}>
+<Table hover responsive className="req_table mt-2" style={{ tableLayout: "fixed" }}>
+  <thead className="table-header-orange">
                     <tr style={{ textAlign: "center" }}>
                       <th style={{ width: 40 }}>#</th>
                       <th style={{ width: 200 }}>Original Filename</th>
@@ -544,8 +608,8 @@ export default function BulkUploadBatch() {
                     </tr>
                   </thead>
 
-                  <tbody>
-                    {current.length ? (
+                  <tbody className="table-body-orange">
+                      {current.length ? (
                       current.map((r, i) => {
                         const status = (r.status || "").toUpperCase();
                         const created = r.created_date ? new Date(r.created_date).toLocaleString() : "-";
