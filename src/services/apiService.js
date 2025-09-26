@@ -390,7 +390,8 @@ export const apiService = {
   getApprovalstatus: (userid) => api.get(`job-requisitions/approvals/${userid}`),
 getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${userid}`),
   //Candidate Interview
-  createInterview: (data) => candidateApi.post('/candidates/interviews', data),
+  createInterview: (applicationId) => 
+    candidateApi.get(`/candidates/interviews/${applicationId}`),
   updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
    //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
    getfeedback: (candidate_id, position_id) =>
@@ -493,9 +494,9 @@ deleteDocument: (id) => apis.delete(`/document-types/delete/${id}`),
   getRelaxations: () => api.get('/job-relaxation-policy/all'),
   updateRelaxation: (id, data) => api.put(`/job-relaxation-policy/update/${id}`, data),
 
-processResumesJC:()=>api.post("/resume/start-batch-process",{}),
+  processResumesJC:()=>api.post("/resume/start-batch-process",{}),
 
-getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
+  getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
 
 deleteResumeJC: (resumeId) =>
   api.delete(`/resume/delete-resume/${encodeURIComponent(resumeId)}`),
@@ -512,19 +513,26 @@ bulkShortlistCandidates: (positionId, candidateIds) =>
     candidateIds,
   }),
 
+  uploadResumeJC: (file) => {
+    const form = new FormData();
+    form.append("file", file, file?.name || "resume");
 
-uploadResumeJC: (file) => {
-  const form = new FormData();
-  form.append("file", file, file?.name || "resume");
+    return api.post("/resume/upload", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 
-  return api.post("/resume/upload", form, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-},
+  getAllResumesJC: (params) => {
+    return api.get("/resume/all", { params });
+  },
 
-getAllResumesJC: (params) => {
-  return api.get("/resume/all", { params });
-},
+  // INTERVIEW PANELS
+  getInterviewPanels: () => apis.get('/interview-panels/all'),
+  addInterviewPanel: (data) => apis.post('/interview-panels/add', data),
+  updateInterviewPanel: (id, data) => apis.put(`/interview-panels/update/${id}`, data),
+  deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
+  getInterviewers: () => api.get('/interviewer/all'),
+  activeMembers: () => apis.get('/interview-panels/active-members'),
 };
 
 

@@ -19,7 +19,8 @@ import {
   faStar,
   faTags,
   faSlidersH,
-  faCogs   
+  faCogs,   
+  faUsers
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -65,11 +66,11 @@ const Sidebar = () => {
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
     { icon: faFile, text: 'Offer Letter', path: '/template' },
     { icon: faBriefcase, text: 'Position', path: '/position' },
-       { icon: faTags, text: 'Category', path: '/category' }, 
+    { icon: faTags, text: 'Category', path: '/category' }, 
     { icon: faStar , text: 'Special Category', path: '/special-category' },
     {icon: faSlidersH  , text: 'Relaxation Type', path: '/relaxation-type' },
     { icon: faFileAlt, text: 'Document', path: '/document' },
-
+    {icon: faUsers, text: 'Interview Panel', path: '/interview-panel' },
   ];
 
   return (

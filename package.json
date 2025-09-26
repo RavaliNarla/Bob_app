@@ -30,6 +30,7 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.20.0",
     "react-scripts": "5.0.1",
+    "react-select": "^5.10.2",
     "react-toastify": "^11.0.5",
     "redux-persist": "^6.0.0",
     "sweetalert2": "^11.23.0",

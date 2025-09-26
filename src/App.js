@@ -29,6 +29,7 @@ import RelaxationPage from './pages/RelaxationPage';
 import BulkUploadBatch from './pages/BulkUploadBatch';
 import BulkCandidateAssign from './pages/Bulkcandidateassign';
 // import BulkUploadLayout from './pages/BulkUploadLayout';
+import InterviewPanel from './pages/InterviewPanel';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -107,15 +108,13 @@ function App() {
                       <Route path="/relaxation" element={<RelaxationPage />} />
                       <Route path="/template" element={<TemplateMainCompo />} />
                       <Route path="/position" element={<Position />} />
-                       <Route path="/category" element={<Category />} />
+                      <Route path="/category" element={<Category />} />
                       <Route path="/special-category" element={<SpecialCategory />} />
                       <Route path="/relaxation-type" element={<RelaxationType />} />'
                       <Route path="/document" element={<Document />} />
-                     
-                      <Route path="/relaxation-type" element={<RelaxationType />} />
-
-  <Route path="/bulk-upload" element={<BulkUploadBatch />} />
-  <Route path="/candidate-assign" element={<BulkCandidateAssign />} />
+                      <Route path="/bulk-upload" element={<BulkUploadBatch />} />
+                      <Route path="/candidate-assign" element={<BulkCandidateAssign />} />
+                      <Route path="/interview-panel" element={<InterviewPanel />} />
                     </Route>
                   </Route>
                 </Route>
