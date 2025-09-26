@@ -442,7 +442,7 @@ const Approvals = () => {
                           {job.requisition_status === "New" ? (
                             <FontAwesomeIcon
                               icon={faPencil}
-                              className="text-info me-3 cursor-pointer"
+                              className="text-info me-3 cursor-pointer iconhover"
                               style={{ cursor: "pointer" }}
                               onClick={() => {
                                 setEditRequisitionId(row.requisition_id);
@@ -454,7 +454,7 @@ const Approvals = () => {
                           ) : (
                             <FontAwesomeIcon
                               icon={faEye}
-                              className="text-info me-3 cursor-pointer"
+                              className="text-info me-3 cursor-pointer iconhover"
                               style={{ cursor: "pointer" }}
                               onClick={() => {
                                 setEditRequisitionId(row.requisition_id);

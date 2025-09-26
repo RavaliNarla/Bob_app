@@ -177,12 +177,12 @@ export default function DownloadReqPdfButton(props) {
   return (
     <>
       <FontAwesomeIcon
-        // className="btn btn-outline-primary"
+        className="iconhover"
         onClick={handleDownload}
         disabled={loading}
         title="Download"
         icon={faDownload}
-        style={{ color: '#FF7043' }}
+        style={{ color: '#717178' }}
       />
         {/* {loading ? "Preparing…" : "Download"}
       </button> */}

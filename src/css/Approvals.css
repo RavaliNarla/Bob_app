@@ -4,8 +4,8 @@
 .approvals_tab .job-form input,
 .approvals_tab .job-form select,
 .approvals_tab .job-form textarea {
-  font-family: 'Poppins', Arial, sans-serif;
-  font-size: 13px;
+font-family: 'Noto Sans';
+  font-size: 14px;
   font-weight: 400;
 }
 
@@ -72,7 +72,7 @@
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
-    font-family: 'Poppins';
+  font-family: 'Noto Sans';;
     text-overflow: ellipsis;
 }
 
@@ -234,23 +234,23 @@
 .approvals_tab .job-form input,
 .approvals_tab .job-form select,
 .approvals_tab .job-form textarea {
-  font-family: 'Poppins', Arial, sans-serif !important;;
-  font-size: 13px !important;
+font-family: 'Noto Sans';
+  font-size: 14px !important;
   font-weight: 400 !important;;
 }
 .approvals_tab .fonall{
-font-family: 'Poppins', sans-serif !important;
+font-family: 'Noto Sans' !important;
   font-weight: 600 !important;  /* 600 = semibold */
   font-size: 16px !important;
 }
 
 .approvals_tab .fonreg {
-    font-family: 'Poppins';
+  font-family: 'Noto Sans';;
 }
 .approvals_tab .postingfont{
-  font-family: 'Poppins', sans-serif !important;
+font-family: 'Noto Sans';
  width: 105px;
-  font-size: 14px !important;
+   font-size:13px !important;
 }
 
 .approvals_tab .modal_container .modal-dialog {
@@ -284,7 +284,7 @@ font-family: 'Poppins', sans-serif !important;
   box-shadow: none !important;
 }
 .approvals_tab .collapsed{
-  border-radius: 10px;
+  border-radius: 20px !important;
 }
 
 /* ...existing code... */
@@ -292,7 +292,7 @@ font-family: 'Poppins', sans-serif !important;
 .approvals_tab .accordion-item{
   background: #fff 0% 0% no-repeat padding-box;
   box-shadow: 0 10px 30px #1a2c7133;
-  border-radius: 10px !important;
+  border-radius: 20px !important;
   margin-bottom: 20px !important;
 }
 .approvals_tab .accordion-button:not(.collapsed) {
@@ -308,25 +308,28 @@ font-family: 'Poppins', sans-serif !important;
 .approvals_tab .fontcard .text-dark {
     font-weight: 600;
     color: rgb(255, 112, 67) !important;
+    font-size: 15px !important;
 }
 .approvals_tab  .header {
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 600 !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     margin-bottom: 0.25rem;
     color: #414141;
 }
-.approvals_tab .fontcard, .text-dark, .boldnes, .boldnes b {
-    font-size: 14px !important;
-    color: #162b75 !important;
+.approvals_tab .fontcard, .text-dark, .boldnes {
+     font-size:14px !important;
+    color: #333 !important;
+    font-weight:600 !important;
+    line-height: 22px;
 }
 .approvals_tab .boldnes b {
-    font-weight: 500;
-    color: #414141;
+    font-weight: normal;
+    color: #717178;
 }
 .approvals_tab .dropdowntext,
 .approvals_tab .dropdowntext option {
-  font-family: 'Poppins', sans-serif !important;
+font-family: 'Noto Sans';
   font-size: 14px;
   color:#414141;
 }
@@ -335,4 +338,8 @@ font-family: 'Poppins', sans-serif !important;
 }
 .modal_container .modal-dialog {
     margin: var(--bs-modal-margin) !important;
+}
+.iconhover{
+  cursor: pointer;
+  color: #FF7043 !important;
 }

@@ -202,7 +202,7 @@ const Location = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </InputGroup> */}
-        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Locations</h5>
+        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Locations</h5>
         <Button variant="orange" onClick={() => openModal()}>
             + Add
           </Button>

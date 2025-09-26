@@ -21,9 +21,9 @@ background:#fff;
 
 }
 .fonall{
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 600 !important;  /* 600 = semibold */
-    font-size: 18px !important;
+    font-size: 15px !important;
    color: #FF7043;
 }
 
@@ -46,17 +46,17 @@ background:#fff;
 .job-form .form-label
 {
   color: #162b75 !important;
-  font-size:14px !important;
+  font-size:13px !important;
   font-weight:500 !important;
 }
 .job-form .form-select, .job-form input,.job-form textarea{
 color: #000 !important;
-  font-size:14px !important;
+  font-size:13px !important;
   font-weight:400 !important
 }
 .job-form .fontss{
     color: #162b75 !important;
-  font-size:14px !important;
+  font-size:13px !important;
   font-weight:500 !important;
 }
 .popform{

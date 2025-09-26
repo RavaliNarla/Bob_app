@@ -262,7 +262,7 @@ const JobRequisition = () => {
 
   return (
     <div className="register_container px-5 my-4 fonsty">
-      <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Requisitions</h5>
+      <h5 className="pb-3" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Requisitions</h5>
 
       {/* Search + Add Button */}
       <div className="d-flex justify-content-between align-items-center mb-3">

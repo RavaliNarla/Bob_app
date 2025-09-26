@@ -148,7 +148,7 @@
 .create_new_btn{
   background: #FF7043 !important;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   border: 1px solid #FF7043;
 }
 .create_new_btn:hover{
@@ -179,13 +179,13 @@
   padding:0px;
 }
 .relaxation-container .table th, .relaxation-container .table td{
-  font-size:14px;
+font-size: 14px;
 }
 .relaxation-container .table th.caste_category, .relaxation-container .table td.caste_category{
   text-align:center;
 }
 .special_category_title{
-  font-size:14px;
+font-size: 14px;
   color:#162b75
 }
 .table th.name, .table th.mode, .table th.flatnumber{
@@ -200,7 +200,7 @@
   border: 1px solid #FF7043 !important;
   color:#fff;
   
-  font-size:14px;
+font-size: 14px;
   cursor:pointer;
 }
 .save_btn:hover{
@@ -208,7 +208,7 @@
 }
 .blinking-text {
   animation: blinker 2s linear infinite; /* Apply the animation */
-  font-size:14px;
+font-size: 14px;
   color:#FF7043 !important;
 }
 
@@ -230,7 +230,7 @@
   }
 }
 .relaxation_table th, .relaxation_table td{
-  font-size:14px;
+font-size: 14px;
   padding:8px;
 }
 .specialCat_table{
@@ -238,10 +238,10 @@
   margin-left:8%;
 }
 .specialCat_table th, .specialCat_table td{
-  font-size:13px;
+font-size: 14px;
   padding:8px;
 }
-.fa-circle-plus{
+.faPlusCircle{
   color:#162b75 !important;
   font-size:16px;
 }

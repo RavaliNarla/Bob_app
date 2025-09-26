@@ -900,7 +900,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
     return (
         <Container fluid className="py-4 px-1 foncandidate">
-            <h5 className="pb-3 px-5" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Candidate Shortlist</h5>
+            <h5 className="pb-3 px-5" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Candidate Shortlist</h5>
             <div className="top-bar">
                 <div className="responsive-breadcrumb-container">
 

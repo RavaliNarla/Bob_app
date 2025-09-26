@@ -155,7 +155,7 @@ const RelaxationPage = () => {
         <div className="card-body">
           {/* <h2 className="mb-4">Relaxation Policy Management</h2> */}
           <div>
-              <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '15px' }}>Relaxation Policy</h5>
+              <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '15px' }}>Relaxation Policy</h5>
           </div>
           <div className="row mb-4 align-items-center">
   {/* Dropdown stays in the left column */}
