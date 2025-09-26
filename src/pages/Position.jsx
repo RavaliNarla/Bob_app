@@ -136,7 +136,7 @@ else {
   return (
     <div className="register_container px-5 gradefont py-3">
       <div className="d-flex justify-content-between align-items-center pb-4">
-        <h5 style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px', color: '#FF7043', marginBottom: '0px' }}>Positions</h5>
+        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Positions</h5>
         <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
       </div>
 

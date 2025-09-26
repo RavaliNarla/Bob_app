@@ -511,7 +511,7 @@ const fetchRequisitions = async () => {
   return (
     
     <Container fluid className="p-4 px-5 fonsty job-postings-page">
-      <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Postings</h5>
+      <h5 className="pb-3" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Postings</h5>
       <div className="d-flex flex-row align-items-end justify-content-between mb-3">
         <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
           <Button
@@ -575,7 +575,7 @@ const fetchRequisitions = async () => {
                 <Row className="w-100 align-items-center fontreg">
                   
                   {/* Left side: Checkbox + Title + Requisition + Status */}
-                  <Col xs={12} md={6} className="d-flex align-items-start mb-2 mb-md-0">
+                  <Col xs={12} md={5} className="d-flex align-items-start mb-2 mb-md-0">
                     <Form.Check
                       type="checkbox"
                       className="form-check-orange me-2 mt-1"
@@ -644,23 +644,14 @@ const fetchRequisitions = async () => {
                     </div>
                   </Col>
 
-                  <Col xs={12} md={1} className="d-flex gap-2 px-2">
-                    <OverlayTrigger placement="top" overlay={<Tooltip>Download</Tooltip>}>
-                      <DownloadReqPdfButton
-                        requisition_id={job.requisition_id}
-                        requisition={job}
-                      >
-                        <FontAwesomeIcon
-                          icon={faDownload}
-                          style={{ color: "#FF7043", cursor: "pointer" }}
-                        />
-                      </DownloadReqPdfButton>
-                    </OverlayTrigger>
+                  <Col xs={12} md={2} className="d-flex gap-4 px-2">
+                    
                     {job?.requisition_status === "New" ? (
                       <>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Add Position</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faPlus}
+                            className="iconhover"
                             onClick={(e) => {
                               e.stopPropagation();
                               // setJobCreation(job);
@@ -668,41 +659,52 @@ const fetchRequisitions = async () => {
                                 state: { requisitionId: job.requisition_id }
                               });
                             }}
-                            style={{ color: '#FF7043', cursor: 'pointer' }}
+                            style={{ color: '#717178', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Edit Requisition</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faPencil}
+                            className="iconhover"
                             onClick={(e) => {
                               e.stopPropagation();
                               addRequisitionModal(job, index, "edit");
                             }}
-                            style={{ color: '#0d6dfdd3', cursor: 'pointer' }}
+                            style={{ color: '#717178', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
                         <OverlayTrigger placement="top" overlay={<Tooltip>Delete Requisition</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faTrash}
-                            className="required-asterisk cursor-pointer"
-                            style={{ cursor: 'pointer' }}
+                            className="required-asterisk cursor-pointer iconhover"
+                            style={{ color: '#717178',cursor: 'pointer' }}
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteReq(job,index);
                             }}
                           />
                         </OverlayTrigger>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Download</Tooltip>}>
+                          <DownloadReqPdfButton
+                            requisition_id={job.requisition_id}
+                            requisition={job}
+                          >
+                            
+                          </DownloadReqPdfButton>
+                        </OverlayTrigger>
                       </>
+                      
                     ) : (
                       <>
                         <OverlayTrigger placement="top" overlay={<Tooltip>View Requisition</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faEye}
+                            className="iconhover"
                             onClick={(e) => {
                               e.stopPropagation();
                               addRequisitionModal(job, index, "view");
                             }}
-                            style={{ color: '#FF7043', cursor: 'pointer', textAlign: 'right', right:'92px', position: 'absolute', top:'48px' }}
+                            style={{ color: '#717178', cursor: 'pointer', textAlign: 'right', right:'80px', position: 'absolute', top:'48px' }}
                           />
                         </OverlayTrigger>
                       </>
@@ -772,7 +774,7 @@ const fetchRequisitions = async () => {
                                 {job.requisition_status==='New' ? (
                                   <FontAwesomeIcon
                                     icon={faPencil}
-                                    className="text-info me-3 cursor-pointer"
+                                    className="text-info me-3 cursor-pointer iconhover"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
                                       setEditRequisitionId(row.requisition_id);
@@ -784,7 +786,7 @@ const fetchRequisitions = async () => {
                                 ) : (
                                   <FontAwesomeIcon
                                     icon={faEye}
-                                    className="text-info me-3 cursor-pointer"
+                                    className="text-info me-3 cursor-pointer iconhover"
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
                                       setEditRequisitionId(row.requisition_id);

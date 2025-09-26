@@ -181,9 +181,9 @@ const Document = () => {
       <div className="d-flex justify-content-between align-items-center pb-4">
         <h5
           style={{
-            fontFamily: "Poppins",
+            fontFamily: "Noto Sans",
             fontWeight: 600,
-            fontSize: "18px",
+            fontSize: "16px",
             color: "#FF7043",
             marginBottom: "0px",
           }}

@@ -81,7 +81,7 @@ const categoryKeys = useMemo(() => {
                   {openRow === row.id ? (
                     <FontAwesomeIcon icon={faMinusCircle} className="text-danger toggle-icon" />
                   ) : (
-                    <FontAwesomeIcon icon={faPlusCircle} className="text-primary toggle-icon" />
+                    <FontAwesomeIcon icon={faPlusCircle} className="text-primary toggle-icon faPlusCircle" />
                   )}
                 </td>
                 <td className="relaxationName">{row.label}</td>

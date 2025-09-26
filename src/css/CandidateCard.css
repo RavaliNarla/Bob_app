@@ -1,5 +1,5 @@
 .foncandidate {
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
 }
 
 .review_columns {
@@ -55,13 +55,13 @@
 
 .color_grey {
      color: #162b75 !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight:500;
 }
 
 .color_light_grey {
     color: #B3B3B3 !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     align-self: center !important;
     padding-top: 2px;
 }
@@ -72,14 +72,14 @@
 
 .rating_text {
     margin-bottom: 0px !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     align-self: center;
 
 }
 
 .candidate_sub_text {
     color: #000 !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     letter-spacing: 0.5px;
     margin-bottom: 5px;
     font-weight: normal;
@@ -87,7 +87,7 @@
 
 .candidate_text {
     color: #162b75 !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     letter-spacing: 0.5px;
     margin-bottom: 5px;
     font-weight: 500 !important;
@@ -264,12 +264,12 @@
     border: none;
     width: auto;
     height: 35px;
-    font-size: 13px;
+    font-size: 14px;
     text-decoration: underline;
     margin-top: 0px;
 }
 .spaceform option {
-	/* font-size: 14px !important; */
+	/*  font-size:13px !important; */
 	color: #414141 !important;
 
 	font-family: 'Poppins', sans-serif !important;
@@ -427,7 +427,7 @@ color: #000 !important;
   margin-right: 2%;
 }
 .btn_action{
-    font-size:14px;
+  font-size: 14px;
 }
 .pushbtn{
     background:rgb(255, 112, 67) !important;
@@ -440,7 +440,7 @@ color: #000 !important;
     display: flex;
   right: 10%;
   position: absolute;
-  font-size:14px;
+font-size: 14px;
 }
 .rank{
     color:rgb(255, 112, 67) !important;

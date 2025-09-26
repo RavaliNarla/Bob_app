@@ -925,7 +925,7 @@ console.log("positionslist222",masterData.masterPositionsList)
                 ← Back
               </Button>
               <div>
-                <h5 className='px-2' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
+                <h5 className='px-2' style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Creation</h5>
               </div>
               <div className='d-flex gap-3'>
                 <a className='downlaodfile'

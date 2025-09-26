@@ -1,12 +1,12 @@
 .dashfont{
-    font-family: poppins, sans-serif !important;
+    font-family: 'Noto Sans';
 }
 .shadow-sm{
     background-color: #fff !important;
 }
 .shadow-sm h6{
-   font-family: poppins, sans-serif !important;
-   font-size: 13px;
+   font-family: 'Noto Sans';
+   font-size: 14px;
 }
 .cardspace{
     padding-left: 12px;
@@ -55,25 +55,25 @@
     border-radius: 10px;
 }
 .shortlist h5 {
-	font-family: poppins, sans-serif;
+	font-family: 'Noto Sans';
 	font-weight: 600;
 	color: #FF7043;
 	font-size: 16px;
 }
 .heightcard h6{
-    font-family: poppins, sans-serif;
+    font-family: 'Noto Sans';
     font-weight: 600;
     color: #FF7043;
     font-size: 16px !important;
 }
 .fonapp h6{
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 600 !important;  /* 600 = semibold */
     font-size: 16px;
     color: #FF7043;
 }
 .fonapp{
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 300 !important;  /* 600 = semibold */
    
     color: #414141;
@@ -129,7 +129,7 @@
 }
 .dashtabs .nav-link.active{
     color: #162b75 !important;
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 400 !important;
    
 }

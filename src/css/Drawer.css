@@ -157,20 +157,20 @@ h6 {
 
 p.sum-data {
     color: black;
-    font-size: 13px;
+    font-size: 14px;
 
 }
 
 .head-section {
     color: #000;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 600;
 
 }
 
 .skill-pill {
     display: inline-block;
-    font-size: 13px;
+    font-size: 14px;
     padding: 7px 16px;
     border-radius: 20px;
     background-color: #f2f4fc;
@@ -204,16 +204,16 @@ p.sum-data {
 .shortlisted_button {
     color: #01B81C !important;
     border: 1px solid #01B81C !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     font-weight: 500 !important;
 }
 
 .reject_button {
     color: #767676 !important;
     border: 1px solid #767676 !important;
-    font-size: 14px !important;
+     font-size:13px !important;
     font-weight: 500 !important;
 }
 .fontdraw{
-    font-family: poppins;
+    font-family: 'Noto Sans';
 }

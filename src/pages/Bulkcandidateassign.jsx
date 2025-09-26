@@ -66,7 +66,7 @@ export default function BulkCandidateAssign() {
   return (
     <Container
       fluid
-      className="py-3 px-0"
+      className="py-4 px-3"
       style={{ height: "100vh", display: "flex", flexDirection: "column" }}
     >
       <BulkTiles />

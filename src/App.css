@@ -1,7 +1,7 @@
 /* Custom styles */
 body {
   /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
-  font-family: 'poppins', sans-serif;
+font-family: 'Noto Sans';
   background-color: #f8f9fa;
   margin: 0;
   padding: 0;
@@ -9,7 +9,7 @@ body {
   font-weight: 300;
 }
 body {
-  font-family: 'Poppins', sans-serif;
+font-family: 'Noto Sans';
 }
 /* Custom scrollbar */
 ::-webkit-scrollbar {
@@ -69,7 +69,7 @@ body {
   /* padding-right: 10px; */
 }
 .reqfon{
-  font-size: 13px;
+  font-size: 14px;
 }
 
 /* Form controls */
@@ -100,7 +100,7 @@ body {
 
 .table th {
   font-weight: 600;
-  font-family: poppins, sans-serif;
+  font-family: 'Noto Sans';
   /* text-transform: capitalize; */
   font-size: 12px;
   letter-spacing: 0.5px;
@@ -109,23 +109,23 @@ body {
   border-bottom: 1px solid #dee2e6;
 }
 .table td {
-  font-family: poppins, sans-serif;
+  font-family: 'Noto Sans';
   font-size: 12px;
 }
 .table-responsive {
 	border-radius: 10px !important;
 }
 .form-control{
-  font-family: poppins, sans-serif;
+  font-family: 'Noto Sans';
   
 }
 .fonreg{
   font-family: Poppins, sans-serif;
 }
 .fonall{
-    font-family: 'Poppins', sans-serif !important;
+  font-family: 'Noto Sans';
     font-weight: 600 !important;  /* 600 = semibold */
-    font-size: 18px !important;
+    font-size: 15px !important;
    color: #FF7043;
 }
 /* Badge styles */
@@ -216,7 +216,7 @@ body {
    display: block;
  }
 .job-form .form-label, .job-form .form-control, .job-form .form-select, .job-form input, .job-form select, .job-form textarea {
-	font-family: 'Poppins', Arial, sans-serif !important;
+	font-family: 'Noto Sans';
 	font-size: 12px !important;
 	
   color:#414141 !important
@@ -228,7 +228,7 @@ body {
   font-weight: bold;
 }
 .fontinter{
-  font-family: poppins, sans-serif;
+  font-family: 'Noto Sans';
 }
 .btn-secondary:hover {
 	color: #fff !important;

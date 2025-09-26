@@ -121,7 +121,7 @@
 .section_toggle h6{
   margin-top:15px;
   color:#162b75;
-  font-size:14px;
+font-size: 14px;
    font-weight: 500;
 }
 .section_toggle label{
@@ -145,19 +145,19 @@
 }
 .offer .card-body label{
   color:#162b75;
-  font-size:14px;
+font-size: 14px;
    font-weight: 500;
 }
 .offer .card-body input{
   color:#000;
-  font-size:14px;
+font-size: 14px;
    font-weight: 400;
    margin-right: 10px;
 }
 .change_btn{
   background: #162b75 !important;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   border: 1px solid #162b75;
 }
 .change_btn:hover{
