@@ -88,8 +88,9 @@ const categoryKeys = useMemo(() => {
                 <td>{row.sc}</td>
                 <td>{row.st}</td>
                 <td>{row.ews}</td>
-                <td>{row.obc}</td>
+                
                 <td>{row.gen}</td>
+                <td>{row.obc}</td>
               </tr>
 
               {/* Expanded row → show special categories if available */}
@@ -116,8 +117,9 @@ const categoryKeys = useMemo(() => {
                               <td>{cat.sc}</td>
                               <td>{cat.st}</td>
                               <td>{cat.ews}</td>
-                              <td>{cat.obc}</td>
                               <td>{cat.gen}</td>
+                              <td>{cat.obc}</td>
+                             
                               <td>{cat.flat}</td>
                             </tr>
                           ))}

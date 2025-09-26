@@ -113,6 +113,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     setSpecialsByType(filteredSpecials);
     setAllocatedVacancies(calculateAllocated(filteredMain, filteredSpecials));
     setIsDirty(false);
+    
   }, [selectedPolicy, types, categories]);
 
   const availableCategories = specialCategories.filter(
@@ -121,21 +122,28 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
 
   // Handlers
   const handleMainChange = (type, cat, val) => {
-    // If the active type is a number input, ensure the value is not negative
     const activeType = types.find(t => t.name === type);
     if (activeType?.input === 'number') {
-      // Convert to number and ensure it's not negative
       const numVal = typeof val === 'string' ? parseFloat(val) || 0 : val;
       val = Math.max(0, numVal);
     }
-    
-    setMain(prev => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        [cat]: val
+  
+    setMain(prev => {
+      const updated = {
+        ...prev,
+        [type]: {
+          ...prev[type],
+          [cat]: val
+        }
+      };
+  
+      // ✅ If type is Vacancy, recalc allocatedVacancies
+      if (type === "Vacancies") {
+        setAllocatedVacancies(calculateAllocated(updated, specialsByType));
       }
-    }));
+  
+      return updated;
+    });
     setIsDirty(true);
   };
 
@@ -286,11 +294,20 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                     {categories.map(c => (
                       <td class="caste_category" key={c}>
                         {s.mode === "category" ? (
-                          <Form.Control
-                            type="number"
-                            value={s.values?.[c] ?? 0}
-                            onChange={(e) => updateSpecial(active, i, "values", e.target.value, c)}
-                          />
+                         <Form.Control
+                         type={activeTypeObj?.input === "text" ? "text" : "number"}
+                         min={activeTypeObj?.input === "number" ? "0" : undefined}
+                         value={s.values?.[c] ?? (activeTypeObj?.input === "number" ? 0 : "")}
+                         onChange={(e) => updateSpecial(
+                           active,
+                           i,
+                           "values",
+                           activeTypeObj?.input === "number"
+                             ? parseFloat(e.target.value) || 0
+                             : e.target.value,
+                           c
+                         )}
+                       />
                         ) : (
                           <span className="text-muted">-</span>
                         )}

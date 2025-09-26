@@ -20,6 +20,7 @@ const RelaxationPage = () => {
   useEffect(() => {
     const fetchRelaxations = async () => {
       setIsLoading(true);
+      setIsCreateNew(true);
       try {
         const res = await apiService.getRelaxations();
         if (Array.isArray(res)) {
@@ -82,6 +83,7 @@ const RelaxationPage = () => {
   console.log("isCreateNew", isCreateNew);
   console.log("selectedPolicyId", selectedPolicyId);
   if (!isCreateNew && !selectedPolicyId) {
+    
     toast.error("No policy selected to update. Please create or select a policy first.");
     return;
   }

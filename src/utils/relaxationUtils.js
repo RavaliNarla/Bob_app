@@ -65,17 +65,21 @@ export function loadFromPayload(payload, typesArr, categoriesArr) {
 // Calculate total allocated vacancies
 export function calculateAllocated(mainObj, specialsObj) {
   let total = 0;
-  Object.keys(mainObj).forEach(type => {
-    Object.values(mainObj[type]).forEach(v => total += Number(v || 0));
-  });
 
-  Object.keys(specialsObj).forEach(type => {
-    specialsObj[type].forEach(sp => {
+  // Only consider Vacancy from mainObj
+  if (mainObj["Vacancies"]) {
+    Object.values(mainObj["Vacancies"]).forEach(v => total += Number(v || 0));
+  }
+
+  // Only consider Vacancy specials
+  if (specialsObj["Vacancies"]) {
+    specialsObj["Vacancies"].forEach(sp => {
       if (sp.mode === "flat") total += Number(sp.flat || 0);
-      else if (sp.mode === "category")
+      else if (sp.mode === "category") {
         Object.values(sp.values).forEach(v => total += Number(v || 0));
+      }
     });
-  });
+  }
 
   return total;
 }
