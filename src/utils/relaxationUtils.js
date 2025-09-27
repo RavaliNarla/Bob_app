@@ -17,15 +17,17 @@ export function createInitialRelaxations(typesArr, categoriesArr, types = []) {
 }
 
 // Create empty special relaxation
-export function createEmptySpecial(name = "", typesArr = [], categoriesArr = []) {
+export function createEmptySpecial(name = "", typeName = "", categoriesArr = [], types = []) {
+  const typeInfo = types.find(t => t.name === typeName);
+  const isText = typeInfo?.input === "text";
+
   return {
     name,
-    mode: "flat", // default mode
-    flat: 0,
-    values: categoriesArr.reduce((acc, c) => ({ ...acc, [c]: 0 }), {}),
+    mode: "flat",
+    flat: isText ? "" : 0,
+    values: categoriesArr.reduce((acc, c) => ({ ...acc, [c]: isText ? "" : 0 }), {}),
   };
 }
-
 // Load saved relaxation payload and map to current master data
 export function loadFromPayload(payload, typesArr, categoriesArr) {
   const mainDefaults = createInitialRelaxations(typesArr, categoriesArr);
@@ -65,17 +67,21 @@ export function loadFromPayload(payload, typesArr, categoriesArr) {
 // Calculate total allocated vacancies
 export function calculateAllocated(mainObj, specialsObj) {
   let total = 0;
-  Object.keys(mainObj).forEach(type => {
-    Object.values(mainObj[type]).forEach(v => total += Number(v || 0));
-  });
 
-  Object.keys(specialsObj).forEach(type => {
-    specialsObj[type].forEach(sp => {
+  // Only consider Vacancy from mainObj
+  if (mainObj["Vacancies"]) {
+    Object.values(mainObj["Vacancies"]).forEach(v => total += Number(v || 0));
+  }
+
+  // Only consider Vacancy specials
+  if (specialsObj["Vacancies"]) {
+    specialsObj["Vacancies"].forEach(sp => {
       if (sp.mode === "flat") total += Number(sp.flat || 0);
-      else if (sp.mode === "category")
+      else if (sp.mode === "category") {
         Object.values(sp.values).forEach(v => total += Number(v || 0));
+      }
     });
-  });
+  }
 
   return total;
 }

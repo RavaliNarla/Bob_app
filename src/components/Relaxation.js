@@ -113,6 +113,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     setSpecialsByType(filteredSpecials);
     setAllocatedVacancies(calculateAllocated(filteredMain, filteredSpecials));
     setIsDirty(false);
+    
   }, [selectedPolicy, types, categories]);
 
   const availableCategories = specialCategories.filter(
@@ -121,21 +122,28 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
 
   // Handlers
   const handleMainChange = (type, cat, val) => {
-    // If the active type is a number input, ensure the value is not negative
     const activeType = types.find(t => t.name === type);
     if (activeType?.input === 'number') {
-      // Convert to number and ensure it's not negative
       const numVal = typeof val === 'string' ? parseFloat(val) || 0 : val;
       val = Math.max(0, numVal);
     }
-    
-    setMain(prev => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        [cat]: val
+  
+    setMain(prev => {
+      const updated = {
+        ...prev,
+        [type]: {
+          ...prev[type],
+          [cat]: val
+        }
+      };
+  
+      // ✅ If type is Vacancy, recalc allocatedVacancies
+      if (type === "Vacancies") {
+        setAllocatedVacancies(calculateAllocated(updated, specialsByType));
       }
-    }));
+  
+      return updated;
+    });
     setIsDirty(true);
   };
 
@@ -162,26 +170,34 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
     const arr = [...specialsByType[type]];
     const sp = { ...arr[idx] };
   
+    const typeInfo = types.find(t => t.name === type);
+    const isText = typeInfo?.input === "text";
+  
     // Ensure values object exists
-    if (!sp.values) sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: 0 }), {});
+    if (!sp.values) {
+      sp.values = categories.reduce((cAcc, c) => ({ ...cAcc, [c]: isText ? "" : 0 }), {});
+    }
   
     if (field === "mode") sp.mode = value;
-    if (field === "flat") sp.flat = Number(value) || 0;
-    if (field === "values" && cat) sp.values[cat] = Number(value) || 0;
+    if (field === "flat") sp.flat = isText ? value : Number(value) || 0;
+    if (field === "values" && cat) {
+      sp.values[cat] = isText ? value : Number(value) || 0;
+    }
   
     arr[idx] = sp;
     const updatedSpecials = { ...specialsByType, [type]: arr };
     setSpecialsByType(updatedSpecials);
   
-    if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
+    if (type === "Vacancies") {
+      setAllocatedVacancies(calculateAllocated(main, updatedSpecials));
+    }
     setIsDirty(true);
   };
-  
 
   const removeSpecial = (type, idx) => {
     const newSpecials = { ...specialsByType, [type]: specialsByType[type].filter((_, i) => i !== idx) };
     setSpecialsByType(newSpecials);
-    if (type === "Vacancy") setAllocatedVacancies(calculateAllocated(main, newSpecials));
+    if (type === "Vacancies") setAllocatedVacancies(calculateAllocated(main, newSpecials));
     setIsDirty(true);
   };
 
@@ -222,6 +238,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                       type={activeTypeObj?.input === "text" ? "text" : "number"}
                       min={activeTypeObj?.input === "number" ? "0" : undefined}
                       value={main[active][c]}
+                      className="no-spin"
                       onChange={(e) => handleMainChange(active, c, activeTypeObj?.input === "number" ? parseFloat(e.target.value) || 0 : e.target.value)}
                     />
                   </td>
@@ -243,11 +260,18 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
               const cat = specialCategories.find(sc => sc.special_category_name === catName);
               if (!cat) return;
 
-              const sp = createEmptySpecial(cat.special_category_name, types.map(t => t.name), categories);
+              //const sp = createEmptySpecial(cat.special_category_name, types.map(t => t.name), categories);
+              const sp = createEmptySpecial(
+                cat.special_category_name, // special name
+                active,                    // ✅ current active type name
+                categories,                // categories
+                types                      // master types array
+              );
+              
               const updated = { ...specialsByType, [active]: [...specialsByType[active], sp] };
               setSpecialsByType(updated);
 
-              if (active === "Vacancy") setAllocatedVacancies(calculateAllocated(main, updated));
+              if (active === "Vacancies") setAllocatedVacancies(calculateAllocated(main, updated));
               setIsDirty(true);
             }}
           >
@@ -286,11 +310,21 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                     {categories.map(c => (
                       <td class="caste_category" key={c}>
                         {s.mode === "category" ? (
-                          <Form.Control
-                            type="number"
-                            value={s.values?.[c] ?? 0}
-                            onChange={(e) => updateSpecial(active, i, "values", e.target.value, c)}
-                          />
+                         <Form.Control
+                         type={activeTypeObj?.input === "text" ? "text" : "number"}
+                         min={activeTypeObj?.input === "number" ? "0" : undefined}
+                         value={s.values?.[c] ?? (activeTypeObj?.input === "number" ? 0 : "")}
+                         onChange={(e) => updateSpecial(
+                           active,
+                           i,
+                           "values",
+                           activeTypeObj?.input === "number"
+                             ? parseFloat(e.target.value) || 0
+                             : e.target.value,
+                           c
+                         )}
+                         className="no-spin"
+                       />
                         ) : (
                           <span className="text-muted">-</span>
                         )}
@@ -301,6 +335,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
                         <Form.Control 
                           type="number"
                           value={s.flat ?? 0}
+                          className="no-spin"
                           onChange={(e) => updateSpecial(active, i, "flat", e.target.value)}
                         />
                       ) : (
