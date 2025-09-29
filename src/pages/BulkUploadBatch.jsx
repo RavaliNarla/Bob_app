@@ -54,20 +54,20 @@ const styles = {
 
 /* inline icons (no extra packages) */
 const IconDoc = ({ color = "currentColor" }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke={color} strokeWidth="1.8"/>
     <path d="M14 2v6h6" stroke={color} strokeWidth="1.8"/>
   </svg>
 );
 const IconUpload = ({ color = "currentColor" }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <path d="M12 3v12" stroke={color} strokeWidth="1.8"/>
     <path d="m7 8 5-5 5 5" stroke={color} strokeWidth="1.8"/>
     <path d="M5 21h14" stroke={color} strokeWidth="1.8"/>
   </svg>
 );
 const IconDb = ({ color = "currentColor" }) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
     <ellipse cx="12" cy="5" rx="7" ry="3" stroke={color} strokeWidth="1.8"/>
     <path d="M5 5v7c0 1.66 3.13 3 7 3s7-1.34 7-3V5" stroke={color} strokeWidth="1.8"/>
     <path d="M5 12v7c0 1.66 3.13 3 7 3s7-1.34 7-3v-7" stroke={color} strokeWidth="1.8"/>
@@ -437,7 +437,7 @@ export default function BulkUploadBatch() {
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2">Load Resumes</div>
+                    <div className="fw-semibold mt-2 stephead">Load Resumes</div>
                     {/* <div className={`bulkstepper-badge ${step1}`}>{step1 === "completed" ? "Done" : "Active"}</div> */}
                     <div className="text-muted small mt-2">Loading resumes from the Localstorage</div>
                   </div>
@@ -451,7 +451,7 @@ export default function BulkUploadBatch() {
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2">Upload</div>
+                    <div className="fw-semibold mt-2 stephead">Upload</div>
                     {/* <div className={`bulkstepper-badge ${step2}`}>{step2 === "completed" ? "Done" : "Waiting"}</div> */}
                     <div className="text-muted small mt-2">Uploading Loaded resumes to the Cloud</div>
                   </div>
@@ -465,7 +465,7 @@ export default function BulkUploadBatch() {
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2">Sync Data</div>
+                    <div className="fw-semibold mt-2 stephead">Sync Data</div>
                     {/* <div className={`bulkstepper-badge ${step3}`}>
                       {step3 === "completed" ? "Done" : step3 === "active" ? "Active" : "Waiting"}
                     </div> */}
@@ -496,12 +496,12 @@ export default function BulkUploadBatch() {
                   onKeyDown={onDropzoneKey}
                 >
                   <IconFilePlus />
-                  <div className="mt-2">Click to select resume files</div>
+                  <div className="mt-2 fileupload">Click to select resume files</div>
                   <div className="text-muted small">PDF, DOC, DOCX files supported</div>
                 </div>
 
                 <div className="mt-3 d-flex justify-content-center">
-                  <Button className="w-50 bulkstepper-cta" disabled={ctaDisabled} onClick={ctaHandler}>
+                  <Button className="bulkstepper-cta actionbtn" disabled={ctaDisabled} onClick={ctaHandler}>
                     {ctaLabel}
                   </Button>
                 </div>
@@ -628,7 +628,7 @@ export default function BulkUploadBatch() {
                           <tr key={(r.resume_id || r.original_filename || i) + "_row"}>
                             <td>{start + i + 1}</td>
                             <td style={styles.truncate(360)} title={r.original_filename || "-"}>
-                              <Button variant="link" className="p-0 text-decoration-none" onClick={() => onDownload(r)}>
+                              <Button variant="link" className="p-0 text-decoration-none linkname" onClick={() => onDownload(r)}>
                                 {r.original_filename || "-"}
                               </Button>
                             </td>

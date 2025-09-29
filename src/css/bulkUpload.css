@@ -149,20 +149,20 @@
   width: 28%; display: flex; flex-direction: column; align-items: center;
 }
 .bulkstepper-dot{
-  width: 56px; height: 56px; border-radius: 50%;
+  width: 40px; height: 40px; border-radius: 50%;
   display: grid; place-items: center;
-  background: #f7f9ff; border: 2px solid #e6e8f0;
+  background: #f7f9ff; border: 1px solid #e6e8f0;
   transition: all .2s ease;
 }
 .bulkstepper-dot.active{
-  background-color: oklch(.623 .214 259.815);
-  border-color: oklch(.623 .214 259.815);
+  background-color: #162b75;
+  border-color: 1px solid #162b75;
   color: #fff;
   transform: scale(1.05);
 }
 .bulkstepper-dot.completed {
-  background: green;
-  border-color: green;
+  background: #32CD32;
+  border-color: #32CD32;
   color: #fff;
 }
 .bulkstepper-dot.waiting{
@@ -273,3 +273,31 @@
 }
 .bulkstepper-dot.completed .dot-check { opacity: 1; transform: scale(1) rotate(0deg); }
 @keyframes dot-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.stephead{
+  font-size:14px;
+  font-weight:500;
+  color:#333;
+}
+.fileupload{
+  font-size: 13px;
+  font-weight: 500;
+  color:#162b75;
+}
+.actionbtn{
+  font-size: 14px;
+  font-weight: 500;
+  color:#fff;
+  background:#162b75;
+  width:auto;
+  padding:12px 25px;
+  cursor:pointer;
+}
+.actionbtn:hover{
+  background:#FF7043;
+  color:#fff; border-color:#FF7043;
+}
+.linkname{
+  font-size:14px;
+  font-weight:500;
+  color:#162b75;
+}
