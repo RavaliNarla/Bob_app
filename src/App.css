@@ -49,7 +49,7 @@ font-family: 'Noto Sans';
 
 .sidebar .nav-link:hover, 
 .sidebar .nav-link.active {
-  background-color: rgba(255, 193, 7, 0.2);
+  background-color: rgba(255, 193, 7, 0.1);
   color: #000;
   font-weight: 500;
 }

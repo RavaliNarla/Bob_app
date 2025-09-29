@@ -2,25 +2,9 @@ import React, { useState } from 'react';
 import { Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faHome,
-  faFileAlt,
-  faBriefcase,
-  faUserFriends,
-  faQuestionCircle,
-  faChevronDown,
-  faChevronUp,
-  faBuilding,    
-  faLightbulb,   
-  faMapMarkerAlt,
-  faChartLine,
-  faPerson,
-  faCalendar,
-  faFile,
-  faStar,
-  faTags,
-  faSlidersH,
-  faCogs,   
-  faUsers
+  faHome, faBriefcase, faUserFriends, faCalendar, faCogs, faPerson,
+  faQuestionCircle, faBuilding, faLightbulb, faMapMarkerAlt,
+  faChartLine, faFile, faStar, faTags, faSlidersH, faUsers, faChevronRight 
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -30,20 +14,15 @@ const Sidebar = () => {
   const location = useLocation();
   const [adminOpen, setAdminOpen] = useState(false);
 
-  const isActive = (path) => {
-    return location.pathname === path ? 'active' : '';
-  };
+  const isActive = (path) => (location.pathname === path ? 'active' : '');
 
   const menuItems = [
     { icon: faHome, text: 'Dashboard', path: '/dashboard' },
-    // { icon: faFileAlt, text: 'Job Requisition', path: '/job-requisition' },
-    // { icon: faFileAlt, text: 'Job Creation', path: '/job-creation' },
     { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
     { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },
     { icon: faCogs, text: 'Relaxation', path: '/relaxation' },
-    { icon : faPerson, text:'Bulk Upload',path: '/bulk-upload'},
-  
+    { icon: faPerson, text: 'Bulk Upload', path: '/bulk-upload' },
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
@@ -53,8 +32,7 @@ const Sidebar = () => {
     // { icon: faCog, text: 'Relaxation Policy', path: '/policy' },
   ];
 
-  // Conditionally add Approvals for L1 or L2 roles
-  if (user?.role === "Manager" || user?.role === "Admin" ) {
+  if (user?.role === "Manager" || user?.role === "Admin") {
     menuItems.push({ icon: faUserFriends, text: 'Approvals', path: '/myapproval' });
   }
 
@@ -66,104 +44,147 @@ const Sidebar = () => {
     { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
     { icon: faFile, text: 'Offer Letter', path: '/template' },
     { icon: faBriefcase, text: 'Position', path: '/position' },
-    { icon: faTags, text: 'Category', path: '/category' }, 
-    { icon: faStar , text: 'Special Category', path: '/special-category' },
-    {icon: faSlidersH  , text: 'Relaxation Type', path: '/relaxation-type' },
-    { icon: faFileAlt, text: 'Document', path: '/document' },
-    {icon: faUsers, text: 'Interview Panel', path: '/interview-panel' },
+    { icon: faTags, text: 'Category', path: '/category' },
+    { icon: faStar, text: 'Special Category', path: '/special-category' },
+    { icon: faSlidersH, text: 'Relaxation Type', path: '/relaxation-type' },
+    { icon: faFile, text: 'Document', path: '/document' },
+    { icon: faUsers, text: 'Interview Panel', path: '/interview-panel' },
   ];
 
+  const handleAdminClick = () => setAdminOpen(!adminOpen);
+
+  const handleAdminItemClick = () => setAdminOpen(false);
+  const isAdminActive = () => {
+  return adminItems.some(item => item.path === location.pathname);
+};
+
+
   return (
-    <div
-      className="sidebar d-flex flex-column align-items-center bg-white"
-      style={{ width: '99px', borderRight: '1px solid #dee2e6', height: '100vh' }}
-    >
-      <Nav className="flex-column text-center w-100 sidescroll">
-        {/* Regular Menu Items */}
-        {menuItems.map((item, index) => (
-          <Nav.Link
-            key={index}
-            as={Link}
-            to={item.path}
-            className={`d-flex flex-column align-items-center justify-content-center py-3 nav-item-custom ${isActive(item.path)}`}
-            style={{
-              color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-              backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
-              fontWeight: isActive(item.path) ? '600' : '400',
-              fontSize: '13px',
-              textDecoration: 'none',
-              height: '60px',
-              width: '99px'
-            }}
-          >
-            <FontAwesomeIcon icon={item.icon} style={{ fontSize: '13px' }} />
-            <span className="mt-1">{item.text}</span>
-          </Nav.Link>
-        ))}
-
-        {(user?.role === 'admin' || user?.role === 'Admin') && (
-          <>
-            <div
-              className="d-flex flex-column align-items-center justify-content-center py-3"
+    <div className="d-flex">
+      {/* Main Sidebar */}
+      <div
+        className="sidebar d-flex flex-column align-items-center bg-white"
+        style={{ width: '99px', borderRight: '1px solid #dee2e6', height: '100vh' }}
+      >
+        <Nav className="flex-column text-center w-100 sidescroll">
+          {menuItems.map((item, index) => (
+            <Nav.Link
+              key={index}
+              as={Link}
+              to={item.path}
+              className={`d-flex flex-column align-items-center justify-content-center py-3 nav-item-custom ${isActive(item.path)}`}
               style={{
-                color: '#6c757d',
+                color: isActive(item.path) ? '#FF4D00' : '#6c757d',
+                fontWeight: isActive(item.path) ? '600' : '400',
                 fontSize: '13px',
-                cursor: 'pointer',
+                textDecoration: 'none',
                 height: '60px',
-                width: '97px',
+                width: '99px'
               }}
-              onClick={() => setAdminOpen(!adminOpen)}
             >
-              <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '13px' }} />
-              <div className='d-flex flex-row align-items-center justify-content-center gap-1'>
-                <span className="mt-1">Admin</span>
-                <FontAwesomeIcon
-                  icon={adminOpen ? faChevronUp : faChevronDown}
-                  style={{ fontSize: '14px', marginTop: '5px' }}
-                />
-              </div>
-            </div>
+              <FontAwesomeIcon icon={item.icon} style={{ fontSize: '13px' }} />
+              <span className="mt-1">{item.text}</span>
+            </Nav.Link>
+          ))}
 
-            {adminOpen &&
-              adminItems.map((item, index) => (
-                <Nav.Link
-                  key={`admin-${index}`}
-                  as={Link}
-                  to={item.path}
-                  className={`d-flex flex-column align-items-center justify-content-center py-1 nav-item-custom ${isActive(item.path)}`}
-                  style={{
-                    color: isActive(item.path) ? '#FF4D00' : '#6c757d',
-                    backgroundColor: isActive(item.path) ? '#FFF' : 'transparent',
-                    fontWeight: isActive(item.path) ? '600' : '400',
-                    fontSize: '13px',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <FontAwesomeIcon icon={item.icon} style={{ fontSize: '14px' }} />
-                  <span className="mt-1">{item.text}</span>
-                </Nav.Link>
-            ))}
-          </>
-        )}
-      </Nav>
+     {/* Admin menu item with hover color */}
+{(user?.role === 'admin' || user?.role === 'Admin') && (
+  <div
+    className="d-flex flex-column align-items-center justify-content-center py-3 position-relative"
+    style={{
+      cursor: 'pointer',
+      height: '60px',
+      width: '97px',
+      color: isAdminActive() ? '#FF4D00' : '#6c757d',
+fontWeight: isAdminActive() ? '600' : '400',
+backgroundColor: isAdminActive() ? 'rgba(255, 193, 7, 0.1)' : 'transparent',
+borderLeft: isAdminActive() ? '3px solid rgb(255, 77, 0)' : 'transparent',
+borderRadius: isAdminActive() ?  '0.25rem' : '',
+fontSize:'13px'
 
-      {/* Bottom Help section */}
-      <div className="mt-auto mb-3 w-100">
+     // transition: 'all 0.2s',
+    }}
+    onMouseEnter={() => setAdminOpen(true)}
+    onMouseLeave={() => setAdminOpen(false)}
+  >
+    <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '13px' }} />
+    <span className="mt-1">Admin</span>
+
+    {/* Right-side chevron */}
+    <FontAwesomeIcon
+      icon={faChevronRight}
+      style={{
+        position: 'absolute',
+        right: '5px',
+        top: '50%',
+        fontSize: '10px',
+        color: adminOpen ? '#FF4D00' : '#6c757d',
+      }}
+    />
+  </div>
+)}
+
+
+
+        </Nav>
+
+        <div className="mt-auto mb-3 w-100">
+          <Nav.Link
+            as={Link}
+            to="/help"
+            className="d-flex flex-column align-items-center justify-content-center py-3"
+            style={{ color: '#6c757d', fontSize: '0.75rem', textDecoration: 'none', height: '70px' }}
+          >
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ fontSize: '0.8rem' }} />
+            <span className="mt-1">Help</span>
+          </Nav.Link>
+        </div>
+      </div>
+
+      {/* Admin Sub Sidebar */}
+<div
+  className="sub-sidebar"
+  onMouseEnter={() => setAdminOpen(true)}
+  onMouseLeave={() => setAdminOpen(false)}
+  style={{
+    width: adminOpen ? '200px' : '0',
+       overflow: 'hidden',
+    borderRight: adminOpen ? '1px solid #dee2e6' : 'none',
+    height: '100vh',
+    backgroundColor: '#fff',
+    position: 'fixed',
+    left:'100px',
+    zIndex: '999',
+   
+  }}
+>
+  {adminOpen && (
+    <Nav className="flex-column p-2">
+      {adminItems.map((item, index) => (
         <Nav.Link
+          key={index}
           as={Link}
-          to="/help"
-          className="d-flex flex-column align-items-center justify-content-center py-3"
+          to={item.path}
+          onClick={() => setAdminOpen(false)} // close on click
+          className={`d-flex align-items-center ${isActive(item.path)}`}
           style={{
-            color: '#6c757d',
-            fontSize: '0.75rem',
+            color: isActive(item.path) ? '#FF4D00' : '#6c757d',
+            fontWeight: isActive(item.path) ? '600' : '400',
             textDecoration: 'none',
-            height: '70px',
+            fontSize: '13px',
+             padding: '10px', // adjust as needed for left spacing
+           
+
           }}
         >
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ fontSize: '0.8rem' }} />
-          <span className="mt-1">Help</span>
+          <FontAwesomeIcon icon={item.icon} style={{ fontSize: '14px', marginRight: '8px' }} />
+          {item.text}
         </Nav.Link>
-      </div>
+      ))}
+    </Nav>
+  )}
+</div>
+
     </div>
   );
 };
