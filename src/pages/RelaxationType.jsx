@@ -218,8 +218,8 @@ const RelaxationType = () => {
                 <td>{cat.operator}</td>
                 <td>{cat.description}</td>
                 <td>
-                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(cat, index)} />
-                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
+                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer iconhover" onClick={() => openModal(cat, index)} />
+                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer iconhover" onClick={() => handleDelete(index)} />
                 </td>
               </tr>
             ))}

@@ -78,7 +78,7 @@ function Drawer({
    
   // interviewer info (read-only — from candidate)
   const interviewerName = interviewer?.interviewer;
-  const interviewerEmail = interviewer?.interviewer_email || interviewer?.interviewer_email || "";
+  const interviewerEmail = interviewer?.interviewer_email || "";
   const interviewerId = interviewer?.interviewer_id;
 
   useEffect(() => {
@@ -116,14 +116,14 @@ function Drawer({
   };
 
   const handleSaveFeedback = async () => {
-    if (!candidate?.candidate_id || !(positionId || candidate?.position_id)) {
-      alert("Missing candidate or position.");
+    if (!candidate?.application_id) {
+      alert("Missing application.");
       return;
     }
-    if (!interviewerEmail) {
-      alert("Interviewer not set. Schedule the interview first.");
-      return;
-    }
+    // if (!interviewerEmail) {
+    //   alert("Interviewer not set. Schedule the interview first.");
+    //   return;
+    // }
 
     setError("");
     setSaving(true);
@@ -132,8 +132,9 @@ function Drawer({
       const payload = {
         comments,
         status, // "Selected for next round" | "Selected" | "Rejected" | etc.
-        candidate_id: candidate.candidate_id,
-        position_id: positionId || candidate.position_id,
+        // candidate_id: candidate.candidate_id,
+        // position_id: positionId || candidate.position_id,
+        application_id: candidate.application_id,
         ...(interviewerId != null && { interviewer_id: Number(interviewerId) }),
         interviewer_name: interviewerName || interviewerEmail,
         interviewer_email: interviewerEmail,
@@ -143,7 +144,7 @@ function Drawer({
       console.log("res",res);
       if(res.status===200)
       {
-         const feedbackRes = await apiService.getfeedback(candidate.candidate_id,positionId || candidate.position_id);
+         const feedbackRes = await apiService.getfeedback(candidate.application_id);
                   if (feedbackRes?.status === 200) 
                   {
                     // console.log("feedbackRes",feedbackRes.data);
@@ -522,13 +523,7 @@ function Drawer({
                             <Form.Label>Interviewer</Form.Label>
                             <Form.Control
                               readOnly
-                              value={
-                                interviewerEmail
-                                  ? interviewerName
-                                    ? `${interviewerName} (${interviewerEmail})`
-                                    : interviewerEmail
-                                  : "Not set"
-                              }
+                              value={interviewerEmail ?  `${interviewerName} (${interviewerEmail})` : interviewerName || "Not set"}
                             />
                             {!interviewerEmail && (
                               <small className="text-muted">
@@ -560,7 +555,8 @@ function Drawer({
 
                           <div className="d-flex gap-2">
                             <Button
-                              disabled={!interviewerEmail || saving}
+                              // disabled={!interviewerEmail || saving}
+                              disabled={saving}
                               onClick={handleSaveFeedback}
                               style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
                             >

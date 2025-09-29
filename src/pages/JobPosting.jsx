@@ -185,7 +185,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
         setJobPostings(responseData.data);
       } else {
         console.log("No data")
-        setError("Failed to fetch job postings: Unexpected data format.");
+        setError("No requisitions found.");
       }
     } catch (err) {
       setError("Failed to fetch job postings.");

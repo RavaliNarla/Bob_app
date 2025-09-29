@@ -164,12 +164,12 @@ else {
                 <td>
                   <FontAwesomeIcon
                     icon={faPencil}
-                    className="text-info me-3 cursor-pointer"
+                    className="text-info me-3 cursor-pointer iconhover"
                     onClick={() => openModal(pos, index)}
                   />
                   <FontAwesomeIcon
                     icon={faTrash}
-                    className="text-danger cursor-pointer"
+                    className="text-danger cursor-pointer iconhover"
                     onClick={() => handleDelete(index)}
                   />
                 </td>

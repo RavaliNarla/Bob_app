@@ -307,8 +307,8 @@ const JobGrade = () => {
                 <td>{job.max_salary}</td>
                 <td>{job.job_grade_desc}</td>
                 <td>
-                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer" onClick={() => openModal(job, index)} />
-                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer" onClick={() => handleDelete(index)} />
+                  <FontAwesomeIcon icon={faPencil} className="text-info me-3 cursor-pointer iconhover" onClick={() => openModal(job, index)} />
+                  <FontAwesomeIcon icon={faTrash} className="text-danger cursor-pointer iconhover" onClick={() => handleDelete(index)} />
                 </td>
               </tr>
             ))}

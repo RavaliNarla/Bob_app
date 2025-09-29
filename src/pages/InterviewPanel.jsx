@@ -136,7 +136,7 @@ const InterviewPanel = () => {
   return (
     <div className='register_container login-container d-flex flex-column py-3 px-5'>
       <div className="d-flex justify-content-between align-items-center pb-4">
-        <h5 className='mt-1' style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '18px !important', color: '#FF7043', marginBottom: '0px' }}>Interview Panels</h5>
+        <h5 className='mt-1' style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Interview Panels</h5>
         <Button variant="orange" onClick={() => setShowModal(true)}>+ Add</Button>
       </div>
       <Table className="req_table mt-2" responsive hover>
@@ -176,13 +176,13 @@ const InterviewPanel = () => {
                 <td>
                   <FontAwesomeIcon
                     icon={faPencil}
-                    className="text-info me-3 cursor-pointer"
+                    className="text-info me-3 cursor-pointer iconhover"
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleEdit(panel, index)}
                   />
                   <FontAwesomeIcon
                     icon={faTrash}
-                    className="text-danger cursor-pointer"
+                    className="text-danger cursor-pointer iconhover"
                     style={{ cursor: 'pointer' }}
                     onClick={() => handleDelete(panel.panel_id)}
                   />

@@ -402,17 +402,22 @@ const CandidateCard = ({ setTriggerDownload }) => {
         }
 
         const timeHHMM = String(interviewData.interview_time).slice(0, 5);
-
+        console.log(interviewData)
         const interviewPayload = {
-            candidate_id: interviewCandidate?.candidate_id,
-            date: interviewData.interview_date,
+            // candidate_id: interviewCandidate?.candidate_id,
+            application_id: interviewCandidate?.application_id,
+            date: interviewData?.interview_date,
             time: timeHHMM,
             // userId: 3,
-            position_id: selectedPositionId,
-            interviewer_email: interviewData.interviewerEmail,
-            interviewer_name: interviewData.interviewerName,
-            interviewer_id: interviewData.interviewerId,
+            // position_id: selectedPositionId,
+            // interviewer_email: interviewData.interviewerEmail,
+            // interviewer_name: interviewData.interviewerName,
+            interviewer_id: interviewData?.interviewer_id,
             status: "Scheduled",
+            interview_type: interviewData?.interview_type,
+            location: interviewData?.interview_type === "In-Person" ? interviewData?.location : "",
+            phone: interviewData?.interview_type === "Telephonic" ? interviewData?.phone : "",
+            is_panel_interview: interviewData?.is_panel_interview,
         };
         setApiLoading(true);
 
@@ -446,6 +451,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                         interviewer_email: interviewData.interviewerEmail,
                         interviewer_name: interviewData.interviewerName,
                         interviewer_id: interviewData.interviewerId,
+                        application_id: interviewCandidate?.application_id,
                     }
                     : candidate
             );
@@ -459,6 +465,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     interviewer_email: interviewData.interviewerEmail,
                     interviewer_name: interviewData.interviewerName,
                     interviewer_id: interviewData.interviewerId,
+                    application_id: interviewCandidate?.application_id,
                 });
             }
             setInterviewed(updatedInterviewed);
@@ -659,11 +666,9 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setSelectedInterview(null);
 
         if (c) {
+            console.log("----------------------------", c)
             try {
-                const res = await apiService.createInterview({
-                    candidate_id: c.candidate_id,
-                    position_id: selectedPositionId,
-                });
+                const res = await apiService.createInterview(c.application_id);
             
                 console.log("res111", res);
             
@@ -671,10 +676,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     setSelectedInterview(res.data);
                    // console.log("SelectedInterview", res.data); // ✅ use res.data directly
             
-                    const feedbackRes = await apiService.getfeedback(
-                        c.candidate_id,
-                        selectedPositionId
-                    );
+                    const feedbackRes = await apiService.getfeedback(c.application_id);
                     console.log("feedbackRes", feedbackRes);
             
                     if (feedbackRes) {
@@ -707,11 +709,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setApiLoading(true);
         setError(null);
         try {
-            const payload = {
-                candidate_id: candidate.candidate_id,
-                position_id: selectedPositionId,
-            };
-            const response = await apiService.createInterview(payload);
+            // const payload = {
+            //     candidate_id: candidate.candidate_id,
+            //     position_id: selectedPositionId,
+            // };
+            const response = await apiService.createInterview(candidate.application_id);
             console.log("response", response);
         
             const interviewDetails = response.data || response;
@@ -729,9 +731,14 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     ...candidate,
                     interviewDate: date,
                     interviewTime: time,
-                    interviewerId: interviewDetails.interviewer_id,
-                    interviewerEmail: interviewDetails.interviewer_email,
-                    interviewerName: interviewDetails.interviewer,
+                    interviewer_id: interviewDetails.interviewer_id,
+                    interviewer_email: interviewDetails.interviewer_email,
+                    interviewer: interviewDetails.interviewer,
+                    interview_type: interviewDetails.interview_type,
+                    location: interviewDetails.location,
+                    phone: interviewDetails.phone,
+                    is_panel_interview: interviewDetails.is_panel_interview,
+                    application_id: candidate?.application_id,
                 };
                 setRescheduleCandidate(updatedCandidate);
             } else {
@@ -768,14 +775,19 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setError(null);
         try {
             const payload = {
-                candidate_id: rescheduleCandidate.candidate_id,
+                // candidate_id: rescheduleCandidate.candidate_id,
+                application_id: rescheduleCandidate?.application_id,
                 date: interviewData.interview_date,
                 time: timeHHMM,
                 status: "Rescheduled",
-                position_id: selectedPositionId,
-                interviewer_id: interviewData.interviewerId,
-                interviewer_email: interviewData.interviewerEmail,
-                interviewer_name: interviewData.interviewerName,
+                // position_id: selectedPositionId,
+                interviewer_id: interviewData.interviewer_id,
+                interviewer_email: interviewData.interviewer_email,
+                interviewer_name: interviewData.interviewer,
+                interview_type: interviewData?.interview_type,
+                location: interviewData?.interview_type === "In-Person" ? interviewData?.location : "",
+                phone: interviewData?.interview_type === "Telephonic" ? interviewData?.phone : "",
+                is_panel_interview: interviewData?.is_panel_interview,
             };
             const response = await apiService.updateInterviewStatus(payload);
             //  const response = await axios.put(`http://192.168.20.111:8081/api/candidates/schedule-interview`,(payload))
@@ -792,6 +804,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                         interviewer_id: interviewData.interviewerId,
                         interviewer_email: interviewData.interviewerEmail,
                         interviewer_name: interviewData.interviewerName,
+                        application_id: rescheduleCandidate?.application_id,
                     } : c);
                 setInterviewed(updated);
 
@@ -824,10 +837,11 @@ const CandidateCard = ({ setTriggerDownload }) => {
         try {
             // Get the date and time from the rescheduleCandidate object
             const payload = {
-                candidate_id: rescheduleCandidate.candidate_id,
+                // candidate_id: rescheduleCandidate.candidate_id,
+                application_id: rescheduleCandidate?.application_id,
                 date: rescheduleCandidate.interviewDate, // 👈 Corrected: Add interview date     
                 time: String(rescheduleCandidate.interviewTime).slice(0, 5), // 👈 Corrected: Add interview time
-                position_id: selectedPositionId,
+                // position_id: selectedPositionId,
                 status: 'Cancelled',
                 interviewer_id: interviewData.interviewerId,
                 interviewer_email: interviewData.interviewerEmail,

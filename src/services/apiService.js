@@ -393,11 +393,11 @@ getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${u
   createInterview: (applicationId) => 
     candidateApi.get(`/candidates/interviews/${applicationId}`),
   updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
+  getPanelSlots: (panelId, date) =>
+    candidateApi.get('/candidates/panel-free-slots', { params: { panelId, date } }),
    //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
-   getfeedback: (candidate_id, position_id) =>
-  candidateApi.get("/candidates/get-feedback", {
-    params: { candidate_id, position_id },
-  }),
+   getfeedback: (application_id) =>
+  candidateApi.get(`/candidates/get-feedback/${application_id}`),
 
   postFeedback: (data) => candidateApi.post('/candidates/feedback', data),
   // updateInterviewStatus: (data) => candidateApi.put('/candidates/update-interview-status', data),
