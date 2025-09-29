@@ -220,7 +220,7 @@ font-size: 14px;
   border-radius: 10px;
   background: transparent;         /* outlined by default */
   color: #ff7a32;
-  font-family: Poppins, sans-serif;
+   font-family: 'Noto Sans';
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
