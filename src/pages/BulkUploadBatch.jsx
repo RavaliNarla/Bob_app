@@ -32,7 +32,7 @@ import {
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsRotate,faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const styles = {
   cardTitle: {
@@ -563,12 +563,14 @@ export default function BulkUploadBatch() {
                     <option value="COMPLETED">Completed</option>
                   </Form.Select>
 
-                  <InputGroup size="sm" style={{ width: 260 }}>
-                    <InputGroup.Text id="search-fn">Search</InputGroup.Text>
+                  <InputGroup className="posting-search" size="sm" style={{ width: 290 }}>
+                    <InputGroup.Text style={{ backgroundColor: "#FF7043" }} id="search-fn">
+                      <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
+                    </InputGroup.Text>
                     <Form.Control
                       aria-label="Search by filename"
                       aria-describedby="search-fn"
-                      placeholder="filename"
+                      placeholder="Search Candidate"
                       value={q}
                       onChange={(e) => setQ(e.target.value)}
                     />

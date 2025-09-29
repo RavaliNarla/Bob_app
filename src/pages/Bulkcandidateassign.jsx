@@ -16,6 +16,8 @@ import apiService from "../services/apiService";
 import "../css/bulkUpload.css";
 import BulkTiles from "./BulkTiles";
 import CandidateDetailsModal from "../components/CandidateDetailsModal";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function BulkCandidateAssign() {
   const [loadingReq, setLoadingReq] = useState(false);
@@ -296,10 +298,14 @@ export default function BulkCandidateAssign() {
                   <p className="text-muted">Showing {filtered.length} of {candidates.length}</p>
                 </div>
                 <div className="d-flex gap-3" style={{ height: '40px' }}>
+
                   {/* <Form.Label className="mb-1">Search</Form.Label> */}
-                  <InputGroup size="sm">
+                  <InputGroup className="posting-search" size="sm">
+                  <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>
+                                <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
+                              </InputGroup.Text>
                     <Form.Control
-                      placeholder="Search candidates (name, email, phone)…"
+                      placeholder="Search candidates..."
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       disabled={loadingCand || candidates.length === 0}
