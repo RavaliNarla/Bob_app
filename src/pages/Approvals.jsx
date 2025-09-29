@@ -38,8 +38,8 @@ const Approvals = () => {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectDescription, setRejectDescription] = useState("");
   const [workflowApprovals, setWorkflowApprovals] = useState([]);
-    const [readOnly, setReadOnly] = useState(false);
-    const [selectedStatus, setSelectedStatus] = useState("");
+  const [readOnly, setReadOnly] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   // Toggle accordion and fetch requisition details
   const toggleAccordion = async (key, requisition_id) => {
@@ -68,7 +68,7 @@ const Approvals = () => {
   };
 
   // Fetch requisitions and positions based on user's role
-   const fetchJobPostings = async () => {
+  const fetchJobPostings = async () => {
     if (!user || !user.role) {
       setError("User role not found. Cannot fetch data.");
       setLoading(false);
@@ -78,7 +78,6 @@ const Approvals = () => {
     setLoading(true);
     setError(null);
     try {
-      // ✅ get job postings
       const responseData = await apiService.getApprovalstatus(user.userid);
       console.log("Job Postings Response:", responseData);
       if (responseData && Array.isArray(responseData.data)) {
@@ -87,7 +86,6 @@ const Approvals = () => {
         setError("No Approvals: Unexpected data format.");
       }
 
-      // ✅ get workflow approvals
       const approvalsRes = await apiService.getWorkflowApprovals(user.userid);
       if (approvalsRes && Array.isArray(approvalsRes.data)) {
         setWorkflowApprovals(approvalsRes.data);
@@ -107,6 +105,7 @@ const Approvals = () => {
 
   // Checkbox selection
   const handleJobSelection = (e, requisitionId) => {
+    
     if (e.target.checked) {
       setSelectedJobIds([...selectedJobIds, requisitionId]);
     } else {
@@ -133,27 +132,37 @@ const Approvals = () => {
     setEditRequisitionId(null);
   };
 
-  // Search
-  // const filteredJobPostings = jobPostings.filter((job) => {
-  //   const search = searchTerm.toLowerCase();
-  //   return (
-  //     job.requisition_title.toLowerCase().includes(search) ||
-  //     job.requisition_code.toLowerCase().includes(search)
-  //   );
-  // });
+  // Flattened job postings for admin to include all workflow approvals
+  const getDisplayJobPostings = () => {
+    if (user?.role?.toLowerCase() === "admin") {
+      // Admin: show all workflow approvals
+      return jobPostings.flatMap((job) => {
+        const approvalsForJob = workflowApprovals.filter(
+          (a) => a.entityId === job.requisition_id
+        );
+        return approvalsForJob.length > 0
+          ? approvalsForJob.map((approval) => ({ ...job, approval }))
+          : [{ ...job, approval: null }];
+      });
+    } else {
+      // Non-admin: show only their own requisitions (one per requisition)
+      return jobPostings.map((job) => ({ ...job, approval: null }));
+    }
+  };
 
- const filteredJobPostings = jobPostings.filter((job) => {
-    const matchesSearch = job.requisition_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         job.requisition_code.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Find the approval for the current job
-    const jobApproval = workflowApprovals.find(approval => 
-      approval.entityId === job.requisition_id
-    );
-    
-    const matchesStatus = !selectedStatus || 
-                         (jobApproval ? jobApproval.action : job.requisition_status)?.toLowerCase() === selectedStatus.toLowerCase();
-    
+  // Filtered based on search & status
+  const filteredJobPostings = getDisplayJobPostings().filter((job) => {
+    const matchesSearch =
+      job.requisition_title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.requisition_code.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      !selectedStatus ||
+      (job.approval
+        ? job.approval.action
+        : job.requisition_status
+      )?.toLowerCase() === selectedStatus.toLowerCase();
+
     return matchesSearch && matchesStatus;
   });
 
@@ -164,22 +173,16 @@ const Approvals = () => {
     }
 
     const payload = {
-    
       requisitionIdList: selectedJobIds,
       status: "approved",
       description: rejectDescription,
       userId: user.userid,
     };
-    
+
     try {
       await apiService.updateApproval(payload);
       toast.success(`Approved ${selectedJobIds.length} requisitions successfully`);
-
-      // setJobPostings((prev) =>
-      //   prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
-      // );
-
-       fetchJobPostings();
+      fetchJobPostings();
       setSelectedJobIds([]);
     } catch (err) {
       console.error("Error updating approval:", err);
@@ -204,34 +207,17 @@ const Approvals = () => {
       toast.error("User information not available.");
       return;
     }
-    
-    // const payload = {
-    //   role: user.role,
-    //   requisitionId: selectedJobIds,
-    //   status: "rejected",
-    //   description: rejectDescription,
-    //   userid: user.userid,
-    // };
+
     const payload = {
-    
       requisitionIdList: selectedJobIds,
       status: "rejected",
       description: rejectDescription,
       userId: user.userid,
     };
-    
 
     try {
       await apiService.updateApproval(payload);
-      toast.success(
-        `Rejected the requisition(s) successfully.`
-      );
-
-      setJobPostings((prev) =>
-        prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
-      );
-      
-      // fetchJobPostings();
+      toast.success(`Rejected the requisition(s) successfully.`);
       setSelectedJobIds([]);
       setRejectDescription("");
       setShowRejectModal(false);
@@ -248,10 +234,6 @@ const Approvals = () => {
 
   return (
     <Container fluid className="p-4 approvals_tab">
-            {/* <h5 className="pb-3" style={{ fontFamily: 'Poppins', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>
-        Approvals
-      </h5> */}
-      
       <div className="d-flex flex-row align-items-end justify-content-between mb-3">
         <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
           <div className="d-flex flex-row align-items-center">
@@ -273,7 +255,6 @@ const Approvals = () => {
             </Form.Select>
           </div>
         </div>
-        
 
         <div className="col-md-6 search-container fonreg">
           <InputGroup className="searchinput">
@@ -290,200 +271,186 @@ const Approvals = () => {
           </InputGroup>
         </div>
       </div>
-        
-        
 
-    {loading ? (
-             <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
-             <Spinner animation="border" variant="primary" />
-             </div>
-             ) : error ? (
-             <Alert variant="danger">{error}</Alert>
-             ) : filteredJobPostings.length === 0 ? (
-             <div className="text-center text-muted py-4">
-                    No records for approval.
-             </div>
-             )  : (
-        <Accordion activeKey={activeKey}>
-  {filteredJobPostings.map((job, index) => {
-    const approval = workflowApprovals.find(
-      (a) => a.entityId === job.requisition_id
-    );
-
-    return (
-      <Accordion.Item
-        eventKey={index.toString()}
-        key={index}
-        className="mb-2 border rounded list"
-      >
-        <Accordion.Header
-          onClick={() => toggleAccordion(index.toString(), job.requisition_id)}
+      {loading ? (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "200px" }}
         >
-          <Row className="w-100 align-items-center fontreg">
-            {/* Left side: Checkbox + Title + Requisition */}
-            <Col
-              xs={12}
-              md={6}
-              className="d-flex align-items-start mb-2 mb-md-0"
-            >
-              <Form.Check
-                type="checkbox"
-                className="form-check-orange me-2 mt-1"
-                checked={selectedJobIds.includes(job.requisition_id)}
-                onChange={(e) => handleJobSelection(e, job.requisition_id)}
-                onClick={(e) => e.stopPropagation()}
-                disabled={
-                  (approval ? approval.action : job.requisition_status)?.toLowerCase() ===
-                  "approved"
-                }
-              />
-              <div className="fontcard">
-                <div className="text-dark mb-1">
-                  Title: {job.requisition_title}
-                </div>
-               <div className="text-muted mb-1 boldnes">
-                  <b>Requisition:</b> {job.requisition_code} (
-                  {approval
-                    ? approval.action === "Pending"
-                      ? "Pending for Approval"
-                      : approval.action
-                    : job.requisition_status}
-                  )
-              </div>
-              </div>
-            </Col>
+          <Spinner animation="border" variant="primary" />
+        </div>
+      ) : error ? (
+        <Alert variant="danger">{error}</Alert>
+      ) : filteredJobPostings.length === 0 ? (
+        <div className="text-center text-muted py-4">No records for approval.</div>
+      ) : (
+        <Accordion activeKey={activeKey}>
+          {filteredJobPostings.map((job, index) => {
+            const approval = job.approval;
 
-            {/* Right side: Postings, Dates, Vacancies, Status */}
-            <Col xs={12} md={5} className="d-flex flex-column fontcard">
-              <div className="d-flex">
-                <div className="boldnes">
-                  <b>Postings:</b>{" "}
-                  {job.job_postings
-                    ? job.job_postings
-                        .split(",")
-                        .map(
-                          (item) =>
-                            item.charAt(0).toUpperCase() + item.slice(1)
-                        )
-                        .join(", ")
-                    : "Not Posted"}
-                </div>
-              </div>
+            return (
+              <Accordion.Item
+                eventKey={index.toString()}
+                key={index}
+                className="mb-2 border rounded list"
+              >
+                <Accordion.Header
+                  onClick={() =>
+                    toggleAccordion(index.toString(), job.requisition_id)
+                  }
+                >
+                  <Row className="w-100 align-items-center fontreg">
+                    {/* Left side */}
+                    <Col xs={12} md={6} className="d-flex align-items-start mb-2 mb-md-0">
+                      <Form.Check
+                        type="checkbox"
+                        className="form-check-orange me-2 mt-1"
+                        checked={selectedJobIds.includes(job.requisition_id)}
+                        onChange={(e) =>
+                          handleJobSelection(e, job.requisition_id)
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        disabled={
+                          (approval ? approval.action : job.requisition_status)
+                            ?.toLowerCase() === "approved"
+                        }
+                      />
+                      <div className="fontcard">
+                        <div className="text-dark mb-1">
+                          Title: {job.requisition_title}
+                        </div>
+                        <div className="text-muted mb-1 boldnes">
+                          <b>Requisition:</b> {job.requisition_code} (
+                          {approval
+                            ? approval.action === "Pending"
+                              ? "Pending for Approval"
+                              : approval.action
+                            : job.requisition_status}
+                          )
+                        </div>
+                      </div>
+                    </Col>
 
-              <div className="d-flex mb-1 mt-1">
-                <div className="me-4 boldnes">
-                  <b>Start Date:</b> {job?.registration_start_date}&nbsp;&nbsp;|
-                  &nbsp;&nbsp;
-                  <b>End Date:</b> {job?.registration_end_date}&nbsp;&nbsp;
-                  {/* &nbsp;&nbsp;
-                  <b>Vacancies:</b> {job.count ? job.count : "0"} */}
-                  <br />
-                  {/* <b>Status:</b>{" "}
-                  {new Date() > new Date(job?.registration_end_date)
-                    ? "Expired"
-                    : "Open"} */}
-                </div>
-              </div>
-            </Col>
+                    {/* Right side */}
+                    <Col xs={12} md={5} className="d-flex flex-column fontcard">
+                      <div className="d-flex">
+                        <div className="boldnes">
+                          <b>Postings:</b>{" "}
+                          {job.job_postings
+                            ? job.job_postings
+                                .split(",")
+                                .map(
+                                  (item) =>
+                                    item.charAt(0).toUpperCase() + item.slice(1)
+                                )
+                                .join(", ")
+                            : "Not Posted"}
+                        </div>
+                      </div>
 
-          </Row>
-        </Accordion.Header>
+                      <div className="d-flex mb-1 mt-1">
+                        <div className="me-4 boldnes">
+                          <b>Start Date:</b> {job?.registration_start_date}&nbsp;&nbsp;|{" "}
+                          <b>End Date:</b> {job?.registration_end_date}
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                </Accordion.Header>
 
-        <Accordion.Body>
-          <Row>
-            <Col xs={12} className="text-muted">
-              <Table className="req_table" responsive hover>
-                <thead className="table-header-orange">
-                  <tr>
-                    <th
-                      onClick={() => handleSort("title")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      Position {getSortIndicator("title")}
-                    </th>
-                    <th
-                      onClick={() => handleSort("positions")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      Position Code {getSortIndicator("positions")}
-                    </th>
-                    <th
-                      onClick={() => handleSort("description")}
-                      style={{ cursor: "pointer" }}
-                    >
-                      Grade {getSortIndicator("description")}
-                    </th>
-                    <th>Vacancies</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="table-body-orange">
-                  {tableLoading ? (
-                    <tr>
-                      <td colSpan="6" className="text-center py-3">
-                        <Spinner animation="border" size="sm" /> Loading
-                        positions...
-                      </td>
-                    </tr>
-                  ) : !apiData || apiData.length === 0 ? (
-                    <tr>
-                      <td colSpan="6" className="text-center text-muted py-3">
-                        No positions added yet
-                      </td>
-                    </tr>
-                  ) : (
-                    apiData.map((row, i) => (
-                      <tr key={row.position_id || i}>
-                        <td>{row.position_title}</td>
-                        <td>{row.position_code}</td>
-                        <td>{row.grade_id}</td>
-                        <td>{row.no_of_vacancies ?? "-"}</td>
-                        <td>
-                          {job.requisition_status === "New" ? (
-                            <FontAwesomeIcon
-                              icon={faPencil}
-                              className="text-info me-3 cursor-pointer iconhover"
+                <Accordion.Body>
+                  <Row>
+                    <Col xs={12} className="text-muted">
+                      <Table className="req_table" responsive hover>
+                        <thead className="table-header-orange">
+                          <tr>
+                            <th
+                              onClick={() => handleSort("title")}
                               style={{ cursor: "pointer" }}
-                              onClick={() => {
-                                setEditRequisitionId(row.requisition_id);
-                                setEditPositionId(row.position_id);
-                                setShowModal(true);
-                                setReadOnly(false);
-                              }}
-                            />
+                            >
+                              Position {getSortIndicator("title")}
+                            </th>
+                            <th
+                              onClick={() => handleSort("positions")}
+                              style={{ cursor: "pointer" }}
+                            >
+                              Position Code {getSortIndicator("positions")}
+                            </th>
+                            <th
+                              onClick={() => handleSort("description")}
+                              style={{ cursor: "pointer" }}
+                            >
+                              Grade {getSortIndicator("description")}
+                            </th>
+                            <th>Vacancies</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="table-body-orange">
+                          {tableLoading ? (
+                            <tr>
+                              <td colSpan="6" className="text-center py-3">
+                                <Spinner animation="border" size="sm" /> Loading
+                                positions...
+                              </td>
+                            </tr>
+                          ) : !apiData || apiData.length === 0 ? (
+                            <tr>
+                              <td colSpan="6" className="text-center text-muted py-3">
+                                No positions added yet
+                              </td>
+                            </tr>
                           ) : (
-                            <FontAwesomeIcon
-                              icon={faEye}
-                              className="text-info me-3 cursor-pointer iconhover"
-                              style={{ cursor: "pointer" }}
-                              onClick={() => {
-                                setEditRequisitionId(row.requisition_id);
-                                setEditPositionId(row.position_id);
-                                setShowModal(true);
-                                setReadOnly(true);
-                              }}
-                            />
+                            apiData.map((row, i) => (
+                              <tr key={row.position_id || i}>
+                                <td>{row.position_title}</td>
+                                <td>{row.position_code}</td>
+                                <td>{row.grade_id}</td>
+                                <td>{row.no_of_vacancies ?? "-"}</td>
+                                <td>
+                                  {job.requisition_status === "New" ? (
+                                    <FontAwesomeIcon
+                                      icon={faPencil}
+                                      className="text-info me-3 cursor-pointer iconhover"
+                                      style={{ cursor: "pointer" }}
+                                      onClick={() => {
+                                        setEditRequisitionId(row.requisition_id);
+                                        setEditPositionId(row.position_id);
+                                        setShowModal(true);
+                                        setReadOnly(false);
+                                      }}
+                                    />
+                                  ) : (
+                                    <FontAwesomeIcon
+                                      icon={faEye}
+                                      className="text-info me-3 cursor-pointer iconhover"
+                                      style={{ cursor: "pointer" }}
+                                      onClick={() => {
+                                        setEditRequisitionId(row.requisition_id);
+                                        setEditPositionId(row.position_id);
+                                        setShowModal(true);
+                                        setReadOnly(true);
+                                      }}
+                                    />
+                                  )}
+                                </td>
+                              </tr>
+                            ))
                           )}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
-            </Col>
-          </Row>
-        </Accordion.Body>
-      </Accordion.Item>
-    );
-  })}
-</Accordion>
-
+                        </tbody>
+                      </Table>
+                    </Col>
+                  </Row>
+                </Accordion.Body>
+              </Accordion.Item>
+            );
+          })}
+        </Accordion>
       )}
 
       {/* Approve / Reject buttons */}
-       {filteredJobPostings.length > 0 && (
+      {filteredJobPostings.length > 0 && (
         <div className="d-flex justify-content-end mt-4 gap-2">
-          
           <Button
             variant="danger"
             disabled={selectedJobIds.length === 0}
