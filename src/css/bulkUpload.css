@@ -1,44 +1,49 @@
+/* src/css/bulkUpload.css */
+
+/* Buttons and progress */
 .bulkupload_btn, .progress-bar{
   background-color: #162b75;
   border-color: #162b75;
   color: #fff;
-font-size: 14px;
+  font-size: 14px;
 }
 .bulkupload_btn:hover{
   background-color: #162b75 !important;
   border-color: #162b75 !important;
   color: #fff;
-font-size: 14px;
+  font-size: 14px;
 }
+
+/* Pagination active */
 .active>.page-link, .page-link.active {
   z-index: 3;
   color: #fff;
   background-color: #162b75 !important;
   border-color: #162b75 !important;
 }
+
+/* Headings */
 .table_heading{
   color: #162b75;
-font-size: 14px;
+  font-size: 14px;
 }
-/* src/css/bulkUpload.css */
+
+/* Secondary button pressed state */
 .btn.btn-secondary.active {
   filter: brightness(0.95);
 }
-/* compact selects + labels */
+
+/* Compact selects + labels */
 .compact-label {
   font-size: 12px;
   margin-bottom: 2px;
   color: #6c757d;
 }
-
 .slim-select.form-select {
   font-size: 12px;
   height: 32px;
   padding: 4px 28px 4px 8px;
 }
-.compact-label { font-size: 12px; margin-bottom: 2px; color: #6c757d; }
-.slim-select.form-select { font-size: 12px; height: 32px; padding: 4px 28px 4px 8px; }
-
 
 /* --- Compact dropdown toggle (like CandidateCard) --- */
 .select-drop {
@@ -106,8 +111,7 @@ font-size: 14px;
 }
 
 /* Keep brand style alignment with your other buttons/heading */
-.table_heading{ color:#162b75; font-size:14px; }
-
+.allresumes{ background-color: white; }
 
 /* Tile buttons: default = outlined orange, hover/active = solid orange */
 .tile-btn {
@@ -115,15 +119,12 @@ font-size: 14px;
   color: #FF7043;
   border-color: #FF7043;
 }
-
 .tile-btn:hover,
 .tile-btn:focus {
   background: #FF7043;
   color: #fff;
   border-color: #FF7043;
 }
-
-/* Selected (active) should look the same as hover */
 .tile-btn.active,
 .tile-btn:active,
 .show > .tile-btn.dropdown-toggle {
@@ -133,11 +134,7 @@ font-size: 14px;
   box-shadow: none !important;
 }
 
-.allresumes{
-  background-color: white;
-}
-
-/* ===== NEW, simplified stepper styles ===== */
+/* ===== Simplified stepper styles ===== */
 .bulkstepper {
   padding: 24px 28px 16px;
   position: relative;
@@ -160,13 +157,13 @@ font-size: 14px;
 .bulkstepper-dot.active{
   background-color: oklch(.623 .214 259.815);
   border-color: oklch(.623 .214 259.815);
-   color: #fff;
+  color: #fff;
   transform: scale(1.05);
 }
 .bulkstepper-dot.completed {
-    background: green;
-    border-color: green;
-    color: #fff;
+  background: green;
+  border-color: green;
+  color: #fff;
 }
 .bulkstepper-dot.waiting{
   background: #f7f9ff; border-color: #e6e8f0; color: #94a3b8;
@@ -183,7 +180,7 @@ font-size: 14px;
 .bulkstepper-dropzone:active{ transform: scale(.998); }
 .bulkstepper-dropzone:focus-visible{ outline: 3px solid #c7d2fe; outline-offset: 3px; }
 
-/* gradient CTA */
+/* CTA */
 .bulkstepper-cta{
   background: #162b75;
   border-color: #162b75;
@@ -206,68 +203,73 @@ font-size: 14px;
   box-shadow: none;
   transform: none;
 }
-.allresumes{
-  background-color: white;
-}
 
-/* Sync button (namespaced to avoid collisions) */
+/* Sync button */
 .sync-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
-  border: 1px solid #ff7a32;      /* orange outline */
+  border: 1px solid #ff7a32;
   border-radius: 10px;
-  background: transparent;         /* outlined by default */
+  background: transparent;
   color: #ff7a32;
-   font-family: 'Noto Sans';
+  font-family: 'Noto Sans';
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
   transition: transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
   box-shadow: 0 4px 10px rgba(255, 122, 50, .18);
 }
-
 .sync-btn:hover:not(:disabled),
 .sync-btn:focus-visible {
   background: #ff7a32;
   color: #fff;
   outline: none;
 }
+.sync-btn:active:not(:disabled) { transform: translateY(1px); }
+.sync-btn:disabled { opacity: .7; cursor: not-allowed; box-shadow: none; }
+.sync-btn--loading { background: #ff7a32; color: #fff; border-color: #ff7a32; }
+.sync-btn__icon { width: 16px; height: 16px; flex: 0 0 16px; }
+.sync-btn__text { line-height: 1; }
 
-.sync-btn:active:not(:disabled) {
-  transform: translateY(1px);
+/* Misc */
+.bg-gray-300 { background-color: var(--color-gray-300); }
+.bulk-container .card-header{ border-bottom: 1px solid #414141 !important; }
+
+/* Animated rail fill layer */
+.bulkstepper { position: relative; }
+.bulkstepper-railfill {
+  position: absolute;
+  top: 44px;
+  left: 16%;
+  right: 16%;
+  height: 2px;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
 }
-
-.sync-btn:disabled {
-  opacity: .7;
-  cursor: not-allowed;
-  box-shadow: none;
+.bulkstepper-railfill > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #162b75;
+  transition: width .6s ease-in-out;
+  will-change: width;
+  border-radius: 999px;
 }
-
-/* Loading modifier */
-.sync-btn--loading {
-  background: #ff7a32;
+.bulkstepper-step .bulkstepper-dot { position: relative; z-index: 1; }
+.bulkstepper-dot { position: relative; overflow: hidden; }
+.dot-icon { display: grid; place-items: center; transition: transform .25s ease, opacity .2s ease; }
+.bulkstepper-dot.active .dot-icon { animation: none !important }
+.bulkstepper-dot.completed .dot-icon { opacity: 0; transform: scale(.6) rotate(-20deg); }
+.dot-check {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 22px;
   color: #fff;
-  border-color: #ff7a32;
+  opacity: 0; transform: scale(.5) rotate(-20deg);
+  transition: opacity .25s ease, transform .25s ease;
 }
-
-/* Icon */
-.sync-btn__icon {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 16px;
-}
-
-/* Optional: keep text from shifting on spin */
-.sync-btn__text {
-  line-height: 1;
-}
-
-.bg-gray-300 {
-    background-color: var(--color-gray-300);
-}
-
-.bulk-container .card-header{
-  border-bottom: 1px solid #414141 !important;
-}
+.bulkstepper-dot.completed .dot-check { opacity: 1; transform: scale(1) rotate(0deg); }
+@keyframes dot-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

@@ -10,7 +10,6 @@ import {
   Spinner,
   Table,
   InputGroup,
-  Modal,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import apiService from "../services/apiService";
@@ -34,13 +33,12 @@ export default function BulkCandidateAssign() {
   const [selected, setSelected] = useState(new Set());
   const [query, setQuery] = useState("");
   const [showDetails, setShowDetails] = useState(false);
-const [candidateDetails, setCandidateDetails] = useState(null);
+  const [candidateDetails, setCandidateDetails] = useState(null);
 
-const openCandidate = (row) => {
-  // row already has the fields from your payload
-  setCandidateDetails(row);
-  setShowDetails(true);
-};
+  const openCandidate = (row) => {
+    setCandidateDetails(row);
+    setShowDetails(true);
+  };
 
   // load requisitions
   useEffect(() => {
@@ -84,33 +82,32 @@ const openCandidate = (row) => {
   }, [selectedReq]);
 
   // load candidates when a position is selected
- useEffect(() => {
-  const run = async () => {
-    setCandidates([]);
-    setSelected(new Set());
-    if (!selectedPos) return;
+  useEffect(() => {
+    const run = async () => {
+      setCandidates([]);
+      setSelected(new Set());
+      if (!selectedPos) return;
 
-    setLoadingCand(true);
-    try {
-      const res = await apiService.getNotAppliedBulkUploadCandidates(selectedPos);
+      setLoadingCand(true);
+      try {
+        const res = await apiService.getNotAppliedBulkUploadCandidates(selectedPos);
 
-      // works whether interceptor returns axios.response or response.data
-      const body = res?.data ?? res;
-      const list = Array.isArray(body)
-        ? body
-        : (Array.isArray(body?.data) ? body.data : []);
+        // works whether interceptor returns axios.response or response.data
+        const body = res?.data ?? res;
+        const list = Array.isArray(body)
+          ? body
+          : (Array.isArray(body?.data) ? body.data : []);
 
-      setCandidates(Array.isArray(list) ? list : []);
-    } catch (e) {
-      console.error(e);
-      toast.error("Failed to load candidates");
-    } finally {
-      setLoadingCand(false);
-    }
-  };
-  run();
-}, [selectedPos]);
-
+        setCandidates(Array.isArray(list) ? list : []);
+      } catch (e) {
+        console.error(e);
+        toast.error("Failed to load candidates");
+      } finally {
+        setLoadingCand(false);
+      }
+    };
+    run();
+  }, [selectedPos]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -152,55 +149,54 @@ const openCandidate = (row) => {
     });
   };
 
- const handleAssign = async () => {
-  if (!selectedPos || selected.size === 0) return;
-  setAssigning(true);
-  try {
-    // Build candidateIds as the API expects (UUIDs from candidate.candidate_id)
-    const ids = Array.from(selected)
-      .map((selId) => {
-        const obj = candidates.find(
-          (c) => (c.id || c.candidate_id || c._id) === selId
-        );
-        return obj?.candidate_id ?? selId; // fallback if we already stored candidate_id
-      })
-      .filter(Boolean);
+  const handleAssign = async () => {
+    if (!selectedPos || selected.size === 0) return;
+    setAssigning(true);
+    try {
+      // Build candidateIds as the API expects (UUIDs from candidate.candidate_id)
+      const ids = Array.from(selected)
+        .map((selId) => {
+          const obj = candidates.find(
+            (c) => (c.id || c.candidate_id || c._id) === selId
+          );
+          return obj?.candidate_id ?? selId; // fallback if we already stored candidate_id
+        })
+        .filter(Boolean);
 
-    const res = await apiService.bulkShortlistCandidates(selectedPos, ids);
-    const body = res?.data ?? res; // works whether interceptor returns response or data
-    const ok = body?.success ?? true;
+      const res = await apiService.bulkShortlistCandidates(selectedPos, ids);
+      const body = res?.data ?? res; // works whether interceptor returns response or data
+      const ok = body?.success ?? true;
 
-    if (ok) {
-      toast.success(`Assigned ${ids.length} candidate(s) to the position.`);
-      // Refresh the "not-applied" list so assigned ones disappear
-      setSelected(new Set());
-      setLoadingCand(true);
-      try {
-        const ref = await apiService.getNotAppliedBulkUploadCandidates(selectedPos);
-        const payload = ref?.data ?? ref;
-        const list = Array.isArray(payload) ? payload : payload?.data ?? [];
-        setCandidates(Array.isArray(list) ? list : []);
-      } finally {
-        setLoadingCand(false);
+      if (ok) {
+        toast.success(`Assigned ${ids.length} candidate(s) to the position.`);
+        // Refresh the "not-applied" list so assigned ones disappear
+        setSelected(new Set());
+        setLoadingCand(true);
+        try {
+          const ref = await apiService.getNotAppliedBulkUploadCandidates(selectedPos);
+          const payload = ref?.data ?? ref;
+          const list = Array.isArray(payload) ? payload : payload?.data ?? [];
+          setCandidates(Array.isArray(list) ? list : []);
+        } finally {
+          setLoadingCand(false);
+        }
+      } else {
+        toast.error(body?.message || "Assignment failed");
       }
-    } else {
-      toast.error(body?.message || "Assignment failed");
+    } catch (e) {
+      console.error(e);
+      toast.error("Failed to assign candidates");
+    } finally {
+      setAssigning(false);
     }
-  } catch (e) {
-    console.error(e);
-    toast.error("Failed to assign candidates");
-  } finally {
-    setAssigning(false);
-  }
-};
+  };
 
   return (
     <Container
-  fluid
-  className="py-4 px-3"
-  style={{ height: "100vh", display: "flex", flexDirection: "column", minHeight: 0 }}
->
-
+      fluid
+      className="py-4 px-3"
+      style={{ height: "100vh", display: "flex", flexDirection: "column", minHeight: 0 }}
+    >
       <BulkTiles />
 
       {/* Filters */}
@@ -273,14 +269,13 @@ const openCandidate = (row) => {
 
       {/* Candidates table */}
       <Card
-  className="border-0 shadow-sm"
-  style={{ flex: 1, overflow: "hidden", minHeight: 0 }}   // ⬅️ add minHeight:0
->
-  <Card.Body
-    className="p-0 d-flex flex-column"
-    style={{ minHeight: 0 }}                               // ⬅️ add minHeight:0
-  >
-
+        className="border-0 shadow-sm"
+        style={{ flex: 1, overflow: "hidden", minHeight: 0 }}
+      >
+        <Card.Body
+          className="p-0 d-flex flex-column"
+          style={{ minHeight: 0 }}
+        >
           {loadingCand ? (
             <div className="d-flex align-items-center justify-content-center py-5 text-muted">
               <Spinner animation="border" size="sm" className="me-2" />
@@ -336,7 +331,7 @@ const openCandidate = (row) => {
                   </div>
                 </div>
               </div>
-<div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
+              <div style={{ flex: 1, minHeight: 0, overflowY: "auto" }}>
                 <Table hover responsive className="req_table mt-2">
                   <thead className="table-header-orange">
                     <tr>
@@ -350,7 +345,7 @@ const openCandidate = (row) => {
                       <th>Name</th>
                       <th>Email</th>
                       <th>Phone</th>
-                      <th>Status</th>
+                      <th>Education Qualification</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-orange">
@@ -365,18 +360,18 @@ const openCandidate = (row) => {
                               onChange={(e) => toggleOne(id, e.target.checked)}
                             />
                           </td>
-<td>
-  <button
-    type="button"
-    className="btn btn-link p-0"
-    onClick={() => openCandidate(c)}
-  >
-    {c.full_name || c.name || "-"}
-  </button>
-</td>
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-link p-0"
+                              onClick={() => openCandidate(c)}
+                            >
+                              {c.full_name || c.name || "-"}
+                            </button>
+                          </td>
                           <td>{c.email || "-"}</td>
                           <td>{c.phone || c.mobile || "-"}</td>
-                          <td>{c.status || c.stage || "-"}</td>
+                          <td>{c.education_qualification || "-"}</td>
                         </tr>
                       );
                     })}
@@ -388,20 +383,17 @@ const openCandidate = (row) => {
                 <div className="small text-muted">
                   Selected: {selected.size}
                 </div>
-                
               </div>
-              <CandidateDetailsModal
-  show={showDetails}
-  onHide={() => setShowDetails(false)}
-  data={candidateDetails}
-/>
 
+              <CandidateDetailsModal
+                show={showDetails}
+                onHide={() => setShowDetails(false)}
+                data={candidateDetails}
+              />
             </>
-            
           )}
         </Card.Body>
       </Card>
     </Container>
-    
   );
 }
