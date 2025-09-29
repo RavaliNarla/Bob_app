@@ -533,7 +533,7 @@ const Approvals = () => {
         <Modal.Header closeButton>
           <Modal.Title className="fonall">
             {editRequisitionId !== null
-              ? "Edit Job Posting"
+              ? "View Job Posting"
               : "Add Job Posting"}
           </Modal.Title>
         </Modal.Header>
