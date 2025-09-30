@@ -219,6 +219,7 @@ export default function BulkUploadBatch() {
     row?.error_message ||
     row?.failure_reason ||
     row?.failureMessage ||
+    row?.failed_reason ||
     "";
 
   const onDeleteRow = async (resumeId) => {
@@ -300,6 +301,11 @@ export default function BulkUploadBatch() {
     if (s === "PENDING") return "warning";
     return "secondary";
   };
+
+  // visibility / lock
+const disableUploads = (summary?.uploaded || 0) > 0; // lock picking new files once at least one uploaded
+
+
 
   /* ---------- stepper state ---------- */
   const filesSelected = !!batch && (batch.items?.length || 0) > 0;
@@ -394,27 +400,26 @@ export default function BulkUploadBatch() {
   return (
     <Container fluid className="py-4 px-3 bulk-container" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <BulkTiles />
+<Row className="mb-3">
+  <Col className="d-flex align-items-center">
+    <div className="d-flex align-items-center gap-3 small text-muted ms-auto">
+      {processing && <span className="text-warning">Processing…</span>}
+      {processError && <span className="text-danger">Process failed</span>}
+      {processMessage && !processing && (
+        <span className="text-success">{processMessage}</span>
+      )}
+      {allLastLoadedAt ? `Last Fetched: ${new Date(allLastLoadedAt).toLocaleString()}` : ""}
 
-      {/* Header */}
-      <Row className="mb-3">
-        <Col className="d-flex align-items-center justify-content-between">
-          {/* <h5 style={styles.cardTitle}>Bulk Upload</h5> */}
-          <div className="d-flex align-items-center gap-3 small text-muted">
-            {processing && <span className="text-warning">Processing…</span>}
-            {processError && <span className="text-danger">Process failed</span>}
-            {processMessage && !processing && <span className="text-success">{processMessage}</span>}
-            {allLastLoadedAt ? `Last loaded: ${new Date(allLastLoadedAt).toLocaleString()}` : ""}
+      {autoRefreshing && (
+        <span className="d-inline-flex align-items-center gap-1 text-primary" title="Refreshing…">
+          <Spinner animation="border" size="sm" />
+          Refreshing…
+        </span>
+      )}
+    </div>
+  </Col>
+</Row>
 
-            {/* NEW: tiny loader during auto-refresh */}
-            {autoRefreshing && (
-              <span className="d-inline-flex align-items-center gap-1 text-primary" title="Refreshing…">
-                <Spinner animation="border" size="sm" />
-                Refreshing…
-              </span>
-            )}
-          </div>
-        </Col>
-      </Row>
 
       <Row className="g-0">
         <Col xs={12} className="px-0 d-flex flex-column" style={{ minHeight: 0 }}>
@@ -601,8 +606,8 @@ export default function BulkUploadBatch() {
                   <thead className="table-header-orange">
                     <tr style={{ textAlign: "" }}>
                       <th style={{ width: 40 }}>#</th>
-                      <th style={{ width: 250 }}>Original Filename</th>
-                      <th style={{ width: 80 }}>Status</th>
+                      <th style={{ width: 200 }}>Original Filename</th>
+                      <th style={{ width: 100 }}>Status</th>
                       {/* <th style={{ width: 320 }}>File Path</th> */}
                       {/* <th style={{ width: 260 }}>Resume ID</th> */}
                       {/* <th style={{ width: 200 }}>Created By</th> */}

@@ -1,36 +1,30 @@
 // src/pages/BulkTiles.jsx
 import React from "react";
-import { Button } from "react-bootstrap";
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export default function BulkTiles() {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const go = (to) => navigate(to);
-
-  const isUpload = pathname === "/bulk-upload";
-  const isAssign = pathname === "/candidate-assign";
+  const items = [
+    { to: "/bulk-upload", label: "Bulk Upload" },
+    { to: "/candidate-assign", label: "Candidate Assign" },
+  ];
 
   return (
-    <div className="d-flex gap-2 mb-3">
-      <Button
-        type="button"
-        className="px-4 btn btn-secondary tile-btn"
-        active={isUpload}
-        onClick={() => go("/bulk-upload")}
-      >
-        Bulk Upload
-      </Button>
-
-      <Button
-        type="button"
-        className="px-4 btn btn-secondary tile-btn"
-        active={isAssign}
-        onClick={() => go("/candidate-assign")}
-      >
-        Candidate Assign
-      </Button>
-    </div>
+    <nav className="top-tabs mb-3" role="navigation" aria-label="Bulk actions">
+      <ul className="top-tabs__list">
+        {items.map((it) => (
+          <li key={it.to} className="top-tabs__item">
+            <NavLink
+              to={it.to}
+              end
+              className={({ isActive }) =>
+                "top-tabs__link" + (isActive ? " active" : "")
+              }
+            >
+              {it.label}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
   );
 }

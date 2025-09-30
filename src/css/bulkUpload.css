@@ -301,3 +301,61 @@
   font-weight:500;
   color:#162b75;
 }
+
+/* === Top text nav (matches screenshot) === */
+:root {
+  --tab-active: #ff7043;   /* orange active text */
+  --tab-inactive: #64748b; /* slate-ish */
+  --tab-underline: #2d7ff9;/* blue underline */
+}
+
+/* Top text nav: no background */
+.top-tabs {
+  background: transparent !important;
+  /* keep the subtle bottom rule; remove if you don't want it */
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+.top-tabs__list {
+  margin: 0;
+  padding: 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 32px;              /* spacing between items */
+  list-style: none;
+}
+
+.top-tabs__item { display: flex; }
+
+.top-tabs__link {
+  position: relative;
+  display: inline-block;
+  padding: 10px 0 12px;   /* a bit of air above the baseline */
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--tab-inactive);
+  transition: color .15s ease;
+}
+
+.top-tabs__link:hover,
+.top-tabs__link:focus-visible {
+  color: #334155;         /* slightly darker on hover */
+  outline: none;
+}
+
+.top-tabs__link.active {
+  color: var(--tab-active);
+}
+
+/* the thin blue underline only under the active item */
+.top-tabs__link.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  bottom: -1px;          /* sits on top of the bar's bottom rule */
+  background: var(--tab-underline);
+  border-radius: 2px;
+}
