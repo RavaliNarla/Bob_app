@@ -81,8 +81,16 @@ const Approvals = () => {
       // ✅ get job postings
       const responseData = await apiService.getApprovalstatus(user.userid);
       console.log("Job Postings Response:", responseData);
+
       if (responseData && Array.isArray(responseData.data)) {
-        setJobPostings(responseData.data);
+        // 🔽 Sort by requisition_code in descending order
+        const sortedData = responseData.data.sort((a, b) => {
+          const numA = parseInt(a.requisition_code.replace(/\D/g, ""), 10);
+          const numB = parseInt(b.requisition_code.replace(/\D/g, ""), 10);
+          return numB - numA; // Descending
+        });
+
+        setJobPostings(sortedData);
       } else {
         setError("No Approvals: Unexpected data format.");
       }
@@ -149,6 +157,19 @@ const Approvals = () => {
         .includes(selectedStatus.toLowerCase());
 
     return matchesSearch && matchesStatus;
+  });
+
+  // 🔽 Sort descending by requisition_code
+  const sortedApprovals = [...filteredApprovals].sort((a, b) => {
+    const jobA = jobPostings.find((j) => j.requisition_id === a.entityId);
+    const jobB = jobPostings.find((j) => j.requisition_id === b.entityId);
+
+    if (!jobA || !jobB) return 0;
+
+    const numA = parseInt(jobA.requisition_code.replace(/\D/g, ""), 10);
+    const numB = parseInt(jobB.requisition_code.replace(/\D/g, ""), 10);
+
+    return numB - numA; // Descending
   });
 
   const handleApprove = async () => {
@@ -270,7 +291,7 @@ const Approvals = () => {
         <div className="text-center text-muted py-4">No records for approval.</div>
       ) : (
         <Accordion activeKey={activeKey}>
-          {filteredApprovals.map((approval, index) => {
+          {sortedApprovals.map((approval, index) => {
             const job = jobPostings.find((j) => j.requisition_id === approval.entityId);
             return (
               <Accordion.Item

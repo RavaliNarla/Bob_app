@@ -134,7 +134,11 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
       comments: r?.comments ?? r?.comments ?? r?.remark ?? "-",
     }));
 
-    setTrailData(normalized);
+    const sortedApprovals = [...normalized].sort(
+      (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
+    );
+
+    setTrailData(sortedApprovals);
   } catch (err) {
     console.error("Approval trail fetch error:", err);
     setTrailError("Failed to load approval details. Please try again.");
