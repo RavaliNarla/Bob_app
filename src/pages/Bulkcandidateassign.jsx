@@ -208,12 +208,13 @@ export default function BulkCandidateAssign() {
             <Col md={4}>
               <Form.Label className="mb-1">Requisition</Form.Label>
               <Form.Select
+              className="requisition"
                 size="sm"
                 value={selectedReq}
                 onChange={(e) => setSelectedReq(e.target.value)}
                 disabled={loadingReq}
               >
-                <option value="">
+                <option value="" className="reqvalues">
                   {loadingReq ? "Loading…" : "Select requisition"}
                 </option>
                 {requisitions.map((r) => (

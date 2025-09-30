@@ -97,6 +97,7 @@
 .req_dropdown {
   max-height: 250px;
   overflow-y: auto;
+      overflow-x: hidden;
 }
 
 /* Menu item style */
@@ -313,7 +314,7 @@
 .top-tabs {
   background: transparent !important;
   /* keep the subtle bottom rule; remove if you don't want it */
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #ccc;
 }
 
 
@@ -326,7 +327,7 @@
   list-style: none;
 }
 
-.top-tabs__item { display: flex; }
+.top-tabs__item { display: flex; font-size:14px;}
 
 .top-tabs__link {
   position: relative;
@@ -356,6 +357,26 @@
   right: 0;
   height: 3px;
   bottom: -1px;          /* sits on top of the bar's bottom rule */
-  background: var(--tab-underline);
+  background: #ff7043;
   border-radius: 2px;
+}
+.requisition{
+  word-wrap: break-word;
+    text-overflow: ellipsis;
+    word-break: break-all;
+}
+.requisition .reqvalues{
+        display: block;
+    width: 400px;
+    padding: var(--bs-dropdown-item-padding-y) var(--bs-dropdown-item-padding-x);
+    clear: both;
+    font-weight: 400;
+    color: var(--bs-dropdown-link-color);
+    text-align: inherit;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+    border-radius: var(--bs-dropdown-item-border-radius, 0);
+    white-space: break-spaces;
+    word-break: break-word;
 }

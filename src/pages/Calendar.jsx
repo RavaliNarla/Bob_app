@@ -277,7 +277,7 @@ export default function Calendar() {
                     <Card className="border-0 shadow-sm">
                       <Card.Body className="d-flex align-items-center">
                         <Placeholder as="div" animation="glow" className="me-3">
-                          <Placeholder style={{ width: 42, height: 42, borderRadius: 9999 }} />
+                          <Placeholder style={{ width: 30, height: 30, borderRadius: 9999 }} />
                         </Placeholder>
                         <div className="flex-grow-1">
                           <Placeholder as="div" animation="glow"><Placeholder xs={6} /></Placeholder>
@@ -305,7 +305,7 @@ export default function Calendar() {
               <Col style={{ paddingLeft: '0px' }}>
                 <Card className="border-0 shadow-sm">
                   <Card.Body className="d-flex align-items-center">
-                    <Image roundedCircle width={42} height={42} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
+                    <Image roundedCircle width={30} height={30} src={profileIcon} alt={ev.person} className="me-3 object-fit-cover" />
                     <div className="flex-grow-1">
                       <div className="fw-bold text-muted fontbold">{ev?.requisitionCode} - {ev.title}</div>
                       <div className="text-muted small fontregular">{ev.person} | Interviewer: {ev?.interviewerName}</div>

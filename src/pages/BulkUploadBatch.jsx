@@ -193,7 +193,11 @@ export default function BulkUploadBatch() {
     return { total, uploaded, failed, uploading, queued, pct };
   }, [batch]);
 
-  const onPickClick = () => fileInputRef.current?.click();
+// Update onPickClick to bail when locked
+const onPickClick = () => {
+  if (disableUploads) return;
+  fileInputRef.current?.click();
+};
   const onPick = (e) => {
     const files = e.target.files;
     if (!files?.length) return;
@@ -303,7 +307,9 @@ export default function BulkUploadBatch() {
   };
 
   // visibility / lock
-const disableUploads = (summary?.uploaded || 0) > 0; // lock picking new files once at least one uploaded
+// Replace your current disableUploads line with this:
+const disableUploads = !!batch && (batch.items?.length || 0) > 0; 
+// ^ locks as soon as files are loaded (covers steps 2 & 3)
 
 
 
@@ -490,6 +496,7 @@ const disableUploads = (summary?.uploaded || 0) > 0; // lock picking new files o
                   hidden
                   accept=".pdf,.doc,.docx,.rtf,.odt,.txt,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   onChange={onPick}
+                  disabled={disableUploads}
                 />
 
                 <div
@@ -497,8 +504,10 @@ const disableUploads = (summary?.uploaded || 0) > 0; // lock picking new files o
                   role="button"
                   tabIndex={0}
                   aria-label="Select resume files"
+                  aria-disabled={disableUploads}     
                   onClick={onPickClick}
                   onKeyDown={onDropzoneKey}
+                  style={disableUploads ? { pointerEvents: "none", opacity: 0.6 } : undefined}  // <-- add
                 >
                   <IconFilePlus />
                   <div className="mt-2 fileupload">Click to select resume files</div>
