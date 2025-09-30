@@ -303,6 +303,7 @@ const onPickClick = () => {
     if (s === "UPLOADED") return "success";
     if (s === "FAILED") return "danger";
     if (s === "PENDING") return "warning";
+    if (s==="COMPLETED") return "success";
     return "secondary";
   };
 
@@ -611,7 +612,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
 
             <Card.Body className="p-0 d-flex flex-column row" style={{ margin: "20px" }}>
               <div className="accordion-body" style={{ flex: 1, overflow: "auto" }}>
-                <Table hover responsive className="req_table mt-2" style={{ tableLayout: "fixed" }}>
+                <Table hover responsive className="req_table mt-2 bulkupload_table" style={{ tableLayout: "fixed" }}>
                   <thead className="table-header-orange">
                     <tr style={{ textAlign: "" }}>
                       <th style={{ width: 40 }}>#</th>
@@ -658,7 +659,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                             {/* <td>{r.updated_date ? new Date(r.updated_date).toLocaleString() : "-"}</td> */}
 
                             {/* ADD: Reason (only for FAILED) */}
-                            <td className={isFailed ? "text-danger" : ""} style={styles.truncate(360)} title={isFailed ? reason || "Unknown error" : ""}>
+                            <td className={isFailed ? "p-0 text-decoration-none" : ""} style={styles.truncate(360)} title={isFailed ? reason || "Unknown error" : ""}>
                               {isFailed ? reason || "Unknown error" : ""}
                             </td>
 
@@ -673,7 +674,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                                     style={{ width: 28, height: 28, borderRadius: "50%" }}
                                     onClick={() => onDeleteRow(r.resume_id)}
                                   >
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-danger">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="iconhover">
                                       <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
                                       <path d="M10 11v7M14 11v7" />
