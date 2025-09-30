@@ -336,8 +336,8 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
     ctaLabel = syncActive
       ? "Processing…"
       : isCoolingDown
-      ? `Sync (${cooldownLeft}s)`
-      : "Sync";
+      ? `Process (${cooldownLeft}s)`
+      : "Process and Sync";
     ctaDisabled = syncActive || isCoolingDown;
     ctaHandler = onSyncAll;
   }
