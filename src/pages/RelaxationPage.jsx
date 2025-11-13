@@ -79,9 +79,9 @@ const RelaxationPage = () => {
     }
   
     setFormData(data);
-  console.log("data", data);
-  console.log("isCreateNew", isCreateNew);
-  console.log("selectedPolicyId", selectedPolicyId);
+  // console.log("data", data);
+  // console.log("isCreateNew", isCreateNew);
+  // console.log("selectedPolicyId", selectedPolicyId);
   if (!isCreateNew && !selectedPolicyId) {
     
     toast.error("No policy selected to update. Please create or select a policy first.");
@@ -91,7 +91,7 @@ const RelaxationPage = () => {
       if (isCreateNew) {
         // 🔹 Save as NEW policy
         const response = await apiService.saveRelaxation(data);
-        console.log("response", response);
+        // console.log("response", response);
         if (response?.success) {
           toast.success(response?.message|| "Relaxation Policy created successfully!");
           setRelaxationPolicies((prev) => [...prev, response.data]);
@@ -103,12 +103,12 @@ const RelaxationPage = () => {
         }
       } else {
         // 🔹 Update existing policy
-        console.log("Updating existing policy...");
+        // console.log("Updating existing policy...");
   
         const payload = { ...data };
   
         const response = await apiService.updateRelaxation(selectedPolicyId, payload);
-        console.log("Update response:", response);
+        // console.log("Update response:", response);
   
         if (response?.success === true) {
           toast.success(response?.message || "Relaxation Policy updated successfully!");

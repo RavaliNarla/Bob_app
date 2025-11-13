@@ -77,7 +77,7 @@ export default function DownloadReqPdfButton(props) {
     const { positions } = await loadDataIfNeeded();
 
     if (!Array.isArray(positions) || positions.length === 0) {
-      console.log("No positions data yet for this requisition.");
+      // console.log("No positions data yet for this requisition.");
     //  setErr("No position data yet for this requisition.");
     toast.info("No position data yet for this requisition.");
       return;

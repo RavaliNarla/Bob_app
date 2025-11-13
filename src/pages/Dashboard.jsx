@@ -109,9 +109,9 @@ export default function Dashboard() {
     // 📌 Fetch metrics (includes upcoming interviews and open positions)
     apiService.getDashboardMetrics()
       .then(data => {
-        console.log("Dashboard  Data:", data);
-        console.log("offer_status  Data:", data?.offer_status);
-        console.log("interviews  Data:", data?.interviews_by_day);
+        // console.log("Dashboard  Data:", data);
+        // console.log("offer_status  Data:", data?.offer_status);
+        // console.log("interviews  Data:", data?.interviews_by_day);
         setDashboardJson({
           offer_status: data?.offer_status || [],
           offers_by_day: data?.offers_by_day || [],
@@ -124,7 +124,7 @@ export default function Dashboard() {
       })
       .catch(err => console.error("Error fetching metrics:", err));
   }, []);
-  console.log("Dashboard JSON:", setDashboardJson);
+  // console.log("Dashboard JSON:", setDashboardJson);
   // Chart Data
   const allDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 

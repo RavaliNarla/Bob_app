@@ -43,7 +43,7 @@ const Position = () => {
         apiService.getallJobGrade(),
         apiService.getallDepartment()
       ]);
-console.log("Position Response:", deptRes);
+// console.log("Position Response:", deptRes);
       setPositions(posRes.data.data || posRes.data || []);
       setJobGrades(gradeRes.data.data || gradeRes.data || []);
       setDepartments(deptRes.data.data || deptRes.data || []);
@@ -54,7 +54,7 @@ console.log("Position Response:", deptRes);
       setLoading(false);
     }
   };
-console.log("Position grades:", jobGrades);
+// console.log("Position grades:", jobGrades);
   useEffect(() => {
     fetchData();
   }, []);
@@ -96,7 +96,7 @@ console.log("Position grades:", jobGrades);
   toast.success("Position updated successfully");
 }
 else {
-  console.log("Adding Position:", currentPosition);
+  // console.log("Adding Position:", currentPosition);
         await apiService.addPosition(currentPosition);
         toast.success("Position added successfully");
       }

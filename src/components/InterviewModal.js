@@ -334,7 +334,7 @@ useEffect(() => {
 
   const onSave = () => {
     if (!selectedSlot && !(isReschedule && interviewData.interview_time)) return;
-      console.log(interviewData)
+      // console.log(interviewData)
       let interviewobj={
       interview_date: interviewData.interview_date,
       interview_time: String(interviewData.interview_time).slice(0, 5), // "HH:mm"
@@ -395,7 +395,7 @@ useEffect(() => {
       interview_date: dateIST,
       interview_time: hhmm,
     }));
-    console.log("interviewData222",  interviewData);
+    // console.log("interviewData222",  interviewData);
   };
 
   const minDateIST = ymdInIST(new Date());
@@ -453,8 +453,8 @@ useEffect(() => {
       });
 
       setSlots(nextSlots);
-      console.log("Panel slots data:", data);
-      console.log("Filtered Panel slots:", nextSlots);
+      // console.log("Panel slots data:", data);
+      // console.log("Filtered Panel slots:", nextSlots);
     } catch (err) {
       setSlotsError(err.message || "Failed to load panel slots");
     } finally {

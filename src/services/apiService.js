@@ -25,10 +25,10 @@ function getToken() {
     const decoded = decodeJWT(token);
     if (decoded?.exp) {
       const expiry = new Date(decoded.exp * 1000);
-      console.log("🔑 Token will expire at:", expiry.toLocaleString());
+      // console.log("🔑 Token will expire at:", expiry.toLocaleString());
 
       const timeLeft = expiry.getTime() - Date.now();
-      console.log("⏳ Time left (ms):", timeLeft, "≈", Math.round(timeLeft / 60000), "minutes");
+      // console.log("⏳ Time left (ms):", timeLeft, "≈", Math.round(timeLeft / 60000), "minutes");
 
       if (timeLeft < 3 * 60 * 1000) {
         console.warn("⚠️ Token expiring soon! Refresh flow will trigger soon.");
@@ -146,7 +146,7 @@ api.interceptors.response.use(
       try {
         await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
 
-        console.log("✅ Token refreshed (api). Retrying:", originalRequest.url);
+        // console.log("✅ Token refreshed (api). Retrying:", originalRequest.url);
         return api(originalRequest); // retry original request on api
       } catch (err) {
         console.error("⛔ Refresh failed (api). Redirecting to login");
@@ -201,7 +201,7 @@ apis.interceptors.response.use(
       try {
         await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
 
-        console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
+        // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
       } catch (err) {
         console.error("⛔ Refresh failed (apis). Redirecting to login");
@@ -249,7 +249,7 @@ candidateApi.interceptors.response.use(
       try {
         await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
 
-        console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
+        // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
       } catch (err) {
         console.error("⛔ Refresh failed (apis). Redirecting to login");
@@ -286,9 +286,9 @@ nodeApi.interceptors.response.use(
         // Try refreshing token automatically; backend reads refresh cookie
         await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
 
-        console.log("Token refreshed and original request retried", originalRequest);
+        // console.log("Token refreshed and original request retried", originalRequest);
         // Retry the original request; cookies are sent automatically
-        console.log("🔄 Token refresh successful, retrying original request");
+        // console.log("🔄 Token refresh successful, retrying original request");
         return nodeApi(originalRequest);
       } catch (err) {
         // Refresh failed → clear user and redirect to login
@@ -442,7 +442,7 @@ updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data
 applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
 
 
-parseResume: (formData) => parseResumeApi.post("/parse-resume2", formData),
+parseResume: (formData) => parseResumeApi.post("/parseresume", formData),
 
   // Candidate Registration (Node API - bobbe)
   candidateRegister: (data) =>

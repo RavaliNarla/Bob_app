@@ -72,9 +72,9 @@ function Drawer({
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false); // edit latest only
   // console.log(candidate)
-   console.log("interviewer",interviewer);
+  //  console.log("interviewer",interviewer);
   //  console.log("interviewFeedBacks",interviewFeedBacks);
-    console.log("feedbacks",feedbacks);
+    // console.log("feedbacks",feedbacks);
    
   // interviewer info (read-only — from candidate)
   const interviewerName = interviewer?.interviewer;
@@ -141,7 +141,7 @@ function Drawer({
       };
 
       const res = await apiService.postFeedback(payload);
-      console.log("res",res);
+      // console.log("res",res);
       if(res.status===200)
       {
          const feedbackRes = await apiService.getfeedback(candidate.application_id);

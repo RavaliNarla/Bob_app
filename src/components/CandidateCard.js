@@ -115,7 +115,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
     const [shouldRefresh, setShouldRefresh] = useState(0);
 
     const handleCloseModal = () => {
-        console.log("this called")
+        // console.log("this called")
         setShouldRefresh(prev => prev + 1);
         setShowCandidatePortal(false);    // Close modal
         // Trigger data refresh
@@ -164,21 +164,21 @@ const CandidateCard = ({ setTriggerDownload }) => {
     }, [selectedRequisitionId]);
 
     useEffect(() => {
-        console.log("ravali")
+        // console.log("ravali")
         const fetchCandidates = async () => {
             setCandidates([]);
             setInterviewed([]);
             setOffered([]);
-            console.log("Fetching candidates for position ID:", selectedPositionId);
+            // console.log("Fetching candidates for position ID:", selectedPositionId);
 
             if (selectedRequisitionId && selectedPositionId) {
                 // Correctly access the data property of the response object
                 const fetchedCandidatesResponse = await getCandidatesByPosition(selectedPositionId);
-                console.log("Fetched candidates response:", fetchedCandidatesResponse);
+                // console.log("Fetched candidates response:", fetchedCandidatesResponse);
               //  const fetchedCandidates = fetchedCandidatesResponse || fetchedCandidatesResponse?.data || [];//
                 //const fetchedCandidatesResponse =  await axios.get('http://192.168.20.111:8081/api/candidates/details-by-position/' + selectedPositionId);
                  const fetchedCandidates = fetchedCandidatesResponse?.data|| [];
-                console.log("Fetched candidates for position:", fetchedCandidates);
+                // console.log("Fetched candidates for position:", fetchedCandidates);
 
                 // Filter for each column based on application_status
                 const shortlistedCandidates = fetchedCandidates.filter(
@@ -196,7 +196,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                 const offeredCandidates = fetchedCandidates.filter(
                     candidate => candidate.application_status === 'Offered'
                 );
-                console.log("Interviewed Candidates", interviewedCandidates);
+                // console.log("Interviewed Candidates", interviewedCandidates);
                 setCandidates(shortlistedCandidates);
                 setInterviewed(interviewedCandidates);
                 setOffered(offeredCandidates);
@@ -395,14 +395,14 @@ const CandidateCard = ({ setTriggerDownload }) => {
       };
     const handleScheduleInterview = async (interviewData) => {
         // this.setState({ isLoading: true });
-        console.log("Scheduling interview with data:", interviewData);
+        // console.log("Scheduling interview with data:", interviewData);
         if (!interviewCandidate || !interviewData.interview_date || !interviewData.interview_time) {
             showToast("Please select both interview date and time.", "warning");
             return;
         }
 
         const timeHHMM = String(interviewData.interview_time).slice(0, 5);
-        console.log(interviewData)
+        // console.log(interviewData)
         const interviewPayload = {
             // candidate_id: interviewCandidate?.candidate_id,
             application_id: interviewCandidate?.application_id,
@@ -423,7 +423,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
         try {
             const response = await apiService.scheduleInterview(interviewPayload);
-            console.log("Interview scheduled response:", response);
+            // console.log("Interview scheduled response:", response);
             // const response = await fetch(API_ENDPOINTS.SCHEDULE_INTERVIEW, {
             //     method: "PUT",
             //     headers: {
@@ -506,7 +506,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
                     joining_date:joiningDate,
                 };
             const response = await apiService.sendOffer(payload);
-            console.log("Offer response:", response?.status);
+            // console.log("Offer response:", response?.status);
                 
         if (response?.status === 200) {
                 const updatedCandidate = {
@@ -666,18 +666,18 @@ const CandidateCard = ({ setTriggerDownload }) => {
         setSelectedInterview(null);
 
         if (c) {
-            console.log("----------------------------", c)
+            // console.log("----------------------------", c)
             try {
                 const res = await apiService.createInterview(c.application_id);
             
-                console.log("res111", res);
+                // console.log("res111", res);
             
                 if (res && res.data) {
                     setSelectedInterview(res.data);
                    // console.log("SelectedInterview", res.data); // ✅ use res.data directly
             
                     const feedbackRes = await apiService.getfeedback(c.application_id);
-                    console.log("feedbackRes", feedbackRes);
+                    // console.log("feedbackRes", feedbackRes);
             
                     if (feedbackRes) {
                         setInterviewFeedBack(feedbackRes?.data);
@@ -714,10 +714,10 @@ const CandidateCard = ({ setTriggerDownload }) => {
             //     position_id: selectedPositionId,
             // };
             const response = await apiService.createInterview(candidate.application_id);
-            console.log("response", response);
+            // console.log("response", response);
         
             const interviewDetails = response.data || response;
-            console.log("interviewDetails", interviewDetails);
+            // console.log("interviewDetails", interviewDetails);
             if (interviewDetails && interviewDetails.scheduled_at) {
                 const scheduleAt = interviewDetails.scheduled_at
                     ? new Date(interviewDetails.scheduled_at)

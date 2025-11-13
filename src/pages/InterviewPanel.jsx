@@ -36,7 +36,7 @@ const InterviewPanel = () => {
       setLoading(true);
       const res = await apiService.getInterviewPanels(); // your GET call
       setPanels(res?.data || []); // adjust according to response structure
-      console.log("Fetched panels:", res?.data);
+      // console.log("Fetched panels:", res?.data);
     } catch (err) {
       console.error("Failed to fetch panels:", err);
     } finally {

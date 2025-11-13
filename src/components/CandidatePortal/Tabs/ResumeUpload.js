@@ -142,7 +142,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     parseFormData.append("resume", resumeFile);
     const parseResponse = await apiService.parseResume(parseFormData);
     const parsedData = parseResponse?.data || parseResponse;
-    console.log("Parsed resume:", parsedData);
+    // console.log("Parsed resume:", parsedData);
 
     setParsedData(parsedData);
 
@@ -156,7 +156,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
       password: encryptedPassword,
     });
     const registerResult = registerResponse?.data || registerResponse;
-    console.log("Candidate registered:", registerResult);
+    // console.log("Candidate registered:", registerResult);
 
     const candidateId = registerResult?.candidate_id;
     if (!candidateId) throw new Error("Candidate registration did not return candidate_id");
@@ -169,7 +169,7 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
 
     const uploadResponse = await apiService.uploadResume(uploadFormData);
     const uploadResult = uploadResponse?.data || uploadResponse;
-    console.log("Resume upload successful:", uploadResult);
+    // console.log("Resume upload successful:", uploadResult);
 
     if (!uploadResult?.public_url) {
       throw new Error("Upload API did not return a valid public_url");

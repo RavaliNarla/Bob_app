@@ -107,7 +107,7 @@ const Department = () => {
         updatedDepts[editIndex] = updatedDept;
         setDepts(updatedDepts);
       } else {
-        console.log("Adding new department:", currentDept);
+        // console.log("Adding new department:", currentDept);
         const response = await apiService.addDepartment(currentDept);
         const newDept = response.data?.data || currentDept;
 

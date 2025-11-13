@@ -28,8 +28,8 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
           apiService.getAllRelaxationType(),
           apiService.getAllCategories(),
         ]);
-        console.log("typesResp", typesResp);
-        console.log("categoriesResp", categoriesResp);
+        // console.log("typesResp", typesResp);
+        // console.log("categoriesResp", categoriesResp);
 
         // 🔹 Map types to objects with name + input
         const typeObjs = typesResp.data.map(t => ({
@@ -66,7 +66,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
       setLoading(true);
       try {
         const response = await apiService.getAllSpecialCategories();
-        console.log("response", response);
+        // console.log("response", response);
         const formatted = Array.isArray(response.data)
           ? response.data.map(cat => ({
               special_category_id: cat.special_category_id,

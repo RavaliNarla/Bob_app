@@ -16,7 +16,7 @@ const Register = () => {
   const SECRET_KEY = "fdf4-832b-b4fd-ccfb9258a6b3";
   const navigate = useNavigate();
   const authUser = useSelector((state) => state.user.authUser.user);
-  console.log(authUser);
+  // console.log(authUser);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -42,7 +42,7 @@ const Register = () => {
     try {
       const res = await apiService.getRegister();
       setUsersData(res);
-      console.log("Fetched users:", res);
+      // console.log("Fetched users:", res);
     } catch (err) {
       console.error("Failed to fetch users:", err);
     }

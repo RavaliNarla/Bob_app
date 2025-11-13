@@ -8,9 +8,9 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
   const [formData, setFormData] = useState(initialData);
   const user = useSelector((state) => state.user.user);
   const candidateId = useSelector((state) => state.user.candidateId)
-   console.log("Redux user state:", candidateId);
+  //  console.log("Redux user state:", candidateId);
   // const candidateId = user?.candidate_id;
-  console.log('selectedPositionId: ', selectedPositionId)
+  // console.log('selectedPositionId: ', selectedPositionId)
 
 
    const [selectedIdProof, setSelectedIdProof] = useState('');
@@ -21,7 +21,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
   const [aadharDob, setAadharDob] = useState(""); 
    // Sync formData and selectedIdProof with initialData
   useEffect(() => {
-    console.log( 'initialData',initialData )
+    // console.log( 'initialData',initialData )
     setFormData(initialData);
     setSelectedIdProof(initialData.id_proof || '');
     setDocumentUrl(initialData.document_url || '');
@@ -104,7 +104,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
         nationality_id: formData.nationality_id || '',
         education_qualification: formData.education_qualification || ''
       };
-        console.log("candidatePayload",candidatePayload);
+        // console.log("candidatePayload",candidatePayload);
 
       const response = await apiService.updateCandidates(candidatePayload);
       toast.success('Candidate data updated successfully!');
@@ -113,7 +113,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
         position_id: selectedPositionId,
         candidate_id: candidateId,
       });
-      console.log('applyjob' , applyjob);
+      // console.log('applyjob' , applyjob);
       if (onSubmitSuccess) {
         onSubmitSuccess();  // 👈 This will tell parent to close modal
       }
@@ -138,7 +138,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
         logger: (m) => console.log(m),
       });
 
-      console.log("Extracted text:", text);
+      // console.log("Extracted text:", text);
 
       // Step 1: Find DOB near "DOB"
       let extractedDob = "";
@@ -178,7 +178,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
     }
   };
   const handleDocumentUpload = async (file) => {
-    console.log("file1111111111",file);
+    // console.log("file1111111111",file);
     try {
       setIsUploading(true);
       const formData = new FormData();
@@ -189,13 +189,13 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
         method: 'POST',
         body: formData,
       });
-    console.log("uploadResponse",uploadResponse);
+    // console.log("uploadResponse",uploadResponse);
       if (!uploadResponse.ok) {
         throw new Error('Failed to upload resume');
       }
 
       const uploadResult = await uploadResponse.json();
-      console.log('Resume upload successful:', uploadResult);
+      // console.log('Resume upload successful:', uploadResult);
      // toast.success('Document uploaded successfully!');
      setDocumentUrl(uploadResult.public_url);
       }
@@ -442,7 +442,7 @@ const ReviewDetails = ({ initialData = {}, onSubmit ,resumePublicUrl, selectedPo
   
 
           {selectedIdProof && (
-            console.log("selectedIdProof",selectedIdProof),
+            // console.log("selectedIdProof",selectedIdProof),
             <div className="">
               <label htmlFor="id_proof_file" className="form-label">
                 Upload {selectedIdProof} Card {isUploading && <span className="spinner-border spinner-border-sm ms-2"></span>}

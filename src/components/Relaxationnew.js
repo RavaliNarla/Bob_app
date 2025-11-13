@@ -136,7 +136,7 @@ const Relaxationnew = ({ vacancies = 10, onRelaxationSave }) => {
 
   const handleSave = async () => {
     const payload = { main, specialsByType };
-    console.log("RELAXATION PAYLOAD:", payload);
+    // console.log("RELAXATION PAYLOAD:", payload);
     alert("Saved!");
     if (onRelaxationSave) onRelaxationSave(payload);
   };

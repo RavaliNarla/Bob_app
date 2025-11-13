@@ -86,7 +86,7 @@ const [trailError, setTrailError] = useState("");
   const [errr, setErrr] = useState({});
   const [selectedReq, setSelectedReq] = useState(null);
   const user = useSelector((state) => state?.user?.user);
-  console.log("user",user)
+  // console.log("user",user)
   //setNoOfApprovals(user?.manager_depth);
   const manager_dept=user?.manager_depth;
   const [noOfApprovals, setNoOfApprovals] = useState(manager_dept);
@@ -188,7 +188,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
       if (responseData && Array.isArray(responseData.data)) {
         setJobPostings(responseData.data);
       } else {
-        console.log("No data")
+        // console.log("No data")
         setError("No requisitions found.");
       }
     } catch (err) {
@@ -300,7 +300,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
     return;
   }
 
-console.log("noOfApprovals",noOfApprovals);
+// console.log("noOfApprovals",noOfApprovals);
   const payload = {
     requisition_id: selectedJobIds,
     job_postings: selectedJobBoards,
@@ -310,7 +310,7 @@ console.log("noOfApprovals",noOfApprovals);
   };
 
   try {
-    console.log("Saving job postings with payload:", payload);
+    // console.log("Saving job postings with payload:", payload);
     await apiService.jobpost(payload);
     toast.success("Job postings updated successfully!");
 
@@ -755,7 +755,7 @@ const fetchRequisitions = async () => {
                         ) : (
                           apiData.map((row, index) => (
                             <tr key={row.position_id || index}>
-                              {console.log(row)}
+                              {/* {console.log(row)} */}
                               <td>{row.position_title}</td>
                               <td>{row.position_code}</td>
                               <td>{row.grade_name}</td>

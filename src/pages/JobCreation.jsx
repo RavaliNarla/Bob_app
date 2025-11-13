@@ -123,7 +123,7 @@ useEffect(() => {
           }))
         );
       }
-      console.log("Fetched master positions:", res.masterPositionsList);
+      // console.log("Fetched master positions:", res.masterPositionsList);
     } catch (error) {
       console.error("Error fetching master positions:", error);
     }
@@ -134,7 +134,7 @@ useEffect(() => {
       if (res.success) {
         setRelaxationPolicies(res.data);
       }
-      console.log("Fetched relaxations:", res.data);
+      // console.log("Fetched relaxations:", res.data);
     } catch (error) {
       console.error("Error fetching relaxations:", error);
     }
@@ -153,13 +153,13 @@ const handleSubmit = async (e) => {
           response = await apiService.jobCreation(formData);
           navigate("/job-postings");
         } else {
-          console.log('Updating job with form data:', formData);
+          // console.log('Updating job with form data:', formData);
           response = await apiService.updateJob(formData);
           onClose();
           if (onUpdateSuccess) onUpdateSuccess(); // 🔥 notify parent
         }
-        console.log('✅ Valid form data:', formData);
-        console.log('✅ API response:', response);
+        // console.log('✅ Valid form data:', formData);
+        // console.log('✅ API response:', response);
         setFormData(initialState);
         setErrors({});
 
@@ -195,9 +195,9 @@ useEffect(() => {
           }))
         );
       }
-      console.log("Fetched master positions:", res.masterPositionsList);
+      // console.log("Fetched master positions:", res.masterPositionsList);
     } catch (error) {
-      console.error("Error fetching master positions:", error);
+      // console.error("Error fetching master positions:", error);
     }
   };
 
@@ -234,8 +234,8 @@ useEffect(() => {
           apiService.getReqData()
         ]);
 
-        console.log('Master Data Response:', masterDataRes);
-       console.log('Requisition Data Response:', requisitionDataRes);
+        // console.log('Master Data Response:', masterDataRes);
+      //  console.log('Requisition Data Response:', requisitionDataRes);
         // const staticJobGrades = [
         //   { job_grade_id: 1, job_scale: "S1","min_salary":20000, "max_salary": 30000 },
         //   { job_grade_id: 2, job_scale: "S2" ,"min_salary":20000, "max_salary": 30000}
@@ -299,7 +299,7 @@ useEffect(() => {
       apiService.getByPositionId(editPositionId).then((response) => {
 
         const selectedPosition = response.data || [];
-      console.log('Selected Position:', selectedPosition);
+      // console.log('Selected Position:', selectedPosition);
 
      // console.log('All Positions:', allPositions);
         // ✅ Pick the exact position using position_id
@@ -374,7 +374,7 @@ useEffect(() => {
   }, [ editPositionId, masterData]);
 const handleInputChange = (e) => {
   const { name, value } = e.target;
- console.log('Input change:', name, value);
+//  console.log('Input change:', name, value);
   setFormData((prev) => ({ ...prev, [name]: value }));
  // ✅ Clear error for this field when it's valid
   setErrors((prev) => ({
@@ -401,7 +401,7 @@ const handleInputChange = (e) => {
     if (selectedPolicy) {
       const allocated = selectedPolicy.relaxation?.allocatedVacancies || 0;
       const vacancies = Number(formData.no_of_vacancies) || 0;
-      console.log('Allocated:', allocated, 'Vacancies:', vacancies);
+      // console.log('Allocated:', allocated, 'Vacancies:', vacancies);
       if (allocated > 0 && vacancies <= allocated) {
         newErrors.no_of_vacancies = `Selected relaxation allows maximum ${allocated} vacancies.`;
       }
@@ -434,10 +434,10 @@ const handleInputChange = (e) => {
   if (name === "country_id") {
     // Convert the value to a number since IDs are numbers
     const countryId = Number(value); 
-    console.log('Selected country ID:', countryId);
+    // console.log('Selected country ID:', countryId);
     if (countryId) {
       // Filter states based on the countryId
-      console.log('All states:', masterData.allStates);
+      // console.log('All states:', masterData.allStates);
       const states = masterData.allStates.filter(
         (s) => s.country_id === countryId
       );
@@ -609,8 +609,8 @@ const handleInputChange = (e) => {
   };
 
 const convertKeysToSnakeCase = (rows, masterData) => {
-  console.log("Converting masterData:", masterData);
-  console.log("Using masterData:",  masterData?.positionTitleOptions);
+  // console.log("Converting masterData:", masterData);
+  // console.log("Using masterData:",  masterData?.positionTitleOptions);
   const asNumberOrZero = (v) =>
     v === "" || v == null ? 0 : Number(v);
 
@@ -623,7 +623,7 @@ const convertKeysToSnakeCase = (rows, masterData) => {
       const item = list.find(
         (obj) => obj && normalize(obj[nameKey]) === normalize(value)
       );
-    console.log("Item found for",value,item)
+    // console.log("Item found for",value,item)
       return item ? item[idKey] : null;
     };
 
@@ -708,11 +708,11 @@ const readExcel = async (file) => {
 
     if (validRows.length > 0) {
       // Convert human-readable Excel values to IDs
-      console.log("masterdata111",masterData)
-      console.log("validRows",validRows)
+      // console.log("masterdata111",masterData)
+      // console.log("validRows",validRows)
       const formattedData = convertKeysToSnakeCase(validRows, masterData);
       setJsonData(formattedData);
-      console.log("Formatted Excel Data:", formattedData);
+      // console.log("Formatted Excel Data:", formattedData);
       //return false;
     }
   };
@@ -754,7 +754,7 @@ const handleUploadSubmit = async () => {
     //   };
     // });
 
-    console.log("Uploading Excel Data:", dataToUpload);
+    // console.log("Uploading Excel Data:", dataToUpload);
     await apiService.uploadJobExcel(dataToUpload);
     setShowUploadModal(false);
     toast.success("Excel data posted successfully!");
@@ -771,7 +771,7 @@ const handleDownloadTemplate = async () => {
   try {
     // Fetch master data
     const masterData = await apiService.getMasterData();
-    console.log("Master Data for Template:", masterData);
+    // console.log("Master Data for Template:", masterData);
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Template");
@@ -829,7 +829,7 @@ const handleDownloadTemplate = async () => {
       col += 2;
       return range;
     };
-console.log("positionslist222",masterData.masterPositionsList)
+// console.log("positionslist222",masterData.masterPositionsList)
     // ----------------------------
     // Populate hidden sheet with lists
     // ----------------------------

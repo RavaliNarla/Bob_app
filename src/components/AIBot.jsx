@@ -17,7 +17,7 @@ const AIBot = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim()) {
-      console.log('Message sent:', message);
+      // console.log('Message sent:', message);
       setMessage('');
     }
   };
@@ -93,7 +93,7 @@ const AIBot = () => {
                 }}
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FFCCBC'}
                 onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgb(255, 231, 222)'}
-                onClick={() => console.log('Get Job Description clicked')}
+                // onClick={() => console.log('Get Job Description clicked')}
               >
                 Get Job Description using AI Prompts
               </div>

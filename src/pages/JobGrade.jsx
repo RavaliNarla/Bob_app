@@ -158,7 +158,7 @@ const JobGrade = () => {
         updatedGrads[editIndex] = updatedGrad;
         setGrads(updatedGrads);
       } else {
-        console.log("Adding new Grade:", currentGrade);
+        // console.log("Adding new Grade:", currentGrade);
         const response = await apiService.addJobGrade(currentGrade);
         const newGrad = response.data?.data || currentGrade;
 

@@ -47,7 +47,7 @@ const Login = () => {
         dispatch(setUser(dbRes));
 
         // console.log("User logged in:", res);
-        console.log("User details from DB:", dbRes);
+        // console.log("User details from DB:", dbRes);
 
         navigate("/dashboard");
       }

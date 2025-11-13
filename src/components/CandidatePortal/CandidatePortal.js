@@ -11,8 +11,8 @@ import apiService from '../../services/apiService';
 const CandidatePortal = ({ selectedPositionId, onSubmitSuccess }) => {
   const user = useSelector((state) => state.user.user);
   const authUser = useSelector((state) => state.user.authUser);
-  console.log("User from Redux:", user);
-  console.log("Auth User from Redux:", authUser);
+  // console.log("User from Redux:", user);
+  // console.log("Auth User from Redux:", authUser);
   const [activeTab, setActiveTab] = useState('resume');
   const [resumeFile, setResumeFile] = useState(null);
   const [ResumePublicUrl, setResumePublicUrl] = useState(null);
@@ -33,7 +33,7 @@ const CandidatePortal = ({ selectedPositionId, onSubmitSuccess }) => {
         const response = await apiService.getCandidateDetails(candidateId);
         if (response.success && response.data) {
           const data = response.data;
-          console.log("Candidate Data:", data);
+          // console.log("Candidate Data:", data);
           if (data) {
             // Map API response to your form fields
             setCandidateData({

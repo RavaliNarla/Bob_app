@@ -106,7 +106,7 @@ const Skill = () => {
           skill_id: skills[editIndex].skill_id,
         };
         await apiService.updateSkill(updatedSkill.skill_id, updatedSkill);
-        console.log("Updating Skill:", updatedSkill);
+        // console.log("Updating Skill:", updatedSkill);
 
         toast.success("Skill updated successfully");
 
@@ -114,7 +114,7 @@ const Skill = () => {
         updatedSkills[editIndex] = updatedSkill;
         setSkills(updatedSkills);
       } else {
-        console.log("Adding new Skill:", currentSkill);
+        // console.log("Adding new Skill:", currentSkill);
         const response = await apiService.addSkill(currentSkill);
         const newSkill = response.data?.data || currentSkill;
 
@@ -134,7 +134,7 @@ const Skill = () => {
 
     try {
       await apiService.deleteSkill(idToDelete);
-      console.log("Deleting Skill ID:", idToDelete);
+      // console.log("Deleting Skill ID:", idToDelete);
       setSkills(skills.filter((skill) => skill.skill_id !== idToDelete));
       toast.success("Skill deleted");
     } catch (err) {

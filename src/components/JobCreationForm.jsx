@@ -35,7 +35,7 @@ const [showRelaxationModal, setShowRelaxationModal] = useState(false);
 useEffect(() => {
   setShowGradeInfo(false);
 }, [formData.grade_id]);
-console.log("Position List:", positionList);
+// console.log("Position List:", positionList);
   // Find the selected requisition's details (handle both string and number id)
   const selectedRequisition = requisitionData.find(
     (req) => String(req.requisition_id) === String(formData.requisition_id)

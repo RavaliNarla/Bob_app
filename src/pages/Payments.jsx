@@ -16,7 +16,7 @@ const Payments = () => {
       const res = await apiService.getPayment();
 
 	  setPaymentData(res?.data?.data || []);
-      console.log("Fetched payments:", res?.data?.data);
+    //   console.log("Fetched payments:", res?.data?.data);
     } catch (err) {
       console.error("Failed to fetch payments:", err);
     }

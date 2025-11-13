@@ -80,7 +80,7 @@ const Approvals = () => {
     try {
       // ✅ get job postings
       const responseData = await apiService.getApprovalstatus(user.userid);
-      console.log("Job Postings Response:", responseData);
+      // console.log("Job Postings Response:", responseData);
 
       if (responseData && Array.isArray(responseData.data)) {
         // 🔽 Sort by requisition_code in descending order
