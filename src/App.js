@@ -28,6 +28,7 @@ import Document from './pages/Document';
 import RelaxationPage from './pages/RelaxationPage';
 import BulkUploadBatch from './pages/BulkUploadBatch';
 import BulkCandidateAssign from './pages/Bulkcandidateassign';
+import CandidateShortlistFlow from './pages/BulkSchedule/CandidateShortlistFlow';
 // import BulkUploadLayout from './pages/BulkUploadLayout';
 import InterviewPanel from './pages/InterviewPanel';
 // Lazy load components
@@ -115,6 +116,7 @@ function App() {
                       <Route path="/bulk-upload" element={<BulkUploadBatch />} />
                       <Route path="/candidate-assign" element={<BulkCandidateAssign />} />
                       <Route path="/interview-panel" element={<InterviewPanel />} />
+                      <Route path="/candidate-bulkshortlist" element={<CandidateShortlistFlow />} />
                     </Route>
                   </Route>
                 </Route>

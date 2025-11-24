@@ -23,6 +23,7 @@ const Sidebar = () => {
     { icon: faCalendar, text: 'Interviews', path: '/interviews' },
     { icon: faCogs, text: 'Relaxation', path: '/relaxation' },
     { icon: faPerson, text: 'Bulk Upload', path: '/bulk-upload' },
+     { icon: faUserFriends, text: 'Bulk Candidate Shortlist', path: '/candidate-bulkshortlist' },
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },

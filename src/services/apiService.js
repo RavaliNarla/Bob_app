@@ -41,7 +41,9 @@ function getToken() {
 
 // Use the environment variables with a fallback to the new URLs you provided.
 // This is the correct way to handle different API services.
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = 'http://192.168.20.115:8081/api/v1';
+//const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const API_BASE_URLS = process.env.REACT_APP_API_BASE_URLS;
 const NODE_API_URL = process.env.REACT_APP_NODE_API_URL;
 const CANDIDATE_API_URL = process.env.REACT_APP_CANDIDATE_API_URL;

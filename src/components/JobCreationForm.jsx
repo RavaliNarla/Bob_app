@@ -3,6 +3,7 @@ import { Button, OverlayTrigger, Popover, Overlay, Modal } from 'react-bootstrap
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import RelaxationPolicyDetails from './RelaxationPolicyDetails';
+import Select from "react-select";
 const JobCreationForm = ({
   formData,
   errors,
@@ -24,7 +25,8 @@ const JobCreationForm = ({
   readOnly = false,
   positionList = [],
   showNextButton = false,
-  relaxationPolicies = []
+  relaxationPolicies = [],
+  interviewPanelOptions =[]
 }) => {
   // Remove modal state, use popover instead
 
@@ -510,7 +512,6 @@ useEffect(() => {
 <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
   <label htmlFor="job_relaxation_policy_id" className="form-label d-flex align-items-center">
     Relaxation Policy <span className="required-asterisk">*</span>
-
     {formData.job_relaxation_policy_id && (
       <button
         type="button"
@@ -522,7 +523,6 @@ useEffect(() => {
       </button>
     )}
   </label>
-
   <select
     id="job_relaxation_policy_id"
     name="job_relaxation_policy_id"
@@ -538,11 +538,43 @@ useEffect(() => {
       </option>
     ))}
   </select>
-
   {errors.job_relaxation_policy_id && (
     <div className="invalid-feedback">{errors.job_relaxation_policy_id}</div>
   )}
 </div>
+
+<div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+  <label htmlFor="interview_panels" className="form-label d-flex align-items-center">
+    Interview Panel <span className="required-asterisk">*</span>
+  </label>
+  <Select
+    id="panels"
+    name="panels"
+    isMulti
+    isDisabled={readOnly}
+    options={interviewPanelOptions?.map((panel) => ({
+      value: panel.panel_id,
+      label: panel.panel_name || `Panel ${panel.panel_id}`,
+    }))}
+    value={interviewPanelOptions?.filter((panel) =>
+      (formData.panels || []).includes(panel.panel_id)
+    ).map((panel) => ({
+      value: panel.panel_id,
+      label: panel.panel_name,
+    }))}
+    onChange={(selectedOptions) => {
+      const selectedValues = selectedOptions.map((option) => option.value);
+      handleInputChange({
+        target: { name: "panels", value: selectedValues },
+      });
+    }}
+    placeholder="Select Panel"
+  />
+  {errors.panels && (
+    <div className="invalid-feedback d-block">{errors.panels}</div>
+  )}
+</div>
+
 
       {/* Relaxation Policy Modal */}
       <Modal 

@@ -107,6 +107,26 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
   const [readOnly, setReadOnly] = useState(readOnlyProp ?? false);
   const [masterPositions, setMasterPositions] = useState([]);
 
+
+  // In JobCreation.jsx, add this state near the top with other states
+const [interviewPanels, setInterviewPanels] = useState([]);
+
+// Add this effect to fetch interview panels
+useEffect(() => {
+  const fetchInterviewPanels = async () => {
+    try {
+      const response = await apiService.getInterviewPanels();
+      console.log("Interview panels:", response.data);
+      if (response.success) {
+        setInterviewPanels(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching interview panels:", error);
+    }
+  };
+  fetchInterviewPanels();
+}, []);
+
 useEffect(() => {
   const fetchMasterData = async () => {
     try {
@@ -342,6 +362,7 @@ useEffect(() => {
             max_salary: selectedPosition.max_salary || '',
             job_relaxation_policy_id: selectedPosition.job_relaxation_policy_id || '',
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
+            panels:selectedPosition.panels || '',
 
           });
           const states = masterData.allStates.filter(
@@ -553,6 +574,9 @@ const handleInputChange = (e) => {
   ) {
     newErrors.min_credit_score = 'Min Credit Score must be a number';
   }
+  if (!formData.panels || formData.panels.length === 0) {
+  newErrors.panels = 'Please select at least one interview panel';
+}
   if (formData.grade_id === '0') {
     // Validate min_salary when grade is 'Others'
     if (!formData.min_salary || isNaN(formData.min_salary) || Number(formData.min_salary) <= 0) {
@@ -573,7 +597,9 @@ const handleInputChange = (e) => {
         Number(formData.max_salary) < Number(formData.min_salary)) {
       newErrors.max_salary = 'Maximum salary cannot be less than minimum salary';
     }
+    
   }
+
   return newErrors;
   };
 
@@ -1002,6 +1028,7 @@ const handleDownloadTemplate = async () => {
                 readOnly={readOnly}
                positionList={masterPositions}
                relaxationPolicies={relaxationPolicies}
+               interviewPanelOptions={interviewPanels}
               />
             )}
           
