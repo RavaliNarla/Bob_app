@@ -921,7 +921,7 @@ const CandidateCard = ({ setTriggerDownload }) => {
 
                     {/* // CandidateCard.js */}
                     {/* <BreadcrumbItem> */}
-                    <Dropdown className="w-100 mb-3" style={{marginRight: '4%'}}>
+                    <Dropdown className="w-100 mb-3">
                         <Dropdown.Toggle className="w-100 text-start select-drop spaceform d-flex justify-content-between align-items-center" style={{ height: '35px', marginTop: '15px', overflow: 'hidden' }}>
                         <span>  {selectedRequisitionCode
                                 ? `${selectedRequisitionCode} - ${jobReqs.find((r) => r.requisition_code === selectedRequisitionCode)

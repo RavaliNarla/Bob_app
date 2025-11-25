@@ -430,7 +430,7 @@ export const apiService = {
   getRecruiterDetails: (email) => nodeApi.post(`/getdetails/users?email=${email}`),
 
 
-  uploadOfferLetter: (data) => api.post("/offer-templates/upload", data, {
+  uploadOfferLetter: (data) => api.post("/offer-templates/upload_offer_letter", data, {
     headers: { "Content-Type": "multipart/form-data" },
   }),
 
