@@ -1,11 +1,13 @@
 // src/pages/BulkTiles.jsx
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 
 export default function BulkTiles() {
+  const { t } = useTranslation("bulkupload");
   const items = [
-    { to: "/bulk-upload", label: "Bulk Upload" },
-    { to: "/candidate-assign", label: "Candidate Assign" },
+    { to: "/bulk-upload", label: t("bulkUpload")  },
+    { to: "/candidate-assign", label: t("candidateAssign") },
   ];
 
   return (

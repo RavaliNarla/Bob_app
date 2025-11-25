@@ -1,0 +1,46 @@
+{
+  "selectStatus": "Select Status",
+
+ "all" : "All",
+ "pendingForApproval": "Pending for Approval",
+  "approved": "Approved",
+  "title": "Title",
+  "requisition": "Requisition",
+  "postings": "Postings",
+  "startdate": "Start Date",
+  "enddate": "End Date",
+  "vacancies": "Vacancies",
+  "status": "Status",
+
+  
+  "viewJobPosting": "View Job Posting",
+  
+  "searchByTitle": "Search by Title",
+
+  "cancel": "Cancel",
+  "submit": "Submit",
+
+   "position": "Position",
+   "positionCode": "Position Code",
+   "grade": "Grade",
+   "actions": "Actions",
+    "reject": "Reject",
+  "approve": "Approve",
+  "rejectRequisition": "Reject Requisition",
+  "description": "Description",
+  "enterRejectionReason": "Enter reason for rejection...",
+
+  "approved_success": "Approved {{count}} requisitions successfully",
+  "select_one_requisition_reject": "Please select at least one requisition to reject.",
+  "enter_description_before_reject": "Please enter a description before rejecting",
+  "user_info_not_available": "User information not available.",
+  "rejected_success": "Rejected the requisition(s) successfully.",
+  "rejected_failed": "Failed to reject requisition(s)",
+  "select_one_requisition_approve": "Please select at least one requisition to approve."
+   
+  
+
+   
+
+
+}

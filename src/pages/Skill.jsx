@@ -16,9 +16,9 @@ import {
   faTrash,
   faSearch
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'react-i18next';
 import apiService from "../services/apiService";
 
 
@@ -35,6 +35,7 @@ const Skill = () => {
   const [errr, setErrr] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const { t } = useTranslation('skill');
 
   useEffect(() => {
     fetchSkill();
@@ -68,10 +69,10 @@ const Skill = () => {
 
   // Step 1: Required fields
   if (!trimmedName) {
-    newErrors.skill_name = "Name is required";
+    newErrors.skill_name = t('name_required');
   }
   // if (!trimmedDesc) {
-  //   newErrors.skill_desc = "Description is required";
+  //   newErrors.skill_desc = t('description_required');
   // }
 
   // Step 2: Only check duplicate name (description can repeat)
@@ -83,7 +84,7 @@ const Skill = () => {
     );
 
     if (isDuplicateName) {
-      newErrors.skill_name = "Skill name already exists";
+      newErrors.skill_name = t('name_exists');
     }
   }
 
@@ -108,7 +109,7 @@ const Skill = () => {
         await apiService.updateSkill(updatedSkill.skill_id, updatedSkill);
         // console.log("Updating Skill:", updatedSkill);
 
-        toast.success("Skill updated successfully");
+        toast.success(t('update_success'));
 
         const updatedSkills = [...skills];
         updatedSkills[editIndex] = updatedSkill;
@@ -118,14 +119,14 @@ const Skill = () => {
         const response = await apiService.addSkill(currentSkill);
         const newSkill = response.data?.data || currentSkill;
 
-        toast.success("Skill added successfully");
+        toast.success(t('save_success'));
         setSkills(prev => [...prev, newSkill]);
         await fetchSkill();
       }
       resetForm();
     } catch (err) {
       console.error("Save Error:", err);
-      toast.error("Save failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -136,10 +137,10 @@ const Skill = () => {
       await apiService.deleteSkill(idToDelete);
       // console.log("Deleting Skill ID:", idToDelete);
       setSkills(skills.filter((skill) => skill.skill_id !== idToDelete));
-      toast.success("Skill deleted");
+      toast.success(t('delete_success'));
     } catch (err) {
       console.error("Delete Error:", err);
-      toast.error("Delete failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -195,8 +196,8 @@ const Skill = () => {
 
   const jobsToDisplay = filteredAndSortedJobs();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="alert alert-danger mt-5">{error}</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
+  if (error) return <div className="alert alert-danger mt-5">{t('error_loading')}</div>;
 
   return (
     <div className="register_container px-5 skillfon py-3">
@@ -212,24 +213,24 @@ const Skill = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup> */}
-      <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Skills</h5>
-      <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+      <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t('skills')}</h5>
+      <Button variant="orange" onClick={() => openModal()}>+ {t('add_skill')}</Button>
       </div>
       {/* <hr /> */}
 
       {jobsToDisplay.length === 0 ? (
-        <p className="text-muted text-center mt-5">No Skill match your criteria.</p>
+        <p className="text-muted text-center mt-5">{t('no_skills_found')}</p>
       ) : (
         <Table responsive hover className="skill_table">
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("skill_name")} style={{ cursor: "pointer", width: "40%" }}>
-                Skill{getSortIndicator("skill_name")}
+                {t('skill_name')}{getSortIndicator("skill_name")}
               </th>
               <th onClick={() => handleSort("skill_desc")} style={{ cursor: "pointer", width: "52%" }}>
-                Description{getSortIndicator("skill_desc")}
+                {t('skill_desc')}{getSortIndicator("skill_desc")}
               </th>
-              <th>Actions</th>
+              <th>{t('actions')}</th>
             </tr>
           </thead>
 
@@ -252,7 +253,7 @@ const Skill = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Skill" : "Add Skill"}
+            {editIndex !== null ? t('edit_skill') : t('add_skill')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -261,12 +262,12 @@ const Skill = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Skill <span className="text-danger">*</span>
+                    {t('skill_name')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter skill"
+                    placeholder={t('skill_name')}
                     value={currentSkill.skill_name}
                     isInvalid={!!errr.skill_name}
                     onChange={(e) =>
@@ -281,12 +282,12 @@ const Skill = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description
+                    {t('skill_desc')}
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t('skill_desc')}
                     value={currentSkill.skill_desc}
                     isInvalid={!!errr.skill_desc}
                     onChange={(e) =>
@@ -304,14 +305,14 @@ const Skill = () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update Skill" : "Save"}
+            {editIndex !== null ? t('update') : t('save')}
           </Button>
         </Modal.Footer>
       </Modal>

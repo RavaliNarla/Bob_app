@@ -6,6 +6,7 @@ import "../css/JobPosting.css";
 import apiService from "../services/apiService";
 import BulkTiles from "./BulkTiles";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   createBatch,
   setActiveBatch,
@@ -32,7 +33,7 @@ import {
 } from "react-bootstrap";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsRotate,faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsRotate, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const styles = {
   cardTitle: {
@@ -55,22 +56,22 @@ const styles = {
 /* inline icons (no extra packages) */
 const IconDoc = ({ color = "currentColor" }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke={color} strokeWidth="1.8"/>
-    <path d="M14 2v6h6" stroke={color} strokeWidth="1.8"/>
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Z" stroke={color} strokeWidth="1.8" />
+    <path d="M14 2v6h6" stroke={color} strokeWidth="1.8" />
   </svg>
 );
 const IconUpload = ({ color = "currentColor" }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <path d="M12 3v12" stroke={color} strokeWidth="1.8"/>
-    <path d="m7 8 5-5 5 5" stroke={color} strokeWidth="1.8"/>
-    <path d="M5 21h14" stroke={color} strokeWidth="1.8"/>
+    <path d="M12 3v12" stroke={color} strokeWidth="1.8" />
+    <path d="m7 8 5-5 5 5" stroke={color} strokeWidth="1.8" />
+    <path d="M5 21h14" stroke={color} strokeWidth="1.8" />
   </svg>
 );
 const IconDb = ({ color = "currentColor" }) => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-    <ellipse cx="12" cy="5" rx="7" ry="3" stroke={color} strokeWidth="1.8"/>
-    <path d="M5 5v7c0 1.66 3.13 3 7 3s7-1.34 7-3V5" stroke={color} strokeWidth="1.8"/>
-    <path d="M5 12v7c0 1.66 3.13 3 7 3s7-1.34 7-3v-7" stroke={color} strokeWidth="1.8"/>
+    <ellipse cx="12" cy="5" rx="7" ry="3" stroke={color} strokeWidth="1.8" />
+    <path d="M5 5v7c0 1.66 3.13 3 7 3s7-1.34 7-3V5" stroke={color} strokeWidth="1.8" />
+    <path d="M5 12v7c0 1.66 3.13 3 7 3s7-1.34 7-3v-7" stroke={color} strokeWidth="1.8" />
   </svg>
 );
 
@@ -84,6 +85,7 @@ const IconFilePlus = () => (
 );
 
 export default function BulkUploadBatch() {
+  const { t } = useTranslation("bulkUpload");
   const dispatch = useDispatch();
   const location = useLocation();
   const {
@@ -139,7 +141,7 @@ export default function BulkUploadBatch() {
     if (!batch) return;
     if (batch.id !== lastToastBatchId.current) {
       lastToastBatchId.current = batch.id;
-      toast.success(`Added ${batch.items?.length || 0} files`);
+      toast.success(t("bulkupload:addedFiles", { count: batch.items?.length || 0 }));
     }
   }, [batch?.id]);
 
@@ -193,11 +195,11 @@ export default function BulkUploadBatch() {
     return { total, uploaded, failed, uploading, queued, pct };
   }, [batch]);
 
-// Update onPickClick to bail when locked
-const onPickClick = () => {
-  if (disableUploads) return;
-  fileInputRef.current?.click();
-};
+  // Update onPickClick to bail when locked
+  const onPickClick = () => {
+    if (disableUploads) return;
+    fileInputRef.current?.click();
+  };
   const onPick = (e) => {
     const files = e.target.files;
     if (!files?.length) return;
@@ -229,8 +231,7 @@ const onPickClick = () => {
   const onDeleteRow = async (resumeId) => {
     try {
       await dispatch(deleteResume(resumeId)).unwrap();
-      toast.success("Deleted");
-    } catch (e) {
+toast.success(t("bulkupload:deleted"));    } catch (e) {
       toast.error(typeof e === "string" ? e : e?.message || "Delete failed / API not ready");
     }
   };
@@ -247,7 +248,7 @@ const onPickClick = () => {
     }
     try {
       await dispatch(fetchAllResumes()).unwrap();
-      toast.success("Synced latest table data");
+     toast.success(t("bulkupload:syncedData"));
     } catch {
       toast.error("Sync failed");
     }
@@ -258,7 +259,7 @@ const onPickClick = () => {
     const res = await dispatch(uploadBatch({ batchId: batch.id }));
     const ok = res?.payload?.uploadedCount || 0;
     if (ok > 0) {
-      toast.success(`Uploaded ${ok} file(s). List refreshed.`);
+      toast.success(t("bulkupload:uploadedAndRefreshed", { count: ok }));
       dispatch(fetchAllResumes());
     } else {
       toast.info("No files uploaded (all failed or none queued).");
@@ -289,13 +290,13 @@ const onPickClick = () => {
       setPage(1);
       setCooldownUntil(0);
       setCooldownLeft(0);
-      toast.info("Reset. Load new files to start again.");
-    } catch {}
+      toast.info(t("bulkupload:resetMessage"));
+    } catch { }
   };
 
   const onSync = () => {
     dispatch(fetchAllResumes());
-    toast.success("Synced latest table data");
+    toast.success(t("bulkupload:syncedData"));
   };
 
   const badgeFor = (status = "") => {
@@ -303,21 +304,21 @@ const onPickClick = () => {
     if (s === "UPLOADED") return "success";
     if (s === "FAILED") return "danger";
     if (s === "PENDING") return "warning";
-    if (s==="COMPLETED") return "success";
+    if (s === "COMPLETED") return "success";
     return "secondary";
   };
 
   // visibility / lock
-// Replace your current disableUploads line with this:
-const disableUploads = !!batch && (batch.items?.length || 0) > 0; 
-// ^ locks as soon as files are loaded (covers steps 2 & 3)
+  // Replace your current disableUploads line with this:
+  const disableUploads = !!batch && (batch.items?.length || 0) > 0;
+  // ^ locks as soon as files are loaded (covers steps 2 & 3)
 
 
 
   /* ---------- stepper state ---------- */
   const filesSelected = !!batch && (batch.items?.length || 0) > 0;
-  const uploadDone   = (summary?.uploaded || 0) > 0;
-  const syncActive   = !!processing;
+  const uploadDone = (summary?.uploaded || 0) > 0;
+  const syncActive = !!processing;
   const syncDone = filesSelected && !!processMessage && !processing;
 
   const step1 = filesSelected ? "completed" : "active";
@@ -336,8 +337,8 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
     ctaLabel = syncActive
       ? "Processing…"
       : isCoolingDown
-      ? `Process (${cooldownLeft}s)`
-      : "Process and Sync";
+        ? `Process (${cooldownLeft}s)`
+        : "Process and Sync";
     ctaDisabled = syncActive || isCoolingDown;
     ctaHandler = onSyncAll;
   }
@@ -401,31 +402,31 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
   let railPct = 0;
   if (filesSelected) {
     if (step2 === "active" || step2 === "completed" || uploadDone) railPct = 50;
-    if (step3 === "active" || step3 === "completed" || syncDone)  railPct = 100;
+    if (step3 === "active" || step3 === "completed" || syncDone) railPct = 100;
   }
 
   return (
     <Container fluid className="py-4 px-3 bulk-container" style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <BulkTiles />
-<Row className="mb-3">
-  <Col className="d-flex align-items-center">
-    <div className="d-flex align-items-center gap-3 small text-muted ms-auto">
-      {processing && <span className="text-warning">Processing…</span>}
-      {processError && <span className="text-danger">Process failed</span>}
-      {processMessage && !processing && (
-        <span className="text-success">{processMessage}</span>
-      )}
-      {allLastLoadedAt ? `Last Fetched: ${new Date(allLastLoadedAt).toLocaleString()}` : ""}
+      <Row className="mb-3">
+        <Col className="d-flex align-items-center">
+          <div className="d-flex align-items-center gap-3 small text-muted ms-auto">
+            {processing && <span className="text-warning">Processing…</span>}
+            {processError && <span className="text-danger">Process failed</span>}
+            {processMessage && !processing && (
+              <span className="text-success">{processMessage}</span>
+            )}
+            {allLastLoadedAt ? `${t("bulkupload:lastFetched")} ${new Date(allLastLoadedAt).toLocaleString()}` : ""}
 
-      {autoRefreshing && (
-        <span className="d-inline-flex align-items-center gap-1 text-primary" title="Refreshing…">
-          <Spinner animation="border" size="sm" />
-          Refreshing…
-        </span>
-      )}
-    </div>
-  </Col>
-</Row>
+            {autoRefreshing && (
+              <span className="d-inline-flex align-items-center gap-1 text-primary" title="Refreshing…">
+                <Spinner animation="border" size="sm" />
+                Refreshing…
+              </span>
+            )}
+          </div>
+        </Col>
+      </Row>
 
 
       <Row className="g-0">
@@ -449,9 +450,9 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2 stephead">Load Resumes</div>
+                    <div className="fw-semibold mt-2 stephead">{t("bulkupload:loadResumes")}</div>
                     {/* <div className={`bulkstepper-badge ${step1}`}>{step1 === "completed" ? "Done" : "Active"}</div> */}
-                    <div className="text-muted small mt-2">Loading resumes from the Localstorage</div>
+                    <div className="text-muted small mt-2">{t("bulkupload:loadingResumes")}</div>
                   </div>
 
                   {/* Step 2 */}
@@ -463,9 +464,9 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2 stephead">Upload</div>
+                    <div className="fw-semibold mt-2 stephead">{t("bulkupload:upload")}</div>
                     {/* <div className={`bulkstepper-badge ${step2}`}>{step2 === "completed" ? "Done" : "Waiting"}</div> */}
-                    <div className="text-muted small mt-2">Uploading Loaded resumes to the Cloud</div>
+                    <div className="text-muted small mt-2">{t("bulkupload:uploadingResumes")}</div>
                   </div>
 
                   {/* Step 3 */}
@@ -477,11 +478,11 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                       <span className="dot-check" role="img" aria-label="completed">✓</span>
                     </div>
 
-                    <div className="fw-semibold mt-2 stephead">Sync Data</div>
+                    <div className="fw-semibold mt-2 stephead">{t("bulkupload:syncData")}</div>
                     {/* <div className={`bulkstepper-badge ${step3}`}>
                       {step3 === "completed" ? "Done" : step3 === "active" ? "Active" : "Waiting"}
                     </div> */}
-                    <div className="text-muted small mt-2">Starting the Batch Process and Syncing the Table</div>
+                    <div className="text-muted small mt-2">{t("bulkupload:syncingBatch")}</div>
                   </div>
                 </div>
               </div>
@@ -505,25 +506,25 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                   role="button"
                   tabIndex={0}
                   aria-label="Select resume files"
-                  aria-disabled={disableUploads}     
+                  aria-disabled={disableUploads}
                   onClick={onPickClick}
                   onKeyDown={onDropzoneKey}
                   style={disableUploads ? { pointerEvents: "none", opacity: 0.6 } : undefined}  // <-- add
                 >
                   <IconFilePlus />
-                  <div className="mt-2 fileupload">Click to select resume files</div>
-                  <div className="text-muted small">PDF, DOC, DOCX files supported</div>
+                  <div className="mt-2 fileupload">{t("bulkupload:clickToSelect")}</div>
+                  <div className="text-muted small">{t("bulkupload:fileTypes")}</div>
                 </div>
 
                 <div className="mt-3 d-flex justify-content-center">
                   <Button className="bulkstepper-cta actionbtn" disabled={ctaDisabled} onClick={ctaHandler}>
-                    {ctaLabel}
+                    {t("bulkupload:browseFiles")}
                   </Button>
                 </div>
                 {step3 === "completed" && !processing && (
                   <div className="mt-2 d-flex justify-content-center">
                     <Button variant="outline-secondary" size="sm" onClick={onStartOver}>
-                      Start Over
+                      {t("bulkupload:startOver")}
                     </Button>
                   </div>
                 )}
@@ -541,8 +542,8 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
           <Card className="border-0 shadow-sm flex-grow-1 d-flex w-100">
             <Card.Header className="allresumes py-2">
               <div className="d-flex flex-wrap align-items-center gap-2">
-                <div className="fw-semibold table_heading">All Resumes</div>
-                <div className="text-muted small">({allResumes?.length ?? 0} total)</div>
+                <div className="fw-semibold table_heading">{t("bulkupload:allResumes")}</div>
+                <div className="text-muted small">({allResumes?.length ?? 0} {t("bulkupload:totalResumes")})</div>
 
                 <div className="ms-auto d-flex align-items-center gap-2">
                   <div>
@@ -551,7 +552,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                       onClick={onSync}
                       disabled={autoRefreshing}
                       aria-busy={autoRefreshing}
-                      aria-label={autoRefreshing ? "Refreshing" : "Sync"}
+                      aria-label={autoRefreshing ? t("bulkupload:Refreshing") : t("bulkupload:Sync")}
                     >
                       <FontAwesomeIcon
                         icon={faArrowsRotate}
@@ -559,9 +560,10 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                         className="sync-btn__icon"
                       />
                       <span className="sync-btn__text">
-                        {autoRefreshing ? "Refreshing…" : "Sync"}
+                        {autoRefreshing ? t("bulkupload:Refreshing") : t("bulkupload:Sync")}
                       </span>
                     </button>
+
                   </div>
 
                   <Form.Select
@@ -571,11 +573,11 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                     style={{ width: 140 }}
                     aria-label="Filter by status"
                   >
-                    <option value="ALL">All statuses</option>
-                    <option value="UPLOADED">Uploaded</option>
-                    <option value="FAILED">Failed</option>
-                    <option value="PENDING">Pending</option>
-                    <option value="COMPLETED">Completed</option>
+                    <option value="ALL">{t("bulkupload:statusFilter.all")}</option>
+                    <option value="UPLOADED">{t("bulkupload:statusFilter.uploaded")}</option>
+                    <option value="FAILED">{t("bulkupload:statusFilter.failed")}</option>
+                    <option value="PENDING">{t("bulkupload:statusFilter.pending")}</option>
+                    <option value="COMPLETED">{t("bulkupload:statusFilter.completed")}</option>
                   </Form.Select>
 
                   <InputGroup className="posting-search" size="sm" style={{ width: 290 }}>
@@ -585,7 +587,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                     <Form.Control
                       aria-label="Search by filename"
                       aria-describedby="search-fn"
-                      placeholder="Search Candidate"
+                      placeholder={t("bulkupload:searchPlaceholder")}
                       value={q}
                       onChange={(e) => setQ(e.target.value)}
                     />
@@ -600,7 +602,7 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                   >
                     {[10, 25, 50, 100].map((n) => (
                       <option key={n} value={n}>
-                        {n} / page
+                        {n} / {t("bulkupload:rowsPerPage")}
                       </option>
                     ))}
                   </Form.Select>
@@ -616,18 +618,18 @@ const disableUploads = !!batch && (batch.items?.length || 0) > 0;
                   <thead className="table-header-orange">
                     <tr style={{ textAlign: "" }}>
                       <th style={{ width: 40 }}>#</th>
-                      <th style={{ width: 200 }}>Original Filename</th>
-                      <th style={{ width: 100 }}>Status</th>
+                      <th style={{ width: 200 }}>{t("bulkupload:originalFilename")}</th>
+                      <th style={{ width: 100 }}>{t("bulkupload:status")}</th>
                       {/* <th style={{ width: 320 }}>File Path</th> */}
                       {/* <th style={{ width: 260 }}>Resume ID</th> */}
                       {/* <th style={{ width: 200 }}>Created By</th> */}
-                      <th style={{ width: 140 }}>Created Date</th>
+                      <th style={{ width: 140 }}>{t("bulkupload:createdDate")}</th>
                       {/* <th style={{ width: 160 }}>Updated By</th> */}
                       {/* <th style={{ width: 160 }}>Updated Date</th> */}
                       {/* ADD: show reason only for FAILED */}
-                      <th style={{ width: 260 }}>Reason For Failed</th>
+                      <th style={{ width: 260 }}>{t("bulkupload:reasonFailed")}</th>
                       {/* ADD: action column (delete icon) */}
-                      <th style={{ width: 80 }}>Action</th>
+                      <th style={{ width: 80 }}>{t("bulkupload:action")}</th>
                     </tr>
                   </thead>
 

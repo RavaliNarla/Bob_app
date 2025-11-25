@@ -4,8 +4,12 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Form, Modal, Row, Spinner, Table } from 'react-bootstrap'
 import Select from 'react-select'
 import apiService from '../services/apiService'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const InterviewPanel = () => {
+  const { t } = useTranslation('interviewpanel')
   const [showModal, setShowModal] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [panels, setPanels] = useState([]);
@@ -74,11 +78,11 @@ const InterviewPanel = () => {
   }, [interviewers, activeMembers]);
 
 
-    useEffect(() => {
-      fetchInterviewers();
-      fetchInterviewPanels();
-      fetchActiveMembers();
-    }, []);
+  useEffect(() => {
+    fetchInterviewers();
+    fetchInterviewPanels();
+    fetchActiveMembers();
+  }, []);
 
   const handleDelete = async (panelId) => {
     try {
@@ -136,34 +140,27 @@ const InterviewPanel = () => {
   return (
     <div className='register_container login-container d-flex flex-column py-3 px-5'>
       <div className="d-flex justify-content-between align-items-center pb-4">
-        <h5 className='mt-1' style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Interview Panels</h5>
-        <Button variant="orange" onClick={() => setShowModal(true)}>+ Add</Button>
+        <h5 className='mt-1' style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>
+          {t('interview_panels')}
+        </h5>
+        <Button variant="orange" onClick={() => setShowModal(true)}>+ {t('add')}</Button>
       </div>
       <Table className="req_table mt-2" responsive hover>
         <thead className="table-header-orange">
           <tr>
-            <th style={{ cursor: "pointer", width: '10%' }}>
-              S No.
-            </th>
-            <th style={{ cursor: "pointer", width: '20%' }}>
-              Panel Name
-            </th>
-            <th style={{ cursor: "pointer", width: '60%' }}>
-              Panel Members
-            </th>
-            {/* <th style={{ cursor: "pointer" }}>
-              Panel Status
-            </th> */}
-            <th style={{ cursor: "pointer", width: '10%' }}>
-              Actions
-            </th>
+            <th style={{ cursor: "pointer", width: '10%' }}>{t('s_no')}</th>
+            <th style={{ cursor: "pointer", width: '20%' }}>{t('panel_name')}</th>
+            <th style={{ cursor: "pointer", width: '60%' }}>{t('panel_members')}</th>
+            <th style={{ cursor: "pointer", width: '10%' }}>{t('actions')}</th>
+
           </tr>
         </thead>
-                <tbody className="table-body-orange">
+        <tbody className="table-body-orange">
           {loading ? (
             <tr>
               <td colSpan={4} className="text-center">
-                <Spinner animation="border" size="sm" /> Loading...
+                <Spinner animation="border" size="sm" /> {t('loading')}...
+
               </td>
             </tr>
           ) : panels.length > 0 ? (
@@ -192,8 +189,9 @@ const InterviewPanel = () => {
           ) : (
             <tr>
               <td colSpan={4} className="text-center text-muted">
-                No panels found
+                {t('no_panels_found')}
               </td>
+
             </tr>
           )}
         </tbody>
@@ -203,7 +201,7 @@ const InterviewPanel = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Interview Panel" : "Add Interview Panel"}
+            {editIndex !== null ? t('edit_interview_panel') : t('add_interview_panel')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -211,32 +209,27 @@ const InterviewPanel = () => {
             <Row className="g-4">
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label>Panel Name <span className="text-danger">*</span></Form.Label>
+                  <Form.Label>{t('panel_name')} <span className="text-danger">*</span></Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter panel name"
+                    placeholder={t('enter_panel_name')}
                     value={currentPanel.panelName}
-                    // isInvalid={!!errr.positionName}
                     onChange={(e) => setCurrentPanel({ ...currentPanel, panelName: e.target.value })}
                   />
+
                   {/* <Form.Control.Feedback type="invalid">{errr.positionName}</Form.Control.Feedback> */}
                 </Form.Group>
               </Col>
 
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label className="form-label">
-                    Description
-                  </Form.Label>
+                  <Form.Label className="form-label">{t('description')}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t('enter_description')}
                     value={currentPanel.panelDescription}
-                    // isInvalid={!!errr.skill_name}
-                    onChange={(e) =>
-                      setCurrentPanel({ ...currentPanel, panelDescription: e.target.value })
-                    }
+                    onChange={(e) => setCurrentPanel({ ...currentPanel, panelDescription: e.target.value })}
                   />
                   {/* <Form.Control.Feedback type="invalid">
                     {errr.skill_name}
@@ -246,9 +239,8 @@ const InterviewPanel = () => {
 
               <Col md={12} style={{ paddingBottom: '20px' }}>
                 <Form.Group>
-                  <Form.Label>
-                    Panel Members <span className="text-danger">*</span>
-                  </Form.Label>
+                 <Form.Label>{t('panel_members')} <span className="text-danger">*</span></Form.Label>
+
                   <Select
                     isMulti
                     options={availableInterviewers}
@@ -290,10 +282,16 @@ const InterviewPanel = () => {
         </Modal.Body>
 
         <Modal.Footer className="justify-content-end gap-2">
-          <Button variant="outline-secondary" onClick={resetForm}>Cancel</Button>
-          <Button className="text-white" style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }} onClick={handleSavePanel}>
-            {editIndex !== null ? "Update Panel" : "Save Panel"}
-          </Button>
+<Button variant="outline-secondary" onClick={resetForm}>
+  {t('cancel')}
+</Button>
+         <Button 
+  className="text-white" 
+  style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }} 
+  onClick={handleSavePanel}
+>
+  {editIndex !== null ? t('update') : t('save')}
+</Button>
         </Modal.Footer>
       </Modal>
     </div>

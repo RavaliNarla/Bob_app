@@ -147,13 +147,13 @@ const ResumeUpload = ({ resumeFile, setResumeFile, setParsedData, setResumePubli
     setParsedData(parsedData);
 
     // Step 2: Register candidate
-    const encryptedPassword = encryptPassword("Sagrsoft@123");
+  //  const encryptedPassword = encryptPassword("Sagrsoft@123");
 
     const registerResponse = await apiService.candidateRegister({
       name: parsedData.name || "",
       email: parsedData.email || "",
       mobile: 9999999999,
-      password: encryptedPassword,
+      password: "Sagrsoft@123",
     });
     const registerResult = registerResponse?.data || registerResponse;
     // console.log("Candidate registered:", registerResult);

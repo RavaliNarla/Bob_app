@@ -1,0 +1,25 @@
+{
+    "Dashboard": "डैशबोर्ड",
+    "JobPostings": "नौकरी पोस्टिंग",
+    "CandidateShortlist": "उम्मीदवार शॉर्टलिस्ट",
+    "Interviews": "साक्षात्कार",
+    "Relaxation": "रिलैक्सेशन",
+    "BulkUpload": "थोक अपलोड",
+    "Approvals": "अनुमोदन",
+    "Admin": "प्रशासक",
+    "Users": "उपयोगकर्ता",
+    "Department": "विभाग",
+    "Skills": "कौशल",
+    "Location": "स्थान",
+    "JobGrade": "जॉब ग्रेड",
+    "OfferLetter": "ऑफर लेटर",
+    "Position": "पद",
+    "Category": "श्रेणी",
+    "SpecialCategory": "विशेष श्रेणी",
+    "RelaxationType": "रिलैक्सेशन प्रकार",
+    "Document": "दस्तावेज़",
+    "InterviewPanel": "साक्षात्कार पैनल",
+
+    "logout": "लॉग आउट",
+    "profile": "प्रोफ़ाइल"
+}

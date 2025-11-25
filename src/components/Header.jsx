@@ -6,8 +6,14 @@ import logo_Bob from '../assets/logo_Bob.png';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearUser } from '../store/userSlice';
+import { setLanguage } from '../store/languageSlice';
+import i18n from '../i18n';
+import { useTranslation } from "react-i18next";
 
 const Header = () => {
+  const { i18n } = useTranslation();
+  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user?.user);
@@ -33,6 +39,10 @@ const Header = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  const changeLang = (lng) => {
+  dispatch(setLanguage(lng));   // update redux
+  i18n.changeLanguage(lng);     // update i18n
+};
 
   return (
     <Navbar bg="warning" variant="light" expand="lg" className="py-2">
@@ -56,6 +66,36 @@ const Header = () => {
         </div> */}
 
         <div className="d-flex align-items-center">
+          <div className="me-3 d-flex gap-1">
+            <button
+              className={`btn btn-sm px-2 ${i18n.language === "en" ? "btn-dark text-white" : "btn-light"
+                }`}
+              onClick={() => changeLang("en")}
+            >
+              EN
+            </button>
+ 
+            <button
+              className={`btn btn-sm px-2 ${i18n.language === "hi" ? "btn-dark text-white" : "btn-light"
+                }`}
+              onClick={() => changeLang("hi")}
+            >
+              HI
+            </button>
+            {/* <button
+        onClick={() => changeLang("en")}
+        style={{ background: selectedLang === "en" ? "#ccc" : "#fff" }}
+      >
+        English
+      </button>
+ 
+      <button
+        onClick={() => changeLang("hi")}
+        style={{ background: selectedLang === "hi" ? "#ccc" : "#fff" }}
+      >
+        हिंदी
+      </button> */}
+          </div>
           {/* <Button variant="link" className="me-2" style={{ color: '#fff' }}>
             <FontAwesomeIcon icon={faGlobe} size="lg" />
           </Button> */}
@@ -78,7 +118,7 @@ const Header = () => {
           <div className="position-relative" ref={dropdownRef}>
             <OverlayTrigger
               placement="bottom"
-              overlay={<Tooltip id="tooltip-payments">Profile</Tooltip>}
+              overlay={<Tooltip id="tooltip-payments">{t("sidebar:profile")}</Tooltip>}
             >
               <FontAwesomeIcon
                 icon={faUserCircle}
@@ -99,7 +139,7 @@ const Header = () => {
                   : user?.role}</p>
                   <hr className="my-2" />
  
-                <p onClick={() => {dispatch(clearUser()); navigate('/login');}} style={{cursor: 'pointer', margin: 0}}>Logout</p>
+                <p onClick={() => {dispatch(clearUser()); navigate('/login');}} style={{cursor: 'pointer', margin: 0}}>{t("sidebar:logout")}</p>
               </div>
             )}
           </div>

@@ -11,9 +11,9 @@ import {
 import "../css/Location.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from 'react-i18next';
 import apiService from "../services/apiService";
 
 
@@ -31,6 +31,7 @@ const Location = () => {
   const [errr, setErrr] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const { t } = useTranslation('location');
 
   useEffect(() => {
     fetchData();
@@ -59,7 +60,7 @@ const Location = () => {
 
       setLocs(mergedData);
     } catch (err) {
-      setError("Failed to fetch data.");
+      setError(t('error_loading'));
       console.error("GET Data Error:", err);
     } finally {
       setLoading(false);
@@ -76,10 +77,10 @@ const Location = () => {
   const newErrors = {};
 
   if (!currentLoc.location_name?.trim()) {
-    newErrors.location_name = "Location is required";
+    newErrors.location_name = t('name_required');
   }
   if (!currentLoc.city_id) {
-    newErrors.city_id = "City is required";
+    newErrors.city_id = t('city_required');
   }
 
   // Duplicate check (case-insensitive)
@@ -90,7 +91,7 @@ const Location = () => {
   );
 
   if (isDuplicate) {
-    newErrors.location_name = "This location already exists for the selected city";
+    newErrors.location_name = t('location_exists');
   }
 
   setErrr(newErrors);
@@ -110,17 +111,17 @@ const Location = () => {
         };
        await apiService.updateLocation(updatedLoc.location_id, updatedLoc);
 
-        toast.success("Location updated successfully");
+        toast.success(t('update_success'));
         await fetchData(); // reload with updated city name
       } else {
         const response =  await apiService.addLocation(currentLoc);
-        toast.success("Location added successfully");
+        toast.success(t('save_success'));
         await fetchData();
       }
       resetForm();
     } catch (err) {
       console.error("Save Error:", err);
-      toast.error("Save failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -129,10 +130,10 @@ const Location = () => {
     try {
       await apiService.deleteLocation(idToDelete);
       setLocs(locs.filter((loc) => loc.location_id !== idToDelete));
-      toast.success("Location deleted");
+      toast.success(t('delete_success'));
     } catch (err) {
       console.error("Delete Error:", err);
-      toast.error("Delete failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -185,7 +186,7 @@ const Location = () => {
 
   const jobsToDisplay = filteredAndSortedJobs();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
@@ -202,9 +203,9 @@ const Location = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </InputGroup> */}
-        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Locations</h5>
+        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t('locations')}</h5>
         <Button variant="orange" onClick={() => openModal()}>
-            + Add
+            + {t('add_location')}
           </Button>
 
       </div>
@@ -212,7 +213,7 @@ const Location = () => {
 
       {jobsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">
-          No Location matches your criteria.
+          {t('no_locations_found')}
         </p>
       ) : (
         <Table responsive hover className="location_table">
@@ -222,15 +223,15 @@ const Location = () => {
         onClick={() => handleSort("city_name")}
         style={{ cursor: "pointer", width: "40%" }}
       >
-        City Name{getSortIndicator("city_name")}
+        {t('city_name')}{getSortIndicator("city_name")}
       </th>
       <th
         onClick={() => handleSort("location_name")}
         style={{ cursor: "pointer", width: "52%" }}
       >
-        Location Name{getSortIndicator("location_name")}
+        {t('location_name')}{getSortIndicator("location_name")}
       </th>
-      <th>Actions</th>
+      <th>{t('actions')}</th>
     </tr>
   </thead>
 
@@ -262,7 +263,7 @@ const Location = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Location" : "Add Location"}
+            {editIndex !== null ? t('edit_location') : t('add_location')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -271,7 +272,7 @@ const Location = () => {
   <Col md={12}>
     <Form.Group>
       <Form.Label>
-        City Name <span className="text-danger">*</span>
+        {t('city_name')} <span className="text-danger">*</span>
       </Form.Label>
       <Form.Select
         value={currentLoc.city_id}
@@ -280,7 +281,7 @@ const Location = () => {
           setCurrentLoc({ ...currentLoc, city_id: e.target.value })
         }
       >
-        <option value="">Select City</option>
+        <option value="">{t('select_city')}</option>
         {cities.map((city) => (
           <option key={city.city_id} value={city.city_id}>
             {city.city_name}
@@ -296,11 +297,11 @@ const Location = () => {
   <Col md={12} style={{ marginTop: '10px' }}>
     <Form.Group>
       <Form.Label>
-        Location Name <span className="text-danger">*</span>
+        {t('location_name')} <span className="text-danger">*</span>
       </Form.Label>
       <Form.Control
         type="text"
-        placeholder="Enter location name"
+        placeholder={t('enter_location_name')}
         value={currentLoc.location_name}
         isInvalid={!!errr.location_name}
         onChange={(e) =>
@@ -319,14 +320,14 @@ const Location = () => {
 
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update Location" : "Save"}
+            {editIndex !== null ? t('update') : t('save')}
           </Button>
         </Modal.Footer>
       </Modal>

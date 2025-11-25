@@ -5,8 +5,10 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { apiService } from "../services/apiService";
 import { faCheckCircle  } from "@fortawesome/free-solid-svg-icons";
 import { createInitialRelaxations, createEmptySpecial, calculateAllocated } from "../utils/relaxationUtils";
+import { useTranslation } from 'react-i18next';
 
 const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
+   const { t } = useTranslation("relaxationPolicy");
   const [types, setTypes] = useState([]); // now stores objects { name, input }
   const [categories, setCategories] = useState([]);
   const [specialCategories, setSpecialCategories] = useState([]);
@@ -18,6 +20,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
   // Fetch master data
   useEffect(() => {
@@ -248,7 +251,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
           </Table>
 
           {/* Special Categories */}
-          <h5 class="special_category_title">Special Categories</h5>
+          <h5 class="special_category_title">{t("relaxationPolicy:specialCategories")}</h5>
           <div class="col-md-3" style={{ paddingLeft: '0px' }}>
           <Form.Select
             value={selectedCategory}
@@ -275,7 +278,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
               setIsDirty(true);
             }}
           >
-            <option value="">Select Category</option>
+            <option value="">{t("relaxationPolicy:selectCategory")}</option>
             {availableCategories.map(c => (
               <option key={c.special_category_id} value={c.special_category_name}>
                 {c.special_category_name}
@@ -352,7 +355,7 @@ const Relaxation = ({ onRelaxationSave, selectedPolicy,readOnly = false }) => {
               </tbody>
             </Table>
           ) : (
-            <p className="text-muted mt-3 blinking-text">*** No special categories added yet ***</p>
+            <p className="text-muted mt-3 blinking-text">*** {t("relaxationPolicy:nospecial")} ***</p>
           )}
         </Card.Body>
       </Card>

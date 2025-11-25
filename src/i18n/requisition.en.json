@@ -1,0 +1,25 @@
+{
+  "modalTitleAdd": "Add Requisition",
+  "modalTitleEdit": "Edit Requisition",
+  "modalTitleView": "View Requisition",
+
+  "requisitionTitle": "Requisition Title",
+  "description": "Description",
+  "startDate": "Start Date",
+  "endDate": "End Date",
+   "close": "Close",
+  "cancel": "Cancel",
+  "save": "Save",
+  "updateRequisition": "Update Requisition",
+
+   "titleRequired": "Title is required",
+    "descriptionRequired": "Description is required",
+    "startDateRequired": "Start date is required",
+    "endDateRequired": "End date is required",
+    "endDateAfter": "End date must be after start date",
+    "titleUnique": "Title must be unique",
+
+    "addSuccess": "Requisition added successfully",
+    "updateSuccess": "Requisition updated successfully",
+    "deleteSuccess": "Requisition deleted successfully"
+}

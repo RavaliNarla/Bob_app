@@ -1,8 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from "react-i18next";
 
 const RelaxationTable = ({ policy }) => {
+  const { t } = useTranslation("jobcreation");
   const [openRow, setOpenRow] = useState(null);
 
   const toggleRow = (rowId) => {
@@ -54,7 +56,7 @@ const categoryKeys = useMemo(() => {
   return (
     <div className="table-responsive">
       <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
-        <label htmlFor="probation_period" className="form-label">Relaxation Policy No</label>
+        <label htmlFor="probation_period" className="form-label">{t("jobcreation:relaxation_policy_no")}</label>
         <input
           type="text"
           className="form-control"
@@ -67,7 +69,7 @@ const categoryKeys = useMemo(() => {
       <thead className="table-header-orange">
         <tr>
           <th></th>
-          <th>Relaxation Details</th>
+          <th>{t("jobcreation:relaxation_details")}</th>
           {categoryKeys.map((key) => (
             <th key={key}>{key}</th>
           ))}
@@ -100,12 +102,12 @@ const categoryKeys = useMemo(() => {
                       <table className="req_table table table-sm table-bordered specialCat_table">
                       <thead className="table-header-orange">
                           <tr>
-                            <th>Special Categories</th>
-                            <th>Mode</th>
+                            <th>{t("jobcreation:special_categories")}</th>
+                            <th>{t("jobcreation:mode")}</th>
                             {categoryKeys.map((key) => (
                               <th key={key}>{key}</th>
                             ))}
-                            <th>Flat</th>
+                            <th>{t("jobcreation:flat")}</th>
                           </tr>
                         </thead>
                         <tbody className="table-body-orange">

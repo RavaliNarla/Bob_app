@@ -1,0 +1,63 @@
+{
+  "addRequisition": "Add Requisition",
+  "selectStatus": "Select Status",
+
+  "allRequisitions": "All Requisitions",
+  "new": "New",
+  "pending": "Pending for Approval",
+  "approved": "Approved",
+  "published": "Published",
+  "rejected": "Rejected",
+
+  "title": "Title",
+  "requisition": "Requisition",
+  "postings": "Postings",
+  "startdate": "Start Date",
+  "enddate": "End Date",
+  "vacancies": "Vacancies",
+  "status": "Status",
+
+  
+  "viewJobPosting": "View Job Posting",
+  "editJobPosting": "Edit Job Posting",
+  "addJobPosting": "Add Job Posting",
+  "jobPostings": "Job Postings",
+  "approvalType": "Approval Type",
+  "directApproval": "Direct Approval",
+  "workflow": "Workflow",
+  "searchByTitle": "Search by Title",
+
+  "cancel": "Cancel",
+  "submit": "Submit",
+
+   "position": "Position",
+   "positionCode": "Position Code",
+   "grade": "Grade",
+   "actions": "Actions",
+
+    "linkedin": "LinkedIn",
+  "careerPage": "Career Page",
+  "naukri": "Naukri",
+  "glassDoor": "Glass Door",
+  "indeed": "Indeed",
+  "foundit": "Foundit",
+  "freshersWorld": "Freshers World",
+
+
+  "approvalHistory": "Approval History",
+  "user": "User",
+  "email": "Email",
+  "dateTime": "Date / Time",
+  "comments": "Comments",
+
+  "expired": "Expired",
+    "open": "Open",
+    "addPosition": "Add Position",
+    "editRequisition": "Edit Requisition",
+    "deleteRequisition": "Delete Requisition",
+    "viewRequisition": "View Requisition",
+
+  "ViewApprovalStatus": "View Approval Status"
+
+
+}

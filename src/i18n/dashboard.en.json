@@ -1,0 +1,37 @@
+{
+  "myDashboard": "My Dashboard",
+
+  "totalOpenPositions": "Total Open Positions",
+  "positionsFilled": "Positions Filled",
+  "progress": "progress",
+  "pendingApprovals": "Pending Approvals",
+  "avgTimeToFill": "Avg Time to Fill (days)",
+
+  "applicationMetrics": "Application Metrics",
+  "candidateStatus": "Candidate Application Status",
+
+  "candidatePipeline": "Candidate Pipeline",
+  "applicationsReceived": "Applications Received",
+  "eligible": "Eligible",
+  "shortlisted": "Shortlisted",
+  "interviewed": "Interviewed",
+  "offered": "Offered",
+  "joined": "Joined",
+  "cancelled": "Cancelled",
+
+  "positionFulfillment": "Position Fulfillment",
+  "filled": "Filled",
+  "inProgress": "In Progress",
+  "openings": "Openings",
+  "avgDays": "Avg Days",
+
+  "openPositions": "Open Positions",
+  "statusActive": "Active",
+  "statusInactive": "Inactive",
+
+  "upcomingInterviews": "Upcoming Interviews",
+  "noUpcomingInterviews": "No upcoming interviews",
+
+  "interviewer": "Interviewer",
+  "candidate": "Candidate"
+}

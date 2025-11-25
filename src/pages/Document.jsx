@@ -9,7 +9,7 @@ import {
   Row,
   Col
 } from "react-bootstrap";
-import "../css/Department.css"; // reuse same CSS or create Documents.css
+import "../css/Department.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencil,
@@ -18,9 +18,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 import apiService from "../services/apiService";
 
 const Document = () => {
+  const { t } = useTranslation('document');
   const [showModal, setShowModal] = useState(false);
   const [currentDoc, setCurrentDoc] = useState({
     document_name: "",
@@ -42,10 +44,10 @@ const Document = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await apiService.getAllDocuments(); // 🔹 Replace with your API call
+      const res = await apiService.getAllDocuments();
       setDocs(res.data.data || res.data);
     } catch (err) {
-      setError("Failed to fetch Documents.");
+      setError(t('fetch_error'));
       console.error("GET Error:", err);
     } finally {
       setLoading(false);
@@ -64,7 +66,7 @@ const Document = () => {
     const trimmedDesc = currentDoc.document_desc?.trim();
 
     if (!trimmedName) {
-      newErrors.document_name = "Document Name is required";
+      newErrors.document_name = t('name_required');
     }
 
     // Duplicate check
@@ -74,7 +76,7 @@ const Document = () => {
     );
 
     if (isDuplicate) {
-      newErrors.document_name = "Document name already exists";
+      newErrors.document_name = t('name_exists');
     }
 
     setErrr(newErrors);
@@ -91,24 +93,24 @@ const Document = () => {
           ...currentDoc,
           document_id: docs[editIndex].document_id,
         };
-        await apiService.updateDocument(updatedDoc.document_id, updatedDoc); // 🔹 Update API
-        toast.success("Document updated successfully");
+        await apiService.updateDocument(updatedDoc.document_id, updatedDoc);
+        toast.success(t('update_success'));
 
         const updatedDocs = [...docs];
         updatedDocs[editIndex] = updatedDoc;
         setDocs(updatedDocs);
       } else {
-        const response = await apiService.addDocument(currentDoc); // 🔹 Add API
+        const response = await apiService.addDocument(currentDoc);
         const newDoc = response.data?.data || currentDoc;
 
-        toast.success("Document added successfully");
+        toast.success(t('save_success'));
         setDocs(prev => [...prev, newDoc]);
         await fetchDocuments();
       }
       resetForm();
     } catch (err) {
       console.error("Save Error:", err);
-      toast.error("Save failed");
+      toast.error(t('save_failed'));
     }
   };
 
@@ -116,12 +118,12 @@ const Document = () => {
     const idToDelete = docs[index]?.document_id;
 
     try {
-      await apiService.deleteDocument(idToDelete); // 🔹 Delete API
+      await apiService.deleteDocument(idToDelete);
       setDocs(docs.filter((doc) => doc.document_id !== idToDelete));
-      toast.success("Document deleted successfully");
+      toast.success(t('delete_success'));
     } catch (err) {
       console.error("Delete Error:", err);
-      toast.error("Delete failed");
+      toast.error(t('delete_failed'));
     }
   };
 
@@ -173,7 +175,7 @@ const Document = () => {
 
   const docsToDisplay = filteredAndSortedDocs();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
@@ -188,14 +190,14 @@ const Document = () => {
             marginBottom: "0px",
           }}
         >
-          Documents
+          {t('documents')}
         </h5>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+        <Button variant="orange" onClick={() => openModal()}>+ {t('add_document')}</Button>
       </div>
 
       {docsToDisplay.length === 0 ? (
         <p className="text-muted text-center mt-5">
-          No Documents match your criteria.
+          {t('no_documents_found')}
         </p>
       ) : (
         <Table className="dept_table" responsive hover>
@@ -205,15 +207,15 @@ const Document = () => {
                 onClick={() => handleSort("document_name")}
                 style={{ cursor: "pointer", width: "40%" }}
               >
-                Document Name{getSortIndicator("document_name")}
+                {t('document_name')}{getSortIndicator("document_name")}
               </th>
               <th
                 onClick={() => handleSort("document_desc")}
                 style={{ cursor: "pointer", width: "52%" }}
               >
-                Description{getSortIndicator("document_desc")}
+                {t('description')}{getSortIndicator("document_desc")}
               </th>
-              <th>Actions</th>
+              <th style={{width: "10%"}}>{t('actions')}</th>
             </tr>
           </thead>
 
@@ -227,11 +229,13 @@ const Document = () => {
                     icon={faPencil}
                     className="text-info me-3 cursor-pointer iconhover"
                     onClick={() => openModal(doc, index)}
+                    title={t('edit_document')}
                   />
                   <FontAwesomeIcon
                     icon={faTrash}
                     className="text-danger cursor-pointer iconhover"
                     onClick={() => handleDelete(index)}
+                    title={t('delete')}
                   />
                 </td>
               </tr>
@@ -240,11 +244,10 @@ const Document = () => {
         </Table>
       )}
 
-      {/* MODAL */}
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Document" : "Add Document"}
+            {editIndex !== null ? t('edit_document') : t('add_document')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -253,12 +256,12 @@ const Document = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Document Name <span className="text-danger">*</span>
+                    {t('document_name')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={2}
-                    placeholder="Enter document name"
+                    placeholder={t('enter_document_name')}
                     value={currentDoc.document_name}
                     isInvalid={!!errr.document_name}
                     onChange={(e) =>
@@ -272,11 +275,11 @@ const Document = () => {
               </Col>
               <Col md={12}>
                 <Form.Group>
-                  <Form.Label className="form-label">Description</Form.Label>
+                  <Form.Label className="form-label">{t('description')}</Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t('enter_description')}
                     value={currentDoc.document_desc}
                     onChange={(e) =>
                       setCurrentDoc({ ...currentDoc, document_desc: e.target.value })
@@ -290,14 +293,14 @@ const Document = () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update Document" : "Save"}
+            {editIndex !== null ? t('update_document') : t('save')}
           </Button>
         </Modal.Footer>
       </Modal>

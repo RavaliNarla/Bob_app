@@ -20,9 +20,12 @@ import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import apiService from "../services/apiService";
+import { useTranslation } from "react-i18next";
 
 
 const Department = () => {
+  const { t } = useTranslation(["department"]);
+
   const [showModal, setShowModal] = useState(false);
   const [currentDept, setCurrentDept] = useState({
     department_name: "",
@@ -44,7 +47,7 @@ const Department = () => {
     setLoading(true);
     setError(null);
     try {
-     const res = await apiService.getallDepartment();
+      const res = await apiService.getallDepartment();
       setDepts(res.data.data || res.data); // adjust if API returns differently
     } catch (err) {
       setError("Failed to fetch Department.");
@@ -66,21 +69,27 @@ const Department = () => {
     const trimmedName = currentDept.department_name?.trim();
     const trimmedDesc = currentDept.department_desc?.trim();
 
+    // Required validation first
     if (!trimmedName) {
-      newErrors.department_name = "Name is required";
+      newErrors.department_name = t("department:nameRequired") || "Name is required";
     }
-   
 
-    // Check if either name or description already exists
-    const isDuplicate = depts.some((dept, index) =>
-      (dept.department_name?.trim().toLowerCase() === trimmedName?.toLowerCase() ||
-        dept.department_desc?.trim().toLowerCase() === trimmedDesc?.toLowerCase()) &&
-      index !== editIndex
-    );
+    // If required errors exist, set and return early (don't check duplicates)
+    if (Object.keys(newErrors).length > 0) {
+      setErrr(newErrors);
+      return;
+    }
+
+    // Check duplicates only if there is input to compare
+    const isDuplicate = depts.some((dept, index) => {
+      const nameMatches = trimmedName && dept.department_name?.trim().toLowerCase() === trimmedName.toLowerCase();
+      const descMatches = trimmedDesc && dept.department_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase();
+      return (nameMatches || descMatches) && index !== editIndex;
+    });
 
     if (isDuplicate) {
-      newErrors.department_name = "Department name already exists";
-      newErrors.department_desc = "Department description already exists";
+      if (trimmedName) newErrors.department_name = t("department:nameExists");
+      if (trimmedDesc) newErrors.department_desc = t("department:descExists");
     }
 
     setErrr(newErrors);
@@ -99,7 +108,7 @@ const Department = () => {
           ...currentDept,
           department_id: depts[editIndex].department_id,
         };
-       await apiService.updateDepartment(updatedDept.department_id, updatedDept);
+        await apiService.updateDepartment(updatedDept.department_id, updatedDept);
 
         toast.success("Department updated successfully");
 
@@ -187,8 +196,8 @@ const Department = () => {
 
   const jobsToDisplay = filteredAndSortedJobs();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="alert alert-danger mt-5">{error}</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
+  if (error) return <div className="alert alert-danger mt-5">{t('error_loading')}</div>;
 
   return (
     <div className="register_container px-5 deptfon py-3">
@@ -204,24 +213,24 @@ const Department = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </InputGroup> */}
-        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Departments</h5>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t("department:departments")}</h5>
+        <Button variant="orange" onClick={() => openModal()}>+ {t("department:add")}</Button>
       </div>
       {/* <hr /> */}
 
       {jobsToDisplay.length === 0 ? (
-        <p className="text-muted text-center mt-5">No Department match your criteria.</p>
+        <p className="text-muted text-center mt-5">{t("department:noDepartmentFound")}.</p>
       ) : (
         <Table className="dept_table" responsive hover>
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("department_name")} style={{ cursor: "pointer", width: "40%" }}>
-                Name{getSortIndicator("department_name")}
+                {t("department:name")}{getSortIndicator("department_name")}
               </th>
               <th onClick={() => handleSort("department_desc")} style={{ cursor: "pointer", width: "52%" }}>
-                Description{getSortIndicator("department_desc")}
+                {t("department:description")}{getSortIndicator("department_desc")}
               </th>
-              <th>Actions</th>
+              <th>{t("department:actions")}</th>
             </tr>
           </thead>
 
@@ -244,8 +253,9 @@ const Department = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Department" : "Add Department"}
+            {editIndex !== null ? t("editDepartment") : t("addDepartment")}
           </Modal.Title>
+
         </Modal.Header>
         <Modal.Body>
           <Form className="department-form">
@@ -253,12 +263,12 @@ const Department = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Name <span className="text-danger">*</span>
+                    {t("department:name")} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter Name"
+                    placeholder={t("department:enterName")}
                     value={currentDept.department_name}
                     isInvalid={!!errr.department_name}
                     onChange={(e) =>
@@ -273,12 +283,12 @@ const Department = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description
+                    {t("department:description")}
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t("department:enterDescription")}
                     value={currentDept.department_desc}
                     isInvalid={!!errr.department_desc}
                     onChange={(e) =>
@@ -296,16 +306,18 @@ const Department = () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t("cancel")}
           </Button>
+
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update Department" : "Save"}
+            {editIndex !== null ? t("updateDepartment") : t("save")}
           </Button>
         </Modal.Footer>
+
       </Modal>
     </div>
   );

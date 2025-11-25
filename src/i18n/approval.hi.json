@@ -1,0 +1,35 @@
+{
+  "selectStatus": "स्थिति चुनें",
+  "all" : "सभी",
+  "pendingForApproval": "अनुमोदन हेतु लंबित",
+  "approved": "अनुमोदित",
+  "title": "शीर्षक",
+  "requisition": "रिक्विज़िशन",
+  "postings": "पोस्टिंग्स",
+  "startdate": "प्रारंभ तिथि",
+  "enddate": "समाप्ति तिथि",
+  "vacancies": "रिक्तियां",
+  "status": "स्थिति",
+  "cancel": "रद्द करें",
+  "viewJobPosting": "जॉब पोस्टिंग देखें",
+   "searchByTitle": "शीर्षक द्वारा खोजें",
+    "position": "पद",
+    "positionCode": "पद कोड",
+    "grade": "ग्रेड",
+     "actions": "कार्रवाई",
+      "reject": "अस्वीकृत",
+  "approve": "स्वीकृत",
+  "rejectRequisition": "रिक्विज़िशन अस्वीकृत करें",
+  "description": "विवरण",
+   "enterRejectionReason": "अस्वीकृति का कारण दर्ज करें...",
+
+    "approved_success": "सफलतापूर्वक {{count}} रिक्विज़िशन स्वीकृत किए गए",
+  "select_one_requisition_reject": "कृपया अस्वीकार करने के लिए कम से कम एक रिक्विज़िशन चुनें।",
+  "enter_description_before_reject": "अस्वीकृत करने से पहले कृपया विवरण दर्ज करें।",
+  "user_info_not_available": "उपयोगकर्ता जानकारी उपलब्ध नहीं है।",
+  "rejected_success": "रिक्विज़िशन सफलतापूर्वक अस्वीकार किए गए।",
+  "rejected_failed": "रिक्विज़िशन अस्वीकार करने में विफल।",
+  "select_one_requisition_approve": "कृपया स्वीकृत करने के लिए कम से कम एक रिक्विज़िशन चुनें।"
+
+
+}

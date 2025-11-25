@@ -8,8 +8,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
+import { useTranslation } from 'react-i18next';
 const Sidebar = () => {
+  const { t } = useTranslation('sidebar');
   const user = useSelector((state) => state.user.user);
   const location = useLocation();
   const [adminOpen, setAdminOpen] = useState(false);
@@ -17,12 +18,12 @@ const Sidebar = () => {
   const isActive = (path) => (location.pathname === path ? 'active' : '');
 
   const menuItems = [
-    { icon: faHome, text: 'Dashboard', path: '/dashboard' },
-    { icon: faBriefcase, text: 'Job Postings', path: '/job-postings' },
-    { icon: faUserFriends, text: 'Candidate Shortlist', path: '/candidate-shortlist' },
-    { icon: faCalendar, text: 'Interviews', path: '/interviews' },
-    { icon: faCogs, text: 'Relaxation', path: '/relaxation' },
-    { icon: faPerson, text: 'Bulk Upload', path: '/bulk-upload' },
+    { icon: faHome, text: t('sidebar:Dashboard'), path: '/dashboard' },
+    { icon: faBriefcase, text: t('sidebar:JobPostings'), path: '/job-postings' },
+    { icon: faUserFriends, text: t('sidebar:CandidateShortlist'), path: '/candidate-shortlist' },
+    { icon: faCalendar, text: t('sidebar:Interviews'), path: '/interviews' },
+    { icon: faCogs, text: t('sidebar:Relaxation'), path: '/relaxation' },
+    { icon: faPerson, text: t('sidebar:BulkUpload'), path: '/bulk-upload' },
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
@@ -33,22 +34,22 @@ const Sidebar = () => {
   ];
 
   if (user?.role === "Manager" || user?.role === "Admin") {
-    menuItems.push({ icon: faUserFriends, text: 'Approvals', path: '/myapproval' });
+    menuItems.push({ icon: faUserFriends, text: t('sidebar:Approvals'), path: '/myapproval' });
   }
 
   const adminItems = [
-    { icon: faPerson, text: 'Users', path: '/users' },
-    { icon: faBuilding, text: 'Department', path: '/department' },
-    { icon: faLightbulb, text: 'Skills', path: '/skill' },
-    { icon: faMapMarkerAlt, text: 'Location', path: '/location' },
-    { icon: faChartLine, text: 'Job Grade', path: '/job-grade' },
-    { icon: faFile, text: 'Offer Letter', path: '/template' },
-    { icon: faBriefcase, text: 'Position', path: '/position' },
-    { icon: faTags, text: 'Category', path: '/category' },
-    { icon: faStar, text: 'Special Category', path: '/special-category' },
-    { icon: faSlidersH, text: 'Relaxation Type', path: '/relaxation-type' },
-    { icon: faFile, text: 'Document', path: '/document' },
-    { icon: faUsers, text: 'Interview Panel', path: '/interview-panel' },
+    { icon: faPerson, text: t('sidebar:Users'), path: '/users' },
+    { icon: faBuilding, text: t('sidebar:Department'), path: '/department' },
+    { icon: faLightbulb, text: t('sidebar:Skills'), path: '/skill' },
+    { icon: faMapMarkerAlt, text: t('sidebar:Location'), path: '/location' },
+    { icon: faChartLine, text: t('sidebar:JobGrade'), path: '/job-grade' },
+    { icon: faFile, text: t('sidebar:OfferLetter'), path: '/template' },
+    { icon: faBriefcase, text: t('sidebar:Position'), path: '/position' },
+    { icon: faTags, text: t('sidebar:Category'), path: '/category' },
+    { icon: faStar, text: t('sidebar:SpecialCategory'), path: '/special-category' },
+    { icon: faSlidersH, text: t('sidebar:RelaxationType'), path: '/relaxation-type' },
+    { icon: faFile, text: t('sidebar:Document'), path: '/document' },
+    { icon: faUsers, text: t('sidebar:InterviewPanel'), path: '/interview-panel' },
   ];
 
   const handleAdminClick = () => setAdminOpen(!adminOpen);
@@ -108,7 +109,7 @@ fontSize:'13px'
     onMouseLeave={() => setAdminOpen(false)}
   >
     <FontAwesomeIcon icon={faBriefcase} style={{ fontSize: '13px' }} />
-    <span className="mt-1">Admin</span>
+    <span className="mt-1">{t("sidebar:Admin")}</span>
 
     {/* Right-side chevron */}
     <FontAwesomeIcon

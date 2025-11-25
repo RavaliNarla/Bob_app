@@ -1,0 +1,25 @@
+{
+  "modalTitleAdd": "रिक्विज़िशन जोड़ें",
+  "modalTitleEdit": "रिक्विज़िशन संपादित करें",
+  "modalTitleView": "रिक्विज़िशन देखें",
+
+  "requisitionTitle": "रिक्विज़िशन शीर्षक",
+  "description": "विवरण",
+  "startDate": "प्रारंभ तिथि",
+  "endDate": "समाप्ति तिथि",
+  "close": " बंद करें",
+  "cancel": "रद्द करें",
+  "save": "सेव करें",
+  "updateRequisition": "रिक्विज़िशन अपडेट करें",
+
+  "titleRequired": "शीर्षक आवश्यक है",
+    "descriptionRequired": "विवरण आवश्यक है",
+    "startDateRequired": "प्रारंभ तिथि आवश्यक है",
+    "endDateRequired": "समाप्ति तिथि आवश्यक है",
+    "endDateAfter": "समाप्ति तिथि प्रारंभ तिथि के बाद होनी चाहिए",
+    "titleUnique": "शीर्षक अद्वितीय होना चाहिए",
+
+    "addSuccess": "रिक्विज़िशन सफलतापूर्वक जोड़ा गया",
+    "updateSuccess": "रिक्विज़िशन सफलतापूर्वक अपडेट किया गया",
+    "deleteSuccess": "रिक्विज़िशन सफलतापूर्वक हटाया गया"
+}

@@ -1,0 +1,20 @@
+{
+  "departments": "Departments",
+  "add": "Add",
+  "addDepartment": "Add Department",
+  "editDepartment": "Edit Department",
+  "name": "Name",
+  "description": "Description",
+  "enterName": "Enter Name",
+  "enterDescription": "Enter Description",
+  "actions": "Actions",
+  "save": "Save",
+  "updateDepartment": "Update Department",
+  "cancel": "Cancel",
+  "noDepartmentFound": "No Department match your criteria.",
+  "nameRequired": "Name is required",
+  "nameExists": "Department name already exists",
+  "descExists": "Department description already exists",
+  "loading": "Loading...",
+  "errorLoading": "Error loading departments"
+}

@@ -1,0 +1,22 @@
+{
+    "skill_name": "कौशल का नाम",
+    "skill_desc": "कौशल विवरण",
+    "skills": "कौशल",
+    "add_skill": "कौशल जोड़ें",
+    "edit_skill": "कौशल संपादित करें",
+    "save": "सहेजें",
+    "cancel": "रद्द करें",
+    "update": "अपडेट करें",
+    "actions": "कार्रवाई",
+    "search_placeholder": "कौशल खोजें...",
+    "no_skills_found": "कोई कौशल नहीं मिला",
+    "loading": "लोड हो रहा है...",
+    "error_loading": "कौशल लोड करने में त्रुटि",
+    "delete_confirm": "क्या आप वाकई इस कौशल को हटाना चाहते हैं?",
+    "delete_success": "कौशल सफलतापूर्वक हटा दिया गया",
+    "save_success": "कौशल सफलतापूर्वक सहेजा गया",
+    "update_success": "कौशल सफलतापूर्वक अपडेट किया गया",
+    "error_occurred": "एक त्रुटि हुई",
+    "name_required": "नाम आवश्यक है",
+    "name_exists": "कौशल का नाम पहले से मौजूद है"
+}

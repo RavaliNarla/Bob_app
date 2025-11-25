@@ -9,6 +9,7 @@ import LivePreview from "./LivePreview";
 import Toolbar from "./Toolbar";
 import defaultTemplate from "./defaultTemplate.json";
 import "../../css/Editor.css";
+import { useTranslation } from "react-i18next";
 
 /* Restore ReactQuill ONLY for Terms so it doesn’t show raw <p> tags */
 import ReactQuill from "react-quill";
@@ -95,6 +96,7 @@ function IntroEditor({ value, onChange }) {
 }
 
 export default function TemplateEditor() {
+  const { t } = useTranslation("offerletter");
   const template = useTemplateStore((s) => s.template);
   const setTemplateName = useTemplateStore((s) => s.setTemplateName);
   const setField = useTemplateStore((s) => s.setField);
@@ -131,7 +133,7 @@ export default function TemplateEditor() {
   const handleSave = async () => {
     let name = (template?.templateName || "").trim();
     if (!name) {
-      alert("Please enter a Template Name");
+      alert(t("enterNameAlert"));
       return;
     }
 
@@ -153,14 +155,13 @@ export default function TemplateEditor() {
         return [...filtered, data];
       });
 
-      alert(`✅ Saved: ${data?.name || name}\nFile: ${data?.id}`);
-
+      alert(`${t("saveSuccess")}: ${data?.name || name}\nID: ${data?.id}`);
       // 🔹 Reset editor after saving
       useTemplateStore.getState().setTemplate(defaultTemplate); // reset store
       setSelectedId(""); // clear selected saved template
     } catch (err) {
       console.error("Save failed", err);
-      alert("Failed to save template.");
+      alert(t("saveFailed"));
     } finally {
       setSaving(false);
     }
@@ -190,13 +191,14 @@ export default function TemplateEditor() {
             <div className="ts-scope ts-left shadow offer" style={{ background: "#fff", padding: "2rem", height: "calc(128vh - 80px)", overflowY: "auto", }}>
               <Card.Body>
 
-                <Form.Label>Template Name</Form.Label>
+                <Form.Label>{t("templateName")}</Form.Label>
                 <InputGroup>
                   <Form.Control
-                    value={template.templateName}  // ✅ will now default to "Template 1"
+                    value={template.templateName}
                     onChange={(e) => setTemplateName(e.target.value)}
-                    placeholder="Enter template name"
+                    placeholder={t("templateNamePlaceholder")}
                   />
+
                 </InputGroup>
 
                 <hr />
@@ -210,22 +212,27 @@ export default function TemplateEditor() {
               <Card.Body>
                 <div className="fields_data">
 
-                  <h6 className="mb-3" style={{ fontWeight: '500' }}>Fields</h6>
-                  <Form.Label>Signature</Form.Label>
+                  <h6 className="mb-3" style={{ fontWeight: '500' }}>
+                    {t("fields")}
+                  </h6>
+                  <Form.Label>{t("signature")}</Form.Label>
+
                   <Form.Group className="mb-2">
 
                     <Form.Control
                       className="mb-2 w-48"
                       value={template.fields.hrName}
                       onChange={(e) => setField("hrName", e.target.value)}
-                      placeholder="e.g. HR Department"
+                      placeholder={t("hrNamePlaceholder")}
                     />
+
                     <Form.Control
                       className="mb-2 w-48"
                       value={template.fields.companyName}
                       onChange={(e) => setField("companyName", e.target.value)}
-                      placeholder="e.g. Company Name"
+                      placeholder={t("companyNamePlaceholder")}
                     />
+
                   </Form.Group>
                 </div>
 
@@ -256,11 +263,14 @@ export default function TemplateEditor() {
               <hr />
               <Card.Body>
                 <div class="content_data">
-                  <h6 className="mb-2" style={{ fontWeight: '500' }}>Content</h6>
+                  <h6 className="mb-2" style={{ fontWeight: '500' }}>
+                    {t("content")}
+                  </h6>
+
 
                   {/* Subject */}
                   <Form.Group className="mb-2" style={{ marginBottom: '15px !important' }}>
-                    <Form.Label>Subject</Form.Label>
+                    <Form.Label>{t("subject")}</Form.Label>
                     <ReactQuill
                       theme="snow"
                       value={template.content.subject}
@@ -272,14 +282,14 @@ export default function TemplateEditor() {
                   </Form.Group>
 
                   {/* Intro (chips, non-editable) */}
-                  <Form.Label>Body Text</Form.Label>
+                  <Form.Label>{t("bodyText")}</Form.Label>
                   <IntroEditor
                     value={template.content.intro}
                     onChange={(v) => setContent("intro", v)}
                   />
 
                   {/* Terms (restored to ReactQuill so no raw <p> shows) */}
-                  <Form.Label>Terms</Form.Label>
+                  <Form.Label>{t("terms")}</Form.Label>
                   <ReactQuill
                     theme="snow"
                     value={template.content.termsHtml}
@@ -296,8 +306,9 @@ export default function TemplateEditor() {
                     disabled={saving}
                     variant="primary"
                   >
-                    {saving ? "Saving…" : "Save Template"}
+                    {saving ? t("saving") : t("save")}
                   </Button>
+
                 </div>
               </Card.Body>
             </div>

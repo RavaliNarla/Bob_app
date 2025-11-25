@@ -8,7 +8,10 @@ import { apiService } from "../services/apiService";
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import { useTranslation } from 'react-i18next';
+
 const RelaxationPage = () => {
+  const { t } = useTranslation("relaxationPolicy");
   const [relaxationPolicies, setRelaxationPolicies] = useState([]);
   const [selectedPolicyId, setSelectedPolicyId] = useState("");
   const [selectedPolicy, setSelectedPolicy] = useState(null);
@@ -157,7 +160,7 @@ const RelaxationPage = () => {
         <div className="card-body">
           {/* <h2 className="mb-4">Relaxation Policy Management</h2> */}
           <div>
-              <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '15px' }}>Relaxation Policy</h5>
+              <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '15px' }}>{t("relaxationPolicy:relaxationPolicy")}</h5>
           </div>
           <div className="row mb-4 align-items-center">
   {/* Dropdown stays in the left column */}
@@ -170,7 +173,7 @@ const RelaxationPage = () => {
         value={selectedPolicyId}
         onChange={handlePolicyChange}
       >
-        <option value="">Select Relaxation Policy</option>
+        <option value="">{t("relaxationPolicy:selectPolicy")}</option>
         {relaxationPolicies.map((policy) => (
           <option
             key={policy.job_relaxation_policy_id}
@@ -191,7 +194,7 @@ const RelaxationPage = () => {
       disabled={isLoading}
     >
        <FontAwesomeIcon icon={faPlusCircle} /> &nbsp;
-      {isCreateNew ? 'Create New' : 'Create New'}
+      {t("createNew")}
     </Button>
   </div>
 </div>

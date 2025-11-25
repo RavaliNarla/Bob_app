@@ -15,9 +15,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'react-i18next';
 import apiService from "../services/apiService";
 
 const SpecialCategory = () => {
+  const { t } = useTranslation('specialcategory');
   const [showModal, setShowModal] = useState(false);
   const [currentCategory, setCurrentCategory] = useState({
     special_category_code: "",
@@ -44,7 +46,7 @@ const SpecialCategory = () => {
       const data = Object.values(res.data);
       setCategories(data);
     } catch (err) {
-      setError("Failed to fetch categories.");
+      setError(t('fetch_error'));
       console.error("GET Error:", err);
     } finally {
       setLoading(false);
@@ -64,10 +66,10 @@ const SpecialCategory = () => {
     const trimmedDesc = currentCategory.special_category_desc?.trim();
 
     if (!trimmedCode) {
-      newErrors.special_category_code = "Code is required";
+      newErrors.special_category_code = t('code_required');
     }
     if (!trimmedName) {
-      newErrors.special_category_name = "Name is required";
+      newErrors.special_category_name = t('name_required');
     }
    
 
@@ -85,13 +87,13 @@ const SpecialCategory = () => {
           cat.special_category_code?.trim().toLowerCase() === trimmedCode.toLowerCase() &&
           index !== editIndex
         )) {
-          newErrors.special_category_code = "Code already exists";
+          newErrors.special_category_code = t('code_exists');
         }
         if (categories.some((cat, index) =>
           cat.special_category_name?.trim().toLowerCase() === trimmedName.toLowerCase() &&
           index !== editIndex
         )) {
-          newErrors.special_category_name = "Name already exists";
+          newErrors.special_category_name = t('name_exists');
         }
       }
     }
@@ -111,7 +113,7 @@ const SpecialCategory = () => {
         };
         await apiService.updateSpecialCategory(updatedCategory.special_category_id, updatedCategory);
 
-        toast.success("Category updated successfully");
+        toast.success(t('update_success'));
 
         const updatedCategories = [...categories];
         updatedCategories[editIndex] = updatedCategory;
@@ -120,14 +122,14 @@ const SpecialCategory = () => {
         const response = await apiService.addSpecialCategory(currentCategory);
         const newCategory = response.data?.data || currentCategory;
 
-        toast.success("Category added successfully");
+        toast.success(t('save_success'));
         setCategories(prev => [...prev, newCategory]);
         await fetchCategories();
       }
       resetForm();
     } catch (err) {
       console.error("Save Error:", err);
-      toast.error("Save failed");
+      toast.error(t('save_failed'));
     }
   };
 
@@ -136,10 +138,10 @@ const SpecialCategory = () => {
     try {
       await apiService.deleteSpecialCategory(idToDelete);
       setCategories(categories.filter((cat) => cat.special_category_id !== idToDelete));
-      toast.success("Category deleted");
+      toast.success(t('delete_success'));
     } catch (err) {
       console.error("Delete Error:", err);
-      toast.error("Delete failed");
+      toast.error(t('delete_failed'));
     }
   };
 
@@ -184,34 +186,34 @@ const SpecialCategory = () => {
 
   const categoriesToDisplay = sortedCategories();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
   if (error) return <div className="alert alert-danger mt-5">{error}</div>;
 
   return (
     <div className="register_container px-5 py-3">
       <div className="d-flex justify-content-between align-items-center pb-4">
         <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>
-          Special Categories
+          {t('special_categories')}
         </h5>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+        <Button variant="orange" onClick={() => openModal()}>+ {t('add_special_category')}</Button>
       </div>
 
       {categoriesToDisplay.length === 0 ? (
-        <p className="text-muted text-center mt-5">No categories found.</p>
+        <p className="text-muted text-center mt-5">{t('no_categories')}</p>
       ) : (
         <Table className="dept_table" responsive hover>
           <thead className="table-header-orange">
             <tr>
               <th onClick={() => handleSort("special_category_code")} style={{ cursor: "pointer", width: "20%" }}>
-                Code{getSortIndicator("special_category_code")}
+                {t('code')}{getSortIndicator("special_category_code")}
               </th>
               <th onClick={() => handleSort("special_category_name")} style={{ cursor: "pointer", width: "35%" }}>
-                Name{getSortIndicator("special_category_name")}
+                {t('name')}{getSortIndicator("special_category_name")}
               </th>
               <th onClick={() => handleSort("special_category_desc")} style={{ cursor: "pointer", width: "35%" }}>
-                Description{getSortIndicator("special_category_desc")}
+                {t('description')}{getSortIndicator("special_category_desc")}
               </th>
-              <th>Actions</th>
+              <th>{t('actions')}</th>
             </tr>
           </thead>
 
@@ -235,7 +237,7 @@ const SpecialCategory = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Special Category" : "Add Special Category"}
+            {editIndex !== null ? t('edit_special_category') : t('add_special_category')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -244,11 +246,11 @@ const SpecialCategory = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label>
-                    Code <span className="text-danger">*</span>
+                    {t('code')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter code"
+                    placeholder={t('enter_code')}
                     value={currentCategory.special_category_code}
                     isInvalid={!!errr.special_category_code}
                     onChange={(e) =>
@@ -263,11 +265,11 @@ const SpecialCategory = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label>
-                    Name <span className="text-danger">*</span>
+                    {t('name')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter name"
+                    placeholder={t('enter_name')}
                     value={currentCategory.special_category_name}
                     isInvalid={!!errr.special_category_name}
                     onChange={(e) =>
@@ -282,12 +284,12 @@ const SpecialCategory = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label>
-                    Description
+                    {t('description')}
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t('enter_description')}
                     value={currentCategory.special_category_desc}
                     isInvalid={!!errr.special_category_desc}
                     onChange={(e) =>
@@ -305,14 +307,14 @@ const SpecialCategory = () => {
 
         <Modal.Footer>
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update" : "Save"}
+            {editIndex !== null ? t('update') : t('save')}
           </Button>
         </Modal.Footer>
       </Modal>

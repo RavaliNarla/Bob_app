@@ -20,8 +20,10 @@ import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Approvals = () => {
+  const { t } = useTranslation("approval");
   const user = useSelector((state) => state?.user?.user);
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -174,8 +176,8 @@ const Approvals = () => {
 
   const handleApprove = async () => {
     if (selectedJobIds.length === 0) {
-      toast.info("Please select at least one requisition to approve.");
-      return;
+      toast.info(t("approval:select_one_requisition_approve"));
+       return;
     }
 
     const payload = {
@@ -187,7 +189,7 @@ const Approvals = () => {
 
     try {
       await apiService.updateApproval(payload);
-      toast.success(`Approved ${selectedJobIds.length} requisitions successfully`);
+      toast.success(t("approval:approved_success", { count: selectedJobIds.length }));
       fetchJobPostings();
       setSelectedJobIds([]);
     } catch (err) {
@@ -198,7 +200,7 @@ const Approvals = () => {
 
   const handleReject = () => {
     if (selectedJobIds.length === 0) {
-      toast.info("Please select at least one requisition to reject.");
+      toast.info(t("approval:select_one_requisition_reject"));
       return;
     }
     setShowRejectModal(true);
@@ -206,11 +208,10 @@ const Approvals = () => {
 
   const confirmReject = async () => {
     if (!rejectDescription.trim()) {
-      toast.error("Please enter a description before rejecting");
-      return;
+      toast.error(t("approval:enter_description_before_reject")); return;
     }
     if (!user) {
-      toast.error("User information not available.");
+      toast.error(t("approval:user_info_not_available"));
       return;
     }
 
@@ -223,7 +224,7 @@ const Approvals = () => {
 
     try {
       await apiService.updateApproval(payload);
-      toast.success(`Rejected the requisition(s) successfully.`);
+      toast.success(t("approval:rejected_success"));
       setJobPostings((prev) =>
         prev.filter((job) => !selectedJobIds.includes(job.requisition_id))
       );
@@ -232,7 +233,7 @@ const Approvals = () => {
       setShowRejectModal(false);
     } catch (err) {
       console.error("Error rejecting requisition:", err);
-      toast.error("Failed to reject requisition(s)");
+      toast.error(t("approval:rejected_failed"));
     }
   };
 
@@ -247,7 +248,7 @@ const Approvals = () => {
         <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
           <div className="d-flex flex-row align-items-center">
             <h5 className="header me-2" style={{ marginBottom: "0.25rem" }}>
-              Select Status
+              {t("approval:selectStatus")}
             </h5>
             <Form.Select
               value={selectedStatus}
@@ -258,9 +259,9 @@ const Approvals = () => {
               style={{ width: "200px" }}
               className="fonreg dropdowntext"
             >
-              <option value="">All</option>
-              <option value="Pending">Pending for Approval</option>
-              <option value="Approved">Approved</option>
+              <option value="">{t("approval:all")}</option>
+              <option value="Pending">{t("approval:pendingForApproval")}</option>
+              <option value="Approved">{t("approval:approved")}</option>
             </Form.Select>
           </div>
         </div>
@@ -272,7 +273,7 @@ const Approvals = () => {
             </InputGroup.Text>
             <Form.Control
               type="text"
-              placeholder="Search by Title"
+              placeholder={t("approval:searchByTitle")}
               value={searchTerm}
               className="title"
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -311,9 +312,9 @@ const Approvals = () => {
                         disabled={(approval.action || job.requisition_status).toLowerCase() === "approved"}
                       />
                       <div className="fontcard">
-                        <div className="text-dark mb-1">Title: {job.requisition_title}</div>
+                        <div className="text-dark mb-1">{t("approval:title")}: {job.requisition_title}</div>
                         <div className="text-muted mb-1 boldnes">
-                          <b>Requisition:</b> {job.requisition_code} (
+                          <b>{t("approval:requisition")}:</b> {job.requisition_code} (
                           {approval.action === "Pending" ? "Pending for Approval" : approval.action || job.requisition_status})
                         </div>
                       </div>
@@ -322,20 +323,20 @@ const Approvals = () => {
                     <Col xs={12} md={5} className="d-flex flex-column fontcard">
                       <div className="d-flex">
                         <div className="boldnes">
-                          <b>Postings:</b>{" "}
+                          <b>{t("approval:postings")}:</b>{" "}
                           {job.job_postings
                             ? job.job_postings
-                                .split(",")
-                                .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-                                .join(", ")
+                              .split(",")
+                              .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+                              .join(", ")
                             : "Not Posted"}
                         </div>
                       </div>
 
                       <div className="d-flex mb-1 mt-1">
                         <div className="me-4 boldnes">
-                          <b>Start Date:</b> {job.registration_start_date} &nbsp;&nbsp;|&nbsp;&nbsp;
-                          <b>End Date:</b> {job.registration_end_date}
+                          <b>{t("approval:startdate")}:</b> {job.registration_start_date} &nbsp;&nbsp;|&nbsp;&nbsp;
+                          <b>{t("approval:enddate")}:</b> {job.registration_end_date}
                         </div>
                       </div>
                     </Col>
@@ -349,16 +350,16 @@ const Approvals = () => {
                         <thead className="table-header-orange">
                           <tr>
                             <th onClick={() => handleSort("title")} style={{ cursor: "pointer" }}>
-                              Position {getSortIndicator("title")}
+                              {t("approval:position")} {getSortIndicator("title")}
                             </th>
                             <th onClick={() => handleSort("positions")} style={{ cursor: "pointer" }}>
-                              Position Code {getSortIndicator("positions")}
+                              {t("approval:positionCode")} {getSortIndicator("positions")}
                             </th>
                             <th onClick={() => handleSort("description")} style={{ cursor: "pointer" }}>
-                              Grade {getSortIndicator("description")}
+                              {t("approval:grade")} {getSortIndicator("description")}
                             </th>
-                            <th>Vacancies</th>
-                            <th>Actions</th>
+                            <th>{t("approval:vacancies")}</th>
+                            <th>{t("approval:actions")}</th>
                           </tr>
                         </thead>
                         <tbody className="table-body-orange">
@@ -424,10 +425,10 @@ const Approvals = () => {
       {filteredApprovals.length > 0 && (
         <div className="d-flex justify-content-end mt-4 gap-2">
           <Button variant="danger" disabled={selectedJobIds.length === 0} onClick={handleReject}>
-            Reject
+            {t("approval:reject")}
           </Button>
           <Button variant="success" disabled={selectedJobIds.length === 0} onClick={handleApprove}>
-            Approve
+            {t("approval:approve")}
           </Button>
         </div>
       )}
@@ -435,15 +436,15 @@ const Approvals = () => {
       {/* Reject Modal */}
       <Modal show={showRejectModal} onHide={cancelReject} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Reject Requisition</Modal.Title>
+          <Modal.Title>{t("approval:rejectRequisition")}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form.Group>
-            <Form.Label>Description</Form.Label>
+            <Form.Label>{t("approval:description")}</Form.Label>
             <Form.Control
               as="textarea"
               rows={3}
-              placeholder="Enter reason for rejection..."
+              placeholder={t("approval:enterRejectionReason")}
               value={rejectDescription}
               onChange={(e) => setRejectDescription(e.target.value)}
             />
@@ -451,10 +452,10 @@ const Approvals = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={cancelReject}>
-            Cancel
+            {t("approval:cancel")}
           </Button>
           <Button variant="danger" onClick={confirmReject}>
-            Reject
+            {t("approval:reject")}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -463,7 +464,7 @@ const Approvals = () => {
       <Modal show={showModal} onHide={resetForm} className="modal_container">
         <Modal.Header closeButton>
           <Modal.Title className="fonall">
-            {editRequisitionId !== null ? "View Job Posting" : "Add Job Posting"}
+            {editRequisitionId !== null ? t("jobpostings:viewJobPosting") : "Add Job Posting"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

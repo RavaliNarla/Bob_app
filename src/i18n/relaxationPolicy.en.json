@@ -1,0 +1,20 @@
+{
+  "relaxationPolicy": "Relaxation Policy",
+  "selectPolicy": "Select Relaxation Policy",
+  "createNew": "Create New",
+  "save": "Save",
+  "saving": "Saving…",
+  "saveSuccess": "Relaxation Policy saved successfully!",
+  "saveFailed": "Failed to save Relaxation Policy",
+  "updateNotAllowed": "This policy cannot be updated. Do you want to save as a new policy instead?",
+  "yesSaveAsNew": "Yes, Save as New",
+  "cancel": "Cancel",
+  "loading": "Loading...",
+  "noPolicySelected": "No policy selected to update. Please create or select a policy first.",
+  "failedToLoad": "Failed to load relaxation policies.",
+  "somethingWentWrong": "Something went wrong while saving.",
+
+  "selectCategory": "Select Category",
+  "specialCategories": "Special Categories",
+  "nospecial":"No special categories added yet"
+}

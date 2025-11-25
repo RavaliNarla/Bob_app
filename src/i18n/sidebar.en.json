@@ -1,0 +1,26 @@
+{
+    "Dashboard": "Dashboard",
+    "JobPostings": "Job Postings",
+    "CandidateShortlist": "Candidate Shortlist",
+    "Interviews": "Interviews",
+    "Relaxation": "Relaxation",
+    "BulkUpload": "Bulk Upload",
+    "Approvals": "Approvals",
+    "Admin": "Admin",
+    "Users": "Users",
+    "Department": "Department",
+    "Skills": "Skills",
+    "Location": "Location",
+    "JobGrade": "Job Grade",
+    "OfferLetter": "Offer Letter",
+    "Position": "Position",
+    "Category": "Category",
+    "SpecialCategory": "Special Category",
+    "RelaxationType": "Relaxation Type",
+    "Document": "Document",
+    "InterviewPanel": "Interview Panel",
+
+    "logout": "Logout",
+    "profile": "Profile"
+   
+}

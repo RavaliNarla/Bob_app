@@ -16,7 +16,7 @@ import {
 } from "react-bootstrap";
 import "../css/JobPosting.css";
 import { apiService } from "../services/apiService";
-import { faE, faEye, faPencil, faPlus, faSearch, faTrash,faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
+import { faE, faEye, faPencil, faPlus, faSearch, faTrash, faClockRotateLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import JobCreation from "./JobCreation";
 import { toast } from "react-toastify";
@@ -25,6 +25,7 @@ import { useNavigate } from "react-router-dom";
 import DownloadReqPdfButton from "../components/DownloadReqPdfButton";
 import { faDownload } from "@fortawesome/free-solid-svg-icons"; // ensure this import exists
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from "react-i18next";
 const EllipsisIcon = () => (
   <svg
     width="16"
@@ -38,6 +39,7 @@ const EllipsisIcon = () => (
   </svg>
 );
 const JobPosting = () => {
+  const { t } = useTranslation(["job", "jobpostings"]);
   const nav = useNavigate();
   const [jobBoards, setJobBoards] = useState({
     linkedin: false,
@@ -48,7 +50,7 @@ const JobPosting = () => {
     foundit: false,
     freshersWorld: false,
   });
-const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: positions[] }
+  const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: positions[] }
 
   const [jobPostings, setJobPostings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -67,19 +69,19 @@ const [reqPositions, setReqPositions] = useState({}); // { [requisition_id]: pos
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedJobIds, setSelectedJobIds] = useState([]);
-  
+
   const [jobBoardError, setJobBoardError] = useState("");
   const [readOnly, setReadOnly] = useState(false);
   const [jobCreation, setJobCreation] = useState(null);
 
   const [showTrailModal, setShowTrailModal] = useState(false);
-const [trailLoading, setTrailLoading] = useState(false);
-const [trailData, setTrailData] = useState([]); // [{ username, useremail, status }]
-const [trailError, setTrailError] = useState("");
+  const [trailLoading, setTrailLoading] = useState(false);
+  const [trailData, setTrailData] = useState([]); // [{ username, useremail, status }]
+  const [trailError, setTrailError] = useState("");
 
-  
+
   // --------- JOB REQUISITION STATES ---------------
-  
+
   const [editIndex, setEditIndex] = useState(null);
   const [viewMode, setViewMode] = useState(false);
   const [showReqModal, setReqShowModal] = useState(false);
@@ -88,69 +90,69 @@ const [trailError, setTrailError] = useState("");
   const user = useSelector((state) => state?.user?.user);
   // console.log("user",user)
   //setNoOfApprovals(user?.manager_depth);
-  const manager_dept=user?.manager_depth;
+  const manager_dept = user?.manager_depth;
   const [noOfApprovals, setNoOfApprovals] = useState(manager_dept);
   const formatDateTime = (value) => {
-  if (!value) return "-";
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return value; // fallback if it's not a valid ISO
-  // Use user’s locale/timezone; tweak as you like
-  return d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
-};
+    if (!value) return "-";
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return value; // fallback if it's not a valid ISO
+    // Use user’s locale/timezone; tweak as you like
+    return d.toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" });
+  };
 
 
 
 
-const handleViewApprovalTrail = async (requisitionId, e) => {
-  e?.stopPropagation?.();
-  setShowTrailModal(true);
-  setTrailLoading(true);
-  setTrailError("");
+  const handleViewApprovalTrail = async (requisitionId, e) => {
+    e?.stopPropagation?.();
+    setShowTrailModal(true);
+    setTrailLoading(true);
+    setTrailError("");
 
-  // try {
-  //   // ⬇️ hardcoded token for local testing only
-  //   const token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Inc4elhNR1VPek5zMUFiWnBtcW5XNiJ9.eyJpc3MiOiJodHRwczovL2Rldi0wcmI2aDJvem5id2tvbmh6LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2ODlkYjU1MTBiOTA1OTY1NjdiZWY2M2MiLCJhdWQiOlsiaHR0cHM6Ly9kZXYtMHJiNmgyb3puYndrb25oei51cy5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vZGV2LTByYjZoMm96bmJ3a29uaHoudXMuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTc1NzkxNzgzMCwiZXhwIjoxNzU4MDA0MjMwLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIHJlYWQ6Y3VycmVudF91c2VyIHVwZGF0ZTpjdXJyZW50X3VzZXJfbWV0YWRhdGEgZGVsZXRlOmN1cnJlbnRfdXNlcl9tZXRhZGF0YSBjcmVhdGU6Y3VycmVudF91c2VyX21ldGFkYXRhIGNyZWF0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIGRlbGV0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIHVwZGF0ZTpjdXJyZW50X3VzZXJfaWRlbnRpdGllcyBvZmZsaW5lX2FjY2VzcyIsImd0eSI6InBhc3N3b3JkIiwiYXpwIjoiYWlpQzZvWmRwSEs1QmV5TEJVTmsxWThQa3h5WEJZNE0ifQ.l0PtjAXmMF2VlmhPA2Whs93y3wgeqSYcQX7dDnf70IP6KkIm3gF_5SoHbjKlh9pXScp02qwTcoRlM-zC6Ngqct7agzM4VW_frpE6WpqvEdUtSbjbi7fRM2fs-PeH8HvsGtxYbuEIUQHQ275PxUX_XN6OXBuU269St5STFeiiTD-0b9j4PFipxE-4--QGRuWvRsrjJV0xgi_yN0CkWrJCCj-xWONobVUSrj5BWqHz7Qj5ocJxQTJ16Iq93tQgC0AcSp69szOUOSNxdIe8EyUAkqrcqOYnSKGCSmvmZ741-owllBKDPyQ280ae4Dn0GfORp1KyZ6y8tFvfT7wtU8DX_A";
+    // try {
+    //   // ⬇️ hardcoded token for local testing only
+    //   const token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Inc4elhNR1VPek5zMUFiWnBtcW5XNiJ9.eyJpc3MiOiJodHRwczovL2Rldi0wcmI2aDJvem5id2tvbmh6LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiJhdXRoMHw2ODlkYjU1MTBiOTA1OTY1NjdiZWY2M2MiLCJhdWQiOlsiaHR0cHM6Ly9kZXYtMHJiNmgyb3puYndrb25oei51cy5hdXRoMC5jb20vYXBpL3YyLyIsImh0dHBzOi8vZGV2LTByYjZoMm96bmJ3a29uaHoudXMuYXV0aDAuY29tL3VzZXJpbmZvIl0sImlhdCI6MTc1NzkxNzgzMCwiZXhwIjoxNzU4MDA0MjMwLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIHJlYWQ6Y3VycmVudF91c2VyIHVwZGF0ZTpjdXJyZW50X3VzZXJfbWV0YWRhdGEgZGVsZXRlOmN1cnJlbnRfdXNlcl9tZXRhZGF0YSBjcmVhdGU6Y3VycmVudF91c2VyX21ldGFkYXRhIGNyZWF0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIGRlbGV0ZTpjdXJyZW50X3VzZXJfZGV2aWNlX2NyZWRlbnRpYWxzIHVwZGF0ZTpjdXJyZW50X3VzZXJfaWRlbnRpdGllcyBvZmZsaW5lX2FjY2VzcyIsImd0eSI6InBhc3N3b3JkIiwiYXpwIjoiYWlpQzZvWmRwSEs1QmV5TEJVTmsxWThQa3h5WEJZNE0ifQ.l0PtjAXmMF2VlmhPA2Whs93y3wgeqSYcQX7dDnf70IP6KkIm3gF_5SoHbjKlh9pXScp02qwTcoRlM-zC6Ngqct7agzM4VW_frpE6WpqvEdUtSbjbi7fRM2fs-PeH8HvsGtxYbuEIUQHQ275PxUX_XN6OXBuU269St5STFeiiTD-0b9j4PFipxE-4--QGRuWvRsrjJV0xgi_yN0CkWrJCCj-xWONobVUSrj5BWqHz7Qj5ocJxQTJ16Iq93tQgC0AcSp69szOUOSNxdIe8EyUAkqrcqOYnSKGCSmvmZ741-owllBKDPyQ280ae4Dn0GfORp1KyZ6y8tFvfT7wtU8DX_A";
 
-  //   const resp = await axios.get(
-  //     `http://192.168.20.111:8081/api/v1/job-requisitions/workflow-approvals-details/${requisitionId}`,
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //         Accept: "application/json",
-  //       },
-  //     }
-  //   );
-  try {
-    const resp = await apiService.getApprovalTrail(requisitionId);
-    const raw = resp?.data?.data ?? resp?.data ?? resp ?? [];
-    const arr = Array.isArray(raw) ? raw : [raw];
+    //   const resp = await axios.get(
+    //     `http://192.168.20.111:8081/api/v1/job-requisitions/workflow-approvals-details/${requisitionId}`,
+    //     {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //         Accept: "application/json",
+    //       },
+    //     }
+    //   );
+    try {
+      const resp = await apiService.getApprovalTrail(requisitionId);
+      const raw = resp?.data?.data ?? resp?.data ?? resp ?? [];
+      const arr = Array.isArray(raw) ? raw : [raw];
 
-    // normalize keys to what the table expects
-    const normalized = arr.map((r) => ({
-      username: r?.username ?? r?.userName ?? r?.user_name ?? "-",
-      useremail: r?.useremail ?? r?.mail ?? r?.email ?? "-",
-      status: r?.status ?? r?.approvalStatus ?? r?.state ?? "-",
-      dateTime: r?.dateTime ?? r?.datetime ?? r?.Datetime ?? "-",
-      comments: r?.comments ?? r?.comments ?? r?.remark ?? "-",
-    }));
+      // normalize keys to what the table expects
+      const normalized = arr.map((r) => ({
+        username: r?.username ?? r?.userName ?? r?.user_name ?? "-",
+        useremail: r?.useremail ?? r?.mail ?? r?.email ?? "-",
+        status: r?.status ?? r?.approvalStatus ?? r?.state ?? "-",
+        dateTime: r?.dateTime ?? r?.datetime ?? r?.Datetime ?? "-",
+        comments: r?.comments ?? r?.comments ?? r?.remark ?? "-",
+      }));
 
-    const sortedApprovals = [...normalized].sort(
-      (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
-    );
+      const sortedApprovals = [...normalized].sort(
+        (a, b) => new Date(b.dateTime) - new Date(a.dateTime)
+      );
 
-    setTrailData(sortedApprovals);
-  } catch (err) {
-    console.error("Approval trail fetch error:", err);
-    setTrailError("Failed to load approval details. Please try again.");
-    setTrailData([]);
-  } finally {
-    setTrailLoading(false);
-  }
-};
+      setTrailData(sortedApprovals);
+    } catch (err) {
+      console.error("Approval trail fetch error:", err);
+      setTrailError("Failed to load approval details. Please try again.");
+      setTrailData([]);
+    } finally {
+      setTrailLoading(false);
+    }
+  };
 
 
 
-  
+
   const toggleAccordion = async (key, requisition_id) => {
     const newKey = activeKey === key ? null : key;
     setActiveKey(newKey);
@@ -215,7 +217,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
     } else {
       setSelectedJobIds(selectedJobIds.filter((id) => id !== requisitionId));
     }
-  };  
+  };
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
 
 
@@ -238,8 +240,8 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
   const getSortIndicator = (key) => {
     if (sortConfig.key !== key) return null;
     return sortConfig.direction === "asc" ? " ▲" : " ▼";
-  }; 
-   const [currentReq, setCurrentReq] = useState({
+  };
+  const [currentReq, setCurrentReq] = useState({
     title: "",
     description: "",
     positions: "",
@@ -261,7 +263,7 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
     setEditRequisitionId(null);
     setEditPositionId(null);
     setReadOnly(false);
-  
+
     // 🔥 Reset filters and selections
     setSelectedJobIds([]);
     setApprovalStatus("");
@@ -277,87 +279,87 @@ const handleViewApprovalTrail = async (requisitionId, e) => {
       freshersWorld: false,
     });
   };
-  
+
 
   const handleSavePostings = async () => {
-  const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
+    const selectedJobBoards = Object.keys(jobBoards).filter((key) => jobBoards[key]);
 
-  // Validation: At least 1 posting must be selected
-  // if (selectedJobBoards.length < 1) {
-  //   setJobBoardError("Please select at least 1 posting.");
-  //   return;
-  // } else {
-  //   setJobBoardError("");
-  // }
+    // Validation: At least 1 posting must be selected
+    // if (selectedJobBoards.length < 1) {
+    //   setJobBoardError("Please select at least 1 posting.");
+    //   return;
+    // } else {
+    //   setJobBoardError("");
+    // }
 
-  if (approvalStatus === "") {
-    toast.error("Please select an approval type.");
-    return;
-  }
+    if (approvalStatus === "") {
+      toast.error("Please select an approval type.");
+      return;
+    }
 
-  if (selectedJobIds.length === 0) {
-    toast.error("Please select at least one requisition to save.");
-    return;
-  }
+    if (selectedJobIds.length === 0) {
+      toast.error("Please select at least one requisition to save.");
+      return;
+    }
 
-// console.log("noOfApprovals",noOfApprovals);
-  const payload = {
-    requisition_id: selectedJobIds,
-    job_postings: selectedJobBoards,
-    approval_status: approvalStatus,
-    noOfApprovals: approvalStatus === "Workflow" ? noOfApprovals : 0, // Include noOfApprovals in payload only if WorkFlow is selected
-    userId: user?.userid// Default user ID as per the payload structure
+    // console.log("noOfApprovals",noOfApprovals);
+    const payload = {
+      requisition_id: selectedJobIds,
+      job_postings: selectedJobBoards,
+      approval_status: approvalStatus,
+      noOfApprovals: approvalStatus === "Workflow" ? noOfApprovals : 0, // Include noOfApprovals in payload only if WorkFlow is selected
+      userId: user?.userid// Default user ID as per the payload structure
+    };
+
+    try {
+      // console.log("Saving job postings with payload:", payload);
+      await apiService.jobpost(payload);
+      toast.success("Job postings updated successfully!");
+
+      // ✅ Reset all filters, selections, and checkboxes
+      setSelectedJobIds([]);
+      setApprovalStatus("");
+      setNoOfApprovals(manager_dept); // Reset to default value
+      setSelectedApproval("");
+      setJobBoards({
+        linkedin: false,
+        careerPage: false,
+        naukri: false,
+        glassDoor: false,
+        indeed: false,
+        foundit: false,
+        freshersWorld: false,
+      });
+
+      // ✅ Reload all requisitions
+      fetchJobPostings();
+
+    } catch (err) {
+      console.error("Error saving job postings:", err);
+      toast.error("Failed to save job postings. Please try again.");
+    }
   };
 
-  try {
-    // console.log("Saving job postings with payload:", payload);
-    await apiService.jobpost(payload);
-    toast.success("Job postings updated successfully!");
+  const filteredJobPostings = jobPostings.filter((job) => {
+    const search = searchTerm.toLowerCase();
+    const matchesSearch =
+      (job.requisition_title?.toLowerCase() ?? "").includes(search) ||
+      (job.requisition_code?.toLowerCase() ?? "").includes(search);
 
-    // ✅ Reset all filters, selections, and checkboxes
-    setSelectedJobIds([]);
-    setApprovalStatus("");
-    setNoOfApprovals(manager_dept); // Reset to default value
-    setSelectedApproval("");
-    setJobBoards({
-      linkedin: false,
-      careerPage: false,
-      naukri: false,
-      glassDoor: false,
-      indeed: false,
-      foundit: false,
-      freshersWorld: false,
-    });
+    let matchesApproval = true;
 
-    // ✅ Reload all requisitions
-    fetchJobPostings();
-
-  } catch (err) {
-    console.error("Error saving job postings:", err);
-    toast.error("Failed to save job postings. Please try again.");
-  }
-};
-
-const filteredJobPostings = jobPostings.filter((job) => {
-  const search = searchTerm.toLowerCase();
-  const matchesSearch =
-    (job.requisition_title?.toLowerCase() ?? "").includes(search) ||
-    (job.requisition_code?.toLowerCase() ?? "").includes(search);
-
-  let matchesApproval = true;
-
-  if (selectedApproval !== "") {
-    if (selectedApproval === "Pending") {
-      matchesApproval =
-        job.requisition_status === "Pending for Approval" 
-    } else {
-      matchesApproval = job.requisition_status === selectedApproval;
+    if (selectedApproval !== "") {
+      if (selectedApproval === "Pending") {
+        matchesApproval =
+          job.requisition_status === "Pending for Approval"
+      } else {
+        matchesApproval = job.requisition_status === selectedApproval;
+      }
     }
-  }
-  return matchesSearch && matchesApproval;
-});
+    return matchesSearch && matchesApproval;
+  });
 
-const fetchRequisitions = async () => {
+  const fetchRequisitions = async () => {
     setLoading(true);
     setError(null);
     try {
@@ -371,7 +373,7 @@ const fetchRequisitions = async () => {
     }
   };
 
-    const addRequisitionModal = (req = null, index = null, mode = "edit") => {
+  const addRequisitionModal = (req = null, index = null, mode = "edit") => {
     if (req) {
       // console.log("Editing/View Requisition:", req);
       setCurrentReq({ ...req });   // ✅ keeps requisition_id
@@ -397,16 +399,16 @@ const fetchRequisitions = async () => {
   const handleReqSave = () => {
     const newErrors = {};
     if (!currentReq.requisition_title?.trim()) {
-      newErrors.requisition_title = "Title is required";
+      newErrors.requisition_title = t("titleRequired");
     }
     if (!currentReq.requisition_description?.trim()) {
-      newErrors.requisition_description = "Description is required";
+      newErrors.requisition_description = t("descriptionRequired");
     }
     if (!currentReq.registration_start_date) {
-      newErrors.registration_start_date = "Start date is required";
+      newErrors.registration_start_date = t("startDateRequired");
     }
     if (!currentReq.registration_end_date) {
-      newErrors.registration_end_date = "End date is required";
+      newErrors.registration_end_date = t("endDateRequired");
     } else if (
       currentReq.registration_start_date &&
       new Date(currentReq.registration_end_date) < new Date(currentReq.registration_start_date)
@@ -422,10 +424,10 @@ const fetchRequisitions = async () => {
         (req) =>
           req.requisition_title.trim().toLowerCase() === currentReq.requisition_title.trim().toLowerCase() &&
           req.requisition_id !== currentReq.requisition_id // ✅ ignore self
-        )
-      ) {
-        newErrors.requisition_title = "Title must be unique";
-      }
+      )
+    ) {
+      newErrors.requisition_title = "Title must be unique";
+    }
 
     setErrr(newErrors);
 
@@ -435,42 +437,42 @@ const fetchRequisitions = async () => {
   };
 
   const handleReqSaveCallback = async () => {
-  try {
-    if (editIndex !== null) {
-      const updatedReq = { ...currentReq };
-      const id = updatedReq.requisition_id; 
+    try {
+      if (editIndex !== null) {
+        const updatedReq = { ...currentReq };
+        const id = updatedReq.requisition_id;
 
-      const response = await apiService.updateRequisition(id, updatedReq);
+        const response = await apiService.updateRequisition(id, updatedReq);
 
-      if (response.success === true) {
-        toast.success("Requisition updated successfully");
+        if (response.success === true) {
+          toast.success(t("job:updateSuccess"));
 
-        // Update the list in state
-        const updatedReqs = reqs.map((r) =>
-          r.requisition_id === updatedReq.requisition_id ? updatedReq : r
-        );
-        setReqs(updatedReqs);
+          // Update the list in state
+          const updatedReqs = reqs.map((r) =>
+            r.requisition_id === updatedReq.requisition_id ? updatedReq : r
+          );
+          setReqs(updatedReqs);
+        }
+      } else {
+        const response = await apiService.createRequisition({
+          ...currentReq,
+          comments: "",
+          no_of_positions: "1",
+        });
+
+        if (response.success === true) {
+          toast.success(t("job:addSuccess"));
+        }
+
+        fetchRequisitions();
       }
-    } else {
-      const response = await apiService.createRequisition({
-        ...currentReq,
-        comments: "",
-        no_of_positions: "1",
-      });
 
-      if (response.success === true) {
-        toast.success("Requisition added successfully");
-      }
-
-      fetchRequisitions();
+      resetReqForm();
+      fetchJobPostings();
+    } catch (err) {
+      toast.error("Save failed");
     }
-
-    resetReqForm();
-    fetchJobPostings();
-  } catch (err) {
-    toast.error("Save failed");
-  }
-};
+  };
 
 
 
@@ -498,8 +500,7 @@ const fetchRequisitions = async () => {
       const response = await apiService.deleteRequisition(req.requisition_id);
 
       if (response.success === true) {
-        toast.success("Requisition deleted successfully");
-
+        toast.success(t("job:deleteSuccess"));
         // Remove from local state immediately
         setReqs((prevReqs) =>
           prevReqs.filter((r) => r.requisition_id !== req.requisition_id)
@@ -513,20 +514,20 @@ const fetchRequisitions = async () => {
 
 
   return (
-    
+
     <Container fluid className="p-4 px-5 fonsty job-postings-page">
-      <h5 className="pb-3" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Postings</h5>
+      <h5 className="pb-3" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t("jobpostings:jobPostings")}</h5>
       <div className="d-flex flex-row align-items-end justify-content-between mb-3">
         <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
           <Button
             onClick={() => addRequisitionModal()}
             style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', color: '#fff', fontSize: '14px' }}
           >
-            + Add Requisition
+            + {t("jobpostings:addRequisition")}
           </Button>
           <div className="d-flex flex-row align-items-center">
             <h5 className="header me-2" style={{ marginBottom: "0.25rem" }}>
-            Select Status
+              {t("jobpostings:selectStatus")}
             </h5>
             <Form.Select
               value={selectedApproval}
@@ -534,18 +535,18 @@ const fetchRequisitions = async () => {
                 setSelectedApproval(e.target.value);
                 setActiveKey(null); // close all accordions when filter changes
               }}
-              style={{ width: "200px"}}
+              style={{ width: "200px" }}
               className="fonreg dropdowntext"
             >
-              <option value="">All Requisitions</option>
-              <option value="New">New</option>
-              <option value="Pending">Pending for Approval</option>
-              <option value="Approved">Approved</option>
-              <option value="Published">Published</option>
-              <option value="Rejected">Rejected</option>
+              <option value="">{t("jobpostings:allRequisitions")}</option>
+              <option value="New">{t("jobpostings:new")}</option>
+              <option value="Pending">{t("jobpostings:pending")}</option>
+              <option value="Approved">{t("jobpostings:approved")}</option>
+              <option value="Published">{t("jobpostings:published")}</option>
+              <option value="Rejected">{t("jobpostings:rejected")}</option>
             </Form.Select>
           </div>
-          
+
         </div>
         <div className="col-md-6 search-container fonreg">
           <InputGroup className="posting-search">
@@ -554,7 +555,7 @@ const fetchRequisitions = async () => {
             </InputGroup.Text>
             <Form.Control className="title"
               type="text"
-              placeholder="Search by Title"
+              placeholder={t("jobpostings:searchByTitle")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -563,21 +564,21 @@ const fetchRequisitions = async () => {
       </div>
       {loading ? (
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
-        <Spinner animation="border" variant="primary" />
+          <Spinner animation="border" variant="primary" />
         </div>
-        ) : error ? (
+      ) : error ? (
         <Alert variant="danger">{error}</Alert>
-        ) : filteredJobPostings.length === 0 ? (
+      ) : filteredJobPostings.length === 0 ? (
         <div className="text-center text-muted py-4">
           No requisitions found for the selected filter.
         </div>
-        ) :(
+      ) : (
         <Accordion activeKey={activeKey}>
           {filteredJobPostings.map((job, index) => (
             <Accordion.Item eventKey={index.toString()} key={index} className="mb-2 border rounded list">
               <Accordion.Header onClick={() => toggleAccordion(index.toString(), job.requisition_id)}>
                 <Row className="w-100 align-items-center fontreg">
-                  
+
                   {/* Left side: Checkbox + Title + Requisition + Status */}
                   <Col xs={12} md={5} className="d-flex align-items-start mb-2 mb-md-0">
                     <Form.Check
@@ -586,30 +587,30 @@ const fetchRequisitions = async () => {
                       checked={selectedJobIds.includes(job.requisition_id)}
                       onChange={(e) => handleJobSelection(e, job.requisition_id)}
                       onClick={(e) => e.stopPropagation()}
-                      disabled={job.count === 0 || job.requisition_status !== "New"} 
+                      disabled={job.count === 0 || job.requisition_status !== "New"}
                     />
                     <div className="fontcard">
                       <div className=" text-dark mb-1">
-                        Title: {job.requisition_title}
+                        {t("jobpostings:title")}: {job.requisition_title}
                       </div>
                       <div className="text-muted mb-1 boldnes d-flex align-items-center gap-2">
-                        <b>Requisition:</b>
+                        <b>{t("jobpostings:requisition")}:</b>
                         <span>{job.requisition_code}</span>
                         <span>({job.requisition_status})</span>
-                        {(job.requisition_status!="New")?
-                        (
-                        <OverlayTrigger placement="top" overlay={<Tooltip>View Approval Status</Tooltip>}>
-                        <span
-                          onClick={(e) => { e.stopPropagation(); handleViewApprovalTrail(job.requisition_id, e); }}
-                          style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
-                         
-                        >
-                          {/* <FontAwesomeIcon icon={faEye} className="approval-eye" /> */}
-                          <FontAwesomeIcon icon={faClockRotateLeft} className="approval-eye" />
-                        </span>
-                      </OverlayTrigger>
-                      ):""
-                    }
+                        {(job.requisition_status != "New") ?
+                          (
+                            <OverlayTrigger placement="top" overlay={<Tooltip>{t("jobpostings:ViewApprovalStatus")}</Tooltip>}>
+                              <span
+                                onClick={(e) => { e.stopPropagation(); handleViewApprovalTrail(job.requisition_id, e); }}
+                                style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+
+                              >
+                                {/* <FontAwesomeIcon icon={faEye} className="approval-eye" /> */}
+                                <FontAwesomeIcon icon={faClockRotateLeft} className="approval-eye" />
+                              </span>
+                            </OverlayTrigger>
+                          ) : ""
+                        }
                       </div>
                     </div>
                   </Col>
@@ -619,40 +620,43 @@ const fetchRequisitions = async () => {
                     {/* Row 1 */}
                     <div className="d-flex">
                       <div className="boldnes">
-                        <b>Postings:</b>{" "}
+                        <b>{t("jobpostings:postings")}:</b>{" "}
                         {job.job_postings
                           ? job.job_postings
-                              .split(",") // split into array
-                              .map(
-                                (item) =>
-                                  item.charAt(0).toUpperCase() + item.slice(1) // capitalize each
-                              )
-                              .join(", ") // join back with comma + space
+                            .split(",") // split into array
+                            .map(
+                              (item) =>
+                                item.charAt(0).toUpperCase() + item.slice(1) // capitalize each
+                            )
+                            .join(", ") // join back with comma + space
                           : "Not Posted"}
                       </div>
                     </div>
                     {/* Row 2 */}
                     <div className="d-flex mb-1 mt-1">
                       <div className="me-4 boldnes">
-                        <b>Start Date:</b> {job?.registration_start_date}&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <b>End Date:</b> {job?.registration_end_date}&nbsp;&nbsp;|&nbsp;&nbsp;
-                        <b>Vacancies:</b> {job.count ? job.count : "0"}<br></br>
-                        <b>Status:</b> {
+                        <b>{t("jobpostings:startdate")}:</b> {job?.registration_start_date}&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <b>{t("jobpostings:enddate")}:</b> {job?.registration_end_date}&nbsp;&nbsp;|&nbsp;&nbsp;
+                        <b>{t("jobpostings:vacancies")}:</b> {job.count ? job.count : "0"}<br></br>
+                        <b>{t("jobpostings:status")}:</b> {
+
                           new Date() > new Date(job?.registration_end_date)
-                            ? "Expired"
-                            : "Open"
+                            ? t("jobpostings:expired")
+                            : t("jobpostings:open")
+
+
                         }
 
                       </div>
-                      
+
                     </div>
                   </Col>
 
                   <Col xs={12} md={2} className="d-flex gap-4 px-2">
-                    
+
                     {job?.requisition_status === "New" ? (
                       <>
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Add Position</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>{t("jobpostings:addPosition")}</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faPlus}
                             className="iconhover"
@@ -666,7 +670,7 @@ const fetchRequisitions = async () => {
                             style={{ color: '#717178', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Edit Requisition</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>{t("jobpostings:editRequisition")}</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faPencil}
                             className="iconhover"
@@ -677,14 +681,14 @@ const fetchRequisitions = async () => {
                             style={{ color: '#717178', cursor: 'pointer' }}
                           />
                         </OverlayTrigger>
-                        <OverlayTrigger placement="top" overlay={<Tooltip>Delete Requisition</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>{t("jobpostings:deleteRequisition")}</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faTrash}
                             className="required-asterisk cursor-pointer iconhover"
-                            style={{ color: '#717178',cursor: 'pointer' }}
+                            style={{ color: '#717178', cursor: 'pointer' }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleDeleteReq(job,index);
+                              handleDeleteReq(job, index);
                             }}
                           />
                         </OverlayTrigger>
@@ -693,14 +697,14 @@ const fetchRequisitions = async () => {
                             requisition_id={job.requisition_id}
                             requisition={job}
                           >
-                            
+
                           </DownloadReqPdfButton>
                         </OverlayTrigger>
                       </>
-                      
+
                     ) : (
                       <>
-                        <OverlayTrigger placement="top" overlay={<Tooltip>View Requisition</Tooltip>}>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>{t("jobpostings:viewRequisition")}</Tooltip>}>
                           <FontAwesomeIcon
                             icon={faEye}
                             className="iconhover"
@@ -708,7 +712,7 @@ const fetchRequisitions = async () => {
                               e.stopPropagation();
                               addRequisitionModal(job, index, "view");
                             }}
-                            style={{ color: '#717178', cursor: 'pointer', textAlign: 'right', right:'80px', position: 'absolute', top:'48px' }}
+                            style={{ color: '#717178', cursor: 'pointer', textAlign: 'right', right: '80px', position: 'absolute', top: '48px' }}
                           />
                         </OverlayTrigger>
                       </>
@@ -723,22 +727,22 @@ const fetchRequisitions = async () => {
                       <thead className="table-header-orange">
                         <tr>
                           <th onClick={() => handleSort("title")} style={{ cursor: "pointer" }}>
-                            Position{getSortIndicator("title")}
+                            {t("jobpostings:position")}{getSortIndicator("title")}
                           </th>
                           <th onClick={() => handleSort("positions")} style={{ cursor: "pointer" }}>
-                            Position Code{getSortIndicator("positions")}
+                            {t("jobpostings:positionCode")}{getSortIndicator("positions")}
                           </th>
                           <th onClick={() => handleSort("description")} style={{ cursor: "pointer" }}>
-                            Grade{getSortIndicator("description")}
+                            {t("jobpostings:grade")}{getSortIndicator("description")}
                           </th>
-                          <th>Vacancies</th>
+                          <th>{t("jobpostings:vacancies")}</th>
                           {/* <th onClick={() => handleSort("startDate")} style={{ cursor: "pointer" }}>
                             Experience{getSortIndicator("startDate")}
                           </th> */}
                           {/* <th onClick={() => handleSort("endDate")} style={{ cursor: "pointer" }}>
                             Status{getSortIndicator("endDate")}
                           </th> */}
-                          <th>{'Actions'}</th>
+                          <th>{t("jobpostings:actions")}</th>
                         </tr>
                       </thead>
                       <tbody className="table-body-orange">
@@ -774,8 +778,8 @@ const fetchRequisitions = async () => {
                                   }}
                                 />
                               </td> */}
-                                <td>
-                                {job.requisition_status==='New' ? (
+                              <td>
+                                {job.requisition_status === 'New' ? (
                                   <FontAwesomeIcon
                                     icon={faPencil}
                                     className="text-info me-3 cursor-pointer iconhover"
@@ -800,7 +804,7 @@ const fetchRequisitions = async () => {
                                     }}
                                   />
                                 )
-                              }</td>
+                                }</td>
                             </tr>
                           ))
                         )}
@@ -827,15 +831,15 @@ const fetchRequisitions = async () => {
                       style={{
                         minWidth: "130px",
                         alignSelf: "flex-start",
-                        
+
                       }}
                     >
-                      Job Postings: <br />
+                      {t("jobpostings:jobPostings")}: <br />
                       {jobBoardError && (
-                      <span style={{ color: "red", fontSize: "10px" }}>{jobBoardError}</span>
-                    )}
+                        <span style={{ color: "red", fontSize: "10px" }}>{jobBoardError}</span>
+                      )}
                     </Form.Label>
-                    
+
                   </div>
 
                   {/* Checkboxes */}
@@ -844,7 +848,7 @@ const fetchRequisitions = async () => {
                       <div key={idx} className="me-4 mb-2">
                         <Form.Check
                           type="checkbox"
-                          label={key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
+                          label={t(`jobpostings:${key}`)}  // ✅ Use translation here
                           name={key}
                           checked={value}
                           onChange={handleCheckboxChange}
@@ -852,6 +856,7 @@ const fetchRequisitions = async () => {
                         />
                       </div>
                     ))}
+
                   </div>
                 </div>
               </Col>
@@ -859,92 +864,94 @@ const fetchRequisitions = async () => {
           </div>
 
           <div className="d-flex align-items-center mb-4">
-          {/* Approval Type */}
-          <span className="postingfont me-3">Approval Type</span>
-          <Form.Select
-            value={approvalStatus}
-            style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
-            className="me-4"
-            onChange={(e) => {
-              setApprovalStatus(e.target.value);
-              if (e.target.value !== "Workflow") {
-                setNoOfApprovals(manager_dept);
-              }
-            }}
-          >
-            <option value="">Select Status</option>
-            <option value="Direct Approval">Direct Approval</option>
-            
+            {/* Approval Type */}
+            <span className="postingfont me-3">{t("jobpostings:approvalType")}</span>
+            <Form.Select
+              value={approvalStatus}
+              style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
+              className="me-4"
+              onChange={(e) => {
+                setApprovalStatus(e.target.value);
+                if (e.target.value !== "Workflow") {
+                  setNoOfApprovals(manager_dept);
+                }
+              }}
+            >
+              <option value="">{t("jobpostings:selectStatus")}</option>
+              <option value="Direct Approval">{t("jobpostings:directApproval")}</option>
+
               {/* Show Workflow option only if user is not Admin */}
               {user.role !== "Admin" && (
-                <option value="Workflow">Workflow</option>
+                <option value="Workflow">{t("jobpostings:workflow")}</option>
               )}
-          </Form.Select>
+            </Form.Select>
 
-         
 
-          {approvalStatus === "Workflow" && (
-            <>
-              <span className="postingfont me-3">Number of Approvals</span>
-              <Form.Select
-                style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
-                value={noOfApprovals}
-                onChange={(e) => {
-                  const val = e.target.value === "default" ? manager_dept : parseInt(e.target.value);
-                  setNoOfApprovals(val);
-                }}
-              >
-                {/* Default option */}
-                {/* <option value="default">Default</option> */}
-                {/* <option value={manager_dept}> {manager_dept}</option> */}
-                {/* Dynamic options from 1 to manager_dept */}
-                {Array.from({ length: manager_dept }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-                {/* {Array.from({ length: manager_dept }, (_, i) => i + 1)
+
+            {approvalStatus === "Workflow" && (
+              <>
+                <span className="postingfont me-3">Number of Approvals</span>
+                <Form.Select
+                  style={{ width: "auto", minWidth: "200px", fontWeight: "300" }}
+                  value={noOfApprovals}
+                  onChange={(e) => {
+                    const val = e.target.value === "default" ? manager_dept : parseInt(e.target.value);
+                    setNoOfApprovals(val);
+                  }}
+                >
+                  {/* Default option */}
+                  {/* <option value="default">Default</option> */}
+                  {/* <option value={manager_dept}> {manager_dept}</option> */}
+                  {/* Dynamic options from 1 to manager_dept */}
+                  {Array.from({ length: manager_dept }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1}
+                    </option>
+                  ))}
+                  {/* {Array.from({ length: manager_dept }, (_, i) => i + 1)
                   .filter((num) => num !== manager_dept) // 👈 skip duplicate
                   .map((num) => (
                     <option key={num} value={num}>
                       {num}
                     </option>
                   ))} */}
-              </Form.Select>
-            </>
-          )}
-        </div>
+                </Form.Select>
+              </>
+            )}
+          </div>
 
         </>
       )}
 
       {(selectedApproval === "New" || selectedApproval === "") && (
         <div className="d-flex justify-content-end gap-3">
-         <Button 
-            variant="outline-secondary" 
+          <Button
+            variant="outline-secondary"
             onClick={resetForm}
           >
-            Cancel
+            {t("jobpostings:cancel")}
           </Button>
           <Button
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
             className="text-white"
             onClick={handleSavePostings}
           >
-            Submit
+            {t("jobpostings:submit")}
           </Button>
         </div>
       )}
 
       <Modal show={showModal} onHide={resetForm} className="modal_container">
         <Modal.Header closeButton>
-        <Modal.Title className="fonall">
-  {readOnly
-    ? "View Job Posting"
-    : editRequisitionId !== null
-      ? "Edit Job Posting"
-      : "Add Job Posting"}
-</Modal.Title>
+          <Modal.Title className="fonall">
+            {readOnly
+              ? t("jobpostings:viewJobPosting")
+              : editRequisitionId !== null
+                ? t("jobpostings:editJobPosting")
+                : t("jobpostings:addJobPosting")}
+
+
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <JobCreation
@@ -956,10 +963,10 @@ const fetchRequisitions = async () => {
             onUpdateSuccess={() => {
               // 🔥 Immediately refresh requisition details after update
               if (editRequisitionId) {
-               // toggleAccordion(activeKey, editRequisitionId);
-                 // ✅ Re-fetch data but keep accordion open
-                  fetchRequisitionDetails(editRequisitionId);
-                  fetchJobPostings();
+                // toggleAccordion(activeKey, editRequisitionId);
+                // ✅ Re-fetch data but keep accordion open
+                fetchRequisitionDetails(editRequisitionId);
+                fetchJobPostings();
               } else {
                 fetchJobPostings();
               }
@@ -969,70 +976,70 @@ const fetchRequisitions = async () => {
       </Modal>
 
 
-<Modal
-  show={showTrailModal}
-  onHide={() => setShowTrailModal(false)}
-  centered
-  size="xl"
-  scrollable
-  dialogClassName="approval-trail-modal"
->
-  <Modal.Header closeButton>
-    <Modal.Title className="fonall" style={{ color: '#FF7043', fontWeight: 700 }}>
-      Approval History
-    </Modal.Title>
-  </Modal.Header>
+      <Modal
+        show={showTrailModal}
+        onHide={() => setShowTrailModal(false)}
+        centered
+        size="xl"
+        scrollable
+        dialogClassName="approval-trail-modal"
+      >
+        <Modal.Header closeButton>
+          <Modal.Title className="fonall" style={{ color: '#FF7043', fontWeight: 700 }}>
+            {t("jobpostings:approvalHistory")}
+          </Modal.Title>
+        </Modal.Header>
 
-  <Modal.Body>
-    {trailLoading && (
-      <div className="d-flex justify-content-center py-3">
-        <Spinner animation="border" size="sm" />
-      </div>
-    )}
+        <Modal.Body>
+          {trailLoading && (
+            <div className="d-flex justify-content-center py-3">
+              <Spinner animation="border" size="sm" />
+            </div>
+          )}
 
-    {!trailLoading && trailError && (
-      <Alert variant="danger" className="mb-0">{trailError}</Alert>
-    )}
+          {!trailLoading && trailError && (
+            <Alert variant="danger" className="mb-0">{trailError}</Alert>
+          )}
 
-    {!trailLoading && !trailError && (!trailData || trailData.length === 0) && (
-      <div className="text-muted text-center py-2">Direct Approval</div>
-    )}
+          {!trailLoading && !trailError && (!trailData || trailData.length === 0) && (
+            <div className="text-muted text-center py-2">{t("jobpostings:directApproval")}</div>
+          )}
 
-    {!trailLoading && !trailError && trailData?.length > 0 && (
-      <div className="table-responsive">
-        <Table bordered hover size="sm" className="mb-0 approval-trail-table">
-          <colgroup>
-            <col style={{ width: '20%' }} />
-            <col style={{ width: '20%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '15%' }} />
-            <col style={{ width: '30%' }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Email</th>
-              <th>Status</th>
-              <th>Date / Time</th>
-              <th>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            {trailData.map((row, idx) => (
-              <tr key={idx}>
-                <td style={{ overflowWrap: 'anywhere' }}>{row?.username ?? '-'}</td>
-                <td style={{ overflowWrap: 'anywhere' }}>{row?.useremail ?? '-'}</td>
-                <td>{row?.status ?? '-'}</td>
-                <td>{formatDateTime(row?.dateTime)}</td>
-                <td>{row?.comments ?? '-'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      </div>
-    )}
-  </Modal.Body>
-</Modal>
+          {!trailLoading && !trailError && trailData?.length > 0 && (
+            <div className="table-responsive">
+              <Table bordered hover size="sm" className="mb-0 approval-trail-table">
+                <colgroup>
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '15%' }} />
+                  <col style={{ width: '15%' }} />
+                  <col style={{ width: '30%' }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>{t("jobpostings:user")}</th>
+                    <th>{t("jobpostings:email")}</th>
+                    <th>{t("jobpostings:status")}</th>
+                    <th>{t("jobpostings:dateTime")}</th>
+                    <th>{t("jobpostings:comments")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trailData.map((row, idx) => (
+                    <tr key={idx}>
+                      <td style={{ overflowWrap: 'anywhere' }}>{row?.username ?? '-'}</td>
+                      <td style={{ overflowWrap: 'anywhere' }}>{row?.useremail ?? '-'}</td>
+                      <td>{row?.status ?? '-'}</td>
+                      <td>{formatDateTime(row?.dateTime)}</td>
+                      <td>{row?.comments ?? '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
 
 
 
@@ -1044,13 +1051,20 @@ const fetchRequisitions = async () => {
         dialogClassName="wide-modal"
       >
         <Modal.Header closeButton>
-        <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
+          {/* <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
           {viewMode 
             ? "View Requisition" 
             : editIndex !== null 
               ? "Edit Requisition" 
               : "Add Requisition"}
-        </Modal.Title>
+        </Modal.Title> */}
+          <Modal.Title className="fw-bold text-orange" style={{ fontSize: '18px' }}>
+            {viewMode
+              ? t("job:modalTitleView")
+              : editIndex !== null
+                ? t("job:modalTitleEdit")
+                : t("job:modalTitleAdd")}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form className="requisition-form">
@@ -1058,7 +1072,7 @@ const fetchRequisitions = async () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Requisition Title <span className="required-asterisk">*</span>
+                    {t("job:requisitionTitle")} <span className="required-asterisk">*</span>
                   </Form.Label>
                   <Form.Control
                     type="text"
@@ -1085,7 +1099,7 @@ const fetchRequisitions = async () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description <span className="required-asterisk">*</span>
+                    {t("job:description")} <span className="required-asterisk">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
@@ -1110,7 +1124,7 @@ const fetchRequisitions = async () => {
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label className="form-label">
-                      Start Date <span className="required-asterisk">*</span>
+                      {t("job:startDate")} <span className="required-asterisk">*</span>
                     </Form.Label>
                     <Form.Control
                       type="date"
@@ -1133,7 +1147,7 @@ const fetchRequisitions = async () => {
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label className="form-label">
-                      End Date <span className="required-asterisk">*</span>
+                      {t("job:endDate")} <span className="required-asterisk">*</span>
                     </Form.Label>
                     <Form.Control
                       type="date"
@@ -1200,18 +1214,22 @@ const fetchRequisitions = async () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetReqForm}>
-            {viewMode ? "Close" : "Cancel"}
+            {viewMode ? t("job:close") : t("job:cancel")}
           </Button>
+
           {!viewMode && (
             <Button
               className="text-white"
               onClick={handleReqSave}
               style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
             >
-              {editIndex !== null ? "Update Requisition" : "Save"}
+              {editIndex !== null
+                ? t("job:updateRequisition")
+                : t("job:save")}
             </Button>
           )}
         </Modal.Footer>
+
       </Modal>
     </Container>
   );

@@ -1,0 +1,19 @@
+{
+  "users": "Users",
+  "addUser": "Add User",
+  "search": "Search",
+  "sNo": "S No.",
+  "role": "Role",
+  "name": "Name",
+  "email": "Email",
+  "phone": "Phone",
+  "userRegistration": "User Registration",
+  "selectRole": "Select Role",
+  "fullName": "Full Name",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "register": "Register",
+   "admin": "Admin",
+  "recruiter": "Recruiter",
+  "interviewer": "Interviewer"
+}

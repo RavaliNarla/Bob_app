@@ -1,0 +1,37 @@
+{
+  "myDashboard": "मेरा डैशबोर्ड",
+
+  "totalOpenPositions": "कुल खुली पद",
+  "positionsFilled": "भरे गए पद",
+  "progress": "प्रगति",
+  "pendingApprovals": "अनुमोदन लंबित",
+  "avgTimeToFill": "भरने का औसत समय (दिन)",
+
+  "applicationMetrics": "आवेदन मेट्रिक्स",
+  "candidateStatus": "उम्मीदवार आवेदन स्थिति",
+
+  "candidatePipeline": "उम्मीदवार पाइपलाइन",
+  "applicationsReceived": "प्राप्त आवेदन",
+  "eligible": "पात्र",
+  "shortlisted": "शॉर्टलिस्टेड",
+  "interviewed": "इंटरव्यू हुए",
+  "offered": "ऑफ़र जारी",
+  "joined": "जॉइन किया",
+  "cancelled": "रद्द",
+
+  "positionFulfillment": "पद पूर्ति स्थिति",
+  "filled": "भरे गए",
+  "inProgress": "प्रगति में",
+  "openings": "रिक्तियां",
+  "avgDays": "औसत दिन",
+
+  "openPositions": "खुली पद",
+  "statusActive": "सक्रिय",
+  "statusInactive": "निष्क्रिय",
+
+  "upcomingInterviews": "आगामी इंटरव्यू",
+  "noUpcomingInterviews": "कोई आगामी इंटरव्यू नहीं",
+
+  "interviewer": "इंटरव्यू लेने वाला",
+  "candidate": "उम्मीदवार"
+}

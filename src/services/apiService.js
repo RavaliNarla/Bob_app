@@ -97,8 +97,8 @@ const nodeApi = axios.create({
   withCredentials: true,
 });
 
-  const templateApi = axios.create({
-  baseURL: NODE_API_URL,
+const templateApi = axios.create({
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "multipart/form-data" },
   withCredentials: true,
 });
@@ -144,7 +144,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (api). Retrying:", originalRequest.url);
         return api(originalRequest); // retry original request on api
@@ -199,7 +199,7 @@ apis.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
@@ -247,7 +247,7 @@ candidateApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
@@ -284,7 +284,7 @@ nodeApi.interceptors.response.use(
 
       try {
         // Try refreshing token automatically; backend reads refresh cookie
-        await nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("Token refreshed and original request retried", originalRequest);
         // Retry the original request; cookies are sent automatically
@@ -344,7 +344,7 @@ export const apiService = {
   deleteData: (id) => api.delete(`/data/${id}`),
 
   // --- Approval trail for a requisition (username, useremail, status) ---
- getApprovalTrail: (requisition_id) => api.get(`job-requisitions/workflow-approvals-details/${requisition_id}`),
+  getApprovalTrail: (requisition_id) => api.get(`job-requisitions/workflow-approvals-details/${requisition_id}`),
 
 
   getReqData: () => api.get('/job-requisitions/all'),
@@ -359,9 +359,9 @@ export const apiService = {
   jobCreation: (data) => api.post('/job-positions/create', data),
   getMasterData: () => apis.get('/all'),
 
-  uploadJobExcel: (data) => api.post('/job-positions/create-bulk', data), 
+  uploadJobExcel: (data) => api.post('/job-positions/create-bulk', data),
   postJobRequisitions: (payload) => api.post("/requisitionpost", payload), // Not using this anywhere
-  getByRequisitionId: (requisition_id) => api.get(`job-positions/get-by-requisition/${requisition_id}`), 
+  getByRequisitionId: (requisition_id) => api.get(`job-positions/get-by-requisition/${requisition_id}`),
   jobpost: (data) => api.post('/job-requisitions/submit-for-approval', data),
   getallLocations: () => apis.get('/location/all'),
   getallCities: () => apis.get('/city/all'),
@@ -386,18 +386,18 @@ export const apiService = {
   deleteJobGrade: (id) => apis.delete(`/jobgrade/delete/${id}`),
 
   // Approvals
-  updateApproval: (data) => api.post('/job-requisitions/approve', data), 
+  updateApproval: (data) => api.post('/job-requisitions/approve', data),
   getApprovalstatus: (userid) => api.get(`job-requisitions/approvals/${userid}`),
-getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${userid}`),
+  getWorkflowApprovals: (userid) => api.get(`job-requisitions/workflow-approvals/${userid}`),
   //Candidate Interview
-  createInterview: (applicationId) => 
+  createInterview: (applicationId) =>
     candidateApi.get(`/candidates/interviews/${applicationId}`),
   updateInterviewStatus: (data) => candidateApi.put('/candidates/schedule-interview', data),
   getPanelSlots: (panelId, date) =>
     candidateApi.get('/candidates/panel-free-slots', { params: { panelId, date } }),
-   //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
-   getfeedback: (application_id) =>
-  candidateApi.get(`/candidates/get-feedback/${application_id}`),
+  //getfeedback: (candidate_id,position_id) => candidateApi.get(`/candidates/getfeedback/${candidate_id}/${position_id}`),
+  getfeedback: (application_id) =>
+    candidateApi.get(`/candidates/get-feedback/${application_id}`),
 
   postFeedback: (data) => candidateApi.post('/candidates/feedback', data),
   // updateInterviewStatus: (data) => candidateApi.put('/candidates/update-interview-status', data),
@@ -405,19 +405,32 @@ getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${u
   getPayment: () => candidateApi.get('/razorpay/all'),
 
   // --- Auth (Node API) ---
-  forgotPassword: (email) => nodeApi.post('/auth/candidate-forgot-password', { email }),
+  forgotPassword: (email) =>
+    nodeApi.post(`/candidate-auth/candidate-forgot-password?email=${email}`),
+
+
+
+
   // Register
   getRegister: () => nodeApi.get('/getdetails/users/all'),
-  registerUser: (data) => nodeApi.post('/auth/recruiter-register', data), // Auth (Node API)
+  registerUser: (data) => nodeApi.post('/recruiter-register', data), // Auth (Node API)
 
 
-  recruiterLogin: (email, password) => nodeApi.post("/auth/recruiter-login", { email, password }),
+  recruiterLogin: (email, password) => nodeApi.post("/recruiter-login", { email, password }),
 
-  resendVerification: (user_id) => nodeApi.post("/auth/recruiter-resend-verification", { user_id }),
+  resendVerification: (user_id) => nodeApi.post("/recruiter-resend-verification", { user_id }),
 
-  getRecruiterDetails: (email) => nodeApi.post("/getdetails/users", { email }),
+  // getRecruiterDetails: (email) => nodeApi.post("/getdetails/users", email,
+  //   {
+  //     headers: {
+  //       "Content-Type": "text/plain",
+  //     },
 
-  uploadOfferLetter: (data) => nodeApi.post("/offer-letters/upload", data, {
+  //   }),
+  getRecruiterDetails: (email) => nodeApi.post(`/getdetails/users?email=${email}`),
+
+
+  uploadOfferLetter: (data) => api.post("/offer-templates/upload", data, {
     headers: { "Content-Type": "multipart/form-data" },
   }),
 
@@ -433,31 +446,31 @@ getWorkflowApprovals:(userid) =>api.get(`job-requisitions/workflow-approvals/${u
     }),
 
   getFreeBusySlots: (email, date, interval = 60, tz = 'Asia/Kolkata') =>
-  nodeApi.get('/calendar/free-busy', {
-    params: { email, date, interval, tz }
-  }),
+    api.get('/calendar/free-busy', {
+      params: { email, date, interval, tz }
+    }),
 
   getCandidateDetails: (candidate_id) => candidateApi.get(`candidates/get-by-candidate/${candidate_id}`),
-updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data),
-applyJobs: (data) => candidateApi.post('candidates/apply/job',data),
+  updateCandidates: (data) => candidateApi.put('candidates/update_candidate', data),
+  applyJobs: (data) => candidateApi.post('candidates/apply/job', data),
 
 
-parseResume: (formData) => parseResumeApi.post("/parseresume", formData),
+  parseResume: (formData) => parseResumeApi.post("/parseresume", formData),
 
   // Candidate Registration (Node API - bobbe)
   candidateRegister: (data) =>
-    nodeApi.post("/auth/candidate-register", data),
+    nodeApi.post("/candidate-auth/candidate-register", data),
 
   // Resume Upload (Node API - bobbe)
   uploadResume: (formData) =>
-    nodeApi.post("/resume/upload", formData, {
+    candidateApi.post("/resume/upload-resume", formData, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
 
   // refreshToken: (refresh_token) =>
   // nodeApi.post("/auth/recruiter-refresh-token", { refresh_token }),
   refreshToken: () =>
-    nodeApi.post("/auth/recruiter-refresh-token", null, { withCredentials: true }),
+    nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true }),
 
   uploadTemplate: (data) => templateApi.post('/offer-templates/upload', data),
   getTemplates: () => templateApi.get('/offer-templates'),
@@ -485,33 +498,33 @@ parseResume: (formData) => parseResumeApi.post("/parseresume", formData),
   deleteRelaxationType: (id) => apis.delete(`/relaxation-type/delete/${id}`),
   //documents
   getAllDocuments: () => apis.get("/document-types/all"),
- addDocument: (data) => apis.post("/document-types/add", data),
-updateDocument: (id, data) => apis.put(`/document-types/update/${id}`, data),
-deleteDocument: (id) => apis.delete(`/document-types/delete/${id}`),
+  addDocument: (data) => apis.post("/document-types/add", data),
+  updateDocument: (id, data) => apis.put(`/document-types/update/${id}`, data),
+  deleteDocument: (id) => apis.delete(`/document-types/delete/${id}`),
 
   //Relaxation
   saveRelaxation: (data) => api.post('/job-relaxation-policy/add', data),
   getRelaxations: () => api.get('/job-relaxation-policy/all'),
   updateRelaxation: (id, data) => api.put(`/job-relaxation-policy/update/${id}`, data),
 
-  processResumesJC:()=>api.post("/resume/start-batch-process",{}),
+  processResumesJC: () => api.post("/resume/start-batch-process", {}),
 
-  getbulkcandidatesJC:()=>api.get("/bulkresumes/all"),
+  getbulkcandidatesJC: () => api.get("/bulkresumes/all"),
 
-deleteResumeJC: (resumeId) =>
-  api.delete(`/resume/delete-resume/${encodeURIComponent(resumeId)}`),
+  deleteResumeJC: (resumeId) =>
+    api.delete(`/resume/delete-resume/${encodeURIComponent(resumeId)}`),
 
-// Fetch bulk-uploaded candidates who have NOT applied for the selected position
-getNotAppliedBulkUploadCandidates: (position_id) =>
-  candidateApi.get(`/candidates/not-applied-bulk-upload/${position_id}`),
+  // Fetch bulk-uploaded candidates who have NOT applied for the selected position
+  getNotAppliedBulkUploadCandidates: (position_id) =>
+    candidateApi.get(`/candidates/not-applied-bulk-upload/${position_id}`),
 
 
-// Assign (bulk shortlist) selected candidates to a position
-bulkShortlistCandidates: (positionId, candidateIds) =>
-  candidateApi.post("/candidates/bulk-shortlist", {
-    positionId,
-    candidateIds,
-  }),
+  // Assign (bulk shortlist) selected candidates to a position
+  bulkShortlistCandidates: (positionId, candidateIds) =>
+    candidateApi.post("/candidates/bulk-shortlist", {
+      positionId,
+      candidateIds,
+    }),
 
   uploadResumeJC: (file) => {
     const form = new FormData();

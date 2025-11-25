@@ -1,0 +1,19 @@
+{
+  "users": "उपयोगकर्ता",
+  "addUser": "उपयोगकर्ता जोड़ें",
+  "search": "खोजें",
+  "sNo": "क्र.सं.",
+  "role": "भूमिका",
+  "name": "नाम",
+  "email": "ईमेल",
+  "phone": "फ़ोन",
+  "userRegistration": "उपयोगकर्ता पंजीकरण",
+  "selectRole": "भूमिका चुनें",
+  "fullName": "पूरा नाम",
+  "password": "पासवर्ड",
+  "confirmPassword": "पासवर्ड की पुष्टि करें",
+  "register": "पंजीकरण करें",
+  "admin": "एडमिन",
+  "recruiter": "रिक्रूटर",
+  "interviewer": "इंटरव्यूअर"
+}

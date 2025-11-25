@@ -5,6 +5,7 @@ import { useTemplateStore } from '../../store/useTemplateStore';
 import { buildHtmlForExport } from "./utils/exportHtml";
 import apiService from "../../services/apiService";
 import defaultTemplate from "./defaultTemplate.json";
+import { useTranslation } from "react-i18next";
 
 // Only wrap tokens if not already wrapped by Quill (prevents double)
 function ensureQuillTokens(html = "") {
@@ -16,6 +17,7 @@ function ensureQuillTokens(html = "") {
 }
 
 export default function Toolbar({ templates, selectedId, setSelectedId }) {
+ const { t } = useTranslation("offerletter"); 
   const template = useTemplateStore((s) => s.template);
   const setLayout = useTemplateStore((s) => s.setLayout);
   const setTemplateName = useTemplateStore((s) => s.setTemplateName); // ⬅ add this
@@ -25,7 +27,7 @@ export default function Toolbar({ templates, selectedId, setSelectedId }) {
   const handleSelect = async (tpl) => {
     try {
       const contentUrl = tpl?.id
-        ? `${process.env.REACT_APP_NODE_API_URL}/offer-templates/${encodeURIComponent(tpl.id)}/content`
+        ? `${process.env.REACT_APP_API_BASE_URL}/offer-templates/${encodeURIComponent(tpl.id)}/content`
         // ? `http://localhost:5000/api/offer-templates/${encodeURIComponent(tpl.id)}/content`
 
         : tpl?.path;
@@ -140,45 +142,30 @@ export default function Toolbar({ templates, selectedId, setSelectedId }) {
   return (
     <div>
       {/* Heading */}
-      <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '20px' }}>Offer Letter Templates</h5>
+      <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '20px' }}>{t("offerTemplates")}</h5>
       <div className="d-flex gap-2 flex-wrap mb-3">
 
 
         <Dropdown>
-          <Dropdown.Toggle variant="secondary" id="template-dropdown">
+          <Dropdown.Toggle variant="secondary">
             {layout
               ? layout === "template1"
-                ? "Template 1"
+                ? t("template1")
                 : layout === "template2"
-                  ? "Template 2"
-                  : "Template 3"
-              : "Master Template"}
+                  ? t("template2")
+                  : t("template3")
+              : t("masterTemplate")}
           </Dropdown.Toggle>
 
           <Dropdown.Menu>
-            <Dropdown.Item
-              onClick={() => {
-                setLayout("template1");
-                setTemplateName("Template 1");
-              }}
-            >
-              Template 1
+            <Dropdown.Item onClick={() => { setLayout("template1"); }}>
+              {t("template1")}
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => {
-                setLayout("template2");
-                setTemplateName("Template 2");
-              }}
-            >
-              Template 2
+            <Dropdown.Item onClick={() => { setLayout("template2"); }}>
+              {t("template2")}
             </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => {
-                setLayout("template3");
-                setTemplateName("Template 3");
-              }}
-            >
-              Template 3
+            <Dropdown.Item onClick={() => { setLayout("template3"); }}>
+              {t("template3")}
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
@@ -186,29 +173,26 @@ export default function Toolbar({ templates, selectedId, setSelectedId }) {
 
         {/* Dropdown: select saved template and load it into the editor */}
         <Dropdown>
-          <Dropdown.Toggle variant="secondary" id="saved-template-dropdown">
+          <Dropdown.Toggle variant="secondary">
             {selectedId
               ? templates.find((t) => t.id === selectedId)?.name.replace(/_\d+$/, "")
-              : "Saved Template"}
+              : t("savedTemplate")}
           </Dropdown.Toggle>
           <Dropdown.Menu>
             {templates.length === 0 ? (
-              <Dropdown.Item disabled>No saved templates</Dropdown.Item>
+              <Dropdown.Item disabled>{t("noSavedTemplates")}</Dropdown.Item>
             ) : (
-              templates.map((tpl) => {
-                const displayName = tpl.name.replace(/_\d+$/, "");
-                return (
-                  <Dropdown.Item
-                    key={tpl.id}
-                    onClick={() => {
-                      setSelectedId(tpl.id);
-                      handleSelect(tpl);
-                    }}
-                  >
-                    {displayName}
-                  </Dropdown.Item>
-                );
-              })
+              templates.map((tpl) => (
+                <Dropdown.Item
+                  key={tpl.id}
+                  onClick={() => {
+                    setSelectedId(tpl.id);
+                    handleSelect(tpl);
+                  }}
+                >
+                  {tpl.name.replace(/_\d+$/, "")}
+                </Dropdown.Item>
+              ))
             )}
           </Dropdown.Menu>
         </Dropdown>

@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTranslation } from 'react-i18next';
 import apiService from "../services/apiService";
 
 
@@ -38,6 +39,7 @@ const JobGrade = () => {
   const [errr, setErrr] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const { t } = useTranslation('jobgrade');
 
   useEffect(() => {
     fetchGrade();
@@ -75,17 +77,17 @@ const JobGrade = () => {
   // ---------------------------
   // Required validations
   // ---------------------------
-  if (!trimmedScale) newErrors.job_scale = "Scale is required";
-  if (!minSalary) newErrors.min_salary = "Minimum salary is required";
-  if (!maxSalary) newErrors.max_salary = "Maximum salary is required";
+  if (!trimmedScale) newErrors.job_scale = "scale_required";
+  if (!minSalary) newErrors.min_salary = "min_salary_required";
+  if (!maxSalary) newErrors.max_salary = "max_salary_required";
   // Description is now optional, so no required check
 
   // Numeric validation
   if (minSalary && isNaN(Number(minSalary))) {
-    newErrors.min_salary = "Minimum salary must be a number";
+    newErrors.min_salary = "number_required";
   }
   if (maxSalary && isNaN(Number(maxSalary))) {
-    newErrors.max_salary = "Maximum salary must be a number";
+    newErrors.max_salary = "number_required";
   }
 
   // Min ≤ Max validation
@@ -96,8 +98,8 @@ const JobGrade = () => {
     !isNaN(Number(maxSalary)) &&
     Number(minSalary) > Number(maxSalary)
   ) {
-    newErrors.min_salary = "Minimum salary cannot be greater than maximum salary";
-    newErrors.max_salary = "Maximum salary cannot be less than minimum salary";
+    newErrors.min_salary = "min_less_than_max";
+    newErrors.max_salary = "max_greater_than_min";
   }
 
   // ---------------------------
@@ -109,7 +111,7 @@ const JobGrade = () => {
         grad.job_scale?.trim().toLowerCase() === trimmedScale.toLowerCase() &&
         index !== editIndex
     );
-    if (duplicateScale) newErrors.job_scale = "Job scale already exists";
+    if (duplicateScale) newErrors.job_scale = "scale_exists";
   }
 
   if (trimmedDesc) {
@@ -118,7 +120,7 @@ const JobGrade = () => {
         grad.job_grade_desc?.trim().toLowerCase() === trimmedDesc.toLowerCase() &&
         index !== editIndex
     );
-    if (duplicateDesc) newErrors.job_grade_desc = "Job description already exists";
+    if (duplicateDesc) newErrors.job_grade_desc = "desc_exists";
   }
 
   if (trimmedCode) {
@@ -127,7 +129,7 @@ const JobGrade = () => {
         grad.job_grade_code?.trim().toLowerCase() === trimmedCode.toLowerCase() &&
         index !== editIndex
     );
-    if (duplicateCode) newErrors.job_grade_code = "Job grade code already exists";
+    if (duplicateCode) newErrors.job_grade_code = "code_exists";
   }
 
   // ---------------------------
@@ -152,7 +154,7 @@ const JobGrade = () => {
         await apiService.updateJobGrade(updatedGrad.job_grade_id, updatedGrad);
 
 
-        toast.success("Grade updated successfully");
+        toast.success(t('update_success'));
 
         const updatedGrads = [...grads];
         updatedGrads[editIndex] = updatedGrad;
@@ -162,14 +164,14 @@ const JobGrade = () => {
         const response = await apiService.addJobGrade(currentGrade);
         const newGrad = response.data?.data || currentGrade;
 
-        toast.success("Grade added successfully");
+        toast.success(t('save_success'));
         setGrads(prev => [...prev, newGrad]);
         await fetchGrade();
       }
       resetForm();
     } catch (err) {
       console.error("Save Error:", err);
-      toast.error("Save failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -179,10 +181,10 @@ const JobGrade = () => {
     try {
       await apiService.deleteJobGrade(idToDelete);
       setGrads(grads.filter((grad) => grad.job_grade_id !== idToDelete));
-      toast.success("Grade deleted successfully");
+      toast.success(t('delete_success'));
     } catch (err) {
       console.error("Delete Error:", err);
-      toast.error("Delete failed");
+      toast.error(t('error_occurred'));
     }
   };
 
@@ -241,8 +243,8 @@ const JobGrade = () => {
 
   const jobsToDisplay = filteredAndSortedJobs();
 
-  if (loading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="alert alert-danger mt-5">{error}</div>;
+  if (loading) return <div className="text-center mt-5">{t('loading')}</div>;
+  if (error) return <div className="alert alert-danger mt-5">{t('error_loading')}</div>;
 
   return (
     <div className="register_container px-5 gradefont py-3">
@@ -258,13 +260,13 @@ const JobGrade = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </InputGroup> */}
-        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>Job Grades</h5>
-        <Button variant="orange" onClick={() => openModal()}>+ Add</Button>
+        <h5 style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t('job_grade')}</h5>
+        <Button variant="orange" onClick={() => openModal()}>+ {t('add_grade')}</Button>
       </div>
       {/* <hr /> */}
 
       {jobsToDisplay.length === 0 ? (
-        <p className="text-muted text-center mt-5">No Grade match your criteria.</p>
+        <p className="text-muted text-center mt-5">{t('no_grades_found')}</p>
       ) : (
         <Table responsive hover className="jobgrade_table">
           <thead className="table-header-orange">
@@ -274,19 +276,19 @@ const JobGrade = () => {
               </th> */}
 
               <th onClick={() => handleSort("job_scale")} style={{ cursor: "pointer", width: "10%" }}>
-                Scale{getSortIndicator("job_scale")}
+                {t('scale')}{getSortIndicator("job_scale")}
               </th>
               <th onClick={() => handleSort("min_salary")} style={{ cursor: "pointer", width: "15%" }}>
-                Minimum Salary{getSortIndicator("min_salary")}
+                {t('min_salary')}{getSortIndicator("min_salary")}
               </th>
               <th onClick={() => handleSort("max_salary")} style={{ cursor: "pointer", width: "15%" }}>
-                Maximum Salary{getSortIndicator("max_salary")}
+                {t('max_salary')}{getSortIndicator("max_salary")}
               </th>
               <th onClick={() => handleSort("job_grade_desc")} style={{ cursor: "pointer", width: "50%" }}>
-                Description{getSortIndicator("job_grade_desc")}
+                {t('description')}{getSortIndicator("job_grade_desc")}
               </th>
 
-              <th>Actions</th>
+              <th>{t('actions')}</th>
             </tr>
           </thead>
 
@@ -320,7 +322,7 @@ const JobGrade = () => {
       <Modal show={showModal} onHide={resetForm} centered dialogClassName="wide-modal">
         <Modal.Header closeButton>
           <Modal.Title className="fw-bold text-orange fs-4">
-            {editIndex !== null ? "Edit Grade" : "Add Grade"}
+            {editIndex !== null ? t('edit_grade') : t('add_grade')}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -329,12 +331,12 @@ const JobGrade = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Scale <span className="text-danger">*</span>
+                    {t('scale')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter scale"
+                    placeholder={t('enter_scale')}
                     value={currentGrade.job_scale}
                     isInvalid={!!errr.job_scale}
                     onChange={(e) =>
@@ -342,19 +344,19 @@ const JobGrade = () => {
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.job_scale}
+                    {t(errr.job_scale)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Description
+                    {t('description')}
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter description"
+                    placeholder={t('enter_description')}
                     value={currentGrade.job_grade_desc}
                     isInvalid={!!errr.job_grade_desc}
                     onChange={(e) =>
@@ -362,7 +364,7 @@ const JobGrade = () => {
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.job_grade_desc}
+                    {t(errr.job_grade_desc)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -370,12 +372,12 @@ const JobGrade = () => {
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Grade Code
+                    {t('grade_code')}
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter grade code"
+                    placeholder={t('enter_grade_code')}
                     value={currentGrade.job_grade_code}
                     isInvalid={!!errr.job_grade_code}
                     onChange={(e) =>
@@ -383,19 +385,19 @@ const JobGrade = () => {
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.job_grade_code}
+                    {t(errr.job_grade_code)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Minimum Salary <span className="text-danger">*</span>
+                    {t('min_salary')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter minimum salary"
+                    placeholder={t('enter_min_salary')}
                     value={currentGrade.min_salary}
                     isInvalid={!!errr.min_salary}
                     onChange={(e) =>
@@ -403,19 +405,19 @@ const JobGrade = () => {
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.min_salary}
+                    {t(errr.min_salary)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={12}>
                 <Form.Group>
                   <Form.Label className="form-label">
-                    Maximum Salary <span className="text-danger">*</span>
+                    {t('max_salary')} <span className="text-danger">*</span>
                   </Form.Label>
                   <Form.Control
                     as="textarea"
                     rows={3}
-                    placeholder="Enter maximum salary"
+                    placeholder={t('enter_max_salary')}
                     value={currentGrade.max_salary}
                     isInvalid={!!errr.max_salary}
                     onChange={(e) =>
@@ -423,7 +425,7 @@ const JobGrade = () => {
                     }
                   />
                   <Form.Control.Feedback type="invalid">
-                    {errr.max_salary}
+                    {t(errr.max_salary)}
                   </Form.Control.Feedback>
                 </Form.Group>
               </Col>
@@ -434,14 +436,14 @@ const JobGrade = () => {
 
         <Modal.Footer className="justify-content-end gap-2">
           <Button variant="outline-secondary" onClick={resetForm}>
-            Cancel
+            {t('cancel')}
           </Button>
           <Button
             className="text-white"
             onClick={handleSave}
             style={{ backgroundColor: "#FF7043", borderColor: "#FF7043" }}
           >
-            {editIndex !== null ? "Update Grade" : "Save"}
+            {editIndex !== null ? t('update_grade') : t('save')}
           </Button>
         </Modal.Footer>
       </Modal>

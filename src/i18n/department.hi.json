@@ -1,0 +1,20 @@
+{
+  "departments": "विभाग",
+  "add": "जोड़ें",
+  "addDepartment": "विभाग जोड़ें",
+  "editDepartment": "विभाग संपादित करें",
+  "name": "नाम",
+  "description": "विवरण",
+  "enterName": "नाम दर्ज करें",
+  "enterDescription": "विवरण दर्ज करें",
+  "actions": "क्रियाएँ",
+  "save": "सहेजें",
+  "updateDepartment": "विभाग अपडेट करें",
+  "cancel": "रद्द करें",
+  "noDepartmentFound": "आपके मानदंड से कोई विभाग मेल नहीं खाता।",
+  "nameRequired": "नाम आवश्यक है",
+  "nameExists": "विभाग का नाम पहले से मौजूद है",
+  "descExists": "विभाग विवरण पहले से मौजूद है",
+  "loading": "लोड हो रहा है...",
+  "errorLoading": "विभाग लोड करने में त्रुटि"
+}
