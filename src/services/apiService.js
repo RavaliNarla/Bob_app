@@ -144,7 +144,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (api). Retrying:", originalRequest.url);
         return api(originalRequest); // retry original request on api
@@ -199,7 +199,7 @@ apis.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
@@ -247,7 +247,7 @@ candidateApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("✅ Token refreshed (apis). Retrying:", originalRequest.url);
         return apis(originalRequest); // retry original request on apis
@@ -284,7 +284,7 @@ nodeApi.interceptors.response.use(
 
       try {
         // Try refreshing token automatically; backend reads refresh cookie
-        await nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true });
+        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true });
 
         // console.log("Token refreshed and original request retried", originalRequest);
         // Retry the original request; cookies are sent automatically
@@ -413,12 +413,12 @@ export const apiService = {
 
   // Register
   getRegister: () => nodeApi.get('/getdetails/users/all'),
-  registerUser: (data) => nodeApi.post('/recruiter-register', data), // Auth (Node API)
+  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
 
 
-  recruiterLogin: (email, password) => nodeApi.post("/recruiter-login", { email, password }),
+  recruiterLogin: (email, password) => nodeApi.post("/recruiter-auth/recruiter-login", { email, password }),
 
-  resendVerification: (user_id) => nodeApi.post("/recruiter-resend-verification", { user_id }),
+  resendVerification: (user_id) => nodeApi.post("/recruiter-auth/recruiter-resend-verification", { user_id }),
 
   // getRecruiterDetails: (email) => nodeApi.post("/getdetails/users", email,
   //   {
@@ -470,7 +470,7 @@ export const apiService = {
   // refreshToken: (refresh_token) =>
   // nodeApi.post("/auth/recruiter-refresh-token", { refresh_token }),
   refreshToken: () =>
-    nodeApi.post("/recruiter-refresh-token", null, { withCredentials: true }),
+    nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, { withCredentials: true }),
 
   uploadTemplate: (data) => templateApi.post('/offer-templates/upload', data),
   getTemplates: () => templateApi.get('/offer-templates'),
