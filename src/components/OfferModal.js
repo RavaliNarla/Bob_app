@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Modal, Button, Form, Spinner, Alert } from 'react-bootstrap';
 import OfferLetter from './OfferLetter';
-
+import { store } from "../../src/store";
 // const TEMPLATES_API = `http://localhost:5000/api/offer-templates`;
 const TEMPLATES_API = `${process.env.REACT_APP_API_BASE_URL}/offer-templates`;
 
@@ -12,6 +12,8 @@ function localISODate(date = new Date()) {
   const local = new Date(date.getTime() - tz * 60000);
   return local.toISOString().slice(0, 10);
 }
+
+
 
 const OfferModal = ({
   show,
@@ -30,6 +32,8 @@ const OfferModal = ({
   companyName,              // e.g., org?.name
   hrName,                   // e.g., org?.hr_contact
 }) => {
+  const state = store.getState();
+  const token = state.user?.authUser?.access_token || null;
   const [showPreview, setShowPreview] = useState(false);
   const [generatingOffer, setGeneratingOffer] = useState(false);
 
@@ -63,7 +67,13 @@ const OfferModal = ({
         setTplLoading(true);
         setApiLoading?.(true);
 
-        const res = await fetch(TEMPLATES_API);
+        const res = await fetch(TEMPLATES_API,{
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                  });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json(); // [{id,name,type,path}, ...]
 

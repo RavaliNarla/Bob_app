@@ -21,7 +21,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [unverifiedUserId, setUnverifiedUserId] = useState(null);
   const navigate = useNavigate();
-    const token = useSelector((state) => state.user.auth?.access_token);
+  const token = useSelector((state) => state.user.auth?.access_token);
   // console.log("Token from Redux:", token);
 
   const encryptPassword = (password) => {
@@ -31,10 +31,10 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-     // const encryptedPassword = encryptPassword(password);
+      // const encryptedPassword = encryptPassword(password);
 
       const res = await apiService.recruiterLogin(email, password);   // already res.data
-      const dbRes = await apiService.getRecruiterDetails(email);      // already res.data
+      const dbRes = await apiService.getRecruiterDetails(email, res.access_token);
 
       if (res.mfa_required) {
         // localStorage.setItem("mfa_token", res.mfa_token);
@@ -64,7 +64,7 @@ const Login = () => {
       }
     }
   };
-  
+
   const handleResendVerification = async () => {
     try {
       await apiService.resendVerification(unverifiedUserId);

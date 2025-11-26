@@ -265,6 +265,7 @@ candidateApi.interceptors.response.use(
 nodeApi.interceptors.request.use(
   (config) => {
     const token = getToken();
+    console.log("NodeAPI Request:", config.url, "Token:", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -412,8 +413,13 @@ export const apiService = {
 
 
   // Register
-  getRegister: () => nodeApi.get('/getdetails/users/all'),
-  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
+getRegister: (token) => 
+  nodeApi.get('/getdetails/users/all', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }),
+    registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
 
 
   recruiterLogin: (email, password) => nodeApi.post("/recruiter-auth/recruiter-login", { email, password }),
@@ -427,7 +433,16 @@ export const apiService = {
   //     },
 
   //   }),
-  getRecruiterDetails: (email) => nodeApi.post(`/getdetails/users?email=${email}`),
+getRecruiterDetails: (email, token) =>
+  nodeApi.post(
+    `/getdetails/users?email=${email}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  ),
 
 
   uploadOfferLetter: (data) => api.post("/offer-templates/upload_offer_letter", data, {

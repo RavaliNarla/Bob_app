@@ -6,7 +6,7 @@ import { buildHtmlForExport } from "./utils/exportHtml";
 import apiService from "../../services/apiService";
 import defaultTemplate from "./defaultTemplate.json";
 import { useTranslation } from "react-i18next";
-
+import { store } from "../../../src/store";
 // Only wrap tokens if not already wrapped by Quill (prevents double)
 function ensureQuillTokens(html = "") {
   if (!html) return "";
@@ -17,6 +17,8 @@ function ensureQuillTokens(html = "") {
 }
 
 export default function Toolbar({ templates, selectedId, setSelectedId }) {
+  const state = store.getState();
+  const token = state.user?.authUser?.access_token || null;
  const { t } = useTranslation("offerletter"); 
   const template = useTemplateStore((s) => s.template);
   const setLayout = useTemplateStore((s) => s.setLayout);
@@ -33,7 +35,7 @@ export default function Toolbar({ templates, selectedId, setSelectedId }) {
         : tpl?.path;
       if (!contentUrl) throw new Error("No template content URL");
 
-      const res = await fetch(contentUrl, { headers: { Accept: "text/html" } });
+      const res = await fetch(contentUrl, { headers: { Accept: "text/html",Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error(`Failed to load template: ${res.status}`);
       const htmlContent = await res.text();
 
