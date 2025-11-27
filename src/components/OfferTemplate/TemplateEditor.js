@@ -170,8 +170,10 @@ export default function TemplateEditor() {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await apiService.getTemplates();
-        setTemplates(data || []);
+        apiService.getTemplates().then((res) => {
+          setTemplates(res || []);
+        });
+
       } catch (e) {
         console.error(e);
       }

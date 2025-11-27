@@ -265,7 +265,6 @@ candidateApi.interceptors.response.use(
 nodeApi.interceptors.request.use(
   (config) => {
     const token = getToken();
-    console.log("NodeAPI Request:", config.url, "Token:", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -322,6 +321,39 @@ parseResumeApi.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+templateApi.interceptors.request.use(
+  (config) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+templateApi.interceptors.response.use(
+  (response) => response.data,
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        await nodeApi.post("/recruiter-auth/recruiter-refresh-token", null, {
+          withCredentials: true,
+        });
+
+        return templateApi(originalRequest);
+      } catch (err) {
+        window.location.href = "/login";
+        return Promise.reject(err);
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 
 
 
@@ -413,13 +445,13 @@ export const apiService = {
 
 
   // Register
-getRegister: (token) => 
-  nodeApi.get('/getdetails/users/all', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }),
-    registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
+  getRegister: (token) =>
+    nodeApi.get('/getdetails/users/all', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+  registerUser: (data) => nodeApi.post('/recruiter-auth/recruiter-register', data), // Auth (Node API)
 
 
   recruiterLogin: (email, password) => nodeApi.post("/recruiter-auth/recruiter-login", { email, password }),
@@ -433,16 +465,16 @@ getRegister: (token) =>
   //     },
 
   //   }),
-getRecruiterDetails: (email, token) =>
-  nodeApi.post(
-    `/getdetails/users?email=${email}`,
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  ),
+  getRecruiterDetails: (email, token) =>
+    nodeApi.post(
+      `/getdetails/users?email=${email}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    ),
 
 
   uploadOfferLetter: (data) => api.post("/offer-templates/upload_offer_letter", data, {
