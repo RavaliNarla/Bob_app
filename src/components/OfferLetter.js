@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import html2pdf from 'html2pdf.js';
 import "../css/OfferLetter.css";
 import apiService from '../services/apiService';
-
+import { store } from "../../src/store";
 const OfferLetter = ({
   candidate,
   jobPosition,
@@ -16,6 +16,8 @@ const OfferLetter = ({
   companyName,    // optional override (used if template/props lack it)
   hrName,         // optional override (used if template/props lack it)
 }) => {
+  const state = store.getState();
+  const token = state.user?.authUser?.access_token || null;
   const [formData, setFormData] = useState({
     full_name: '',
     address1: '',
@@ -84,7 +86,7 @@ const OfferLetter = ({
     (async () => {
       if (!templateUrl) { setTemplateHtml(''); return; }
       try {
-        const res = await fetch(templateUrl, { headers: { Accept: 'text/html' } });
+        const res = await fetch(templateUrl, { headers: { Accept: 'text/html',   Authorization: `Bearer ${token}`, } });
         if (!res.ok) throw new Error(`Template HTTP ${res.status}`);
         const html = await res.text();
         if (abort) return;
