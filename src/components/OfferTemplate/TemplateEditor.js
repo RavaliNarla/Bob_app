@@ -147,14 +147,14 @@ export default function TemplateEditor() {
       fd.append("templateFile", new Blob([html], { type: "text/html" }));
       if (selectedId) fd.append("id", selectedId);
 
-      const { data } = await apiService.uploadTemplate(fd);
+      const data = await apiService.uploadTemplate(fd);
 
       // ✅ Update templates list immediately
       setTemplates((prev) => {
         const filtered = prev.filter((t) => t.id !== selectedId);
         return [...filtered, data];
       });
-
+      // console.log("Save successful", data);
       alert(`${t("saveSuccess")}: ${data?.name || name}\nID: ${data?.id}`);
       // 🔹 Reset editor after saving
       useTemplateStore.getState().setTemplate(defaultTemplate); // reset store
