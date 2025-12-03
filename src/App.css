@@ -289,3 +289,10 @@ font-family: 'Noto Sans';
 .sidescroll a{
   padding: 25px 0px;
 }
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}

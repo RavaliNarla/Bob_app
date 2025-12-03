@@ -487,6 +487,9 @@ export const apiService = {
   sendOffer: (payload) =>
     candidateApi.put("/candidates/offer", payload),
 
+  sendBulkOffer: (payload) =>
+    candidateApi.post("/candidates/sendOfferLetterBulk", payload),
+
   getInterviewsByDateRange: (startTimestamp, endTimestamp) =>
     candidateApi.get('/candidates/interviews/by-date-range', {
       params: { startTimestamp, endTimestamp },
@@ -593,6 +596,8 @@ export const apiService = {
   deleteInterviewPanel: (id) => apis.delete(`/interview-panels/delete/${id}`),
   getInterviewers: () => api.get('/interviewer/all'),
   activeMembers: () => apis.get('/interview-panels/active-members'),
+    //bulk Schedules
+  applyAutoSchedule:(data)=>api.post('interviewer/getBulkInterviewSchedules',data),
 };
 
 

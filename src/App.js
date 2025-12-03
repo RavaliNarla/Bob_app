@@ -30,6 +30,7 @@ import BulkUploadBatch from './pages/BulkUploadBatch';
 import BulkCandidateAssign from './pages/Bulkcandidateassign';
 // import BulkUploadLayout from './pages/BulkUploadLayout';
 import InterviewPanel from './pages/InterviewPanel';
+import CandidateShortlistFlow from './pages/BulkSchedule/CandidateShortlistFlow';
 // Lazy load components
 const JobCreation = React.lazy(() => import('./pages/JobCreation'));
 const JobPosting = React.lazy(() => import('./pages/JobPosting'));
@@ -115,6 +116,7 @@ function App() {
                       <Route path="/bulk-upload" element={<BulkUploadBatch />} />
                       <Route path="/candidate-assign" element={<BulkCandidateAssign />} />
                       <Route path="/interview-panel" element={<InterviewPanel />} />
+                      <Route path="/candidate-bulkshortlist" element={<CandidateShortlistFlow />} />
                     </Route>
                   </Route>
                 </Route>

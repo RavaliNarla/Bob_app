@@ -1,0 +1,95 @@
+/* Bank of Baroda Branding */
+:root {
+  --bob-orange: #F58220;
+  --bob-blue: #003D79; /* Deep Blue */
+}
+
+body {
+  background-color: #f8f9fa;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.text-bob-orange { color: var(--bob-orange) !important; }
+.bg-bob-orange { background-color: var(--bob-orange) !important; }
+.border-bob-orange { border-color: var(--bob-orange) !important; }
+
+.text-bob-blue { color: var(--bob-blue) !important; }
+.bg-bob-blue { background-color: var(--bob-blue) !important; }
+.border-bob-blue { border-color: var(--bob-blue) !important; }
+
+.btn-bob-primary {
+  background-color: var(--bob-orange);
+  border-color: var(--bob-orange);
+  color: white;
+}
+.btn-bob-primary:hover {
+  background-color: #d96e12;
+  color: white;
+}
+
+.btn-bob-secondary {
+  background-color: var(--bob-blue);
+  border-color: var(--bob-blue);
+  color: white;
+}
+.btn-bob-secondary:hover {
+  background-color: #002a55;
+  color: white;
+}
+
+/* Sidebar Styling */
+.sidebar-link {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 5px;
+  font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.sidebar-link:hover, .sidebar-link.active {
+  color: white;
+  background-color: rgba(255,255,255,0.1);
+  border-left: 3px solid var(--bob-orange);
+}
+
+/* Table Styling */
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Custom Scrollbar for table */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa; 
+}
+.bg-warningscheduled {
+  background: #ffc107;
+}
+.bg-secondarycancelled{
+
+  background:#FF7043;
+}
+.btn-primary{
+  background:#0d6efd !important;
+}
+ .btn-secondary{
+background-color: #fff !important;
+  color: #FF7043 !important;
+  border-color: #FF7043 !important;
+} 
+
+
+
+

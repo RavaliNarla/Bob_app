@@ -24,6 +24,7 @@ const Sidebar = () => {
     { icon: faCalendar, text: t('sidebar:Interviews'), path: '/interviews' },
     { icon: faCogs, text: t('sidebar:Relaxation'), path: '/relaxation' },
     { icon: faPerson, text: t('sidebar:BulkUpload'), path: '/bulk-upload' },
+    { icon: faUserFriends, text: 'Bulk Candidate Shortlist', path: '/candidate-bulkshortlist' },
     //{ icon: faUserFriends, text: 'Approvals', path: '/myapproval' }
     // { icon: faUserFriends, text: 'IBPS Integration', path: '/ibps' },
     // { icon: faUserFriends, text: 'Candidate Portal', path: '/candidate-portal' },
