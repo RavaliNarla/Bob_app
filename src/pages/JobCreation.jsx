@@ -435,21 +435,17 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
     }
 
     if (name === "country_id") {
-      // Convert the value to a number since IDs are numbers
-      const countryId = Number(value);
-      // console.log('Selected country ID:', countryId);
+      const countryId = value; // keep as string
+
       if (countryId) {
-        // Filter states based on the countryId
-        // console.log('All states:', masterData.allStates);
         const states = masterData.allStates.filter(
-          (s) => s.country_id === countryId
+          (s) => String(s.country_id) === String(countryId)
         );
         setFilteredStates(states);
       } else {
-        // If no country is selected, clear the dependent dropdowns
         setFilteredStates([]);
       }
-      // Reset subsequent form fields and dropdowns
+
       setFormData((prev) => ({
         ...prev,
         state_id: "",
@@ -458,44 +454,36 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
       }));
       setFilteredCities([]);
       setFilteredLocations([]);
-
     } else if (name === "state_id") {
-      // Convert the value to a number since IDs are numbers
-      const stateId = Number(value);
+      const stateId = value;
 
       if (stateId) {
-        // Filter cities where the state_id matches the selected state's ID
         const cities = masterData.allCities.filter(
-          (c) => c.state_id === stateId
+          (c) => String(c.state_id) === String(stateId)
         );
         setFilteredCities(cities);
       } else {
         setFilteredCities([]);
       }
 
-      // Reset subsequent form fields and dropdowns
       setFormData((prev) => ({
         ...prev,
         city_id: "",
         location_id: "",
       }));
       setFilteredLocations([]);
-
     } else if (name === "city_id") {
-      // Convert the value to a number since IDs are numbers
-      const cityId = Number(value);
+      const cityId = value;
 
       if (cityId) {
-        // Filter locations where the city_id matches the selected city's ID
         const locations = masterData.allLocations.filter(
-          (l) => l.city_id === cityId
+          (l) => String(l.city_id) === String(cityId)
         );
         setFilteredLocations(locations);
       } else {
         setFilteredLocations([]);
       }
 
-      // Reset the final form field
       setFormData((prev) => ({
         ...prev,
         location_id: "",
@@ -1184,7 +1172,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
             )}
           </div>
         </Modal.Body>
-        <Modal.Footer className='footspace'>
+        <Modal.Footer className='footspace btnremove'>
           <Button
             onClick={handleUploadSubmit}
             className="text-white fw-semibold"

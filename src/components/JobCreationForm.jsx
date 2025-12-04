@@ -667,7 +667,7 @@ const JobCreationForm = ({
               {t("jobcreation:cancel")}
             </Button>
 
-            <div>
+            <div className='btnremove'>
               {showNextButton ? (
                 <Button
                   type="submit"

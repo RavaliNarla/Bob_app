@@ -518,7 +518,7 @@ const JobPosting = () => {
     <Container fluid className="p-4 px-5 fonsty job-postings-page">
       <h5 className="pb-3" style={{ fontFamily: 'Noto Sans', fontWeight: 600, fontSize: '16px', color: '#FF7043', marginBottom: '0px' }}>{t("jobpostings:jobPostings")}</h5>
       <div className="d-flex flex-row align-items-end justify-content-between mb-3">
-        <div className="d-flex align-items-end gap-5 mb-2 mb-md-0">
+        <div className="d-flex align-items-end gap-5 mb-2 mb-md-0 btnremove">
           <Button
             onClick={() => addRequisitionModal()}
             style={{ backgroundColor: '#FF7043', borderColor: '#FF7043', color: '#fff', fontSize: '14px' }}
@@ -924,7 +924,7 @@ const JobPosting = () => {
       )}
 
       {(selectedApproval === "New" || selectedApproval === "") && (
-        <div className="d-flex justify-content-end gap-3">
+        <div className="d-flex justify-content-end gap-3 btnremove">
           <Button
             variant="outline-secondary"
             onClick={resetForm}
@@ -1212,7 +1212,7 @@ const JobPosting = () => {
           </Form>
         </Modal.Body>
 
-        <Modal.Footer className="justify-content-end gap-2">
+        <Modal.Footer className="justify-content-end gap-2 btnremove">
           <Button variant="outline-secondary" onClick={resetReqForm}>
             {viewMode ? t("job:close") : t("job:cancel")}
           </Button>
