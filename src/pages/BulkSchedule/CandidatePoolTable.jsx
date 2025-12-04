@@ -202,8 +202,8 @@ export function CandidatePoolTable({
 
                   {openDropdownId === candidate.id && (
                     <div 
-                      className="position-absolute end-0 mt-1 bg-white border rounded shadow-sm py-1 text-start" 
-                      style={{ zIndex: 1050, width: '180px', top: '100%' }}
+                      className="position-absolute end-0 mt-1 bg-white border rounded shadow-sm py-1 p-1 text-start" 
+                      style={{ zIndex: 1050, width: '180px', top: '100%', fontSize: '14px' }}
                     >
                       {['Applied', 'Shortlisted'].includes(candidate.stage) && (
                         <button 

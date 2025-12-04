@@ -186,29 +186,16 @@ const handlePreviewTemplate = async () => {
       </div>
 
       {/* Offer Controls */}
-      <div className="card shadow-sm mb-4 border-0 bg-light">
+      <div className="card shadow-lg mb-4 border-0 bg-light">
         <div className="card-body d-flex flex-wrap align-items-end gap-3">
           {/* Offer Template */}
-           <div className="flex-grow-1 position-relative">
+           <div className="d-flex-grow-1 col-md-4">
             <label className="form-label fw-semibold text-muted">
               Offer Template
             </label>
-            <div className="d-flex align-items-center gap-2">
-              <select
-                className="form-select"
-                value={selectedTemplate}
-                onChange={(e) => setSelectedTemplate(e.target.value)}
-              >
-                <option value="">Select Template...</option>
-                {templates.map((tpl) => (
-                  <option key={tpl.id} value={tpl.id}>
-                    {tpl.name}
-                  </option>
-                ))}
-              </select>
-              {selectedTemplate && (
+             {selectedTemplate && (
                 <button
-                  className="btn btn-outline-info"
+                  className="btn btn-link p-0 px-2 d-inline-flex align-items-center"
                   type="button"
                   title="Preview Template"
                   onClick={handlePreviewTemplate}
@@ -224,12 +211,26 @@ const handlePreviewTemplate = async () => {
                   )}
                 </button>
               )}
+            <div className="">
+              <select
+                className="form-select"
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
+              >
+                <option value="">Select Template...</option>
+                {templates.map((tpl) => (
+                  <option key={tpl.id} value={tpl.id}>
+                    {tpl.name}
+                  </option>
+                ))}
+              </select>
+             
             </div>
           </div>
 
           {/* Joining Date */}
            {/* Joining Date */}
-          <div>
+          <div className="col-md-4">
             <label className="form-label fw-semibold text-muted">
               Joining Date
             </label>
