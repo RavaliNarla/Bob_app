@@ -245,12 +245,12 @@ export function CandidatePoolTable({
                       >
                         <User size={14} /> View Profile
                       </button>
-                      <button 
+                      {/* <button 
                         className="dropdown-item small py-2"
                         onClick={() => setOpenDropdownId(null)}
                       >
                         Close Menu
-                      </button>
+                      </button> */}
                     </div>
                   )}
 

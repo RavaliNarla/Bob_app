@@ -101,7 +101,6 @@ const [candidateStatus, setCandidateStatus] = useState({});
             candidate_id: candidateId,
             offer_template_id: selectedTemplate,
             joining_date: joiningDate,
-            requisition_id: selectedRequisition || null,
             position_id: selectedPosition || null,
             position:
               positions.find(p => p.position_id === selectedPosition)?.position_title || "",
