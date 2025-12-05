@@ -1,0 +1,18 @@
+{
+  "candidateDetailsModalTitle": "Candidate Details",
+  "candidateId": "Candidate ID",
+  "designation": "Designation",
+  "employer": "Employer",
+  "created": "Created",
+  "address": "Address",
+  "education": "Education",
+  "skills": "Skills",
+  "resume": "Resume",
+  "viewDownload": "View / Download",
+  "comments": "Comments",
+  "candidateDetailsClose": "Close",
+
+  "yearShort": "yr",
+  "yearsShort": "yrs",
+  "experienceShort": "Exp:"
+}

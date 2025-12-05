@@ -1,0 +1,18 @@
+{
+  "candidateDetailsModalTitle": "उम्मीदवार विवरण",
+  "candidateId": "उम्मीदवार आईडी",
+  "designation": "पदनाम",
+  "employer": "नियोक्ता",
+  "created": "निर्मित तिथि",
+  "address": "पता",
+  "education": "शिक्षा",
+  "skills": "कौशल",
+  "resume": "रिज़्यूमे",
+  "viewDownload": "देखें / डाउनलोड करें",
+  "comments": "टिप्पणियाँ",
+  "candidateDetailsClose": "बंद करें",
+
+  "yearShort": "वर्ष",
+  "yearsShort": "वर्ष",
+  "experienceShort": "अनुभव:"
+}

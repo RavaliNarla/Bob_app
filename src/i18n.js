@@ -41,6 +41,8 @@ import sidebarEn from "./i18n/sidebar.en.json";
 import sidebarHi from "./i18n/sidebar.hi.json";
 import dashboardEn from "./i18n/dashboard.en.json";
 import dashboardHi from "./i18n/dashboard.hi.json";
+import candidateModalEn from "./i18n/candidateModal.en.json";
+import candidateModalHi from "./i18n/candidateModal.hi.json";
 
 // ⬅ Read persisted Redux value
 let savedLang = "en";
@@ -77,7 +79,8 @@ i18n.use(initReactI18next).init({
       approval: approvalEn,
       bulkupload: bulkuploadEn,
       sidebar: sidebarEn,
-      dashboard: dashboardEn
+      dashboard: dashboardEn,
+      candidateModal: candidateModalEn,
     },
     hi: {
      job: jobHi ,
@@ -99,7 +102,8 @@ i18n.use(initReactI18next).init({
     approval: approvalHi,
     bulkupload: bulkuploadHi,
     sidebar: sidebarHi,
-    dashboard: dashboardHi
+    dashboard: dashboardHi,
+    candidateModal: candidateModalHi,
     }
   },
   lng: savedLang,       // 👈 use persisted value

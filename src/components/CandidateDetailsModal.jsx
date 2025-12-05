@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Modal, Button, Row, Col, Badge } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 const V = (v, dash = "-") => (v === 0 || v ? String(v) : dash);
 
@@ -13,6 +14,8 @@ const resumeLinkFrom = (file_url) => {
 };
 
 export default function CandidateDetailsModal({ show, onHide, data = {} }) {
+  const { t } = useTranslation("candidateModal");
+
   const {
     candidate_id,
     full_name,
@@ -44,7 +47,7 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
   // nicer labels
   const expLabel =
     total_experience === 0 || total_experience
-      ? `${total_experience} ${Number(total_experience) === 1 ? "yr" : "yrs"}`
+      ? `${total_experience} ${Number(total_experience) === 1 ? t("yearShort") || "yr" : t("yearsShort") || "yrs"}`
       : null;
 
   const createdLabel = created_date
@@ -66,7 +69,7 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
   return (
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton className="table-header-orange">
-        <Modal.Title className="table_heading">Candidate Details</Modal.Title>
+        <Modal.Title className="table_heading">{t("candidateDetailsModalTitle")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -74,13 +77,13 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
         <Row className="mb-3">
           <Col md={8}>
             <h5 className="mb-1">{V(full_name)}</h5>
-            <div className="text-muted small">ID: {V(candidate_id)}</div>
+            <div className="text-muted small">{t("candidateId")}: {V(candidate_id)}</div>
             <div className="text-muted small">{V(email)} • {V(phone)}</div>
           </Col>
           <Col md={4} className="text-md-end mt-2 mt-md-0">
             {expLabel && (
               <Badge bg="light" text="dark" className="border rounded-pill">
-                Exp: {expLabel}
+                {t("experienceShort")} {expLabel}
               </Badge>
             )}
           </Col>
@@ -90,15 +93,15 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
         <div className="p-3 border rounded-3 mb-3 bg-white">
           <Row className="g-3">
             <Col md={4}>
-              <div className="text-muted small">Designation</div>
+              <div className="text-muted small">{t("designation")}</div>
               <div className="fw-medium">{V(current_designation)}</div>
             </Col>
             <Col md={4}>
-              <div className="text-muted small">Employer</div>
+              <div className="text-muted small">{t("employer")}</div>
               <div className="fw-medium">{V(current_employer)}</div>
             </Col>
             <Col md={4}>
-              <div className="text-muted small">Created</div>
+              <div className="text-muted small">{t("created")}</div>
               <div className="fw-medium">{createdLabel}</div>
             </Col>
           </Row>
@@ -108,11 +111,11 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
         <div className="p-3 border rounded-3 mb-3 bg-white">
           <Row className="g-3">
             <Col md={8}>
-              <div className="text-muted small">Address</div>
+              <div className="text-muted small">{t("address")}</div>
               <div className="fw-medium">{addressText}</div>
             </Col>
             <Col md={4}>
-              <div className="text-muted small">Education</div>
+              <div className="text-muted small">{t("education")}</div>
               <div className="fw-medium">{V(education_qualification)}</div>
             </Col>
           </Row>
@@ -120,7 +123,7 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
 
         {/* Skills */}
         <div className="mb-3">
-          <div className="text-muted small mb-1">Skills</div>
+          <div className="text-muted small mb-1">{t("skills")}</div>
           {skillList.length ? (
             <div className="d-flex flex-wrap gap-2">
               {skillList.map((s, i) => (
@@ -136,10 +139,10 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
 
         {/* Resume */}
         <div className="mb-3">
-          <div className="text-muted small mb-1">Resume</div>
+          <div className="text-muted small mb-1">{t("resume")}</div>
           {resumeURL ? (
             <a href={resumeURL} target="_blank" rel="noreferrer">
-              View / Download
+              {t("viewDownload")}
             </a>
           ) : (
             <span>-</span>
@@ -149,7 +152,7 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
         {/* Comments */}
         {comments && (
           <div className="mt-2">
-            <div className="text-muted small mb-1">Comments</div>
+            <div className="text-muted small mb-1">{t("comments")}</div>
             <div className="p-2 border rounded small" style={{ whiteSpace: "pre-wrap" }}>
               {comments}
             </div>
@@ -159,7 +162,7 @@ export default function CandidateDetailsModal({ show, onHide, data = {} }) {
 
       <Modal.Footer>
         <Button variant="primary" className="bulkupload_btn" onClick={onHide}>
-          Close
+          {t("candidateDetailsClose")}
         </Button>
       </Modal.Footer>
     </Modal>
