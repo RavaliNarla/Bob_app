@@ -104,29 +104,73 @@ export function CandidateProfileModal({ show, onClose, candidate }) {
 
             {/* 🟢 Resume Tab */}
             {activeTab === "resume" && candidate.resumeUrl && (
-              <div>
-                <h6 className="text-bob-orange fw-bold border-bottom pb-2">
-                  Resume Preview
-                </h6>
-                <iframe
-                  src={candidate.resumeUrl}
-                  title="Candidate Resume"
-                  width="100%"
-                  height="500px"
-                  style={{
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                  }}
-                ></iframe>
-              </div>
-            )}
+  <div>
+   
+
+    {(() => {
+      const fileUrl = candidate.resumeUrl;
+      const ext = fileUrl.split(".").pop().toLowerCase();
+      const isPdf = ext === "pdf";
+      const isDoc = ext === "docx" || ext === "doc";
+
+      // Choose appropriate viewer URL
+      const viewerUrl = isPdf
+        ? fileUrl
+        : `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}`;
+
+      return (
+        <div>
+           {/* Download button at top */}
+          <div className="d-flex justify-content-end mb-2">
+            <a
+              href={fileUrl}   target="_blank"
+              download
+              className="btn btn-sm btn-outline-secondary"
+            >
+              Download Resume
+            </a>
+          </div>
+          <iframe
+            src={viewerUrl}
+            title="Candidate Resume"
+            width="100%"
+            height="500px"
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "8px",
+            }}
+          ></iframe>
+
+          {/* Download Button */}
+          {/* <div className="text-end mt-2">
+            <a
+              href={fileUrl}
+              download
+              className="btn btn-sm btn-outline-secondary"
+            >
+              Download Resume
+            </a>
+          </div> */}
+        </div>
+      );
+    })()}
+  </div>
+)}
+
 
             {/* 🔵 Offer Letter Tab */}
             {activeTab === "offer" && candidate.offerLetterUrl && (
               <div>
-                <h6 className="text-bob-orange fw-bold border-bottom pb-2">
-                  Offer Letter Preview
-                </h6>
+                 <div className="d-flex justify-content-end mb-2">
+                          <a
+                            href={candidate?.offerLetterUrl}
+                            download
+                            className="btn btn-sm btn-outline-secondary"
+                            target="_blank"
+                          >
+                            Download Offer Letter
+                          </a>
+                        </div>
                 <iframe
                   src={candidate.offerLetterUrl}
                   title="Candidate Offer Letter"

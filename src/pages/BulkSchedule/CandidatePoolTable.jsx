@@ -41,7 +41,7 @@ export function CandidatePoolTable({
     switch(stage) {
       case 'Shortlisted': return 'bg-info text-dark';
       case 'Scheduled': return 'bg-warningscheduled';
-      case 'Selected for Next Round': return 'bg-primary';
+      case 'Selected for Next Round': return 'bg-warningscheduled';
       case 'Selected': return 'bg-success';
       case 'Offered': return 'bg-success';
       case 'Rejected': return 'bg-danger';

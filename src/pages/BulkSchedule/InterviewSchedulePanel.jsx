@@ -3,7 +3,7 @@ import { Calendar, Clock, Users, ArrowLeft, CheckCircle ,Loader2 } from 'lucide-
 import apiService from '../../services/apiService';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Swal from 'sweetalert2';
 export function InterviewSchedulePanel({ 
   selectedCandidates, 
   onSchedule, 
@@ -141,153 +141,51 @@ console.log("candidates",candidates)
   }, [selectedCandidates.length]);
 
   // ✅ Auto-Schedule function with API integration
-//    const handleApplyAutoSchedule = async () => {
-//     try {
-//       const candidateIds = selectedCandidates.map(c => c.id);
-//       if (candidateIds.length === 0) {
-//         alert("Please select at least one candidate.");
-//         return;
-//       }
+   const handleApplyAutoSchedule = async () => {
+    try {
+      const candidateIds = selectedCandidates.map(c => c.id);
+      if (candidateIds.length === 0) {
+        alert("Please select at least one candidate.");
+        return;
+      }
 
-//       const CHUNK_SIZE = 200;
-//       let allSchedules = {};
-//       let currentDate = globalDate;
-//       let remaining = [...candidateIds];
-//       let batchCount = 1;
+      const CHUNK_SIZE = 200;
+      let allSchedules = {};
+      let currentDate = globalDate;
+      let remaining = [...candidateIds];
+      let batchCount = 1;
 
-//       // ✅ Initialize progress
-//       setIsLoading(true);
-//       setProgress({ completed: 0, total: candidateIds.length, batch: 0 });
+      // ✅ Initialize progress
+      setIsLoading(true);
+      setProgress({ completed: 0, total: candidateIds.length, batch: 0 });
 
-//       while (remaining.length > 0) {
-//         const batch = remaining.splice(0, CHUNK_SIZE);
-//         console.log(`Scheduling batch ${batchCount}, size: ${batch.length}`);
-//         setProgress(prev => ({
-//           ...prev,
-//           batch: batchCount,
-//           completed: candidateIds.length - remaining.length
-//         }));
+      while (remaining.length > 0) {
+        const batch = remaining.splice(0, CHUNK_SIZE);
+        console.log(`Scheduling batch ${batchCount}, size: ${batch.length}`);
+        setProgress(prev => ({
+          ...prev,
+          batch: batchCount,
+          completed: candidateIds.length - remaining.length
+        }));
 
-//         const payload = {
-//           panelId: panels || [17,18],
-//           candidateIds: batch,
-//           date: currentDate,
-//           startTime,
-//           durationMinutes: duration,
-//           jobRequisitionId: selectedRequisition,
-//           jobPositionId: selectedPosition,
-//         };
+        const payload = {
+          panelId: (Array.isArray(panels) && panels.length > 0) ? panels : [17, 18],
+          candidateIds: batch,
+          date: currentDate,
+          startTime,
+          durationMinutes: duration,
+          jobRequisitionId: selectedRequisition,
+          jobPositionId: selectedPosition,
+        };
 
-//         const response = await apiService.applyAutoSchedule(payload);
-//         if (!response.success) {
-//           alert(`Batch ${batchCount} failed. Please retry.`);
-//           break;
-//         }
-
-//         const scheduleData = response?.data?.schedules || [];
-//         const overflow = response?.data?.overflow || false;
-//         scheduleData.forEach(item => {
-//           allSchedules[item.candidateId] = {
-//             candidateId: item.candidateId,
-//             candidateName: item.candidateName,
-//             date: item.interviewDate,
-//             startTime: item.interviewStartTime,
-//             endTime: item.interviewEndTime,
-//             duration: item.durationMinutes,
-//             panelName: item.panelName,
-//             applicationId: item.jobApplicationId,
-//             panelId: item.panelId,
-//           };
-//         });
-// // application_id	"dd34e96d-ff16-48a5-a024-d753bea6cef6"
-// // date	"2025-11-26"
-// // interview_type	""
-// // interviewer_id	17
-// // is_panel_interview	true
-// // location	""
-// // phone	""
-// // status	"Scheduled"
-// // time	"11:00"
-//         // ✅ Overflow Handling
-//         if (overflow) {
-//           alert(`The schedule for ${currentDate} is full. Moving to the next day automatically.`);
-//           // const nextDay = new Date(currentDate);
-//           // nextDay.setDate(nextDay.getDate() + 1);
-//           // currentDate = nextDay.toISOString().split('T')[0];
-//         }
-
-//         batchCount++;
-//         await new Promise(r => setTimeout(r, 150)); // small delay to avoid backend overload
-//       }
-
-//       setSchedules(allSchedules);
-//       toast.success(`Successfully scheduled ${Object.keys(allSchedules).length} candidates!`);
-//     } catch (err) {
-//       console.error("Scheduling error:", err);
-//       toast.error("An error occurred while scheduling interviews.");
-//     } finally {
-//       setIsLoading(false);
-//       setProgress({ completed: 0, total: 0, batch: 0 });
-//     }
-//   };
-
-// ✅ Handle Auto-Schedule for candidates
-const handleApplyAutoSchedule = async () => {
-  try {
-    const candidateIds = selectedCandidates.map(c => c.id);
-    if (candidateIds.length === 0) {
-      alert("Please select at least one candidate.");
-      return;
-    }
-
-    // ✅ Smaller batch size
-    const BATCH_SIZE = 200;
-    let allSchedules = {};
-    let currentDate = globalDate;
-    let remaining = [...candidateIds];
-    let batchCount = 1;
-
-    // ✅ Initialize progress and loading
-    setIsLoading(true);
-    setProgress({ completed: 0, total: candidateIds.length, batch: 0 });
-
-    console.log(`🚀 Starting Auto-Schedule for ${candidateIds.length} candidates in batches of ${BATCH_SIZE}`);
-
-    while (remaining.length > 0) {
-      const batch = remaining.splice(0, BATCH_SIZE);
-
-      console.log(`📦 Scheduling batch ${batchCount} | Size: ${batch.length}`);
-      setProgress(prev => ({
-        ...prev,
-        batch: batchCount,
-        completed: candidateIds.length - remaining.length,
-      }));
-
-      const payload = {
-        panelId: panels || [17, 18],
-        candidateIds: batch,
-        date: currentDate,
-        startTime,
-        durationMinutes: duration,
-        jobRequisitionId: selectedRequisition,
-        jobPositionId: selectedPosition,
-      };
-
-      try {
         const response = await apiService.applyAutoSchedule(payload);
-
-        if (!response?.success) {
-          toast.error(`❌ Batch ${batchCount} failed. Skipping to next batch.`);
-          batchCount++;
-          continue; // continue with next batch
+        if (!response.success) {
+          alert(`Batch ${batchCount} failed. Please retry.`);
+          break;
         }
 
-        const scheduleData = Array.isArray(response?.data?.schedules)
-          ? response.data.schedules
-          : [];
+        const scheduleData = response?.data?.schedules || [];
         const overflow = response?.data?.overflow || false;
-
-        // ✅ Merge all schedule data into allSchedules object
         scheduleData.forEach(item => {
           allSchedules[item.candidateId] = {
             candidateId: item.candidateId,
@@ -301,48 +199,158 @@ const handleApplyAutoSchedule = async () => {
             panelId: item.panelId,
           };
         });
-
-        console.log(`✅ Batch ${batchCount} scheduled ${scheduleData.length} candidates successfully.`);
-
-        // ✅ Handle overflow (auto move to next date)
+// application_id	"dd34e96d-ff16-48a5-a024-d753bea6cef6"
+// date	"2025-11-26"
+// interview_type	""
+// interviewer_id	17
+// is_panel_interview	true
+// location	""
+// phone	""
+// status	"Scheduled"
+// time	"11:00"
+        // ✅ Overflow Handling
         if (overflow) {
-          toast.warn(`⚠️ Schedule for ${currentDate} is full. Moving to next day automatically.`);
-          const nextDay = new Date(currentDate);
-          nextDay.setDate(nextDay.getDate() + 1);
-          currentDate = nextDay.toISOString().split('T')[0];
+         // alert(`The schedule for ${currentDate} is full. Moving to the next day automatically.`);
+
+          Swal.fire({
+  icon: 'info',
+  title: 'Schedule Notice',
+  text: `The schedule for ${currentDate} is full. Moving to the next day automatically.`,
+  confirmButtonText: 'OK'
+});
+          // const nextDay = new Date(currentDate);
+          // nextDay.setDate(nextDay.getDate() + 1);
+          // currentDate = nextDay.toISOString().split('T')[0];
         }
 
-      } catch (err) {
-        console.error(`❌ API error in batch ${batchCount}:`, err);
-        toast.error(`Batch ${batchCount} failed due to a server error.`);
+        batchCount++;
+        await new Promise(r => setTimeout(r, 150)); // small delay to avoid backend overload
       }
 
-      batchCount++;
-
-      // ✅ Small delay to avoid backend overload
-      await new Promise(r => setTimeout(r, 300));
+      setSchedules(allSchedules);
+      toast.success('Panels have been successfully mapped to the candidates. Please confirm the schedules.');
+      //toast.success(`Successfully scheduled ${Object.keys(allSchedules).length} candidates!`);
+    } catch (err) {
+      console.error("Scheduling error:", err);
+      toast.error("An error occurred while scheduling interviews.");
+    } finally {
+      setIsLoading(false);
+      setProgress({ completed: 0, total: 0, batch: 0 });
     }
+  };
 
-    // ✅ All batches completed
-    setSchedules(allSchedules);
+// ✅ Handle Auto-Schedule for candidates
+// const handleApplyAutoSchedule = async () => {
+//   try {
+//     const candidateIds = selectedCandidates.map(c => c.id);
+//     if (candidateIds.length === 0) {
+//       alert("Please select at least one candidate.");
+//       return;
+//     }
 
-    const totalScheduled = Object.keys(allSchedules).length;
-    toast.success(`🎉 Successfully scheduled ${totalScheduled} candidates across ${batchCount - 1} batch(es)!`, {
-      autoClose: 2500,
-      // onClose: () => {
-      //   // Optional: Navigate back to main view after success
-      //   if (onBackToMain) onBackToMain();
-      // },
-    });
+//     // ✅ Smaller batch size
+//     const BATCH_SIZE = 200;
+//     let allSchedules = {};
+//     let currentDate = globalDate;
+//     let remaining = [...candidateIds];
+//     let batchCount = 1;
 
-  } catch (err) {
-    console.error("❌ Scheduling error:", err);
-    toast.error("An unexpected error occurred while scheduling interviews.");
-  } finally {
-    setIsLoading(false);
-    setProgress({ completed: 0, total: 0, batch: 0 });
-  }
-};
+//     // ✅ Initialize progress and loading
+//     setIsLoading(true);
+//     setProgress({ completed: 0, total: candidateIds.length, batch: 0 });
+
+//     console.log(`🚀 Starting Auto-Schedule for ${candidateIds.length} candidates in batches of ${BATCH_SIZE}`);
+
+//     while (remaining.length > 0) {
+//       const batch = remaining.splice(0, BATCH_SIZE);
+
+//       console.log(`📦 Scheduling batch ${batchCount} | Size: ${batch.length}`);
+//       setProgress(prev => ({
+//         ...prev,
+//         batch: batchCount,
+//         completed: candidateIds.length - remaining.length,
+//       }));
+
+//       const payload = {
+//         panelId: panels || [17, 18],
+//         candidateIds: batch,
+//         date: currentDate,
+//         startTime,
+//         durationMinutes: duration,
+//         jobRequisitionId: selectedRequisition,
+//         jobPositionId: selectedPosition,
+//       };
+
+//       try {
+//         const response = await apiService.applyAutoSchedule(payload);
+
+//         if (!response?.success) {
+//           toast.error(`❌ Batch ${batchCount} failed. Skipping to next batch.`);
+//           batchCount++;
+//           continue; // continue with next batch
+//         }
+
+//         const scheduleData = Array.isArray(response?.data?.schedules)
+//           ? response.data.schedules
+//           : [];
+//         const overflow = response?.data?.overflow || false;
+
+//         // ✅ Merge all schedule data into allSchedules object
+//         scheduleData.forEach(item => {
+//           allSchedules[item.candidateId] = {
+//             candidateId: item.candidateId,
+//             candidateName: item.candidateName,
+//             date: item.interviewDate,
+//             startTime: item.interviewStartTime,
+//             endTime: item.interviewEndTime,
+//             duration: item.durationMinutes,
+//             panelName: item.panelName,
+//             applicationId: item.jobApplicationId,
+//             panelId: item.panelId,
+//           };
+//         });
+
+//         console.log(`✅ Batch ${batchCount} scheduled ${scheduleData.length} candidates successfully.`);
+
+//         // ✅ Handle overflow (auto move to next date)
+//         if (overflow) {
+//           toast.warn(`⚠️ Schedule for ${currentDate} is full. Moving to next day automatically.`);
+//           const nextDay = new Date(currentDate);
+//           nextDay.setDate(nextDay.getDate() + 1);
+//           currentDate = nextDay.toISOString().split('T')[0];
+//         }
+
+//       } catch (err) {
+//         console.error(`❌ API error in batch ${batchCount}:`, err);
+//         toast.error(`Batch ${batchCount} failed due to a server error.`);
+//       }
+
+//       batchCount++;
+
+//       // ✅ Small delay to avoid backend overload
+//       await new Promise(r => setTimeout(r, 300));
+//     }
+
+//     // ✅ All batches completed
+//     setSchedules(allSchedules);
+
+//     const totalScheduled = Object.keys(allSchedules).length;
+//     toast.success(`🎉 Successfully scheduled ${totalScheduled} candidates across ${batchCount - 1} batch(es)!`, {
+//       autoClose: 2500,
+//       // onClose: () => {
+//       //   // Optional: Navigate back to main view after success
+//       //   if (onBackToMain) onBackToMain();
+//       // },
+//     });
+
+//   } catch (err) {
+//     console.error("❌ Scheduling error:", err);
+//     toast.error("An unexpected error occurred while scheduling interviews.");
+//   } finally {
+//     setIsLoading(false);
+//     setProgress({ completed: 0, total: 0, batch: 0 });
+//   }
+// };
 
 
   // ✅ Loading Overlay (shown when scheduling)
@@ -448,7 +456,7 @@ console.log("schedules",schedules)
                   >
                     <option value="30">30 mins</option>
                     <option value="45">45 mins</option>
-                    <option value="360">360 mins</option>
+                    <option value="60">60 mins</option>
                   </select>
                 </div>
               </div>

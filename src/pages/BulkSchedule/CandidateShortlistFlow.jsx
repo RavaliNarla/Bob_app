@@ -109,7 +109,7 @@ const [selectedProfile, setSelectedProfile] = useState(null);
    // { id: 'Applied', label: 'Applied', color: 'secondary' },
     { id: 'Shortlisted', label: 'Shortlisted', color: 'info' },
     { id: 'Scheduled', label: 'Scheduled', color: 'warning' },
-    { id: 'Selected for Next Round', label: 'Next Round', color: 'primary' },
+    { id: 'Selected for Next Round', label: 'Next Round', color: 'warning' },
     { id: 'Selected', label: 'Selected', color: 'success' },
     { id: 'Offered', label: 'Offered', color: 'success' },
     { id: 'Rejected', label: 'Rejected', color: 'danger' },
@@ -273,6 +273,7 @@ const handleStageToggle = (stage) => {
 const handleScheduleConfirm = async (schedules) => {
   try {
     const allSchedules = Object.values(schedules);
+    console.log(allSchedules)
     if (allSchedules.length === 0) {
       toast.warning("No candidates to schedule.");
       return;
@@ -340,7 +341,7 @@ setProgress({ completed: 0, total: allSchedules.length, percentage: 0 });
       await new Promise(r => setTimeout(r, 300)); // optional delay between batches
     }
 
-    toast.success('Successfully scheduled ${successCount} candidates!');
+    toast.success(`Successfully scheduled ${successCount} candidates!`);
     setViewMode("main");
     setSelectedCandidates([]);
 
@@ -676,15 +677,23 @@ const getCandidateDetails = () => {
             selectedPosition={selectedPosition}
             selectedRequisition={selectedRequisition}
             positions={positions}
-            onBackToMain={() => {
+            onBackToMain={async () => {
             console.log("🔄 Navigating back to main view...");
             setViewMode('main');
             setActiveTab('candidates');
+
+
             // Set the stage filter to 'Offered'
             setFilters(prev => ({
               ...prev,
               stages: ['Offered']  // This will automatically select the Offered stage
             }));
+
+            // ✅ Force candidate refresh
+            if (selectedPosition) {
+              console.log("🔁 Refreshing candidate data after offer...");
+              await handlePositionChange(selectedPosition);
+            }
           }}
           />
         )}
