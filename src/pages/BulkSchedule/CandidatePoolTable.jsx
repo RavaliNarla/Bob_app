@@ -17,7 +17,7 @@ export function CandidatePoolTable({
 }) {
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
-  const isActionTab = !['Rejected', 'Selected', 'Offered'].includes(activeStage);
+  const isActionTab = !['Rejected', 'Selected', 'Offered','Not Available'].includes(activeStage);
 
   console.log('active tab:', activeStage);
 
@@ -39,13 +39,15 @@ export function CandidatePoolTable({
 
   const getStageBadgeClass = (stage) => {
     switch(stage) {
-      case 'Shortlisted': return 'bg-success text-dark';
+      case 'Shortlisted': return 'bg-success';
       case 'Scheduled': return 'bg-primaryy';
+      case 'Rescheduled': return 'bg-primaryy';
       case 'Selected for Next Round': return 'bg-info';
       case 'Selected': return 'bg-secondaryy';
       case 'Offered': return 'bg-success';
       case 'Rejected': return 'bg-danger';
       case 'Cancelled': return 'bg-warning';
+       case 'Not Available': return 'bg-danger';
       default: return 'bg-light text-dark';
     }
   };
@@ -53,8 +55,8 @@ export function CandidatePoolTable({
   const getBulkActions = () => {
     if (selectedCandidates.length === 0) return null;
     const selectedObjs = candidates.filter(c => selectedCandidates.includes(c.id));
-    const allScheduled = selectedObjs.every(c => ['Scheduled', 'Selected for Next Round','Cancelled'].includes(c.stage));
-    const allShortlisted = selectedObjs.every(c => ['Shortlisted', 'Applied'].includes(c.stage));
+    const allScheduled = selectedObjs.every(c => ['Scheduled','Rescheduled', 'Selected for Next Round','Cancelled'].includes(c.stage));
+    const allShortlisted = selectedObjs.every(c => ['Shortlisted'].includes(c.stage));
     return { allScheduled, allShortlisted };
   };
 
@@ -214,7 +216,7 @@ export function CandidatePoolTable({
                         </button>
                       )}
 
-                      {['Scheduled','Selected for Next Round','Cancelled'].includes(candidate.stage) && (
+                      {['Scheduled','Rescheduled','Selected for Next Round','Cancelled'].includes(candidate.stage) && (
                         <>
                           <button 
                             className="dropdown-item small py-2 d-flex align-items-center gap-2"

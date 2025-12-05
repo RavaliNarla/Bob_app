@@ -198,7 +198,6 @@ const handlePreviewTemplate = async () => {
                   type="button"
                   title="Preview Template"
                   onClick={handlePreviewTemplate}
-                  disabled={isPreviewLoading}
                 >
                   {isPreviewLoading ? (
                     <span
@@ -215,6 +214,7 @@ const handlePreviewTemplate = async () => {
                 className="form-select"
                 value={selectedTemplate}
                 onChange={(e) => setSelectedTemplate(e.target.value)}
+                disabled={selectedCandidates.length === 0 || isSending}
               >
                 <option value="">Select Template...</option>
                 {templates.map((tpl) => (
@@ -238,6 +238,7 @@ const handlePreviewTemplate = async () => {
               className="form-control"
               value={joiningDate}
               onChange={(e) => setJoiningDate(e.target.value)}
+               disabled={selectedCandidates.length === 0 || isSending}
             />
           </div>
 
@@ -246,7 +247,12 @@ const handlePreviewTemplate = async () => {
             <button
               className="btn btn-bob-primary d-flex align-items-center gap-2 px-4"
               onClick={handleSendOffer}
-              disabled={isSending}
+               disabled={
+          isSending ||
+          selectedCandidates.length === 0 || // disable if no candidate selected
+          !selectedTemplate || // disable if template not chosen
+          !joiningDate // disable if no joining date
+        }
             >
               {isSending ? (
                 <>

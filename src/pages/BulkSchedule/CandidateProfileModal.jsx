@@ -116,7 +116,7 @@ export function CandidateProfileModal({ show, onClose, candidate }) {
       // Choose appropriate viewer URL
       const viewerUrl = isPdf
         ? fileUrl
-        : `https://docs.google.com/viewer?url=${encodeURIComponent(fileUrl)}`;
+        : `https://view.officeapps.live.com/op/view.aspx?src=${encodeURIComponent(fileUrl)}`;
 
       return (
         <div>

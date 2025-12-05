@@ -109,11 +109,14 @@ const [selectedProfile, setSelectedProfile] = useState(null);
    // { id: 'Applied', label: 'Applied', color: 'secondary' },
     { id: 'Shortlisted', label: 'Shortlisted', color: 'success' },
     { id: 'Scheduled', label: 'Scheduled', color: 'primaryy' },
+    { id: 'Rescheduled', label: 'Rescheduled', color: 'primaryy' },
     { id: 'Selected for Next Round', label: 'Next Round', color: 'info' },
     { id: 'Selected', label: 'Selected', color: 'secondaryy' },
-    { id: 'Offered', label: 'Offered', color: 'success' },
+   
     { id: 'Rejected', label: 'Rejected', color: 'danger' },
-     { id: 'Cancelled', label: 'Cancelled', color: 'warning' }
+     { id: 'Cancelled', label: 'Cancelled', color: 'warning' },
+        { id: 'Not Available', label: 'Not Available', color: 'warning' },
+         { id: 'Offered', label: 'Offered', color: 'success' },
   ];
 
   
@@ -122,14 +125,6 @@ const [selectedProfile, setSelectedProfile] = useState(null);
   setProfileModalOpen(true);
 };
 
-  // Derived state
-  // const filteredCandidates = candidates.filter(c => {
-  //   if (selectedPosition && c.positionId !== selectedPosition) return false;
-  //   if (filters.stages.length > 0 && !filters.stages.includes(c.application_status)) return false;
-  //   //if (filters.skills.length > 0 && !filters.skills.some(s => c.skills.includes(s))) return false;
-  //   //if (filters.location.length > 0 && !filters.location.some(l => c.location.includes(l))) return false;
-  //   return true;
-  // });
 const filteredCandidates = candidates.filter(c => {
   // 1️⃣ Filter by selected position (optional)
   if (selectedPosition && c.positionId && c.positionId !== selectedPosition) return false;
@@ -283,8 +278,8 @@ const handleScheduleConfirm = async (schedules) => {
     const remaining = [...allSchedules];
     let successCount = 0;
     let batchCount = 1;
-setIsScheduling(true);
-setProgress({ completed: 0, total: allSchedules.length, percentage: 0 });
+    setIsScheduling(true);
+    setProgress({ completed: 0, total: allSchedules.length, percentage: 0 });
 
     while (remaining.length > 0) {
       const batch = remaining.splice(0, CHUNK_SIZE);
@@ -298,17 +293,18 @@ setProgress({ completed: 0, total: allSchedules.length, percentage: 0 });
             date: s.date,
             time: s.startTime,
             interviewer_id: s.panelId,
-            status: "Scheduled",
+           // status: "Scheduled",
+             status: isReschedule ? "Rescheduled" : "Scheduled",  // This line was updated
             interview_type: s.interview_type || "Panel",
             location: "",
             phone: "",
             is_panel_interview: true,
+            endTime:s.endTime
           };
-
           try {
             const response = await apiService.scheduleInterview(interviewPayload);
             const message = String(response?.data || response).toLowerCase();
-            if (message.includes("interview scheduled")) {
+           if (message.includes("interview scheduled") || message.includes("interview rescheduled")) {
               return { success: true };
             } else {
               console.warn(`❌ Failed to schedule candidate ${s.candidateId}`);
@@ -483,6 +479,7 @@ const getCandidateDetails = () => {
           selectedPosition={selectedPosition}
           selectedRequisition={selectedRequisition}
           candidates={filteredCandidates}
+          isreschedule={isReschedule} 
           
         />
       </div>
@@ -505,6 +502,7 @@ const getCandidateDetails = () => {
                 // ✅ value must be the *object* that matches one of the options
                 value={
                   requisitions
+                   .filter(req => req.requisition_status === 'Approved')
                     .map(req => ({
                       value: req.requisition_id,
                       label: `${req.requisition_code} - ${req.requisition_title}`,
@@ -513,7 +511,9 @@ const getCandidateDetails = () => {
                 }
                 // ✅ onChange gives you the selected object
                 onChange={(option) => setSelectedRequisition(option?.value || '')}
-                options={requisitions.map(req => ({
+                options={requisitions
+                   .filter(req => req.requisition_status === 'Approved')
+                  .map(req => ({
                   value: req.requisition_id,
                   label: `${req.requisition_code} - ${req.requisition_title}`,
                 }))}

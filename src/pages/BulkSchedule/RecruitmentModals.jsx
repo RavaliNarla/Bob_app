@@ -149,7 +149,7 @@ return (
               </option>
               <option value="Selected">Selected</option>
               <option value="Rejected">Rejected</option>
-              <option value="Not Available">Not Available</option>
+              {/* <option value="Not Available">Not Available</option> */}
             </select>
           </div>
 

@@ -100,6 +100,16 @@ background-color: #FF7043 !important;
   border-color: #FF7043 !important;
 } 
 
-
+.bg-primaryy{
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+ 
+.bg-secondaryy{
+  background-color: #FF7043 !important;
+  color: #fff !important;
+}
+ 
+ 
 
 
