@@ -39,13 +39,13 @@ export function CandidatePoolTable({
 
   const getStageBadgeClass = (stage) => {
     switch(stage) {
-      case 'Shortlisted': return 'bg-info text-dark';
-      case 'Scheduled': return 'bg-warningscheduled';
-      case 'Selected for Next Round': return 'bg-warningscheduled';
-      case 'Selected': return 'bg-success';
+      case 'Shortlisted': return 'bg-success text-dark';
+      case 'Scheduled': return 'bg-primaryy';
+      case 'Selected for Next Round': return 'bg-info';
+      case 'Selected': return 'bg-secondaryy';
       case 'Offered': return 'bg-success';
       case 'Rejected': return 'bg-danger';
-      case 'Cancelled': return 'bg-secondary';
+      case 'Cancelled': return 'bg-warning';
       default: return 'bg-light text-dark';
     }
   };

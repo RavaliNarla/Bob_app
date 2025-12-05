@@ -107,13 +107,13 @@ const [selectedProfile, setSelectedProfile] = useState(null);
 
   const STAGES = [
    // { id: 'Applied', label: 'Applied', color: 'secondary' },
-    { id: 'Shortlisted', label: 'Shortlisted', color: 'info' },
-    { id: 'Scheduled', label: 'Scheduled', color: 'warning' },
-    { id: 'Selected for Next Round', label: 'Next Round', color: 'warning' },
-    { id: 'Selected', label: 'Selected', color: 'success' },
+    { id: 'Shortlisted', label: 'Shortlisted', color: 'success' },
+    { id: 'Scheduled', label: 'Scheduled', color: 'primaryy' },
+    { id: 'Selected for Next Round', label: 'Next Round', color: 'info' },
+    { id: 'Selected', label: 'Selected', color: 'secondaryy' },
     { id: 'Offered', label: 'Offered', color: 'success' },
     { id: 'Rejected', label: 'Rejected', color: 'danger' },
-     { id: 'Cancelled', label: 'Cancelled', color: 'secondary' }
+     { id: 'Cancelled', label: 'Cancelled', color: 'warning' }
   ];
 
   
