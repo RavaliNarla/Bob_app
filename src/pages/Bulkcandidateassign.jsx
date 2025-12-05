@@ -12,6 +12,7 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import apiService from "../services/apiService";
 import "../css/bulkUpload.css";
 import BulkTiles from "./BulkTiles";
@@ -20,6 +21,8 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function BulkCandidateAssign() {
+  const { t } = useTranslation("bulkupload");
+
   const [loadingReq, setLoadingReq] = useState(false);
   const [loadingPos, setLoadingPos] = useState(false);
   const [loadingCand, setLoadingCand] = useState(false);
@@ -52,13 +55,13 @@ export default function BulkCandidateAssign() {
         setRequisitions(list);
       } catch (e) {
         console.error(e);
-        toast.error("Failed to load requisitions");
+        toast.error(t("processFailed") || "Failed to load requisitions");
       } finally {
         setLoadingReq(false);
       }
     };
     run();
-  }, []);
+  }, [t]);
 
   // load positions for selected requisition
   useEffect(() => {
@@ -75,13 +78,13 @@ export default function BulkCandidateAssign() {
         setPositions(list);
       } catch (e) {
         console.error(e);
-        toast.error("Failed to load positions");
+        toast.error(t("processFailed") || "Failed to load positions");
       } finally {
         setLoadingPos(false);
       }
     };
     run();
-  }, [selectedReq]);
+  }, [selectedReq, t]);
 
   // load candidates when a position is selected
   useEffect(() => {
@@ -103,13 +106,13 @@ export default function BulkCandidateAssign() {
         setCandidates(Array.isArray(list) ? list : []);
       } catch (e) {
         console.error(e);
-        toast.error("Failed to load candidates");
+        toast.error(t("processFailed") || "Failed to load candidates");
       } finally {
         setLoadingCand(false);
       }
     };
     run();
-  }, [selectedPos]);
+  }, [selectedPos, t]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -170,7 +173,9 @@ export default function BulkCandidateAssign() {
       const ok = body?.success ?? true;
 
       if (ok) {
-        toast.success(`Assigned ${ids.length} candidate(s) to the position.`);
+        toast.success(
+          t("assignButton") + `: ${ids.length} ` + t("selectedCount", { count: ids.length })
+        );
         // Refresh the "not-applied" list so assigned ones disappear
         setSelected(new Set());
         setLoadingCand(true);
@@ -183,11 +188,11 @@ export default function BulkCandidateAssign() {
           setLoadingCand(false);
         }
       } else {
-        toast.error(body?.message || "Assignment failed");
+        toast.error(body?.message || t("processFailed") || "Assignment failed");
       }
     } catch (e) {
       console.error(e);
-      toast.error("Failed to assign candidates");
+      toast.error(t("processFailed") || "Failed to assign candidates");
     } finally {
       setAssigning(false);
     }
@@ -206,32 +211,30 @@ export default function BulkCandidateAssign() {
         <Card.Body>
           <Row className="g-3 align-items-end">
             <Col md={4}>
-              <Form.Label className="mb-1">Requisition</Form.Label>
+              <Form.Label className="mb-1">{t("requisitionLabel")}</Form.Label>
               <Form.Select
-              className="requisition"
+                className="requisition"
                 size="sm"
                 value={selectedReq}
                 onChange={(e) => setSelectedReq(e.target.value)}
                 disabled={loadingReq}
               >
                 <option value="" className="reqvalues">
-                  {loadingReq ? "Loading…" : "Select requisition"}
+                  {loadingReq ? t("loading") : t("selectRequisitionPlaceholder")}
                 </option>
                 {requisitions.map((r) => (
                   <option
                     key={r.requisition_id || r.id}
                     value={r.requisition_id || r.id}
                   >
-                    {r.requisition_title ||
-                      r.title ||
-                      `REQ-${r.requisition_id || r.id}`}
+                    {r.requisition_title || r.title || `REQ-${r.requisition_id || r.id}`}
                   </option>
                 ))}
               </Form.Select>
             </Col>
 
             <Col md={4}>
-              <Form.Label className="mb-1">Position</Form.Label>
+              <Form.Label className="mb-1">{t("positionLabel")}</Form.Label>
               <Form.Select
                 size="sm"
                 value={selectedPos}
@@ -240,32 +243,19 @@ export default function BulkCandidateAssign() {
               >
                 <option value="">
                   {loadingPos
-                    ? "Loading…"
+                    ? t("loading")
                     : selectedReq
-                    ? "Select position"
-                    : "Select requisition first"}
+                    ? t("selectPositionPlaceholder")
+                    : t("selectRequisitionFirst")}
                 </option>
                 {positions.map((p) => (
                   <option key={p.position_id || p.id} value={p.position_id || p.id}>
-                    {p.position_title ||
-                      p.title ||
-                      `POS-${p.position_id || p.id}`}
+                    {p.position_title || p.title || `POS-${p.position_id || p.id}`}
                   </option>
                 ))}
               </Form.Select>
             </Col>
 
-            {/* <Col md={4}>
-              <Form.Label className="mb-1">Search</Form.Label>
-              <InputGroup size="sm">
-                <Form.Control
-                  placeholder="Search candidates (name, email, phone)…"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  disabled={loadingCand || candidates.length === 0}
-                />
-              </InputGroup>
-            </Col> */}
           </Row>
         </Card.Body>
       </Card>
@@ -282,31 +272,30 @@ export default function BulkCandidateAssign() {
           {loadingCand ? (
             <div className="d-flex align-items-center justify-content-center py-5 text-muted">
               <Spinner animation="border" size="sm" className="me-2" />
-              Loading candidates…
+              {t("loadingCandidates")}
             </div>
           ) : !selectedPos ? (
             <div className="text-center text-muted py-5">
-              Select a position to load candidates.
+              {t("selectPositionToLoadCandidates")}
             </div>
           ) : candidates.length === 0 ? (
             <div className="text-center text-muted py-5">
-              No candidates found for this position.
+              {t("noCandidatesForPosition")}
             </div>
           ) : (
             <>
               <div className="px-3 py-2 small text-muted d-flex justify-content-between align-items-center">
                 <div className="mt-2">
-                  <p className="text-muted">Showing {filtered.length} of {candidates.length}</p>
+                  <p className="text-muted">{t("showingOf", { shown: filtered.length, total: candidates.length })}</p>
                 </div>
                 <div className="d-flex gap-3" style={{ height: '40px' }}>
 
-                  {/* <Form.Label className="mb-1">Search</Form.Label> */}
                   <InputGroup className="posting-search" size="sm">
-                  <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>
-                                <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
-                              </InputGroup.Text>
+                    <InputGroup.Text style={{ backgroundColor: "#FF7043" }}>
+                      <FontAwesomeIcon icon={faSearch} style={{ color: "#fff" }} />
+                    </InputGroup.Text>
                     <Form.Control
-                      placeholder="Search candidates..."
+                      placeholder={t("searchCandidatesPlaceholder")}
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       disabled={loadingCand || candidates.length === 0}
@@ -329,10 +318,10 @@ export default function BulkCandidateAssign() {
                       {assigning ? (
                         <>
                           <Spinner animation="border" size="sm" className="me-2" />
-                          Assigning…
+                          {t("assigningButton")}
                         </>
                       ) : (
-                        "Assign to position"
+                        t("assignButton")
                       )}
                     </Button>
                   </div>
@@ -347,12 +336,13 @@ export default function BulkCandidateAssign() {
                           type="checkbox"
                           checked={isAllVisibleSelected}
                           onChange={(e) => toggleAllVisible(e.target.checked)}
+                          title={t("tableHeaderSelectAllTooltip")}
                         />
                       </th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                      <th>Education Qualification</th>
+                      <th>{t("tableHeaderName")}</th>
+                      <th>{t("tableHeaderEmail")}</th>
+                      <th>{t("tableHeaderPhone")}</th>
+                      <th>{t("tableHeaderEducation")}</th>
                     </tr>
                   </thead>
                   <tbody className="table-body-orange">
@@ -388,7 +378,7 @@ export default function BulkCandidateAssign() {
 
               <div className="d-flex justify-content-between align-items-center px-3 py-2 border-top bg-light">
                 <div className="small text-muted">
-                  Selected: {selected.size}
+                  {t("selectedCount", { count: selected.size })}
                 </div>
               </div>
 

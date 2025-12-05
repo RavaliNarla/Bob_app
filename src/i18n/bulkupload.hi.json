@@ -41,6 +41,31 @@
   "resetMessage": "रीसेट हो गया। दोबारा शुरू करने के लिए नई फ़ाइलें लोड करें।",
   "syncedData": "नवीनतम तालिका डेटा सिंक किया गया",
    "deleted": "हटा दिया गया",
-  "processStarted": "प्रक्रिया शुरू हो गई"
+  "processStarted": "प्रक्रिया शुरू हो गई",
+
+  "requisitionLabel": "रिक्विजिशन",
+  "positionLabel": "पद",
+  "selectRequisitionPlaceholder": "रिक्विजिशन चुनें",
+  "selectPositionPlaceholder": "पद चुनें",
+  "selectRequisitionFirst": "पहले रिक्विजिशन चुनें",
+  "loading": "लोड हो रहा है…",
+  "loadingPositions": "पद लोड हो रहे हैं…",
+  "loadingCandidates": "उम्मीदवार लोड हो रहे हैं…",
+  "selectPositionToLoadCandidates": "उम्मीदवार लोड करने के लिए एक पद चुनें।",
+  "noCandidatesForPosition": "इस पद के लिए कोई उम्मीदवार नहीं मिला।",
+  "searchCandidatesPlaceholder": "उम्मीदवार खोजें (नाम, ईमेल, फ़ोन)…",
+  "assignButton": "पद पर असाइन करें",
+  "assigningButton": "असाइन कर रहे हैं…",
+  "showingOf": "{{shown}} में से {{total}} दिखा रहे हैं",
+  "selectedCount": "चयनित: {{count}}",
+  "tableHeaderName": "नाम",
+  "tableHeaderEmail": "ईमेल",
+  "tableHeaderPhone": "फ़ोन",
+  "tableHeaderEducation": "शैक्षिक योग्यता",
+  "tableHeaderSelectAllTooltip": "दिखायी दे रहे सभी का चयन करें",
+  "candidateDetailsModalTitle": "उम्मीदवार विवरण",
+  "candidateDetailsClose": "बंद करें",
+  "noCandidatesFoundSmall": "कोई उम्मीदवार नहीं मिला।",
+  "viewCandidateDetails": "विवरण देखें"
 
 }

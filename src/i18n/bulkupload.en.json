@@ -42,5 +42,31 @@
     "resetMessage": "Reset. Load new files to start again.",
   "syncedData": "Synced latest table data",
   "deleted": "Deleted",
-"processStarted": "Process started"  
+"processStarted": "Process started",
+
+  "requisitionLabel": "Requisition",
+  "positionLabel": "Position",
+  "selectRequisitionPlaceholder": "Select requisition",
+  "selectPositionPlaceholder": "Select position",
+  "selectRequisitionFirst": "Select requisition first",
+  "loading": "Loading…",
+  "loadingPositions": "Loading positions…",
+  "loadingCandidates": "Loading candidates…",
+  "selectPositionToLoadCandidates": "Select a position to load candidates.",
+  "noCandidatesForPosition": "No candidates found for this position.",
+  "searchCandidatesPlaceholder": "Search candidates (name, email, phone)…",
+  "assignButton": "Assign to position",
+  "assigningButton": "Assigning…",
+  "showingOf": "Showing {{shown}} of {{total}}",
+  "selectedCount": "Selected: {{count}}",
+  "tableHeaderName": "Name",
+  "tableHeaderEmail": "Email",
+  "tableHeaderPhone": "Phone",
+  "tableHeaderEducation": "Education Qualification",
+  "tableHeaderSelectAllTooltip": "Select all visible",
+  "candidateDetailsModalTitle": "Candidate Details",
+  "candidateDetailsClose": "Close",
+  "noCandidatesFoundSmall": "No candidates found.",
+  "viewCandidateDetails": "View details"
+
 }
