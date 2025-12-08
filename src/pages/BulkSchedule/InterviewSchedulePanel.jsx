@@ -337,7 +337,7 @@ console.log("schedules",schedules)
                   >
                     <option value="30">30 mins</option>
                     <option value="45">45 mins</option>
-                    <option value="360">360 mins</option>
+                    <option value="60">60 mins</option>
                   </select>
                 </div>
               </div>
