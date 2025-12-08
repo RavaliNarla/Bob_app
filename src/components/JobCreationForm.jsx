@@ -5,6 +5,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import RelaxationPolicyDetails from './RelaxationPolicyDetails';
 import { useTranslation } from "react-i18next";
 import JobCreation from '../pages/JobCreation';
+import Select from "react-select";
 
 const JobCreationForm = ({
   formData,
@@ -27,7 +28,8 @@ const JobCreationForm = ({
   readOnly = false,
   positionList = [],
   showNextButton = false,
-  relaxationPolicies = []
+  relaxationPolicies = [],
+  interviewPanelOptions = [],
 }) => {
   // Remove modal state, use popover instead
   const { t } = useTranslation(["jobcreation"]);
@@ -548,6 +550,8 @@ const JobCreationForm = ({
           )}
         </div>
 
+
+
         {/* Relaxation Policy Modal */}
         <Modal
           show={showRelaxationModal}
@@ -571,6 +575,37 @@ const JobCreationForm = ({
             </Button>
           </Modal.Footer>
         </Modal>
+        <div className="col-12 col-md-6 col-lg-3 mb-4 formSpace">
+  <label htmlFor="interview_panels" className="form-label d-flex align-items-center">
+    Interview Panel <span className="required-asterisk">*</span>
+  </label>
+  <Select
+    id="panels"
+    name="panels"
+    isMulti
+    isDisabled={readOnly}
+    options={interviewPanelOptions?.map((panel) => ({
+      value: panel.panel_id,
+      label: panel.panel_name || `Panel ${panel.panel_id}`,
+    }))}
+    value={interviewPanelOptions?.filter((panel) =>
+      (formData.panels || []).includes(panel.panel_id)
+    ).map((panel) => ({
+      value: panel.panel_id,
+      label: panel.panel_name,
+    }))}
+    onChange={(selectedOptions) => {
+      const selectedValues = selectedOptions.map((option) => option.value);
+      handleInputChange({
+        target: { name: "panels", value: selectedValues },
+      });
+    }}
+    placeholder="Select Panel"
+  />
+  {errors.panels && (
+    <div className="invalid-feedback d-block">{errors.panels}</div>
+  )}
+</div>
 
         <div className='row p-0'>
           {/* Description */}

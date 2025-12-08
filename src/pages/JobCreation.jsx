@@ -104,6 +104,23 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
     allCities: [],
     allLocations: [],
   });
+const [interviewPanels, setInterviewPanels] = useState([]);
+
+// Add this effect to fetch interview panels
+useEffect(() => {
+  const fetchInterviewPanels = async () => {
+    try {
+      const response = await apiService.getInterviewPanels();
+      console.log("Interview panels:", response.data);
+      if (response.success) {
+        setInterviewPanels(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching interview panels:", error);
+    }
+  };
+  fetchInterviewPanels();
+}, []);
 
   const [loading, setLoading] = useState(false);
   const [dataError, setDataError] = useState(null);
@@ -345,6 +362,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
             max_salary: selectedPosition.max_salary || '',
             job_relaxation_policy_id: selectedPosition.job_relaxation_policy_id || '',
             // job_application_fee_id: selectedPosition.job_application_fee_id || '',
+            panels:selectedPosition.panels || '',
 
           });
           const states = masterData.allStates.filter(
@@ -490,6 +508,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
       }));
     }
   };
+// In JobCreation.jsx, add this state near the top with other states
 
 
   const validateForm = () => {
@@ -993,6 +1012,7 @@ const JobCreation = ({ editRequisitionId, showModal, onClose, editPositionId, on
               readOnly={readOnly}
               positionList={masterPositions}
               relaxationPolicies={relaxationPolicies}
+               interviewPanelOptions={interviewPanels}
             />
           )}
 
